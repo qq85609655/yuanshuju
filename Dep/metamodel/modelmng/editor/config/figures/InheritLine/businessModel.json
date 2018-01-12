@@ -1,0 +1,19 @@
+{
+	"fields" : [{
+				"name" : "id",
+				"type" : "String",
+
+			}, {
+				"name" : "mmId",
+				"type" : "String",
+
+			}, {
+				"name" : "parentId",
+				"type" : "String",
+				"required" : "true"
+			}, {
+				"name" : "remark",
+				"type" : "String"
+			}]
+
+}

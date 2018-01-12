@@ -1,0 +1,100 @@
+/**   
+ * @Title: GatherAdaptorServiceImpl.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月29日 下午3:52:48
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.service.impl;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.IRequest;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.util.enmu.EnumUtil;
+import com.gilight.dep.metadata.enmu.MetaDataGatherAdaptor;
+import com.gilight.dep.metadata.repository.IGatherAdaptorRepository;
+import com.gilight.dep.metadata.repository.IGatherDataScourceRepository;
+import com.gilight.dep.metadata.service.IGatherAdaptorService;
+
+/***
+ * 
+ * @ClassName: GatherAdaptorServiceImpl
+ *             <p>
+ *             采集适配器管理的实现 TODO<br>
+ * @author zps
+ * @date 2015年7月29日 下午4:00:57
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class GatherAdaptorServiceImpl implements IGatherAdaptorService {
+	private static final Logger logger = Logger
+			.getLogger(GatherAdaptorServiceImpl.class);
+
+	@Autowired
+	IGatherAdaptorRepository repository;
+	
+	@Override
+	public <P> IResponse getAllAdaptor(IContext<P> context)
+			throws ServiceException {
+		try {
+			List<MetaDataGatherAdaptor> adaptor = this.getAllAdaptor();
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"获取采集适配器成功！", adaptor));
+			return context.getResponse();
+		} catch (Exception e) {
+			logger.error("获取采集适配器失败", e);
+			throw new ServiceException("获取采集适配器失败");
+		}
+	}
+
+	private List<MetaDataGatherAdaptor> getAllAdaptor() throws ServiceException {
+		try {
+			return EnumUtil.getEnumList(MetaDataGatherAdaptor.class);
+		} catch (Exception e) {
+			logger.error("", e);
+			throw new ServiceException("获取采集适配器失败");
+		}
+	}
+
+	public static void main(String[] arg) throws ServiceException {
+		GatherAdaptorServiceImpl a = new GatherAdaptorServiceImpl();
+		List l = a.getAllAdaptor();
+		if (l != null) {
+			Object o = l.get(0);
+			MetaDataGatherAdaptor me = (MetaDataGatherAdaptor) o;
+			System.out.println(o.getClass().getName());
+			System.out.println(me.toString());
+			System.out.println(me.getName());
+			System.out.println(me.getValue());
+		}
+	}
+
+	@Override
+	public IResponse getDataSourceTreeById(IContext paramIContext)
+			throws ServiceException {
+		try {
+			IDParameters idp = (IDParameters) paramIContext.getParameters();
+			String id= idp.getId();
+			return repository.getDataSourceTreeById(paramIContext);
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("", e);
+			throw new ServiceException("获取采集适配器失败");
+		}
+		
+	}
+	
+	
+}

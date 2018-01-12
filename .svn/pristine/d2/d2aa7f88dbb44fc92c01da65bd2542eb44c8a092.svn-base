@@ -1,0 +1,82 @@
+package com.gilight.dep.metadata.model;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.MessageProducerException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.model.impl.BaseBasicModel;
+import com.gilight.dep.metadata.message.procuder.MetaDataBaseMessageProducer;
+import com.gilight.dep.metadata.message.procuder.MetaDataVersionMessageProducer;
+
+public class MetaDataVersionModel extends BaseBasicModel<String> {
+
+	@Override
+	public String getModelName() {
+		return MetaDataVersionModel.class.getName();
+	}
+
+	@Override
+	public Class getMessageProcuderClass() {
+		// TODO Auto-generated method stub
+		return MetaDataBaseMessageProducer.class;
+	}
+
+	public IResponse approveReject(IContext context) throws ModelException {
+
+		try {
+			// MetaDataVersionMessageProducer producer =
+			// (MetaDataVersionMessageProducer)getMessageProcuder();
+			MetaDataVersionMessageProducer producer = (MetaDataVersionMessageProducer) getRoleAssigner()
+					.assign(this,
+							MetaDataVersionMessageProducer.class.newInstance());
+			producer.approveReject(context);
+		} catch (MessageProducerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ModelException(e);
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ModelException(e);
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return context.getResponse();
+		// return null;
+
+	}
+
+	public IResponse approveAgree(IContext context) throws ModelException {
+
+		try {
+			MetaDataVersionMessageProducer producer = (MetaDataVersionMessageProducer) getRoleAssigner()
+					.assign(this,
+							MetaDataVersionMessageProducer.class.newInstance());
+
+			producer.approveAgree(context);
+		} catch (MessageProducerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ModelException(e);
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ModelException(e);
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return context.getResponse();
+
+	}
+}

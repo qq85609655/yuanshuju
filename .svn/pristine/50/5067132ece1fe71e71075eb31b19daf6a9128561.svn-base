@@ -1,0 +1,13 @@
+package com.gilight.dep.metadata.repository;
+/**
+ * 采集模板操作
+* @ClassName: IGatherTempleRepository 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:47:52
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IGatherTempleRepository extends IMetaDataRepository {
+
+}

@@ -1,0 +1,132 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+import java.math.BigDecimal;
+
+/**
+ * 
+* @ClassName: MdView 
+* <p>TODO<br>
+* @author hww
+* @date 2015年7月7日 下午3:51:39
+* @version V1.0
+* @since JDK 1.7
+ */
+public class MdView extends BaseMetaDataEntity {
+
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 名称
+	 */
+	private String viewName;
+	/**
+	 * 默认显示
+	 */
+	private String defaultShow;
+	/**
+	 * 类别：系统视图，用户视图
+	 */
+	private String viewType;
+	/**
+	 * 显示顺序
+	 */
+	private String displayOrder;
+	/**
+	 * 描述
+	 */
+	private String remark;
+	/**
+	 * 是否隐藏：YES/NO
+	 */
+	private Integer ishidden;
+
+	public MdView() {
+	}
+
+	public MdView(String id) {
+		this.id = id;
+	}
+
+	public MdView(String id, String viewName, String defaultShow,
+			String viewType, String displayOrder, String remark,
+			Integer ishidden) {
+		this.id = id;
+		this.viewName = viewName;
+		this.defaultShow = defaultShow;
+		this.viewType = viewType;
+		this.displayOrder = displayOrder;
+		this.remark = remark;
+		this.ishidden = ishidden;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getViewName() {
+		return this.viewName;
+	}
+
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
+	}
+
+	public String getDefaultShow() {
+		return this.defaultShow;
+	}
+
+	public void setDefaultShow(String defaultShow) {
+		this.defaultShow = defaultShow;
+	}
+
+	public String getViewType() {
+		return this.viewType;
+	}
+
+	public void setViewType(String viewType) {
+		this.viewType = viewType;
+	}
+
+	public String getDisplayOrder() {
+		return this.displayOrder;
+	}
+
+	public void setDisplayOrder(String displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+
+	public String getRemark() {
+		return this.remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getIshidden() {
+		return ishidden;
+	}
+
+	public void setIshidden(Integer ishidden) {
+		this.ishidden = ishidden;
+	}
+
+	@Override
+	public String toString() {
+		return "MdView [id=" + id + ", viewName=" + viewName + ", defaultShow="
+				+ defaultShow + ", viewType=" + viewType + ", displayOrder="
+				+ displayOrder + ", remark=" + remark + ", ishidden="
+				+ ishidden + "]";
+	}
+
+
+
+}

@@ -1,0 +1,12 @@
+{
+    "fields": [
+        {
+            "name": "id",
+            "type": "String"
+        },{
+            "name": "viewData",
+            "type": "String",
+            "defaultValue": ""
+        }
+    ]
+}

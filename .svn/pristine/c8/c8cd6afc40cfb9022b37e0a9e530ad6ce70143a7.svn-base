@@ -1,0 +1,68 @@
+package com.gilight.dep.metamodel.model.procuder;
+
+import com.gilight.dep.framework.core.context.base.DomainMessageContext;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.MessageProducerException;
+import com.gilight.dep.framework.core.message.producer.IBasicMessageProducer;
+import com.gilight.dep.framework.core.message.producer.impl.BaseMessageProducer;
+import com.jdon.annotation.Introduce;
+import com.jdon.annotation.model.Send;
+
+@SuppressWarnings({ "unchecked", "rawtypes" })
+@Introduce("message")
+public class ModelFolderMessageProducer extends BaseMessageProducer implements
+		IBasicMessageProducer {
+
+	public ModelFolderMessageProducer() {
+	}
+
+	@Override
+	@Send("modelfolderUpdate")
+	public DomainMessageContext update(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			throw new MessageProducerException("更新文件夹失败");
+		}
+	}
+
+	@Override
+	@Send("modelfolderDel")
+	public DomainMessageContext delete(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("删除文件夹失败");
+		}
+	}
+
+	@Override
+	@Send("folderGet")
+	public DomainMessageContext get(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("删除文件夹失败");
+		}
+	}
+
+	@Override
+	@Send("modelfolderCreate")
+	public DomainMessageContext create(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("创建文件夹失败");
+		}
+	}
+
+}

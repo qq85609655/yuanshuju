@@ -1,0 +1,37 @@
+package com.gilight.dep.metadata.wsview;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+
+@XStreamAlias("metadatas")
+public class SchemasView {
+    @XStreamImplicit()
+    private List<SchemaView> schemas;
+
+    public List<SchemaView> getSchemas() {
+        return schemas;
+    }
+
+    public void setSchemas(List<SchemaView> schemas) {
+        this.schemas = schemas;
+    }
+
+    public void addSchema(SchemaView schema){
+        if(this.schemas==null){
+            this.schemas = new ArrayList<SchemaView>();
+        }
+        this.schemas.add(schema);
+    }
+}

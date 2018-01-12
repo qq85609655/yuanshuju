@@ -1,0 +1,169 @@
+/**   
+analyseExcuteService * @Title: KettleSpringFactory.java  
+ * @Description: TODO 
+ * @author zps   
+ * @date 2015骞�鏈�9鏃�涓嬪崍2:32:46
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.spring;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.gather.excel.ExcelGatherJobTaskModel;
+import com.gilight.dep.metadata.gather.excel.ExcelGatherServiceImpl;
+import com.gilight.dep.metadata.scope.MetaHbiernateScope;
+import com.gilight.dep.metadata.service.IMetaDataBaseService;
+import com.gilight.dep.metadata.service.IMetaDataVersionService;
+import com.gilight.dep.metadata.service.IMetaDataViewService;
+import com.gilight.dep.metadata.view.MetaDataAttView;
+import com.gilight.dep.metadata.view.MetaDataBaseView;
+import com.gilight.dep.metadata.view.MetaDataCompBaseView;
+import com.gilight.dep.metadata.view.MetaDataDepeBaseView;
+import com.gilight.dep.metadata.view.MetaDataSubBaseView;
+import com.gilight.dep.metadata.view.MetaDataView;
+import com.gilight.dep.metadata.view.MetaModelInheritView;
+import com.gilight.dep.metadata.view.PackageBasicView;
+import com.gilight.dep.metadata.view.PackageFolderBasicView;
+import com.gilight.dep.metamodel.service.IMetaModelBasicService;
+import com.gilight.dep.metamodel.service.IMetaModelCompService;
+import com.gilight.dep.metamodel.service.IMetaModelDepeService;
+import com.gilight.dep.metamodel.service.IMetaModelInheService;
+import com.gilight.dep.metamodel.service.IMetaModelQueryService;
+
+public class TestSpringFactory {
+
+	private static TestSpringFactory instance = new TestSpringFactory();
+	private static ApplicationContext factory;
+
+	public static TestSpringFactory getInstance() {
+		return instance;
+	}
+
+	static {
+		//String[] beans={"beans/service/beans.xml","beans/hibernate/hibernate.xml"};
+		factory = new ClassPathXmlApplicationContext("test.xml");
+	}
+
+	public static Object getBean(String name) {
+		if (factory == null) {
+			return null;
+		}
+		try {
+			return factory.getBean(name);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public static ApplicationContext getFactory() {
+		return factory;
+	}
+
+	public static void setFactory(ApplicationContext factory) {
+		TestSpringFactory.factory = factory;
+	}
+
+	public static void main(String[] args) {
+		try {
+			System.out.println("Test------");
+			/*IMetaDataViewService metaDataViewService = (IMetaDataViewService) TestSpringFactory.getBean("metaDataViewService");
+			IMetaDataBaseService metaDataBaseService = (IMetaDataBaseService) TestSpringFactory.getBean("metaDataBaseService");
+			IMetaDataVersionService metaDataVersionService =(IMetaDataVersionService)TestSpringFactory.getBean("metaDataVersionService");*/
+			ExcelGatherJobTaskModel jobmodel = new ExcelGatherJobTaskModel();
+			ExcelGatherServiceImpl gs = (ExcelGatherServiceImpl) TestSpringFactory.getBean("excelGatherService");
+			
+			gs.buildMetadatas(jobmodel);
+			//gs.buildMetadatas(jobTaskModel);
+			/*MetaDataSubBaseView mdsbv =new MetaDataSubBaseView();
+			MetaDataBaseView md = new MetaDataBaseView();
+			md.setMdName("阿萨德法师");
+			mdsbv.setName("ddddddff沙发实得分");
+			mdsbv.setSubMetaData(md);
+			mdsbv.setParentMdId("2134123412");
+			IContext context = ContextFactoryImpl.getInstance().createContextWithView(mdsbv);
+			//metaDataBaseService.createCompMetaData(context);
+			IDParameters idp = new IDParameters();
+			idp.setId("2134123412");
+			context = ContextFactoryImpl.getInstance().createContextWithParams(idp);
+			metaDataBaseService.getCompData(context);*/
+			
+			//IContext context = ContextFactoryImpl.getInstance().createContextWithID("77fe5729-7935-4d36-8914-33be3529f13e");
+			//metaDataViewService.delete(context);
+			
+			//md.get
+			//MetaDataCompBaseView view= new MetaDataCompBaseView();
+			/*MetaDataDepeBaseView view = new MetaDataDepeBaseView();
+			view.setId("ffff1yyyy");
+			//view.setMdName("阿萨德发斯蒂芬1111111111111111111111");
+			//view.setName("是打发斯蒂芬333333333333333333");
+			view.setRemark("的所得税");
+			
+			IDParameters ips = new IDParameters();
+			ips.setId("ffff1yyyy");
+			IContext context = ContextFactoryImpl.getInstance().createContextWithView(view);
+
+			IContext icontext = ContextFactoryImpl.getInstance().createContextWithParams(ips);
+			metaDataBaseService.deteleDepe(icontext);*/
+			
+			//PackageFolderBasicView pbv = new PackageFolderBasicView();
+			//pbv.setId("0d723b66-1b6a-42b1-896d-6b0f08c549ed");
+			
+			/*List<String> ids = new ArrayList<String>();
+			ids.add("8547ed68-8c94-4e96-9079-f0690686ed65");
+			ids.add("84326510-3387-4184-aae5-beaf202d4425");
+			ids.add("4e1bfa70-2ccf-459c-bd7d-7fc52c784260");
+			MetaHbiernateScope scope = new MetaHbiernateScope();
+			scope.setIds(ids);
+			IContext context = ContextFactoryImpl.getInstance().createContextWithParams(scope);
+			//context = ContextFactoryImpl.getInstance().createDifferResponseContextWithView(pbv);
+			metaDataVersionService.approveAgree(context);*/
+			/*PackageFolderBasicView pbv = new PackageFolderBasicView();
+			pbv.setId("0d723b66-1b6a-42b1-896d-6b0f08c549ed");*/
+			//pbv.setRemark("的凤飞飞");
+			//pbv.setName("点点点");
+			/*IContext context;
+			context = ContextFactoryImpl.getInstance().createDifferResponseContextWithView(pbv);*/
+			//metaDataViewService.createFolder(context);
+			/*metaDataViewService.deleteFolder(context);
+			System.out.println("9999999999999999999999999999999");
+			IResult result = (IResult) context.getResponse().getResult();
+			System.out.println("ooooooooooooooooooooooooooooooooooo");
+			System.out.println(context.getRequest().getParameters());
+			System.out.println("ppppppppppppppppppppppppp");
+			*/
+			/*MetaDataAttView mdv = new MetaDataAttView();
+			mdv.setId(UUID.randomUUID().toString());
+			//mdv.setMdName("d是是是");
+			mdv.setMmAttName("是多少");
+			IContext context;
+			context = ContextFactoryImpl.getInstance().createDifferResponseContextWithView(mdv);
+			metaDataBaseService.createAttr(context);*/
+			
+			/*
+			IDParameters ids = new IDParameters();
+			ids.setId("84b7c0ad-a401-4698-b53a-928583782843");
+			IContext context;
+			context = ContextFactoryImpl.getInstance().createContextWithParams(ids);
+			metaModelQueryService.getChildModels(context);*/
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// System.out.println(s.findAll()==null);
+	}
+
+}

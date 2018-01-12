@@ -1,0 +1,92 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.service.IQueryService;
+
+/**
+ * 
+ * @ClassName: IMetaDataVersionService
+ *             <p>
+ *             元数据版本管理服务层接口<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:06:41
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaDataVersionService extends IMetaDataService,
+		IQueryService {
+	/**
+	 * 审批通过
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月27日 下午7:27:25
+	 * @version V1.0
+	 */
+	public IResponse approveAgree(IContext context) throws ServiceException;
+
+	/**
+	 * 审批驳回
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月27日 下午7:27:32
+	 * @version V1.0
+	 */
+	public IResponse approveReject(IContext context) throws ServiceException;
+
+	/**
+	 * 发布
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月27日 下午7:27:40
+	 * @version V1.0
+	 */
+	public IResponse publishVer(IContext context) throws ServiceException;
+
+	/**
+	 * 版本查询
+	 * <p>
+	 * <br>
+	 * 
+	 * @param paramIContext
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月27日 下午7:27:52
+	 * @version V1.0
+	 */
+	public IResponse getAllVerByMDID(IContext paramIContext)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>获取所有待审批的元数据
+	 * <br>
+	 * 
+	 * @param paramIContext
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月5日 下午3:44:37
+	 * @version V1.0
+	 */
+	public IResponse getAuditingMD(IContext paramIContext)
+			throws ServiceException;
+
+}

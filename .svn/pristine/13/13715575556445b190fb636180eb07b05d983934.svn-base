@@ -1,0 +1,289 @@
+package com.gilight.dep.metadata.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.IParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.IBasicModel;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.model.IViewModel;
+import com.gilight.dep.framework.core.model.entity.IDEntity;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.core.service.impl.BasicServiceImpl;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdMetadataArchive;
+import com.gilight.dep.metadata.enums.MetaDataStatus;
+import com.gilight.dep.metadata.model.MetaDataModel;
+import com.gilight.dep.metadata.repository.IMetaDataVersionRepository;
+import com.gilight.dep.metadata.scope.MetaDataVersionScope;
+import com.gilight.dep.metadata.scope.MetaHbiernateScope;
+import com.gilight.dep.metadata.service.IMetaDataVersionService;
+import com.gilight.dep.metadata.util.AutoCopyObj;
+import com.gilight.dep.metadata.view.MetaDataAttView;
+import com.gilight.dep.metadata.view.MetaDataBaseView;
+import com.gilight.dep.metadata.view.MetaDataBasicView;
+
+public class MetaDataVersionServiceImpl extends BasicServiceImpl<String>
+		implements IMetaDataVersionService {
+	private static final Logger logger = Logger
+			.getLogger(MetaDataVersionServiceImpl.class);
+
+	IMetaDataVersionRepository repository;
+
+	public IMetaDataVersionRepository getRepository() {
+		return repository;
+	}
+
+	public void setRepository(IMetaDataVersionRepository repository) {
+		this.repository = repository;
+	}
+
+	@Override
+	public IResponse getByScope(IContext context) throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					if (result == null) {
+						return result;
+					}
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaDataBasicView> metaList = new ArrayList<MetaDataBasicView>();
+					for (IEntity iEntity : list) {
+						MetaDataBasicView packbase = AutoCopyObj.objCopy(
+								MetaDataBasicView.class, iEntity);
+						metaList.add(packbase);
+					}
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("获取成功!", metaList);
+				}
+			});
+			this.getRepository().getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据出现错误!", e);
+			throw new ServiceException("查询元数据出现错误!");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			logger.error("查询元数据出现错误!", e);
+			e.printStackTrace();
+			throw new ServiceException("查询元数据出现错误!");
+		}
+	}
+
+	@Override
+	public IResponse getAllVerByMDID(IContext paramIContext)
+			throws ServiceException {
+		try {
+			IDParameters idp = (IDParameters) paramIContext.getParameters();
+			String code = idp.getId();
+			MetaDataVersionScope scope = new MetaDataVersionScope();
+			scope.setMdCode(code);
+			scope.setStatus(MetaDataStatus.approveAgree);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			this.getByScope(context);
+			return paramIContext.getResponse();
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			logger.error("查询元数据出现错误!", e);
+			e.printStackTrace();
+			throw new ServiceException("查询元数据出现错误!");
+		}
+	}
+
+	/*
+	 * private MetaDataBaseView getArchiveByMdCode(String mdcode)throws
+	 * ServiceException{ return null;
+	 * 
+	 * }
+	 */
+
+	@Override
+	public IResponse approveAgree(IContext context) throws ServiceException {
+		try {
+			// MetaDataBizFlowView view = (MetaDataBizFlowView)
+			// context.getParameter(ParameterKeys.ATT_VIEW);
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("审批成功!", null);
+				}
+			});
+			repository.approveAgree(context);
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"更新元数据成功!", null));
+			return context.getResponse();
+		} catch (Exception exception) {
+			logger.error("更新元数据失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("更新元数据失败!", exception);
+		}
+	}
+
+	@Override
+	public IResponse approveReject(IContext context) throws ServiceException {
+		try {
+			// MetaDataBizFlowView view = (MetaDataBizFlowView)
+			// context.getParameter(ParameterKeys.ATT_VIEW);
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("审批成功!", null);
+				}
+			});
+			repository.approveReject(context);
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"更新元数据成功!", null));
+			return context.getResponse();
+		} catch (Exception exception) {
+			logger.error("更新元数据失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("更新元数据失败!", exception);
+		}
+	}
+
+	@Override
+	public IModel<java.lang.String> initModel(
+			IContext<? extends IParameters> context) throws Exception {
+		// TODO Auto-generated method stub
+		// MmViewFolder
+		// IDEntity<String> entity = this.createEntityFromContext(context);
+
+		IDEntity<String> entity = AutoCopyObj.objCopy(MdMetadata.class,
+				AutoCopyObj.getViewParam(context));
+		// entity.setId(UUID.randomUUID().toString());
+		IModel<String> dataModel = (IModel) getCacheManager().getObject(
+				entity.getId(), getModelClass());
+		IModel<String> model = this.createModel(entity.getId());
+		// 设置逻辑数据
+		if (model instanceof IBasicModel) {
+			((IBasicModel<String>) model).setData(entity);
+		}
+		// 设置图形数据，此处图形数据和业务数据都在一个view里面
+		if (model instanceof IViewModel) {
+			IDEntity<String> view = AutoCopyObj
+					.createViewEntityFromContext(context);
+			((IViewModel) model).setViewData(view);
+		}
+		return model;
+
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description:更新元数据 </p>
+	 * 
+	 * @param context
+	 * 
+	 * @return
+	 * 
+	 * @throws ServiceException
+	 * 
+	 * @see
+	 * com.gilight.dep.framework.core.service.impl.BasicServiceImpl#create(com
+	 * .gilight.dep.framework.core.context.base.IContext)
+	 */
+	@Override
+	public IResponse publishVer(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+
+			MetaDataBasicView view = (MetaDataBasicView) AutoCopyObj
+					.getViewParam(context);
+			view.setStatus(MetaDataStatus.publishVer);
+			context = AutoCopyObj.setViewParam(context, view);
+
+			IModel model = initModel(context);
+			if ((model instanceof MetaDataModel)) {
+				IContext modelContext = getDefaultContext(context);
+				((MetaDataModel) model).publish(modelContext);
+			}
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("发布成功!",result);
+				}
+			});
+			return context.getResponse();
+		} catch (ModelException exception) {
+			logger.error("发布元数据失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("发布元数据失败!", exception);
+		} catch (Exception exception) {
+			logger.error("发布元数据失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("发布元数据失败!", exception);
+		}
+	}
+
+	@Override
+	public Class<? extends IModel<String>> getModelClass() {
+		// TODO Auto-generated method stub
+		return MetaDataModel.class;
+	}
+
+	@Override
+	public IResponse getAuditingMD(IContext context) throws ServiceException {
+		MetaDataVersionScope scope = new MetaDataVersionScope();
+		scope.setStatus(MetaDataStatus.publishVer);
+		context.setParameters(scope);
+		return this.getByScope(context);
+	}
+
+	public IResponse getById(IContext context) throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					if (result == null) {
+						return result;
+					}
+					MdMetadataArchive md = (MdMetadataArchive) result
+							.getResult();
+					MetaDataBaseView mdView = AutoCopyObj.objCopy(
+							MetaDataBaseView.class, md);
+					List attList = SpringBeansUtils.copyPropertiesForList(
+							MetaDataAttView.class, md.getAttList(), null);
+					mdView.setAttList(attList);
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("获取成功!", mdView);
+				}
+			});
+			this.getRepository().getById(context);
+			return context.getResponse();
+		} catch (GilightException exception) {
+			throw new ServiceException("更新失败!", exception);
+		} catch (Exception exception) {
+			throw new ServiceException("更新失败!", exception);
+		}
+	}
+}

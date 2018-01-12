@@ -1,0 +1,145 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+import java.math.BigDecimal;
+
+/**
+ * 
+* @ClassName: MmViewFolder 
+* <p>TODO<br>
+* @author hww
+* @date 2015年7月7日 下午3:53:07
+* @version V1.0
+* @since JDK 1.7
+ */
+public class MdViewFolder extends BaseMetaDataEntity {
+
+	/**
+	 * ID
+	 */
+	private String id;
+	/**
+	 * 视图id
+	 */
+	private String viewId;
+	/**
+	 * 父文件夹id
+	 */
+	private String parentId;
+	/**
+	 * 文件夹名称
+	 */
+	private String name;
+	/**
+	 * 命名空间
+	 */
+	private String namespace;
+	/**
+	 * 文件夹等级
+	 */
+	private String folderLevel;
+	/**
+	 * 显示顺序
+	 */
+	private String displayOrder;
+	/**
+	 * 是否隐藏：YES/NO
+	 */
+	private Integer ishidden;
+
+	public MdViewFolder() {
+	}
+
+	public MdViewFolder(String id) {
+		this.id = id;
+	}
+
+	public MdViewFolder(String id, String viewId, String parentId, String name,
+			String namespace, String folderLevel, String displayOrder,
+			Integer ishidden) {
+		this.id = id;
+		this.viewId = viewId;
+		this.parentId = parentId;
+		this.name = name;
+		this.namespace = namespace;
+		this.folderLevel = folderLevel;
+		this.displayOrder = displayOrder;
+		this.ishidden = ishidden;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getViewId() {
+		return this.viewId;
+	}
+
+	public void setViewId(String viewId) {
+		this.viewId = viewId;
+	}
+
+	public String getParentId() {
+		return this.parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getNamespace() {
+		return this.namespace;
+	}
+
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
+	}
+
+	public String getFolderLevel() {
+		return this.folderLevel;
+	}
+
+	public void setFolderLevel(String folderLevel) {
+		this.folderLevel = folderLevel;
+	}
+
+	public String getDisplayOrder() {
+		return this.displayOrder;
+	}
+
+	public void setDisplayOrder(String displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+
+	public Integer getIshidden() {
+		return ishidden;
+	}
+
+	public void setIshidden(Integer ishidden) {
+		this.ishidden = ishidden;
+	}
+
+	@Override
+	public String toString() {
+		return "MdViewFolder [id=" + id + ", viewId=" + viewId + ", parentId="
+				+ parentId + ", name=" + name + ", namespace=" + namespace
+				+ ", folderLevel=" + folderLevel + ", displayOrder="
+				+ displayOrder + ", ishidden=" + ishidden + "]";
+	}
+
+	
+
+}

@@ -1,0 +1,333 @@
+package com.gilight.dep.metadata.model;
+
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.metadata.enmu.EnumRelation;
+import com.gilight.dep.metadata.entity.MdDependency;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdRelation;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.util.ListUtil;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**映射模型
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+
+public class DepDepeMappingModel extends DepBaseModel {
+   // private
+
+    private static final Logger logger = Logger
+            .getLogger(DepDepeMappingModel.class);
+
+    private MdMetadata source;
+    private MdMetadata target;
+    private MdMetadata depe;
+
+    private MmMetamodel depeMm;
+
+    public MmMetamodel getDepeMm() {
+        return depeMm;
+    }
+
+    public void setDepeMm(MmMetamodel depeMm) {
+        this.depeMm = depeMm;
+    }
+
+    public MdMetadata getSource() {
+        return source;
+    }
+
+    public void setSource(MdMetadata source) {
+        this.source = source;
+    }
+
+    public MdMetadata getTarget() {
+        return target;
+    }
+
+    public void setTarget(MdMetadata target) {
+        this.target = target;
+    }
+
+    public MdMetadata getDepe() {
+        return depe;
+    }
+
+    public void setDepe(MdMetadata depe) {
+        this.depe = depe;
+    }
+
+    @Override
+    public String toString() {
+        return "DepeMappingModel{" +
+                "source=" + source +
+                ", target=" + target +
+                ", depe=" + depe +
+                '}';
+    }
+
+    public boolean create(){
+        //this.getMetaDataBaseRepository().createTableMapping();
+        try {
+            if (source!=null&&target!=null&&depeMm!=null){
+                return this.getMetaDataBaseRepository().createMapping(source,target,depeMm.getId());
+            }
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
+
+    public void remove(){
+
+    }
+
+    public List<DepDepeMappingModel> queryMapping() throws ModelException{
+        List<DepDepeMappingModel> depDepeMappingModels=new ArrayList<DepDepeMappingModel>();
+        String sourceId=source.getId();
+        //this.setSource(this.getSource().set);
+        MdRelation mdRelation = new MdRelation();
+        mdRelation.setSourcemdid(sourceId);
+        //this.getMetaDataBaseRepository().findBySource()
+        try {
+            List<MdRelation> list=this.getMetaDataBaseRepository().findByEntity(mdRelation,MdRelation.class);
+            if (list==null||list.size()==0){
+                return depDepeMappingModels;
+            }
+            for (MdRelation relation:list) {
+                DepDepeMappingModel depDepeMappingModel=new DepDepeMappingModel();
+                String depeId=relation.getRelationmdid();
+                String sourId=relation.getSourcemdid();
+                String targetId=relation.getTargetmdid();
+                depDepeMappingModel.setDepe(this.getMetaDataBaseRepository().getById(depeId));
+                if (depDepeMappingModel.getDepe()==null){
+                    continue;
+                }
+                depDepeMappingModel.setSource(this.getMetaDataBaseRepository().getById(sourId));
+                if (depDepeMappingModel.getSource()==null){
+                    continue;
+                }
+                depDepeMappingModel.setTarget(this.getMetaDataBaseRepository().getById(targetId));
+                if (depDepeMappingModel.getDepe()==null||depDepeMappingModel.getSource()==null||depDepeMappingModel.getTarget()==null){
+                    continue;
+                }
+                depDepeMappingModels.add(depDepeMappingModel);
+
+            }
+
+
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            logger.error("查询映射关系失败",e);
+            throw new ModelException("查询映射关系失败");
+
+        }
+        return depDepeMappingModels;
+    }
+
+    public List<DepDepeMappingModel> queryMappingold() throws ModelException{
+        List<DepDepeMappingModel> depDepeMappingModels=new ArrayList<DepDepeMappingModel>();
+        String sourceId=source.getId();
+        //this.setSource(this.getSource().set);
+        MdDependency mdDependency = new MdDependency();
+        mdDependency.setIsMapp("1");
+        mdDependency.setMappDire("0");
+        mdDependency.setToMdId(sourceId);
+        mdDependency.setUpdateDate(null);
+        //this.getMetaDataBaseRepository().findBySource()
+        try {
+            List<MdDependency> list=this.getMetaDataBaseRepository().findByEntity(mdDependency,MdDependency.class);
+            if (list==null||list.size()==0){
+                return depDepeMappingModels;
+            }
+            for (MdDependency mdDepe:list) {
+                DepDepeMappingModel depDepeMappingModel=new DepDepeMappingModel();
+                String depeId=mdDepe.getFromMdId();
+                String sourId=mdDepe.getToMdId();
+                depDepeMappingModel.setDepe(this.getMetaDataBaseRepository().getById(depeId));
+                if (depDepeMappingModel.getDepe()==null){
+                    continue;
+                }
+                depDepeMappingModel.setSource(this.getMetaDataBaseRepository().getById(sourId));
+                if (depDepeMappingModel.getSource()==null){
+                    continue;
+                }
+                depDepeMappingModel.setTarget(this.getMetaDataBaseRepository().findBySourceMappId(sourId,depDepeMappingModel.getDepe().getId()));
+                if (depDepeMappingModel.getDepe()==null||depDepeMappingModel.getSource()==null||depDepeMappingModel.getTarget()==null){
+                    continue;
+                }
+                depDepeMappingModels.add(depDepeMappingModel);
+
+            }
+
+
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            logger.error("查询映射关系失败",e);
+            throw new ModelException("查询映射关系失败");
+
+        }
+        return depDepeMappingModels;
+    }
+
+
+    public List<DepDepeMappingModel> queryPassiveMapping()throws ModelException{
+
+        List<DepDepeMappingModel> depDepeMappingModels=new ArrayList<DepDepeMappingModel>();
+        String targetId=source.getId();
+        //this.setSource(this.getSource().set);
+        MdRelation mdRelation = new MdRelation();
+        mdRelation.setTargetmdid(targetId);
+        //this.getMetaDataBaseRepository().findBySource()
+        try {
+            List<MdRelation> list=this.getMetaDataBaseRepository().findByEntity(mdRelation,MdRelation.class);
+            if (list==null||list.size()==0){
+                return depDepeMappingModels;
+            }
+            for (MdRelation relation:list) {
+                DepDepeMappingModel depDepeMappingModel=new DepDepeMappingModel();
+                String depeId=relation.getRelationmdid();
+                String sourId=relation.getSourcemdid();
+                //String targetId=relation.getTargetmdid();
+                depDepeMappingModel.setDepe(this.getMetaDataBaseRepository().getById(depeId));
+                if (depDepeMappingModel.getDepe()==null){
+                    continue;
+                }
+                depDepeMappingModel.setSource(this.getMetaDataBaseRepository().getById(sourId));
+                if (depDepeMappingModel.getSource()==null){
+                    continue;
+                }
+                depDepeMappingModel.setTarget(this.getMetaDataBaseRepository().getById(targetId));
+                if (depDepeMappingModel.getDepe()==null||depDepeMappingModel.getSource()==null||depDepeMappingModel.getTarget()==null){
+                    continue;
+                }
+                depDepeMappingModels.add(depDepeMappingModel);
+
+            }
+
+
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            logger.error("查询映射关系失败",e);
+            throw new ModelException("查询映射关系失败");
+
+        }
+        return depDepeMappingModels;
+    }
+
+    public List<DepDepeMappingModel> queryPassiveMapping_old()throws ModelException{
+
+        List<DepDepeMappingModel> depDepeMappingModels=new ArrayList<DepDepeMappingModel>();
+        String targetId=target.getId();
+        MdDependency mdDependency = new MdDependency();
+        mdDependency.setIsMapp("1");
+        mdDependency.setMappDire("1");
+        mdDependency.setToMdId(targetId);
+        mdDependency.setUpdateDate(null);
+        //this.getMetaDataBaseRepository().findBySource()
+        try {
+            List<MdDependency> list=this.getMetaDataBaseRepository().findByEntity(mdDependency,MdDependency.class);
+            if (list==null||list.size()==0){
+                return depDepeMappingModels;
+            }
+            for (MdDependency mdDepe:list) {
+                DepDepeMappingModel depDepeMappingModel=new DepDepeMappingModel();
+                String depeId=mdDepe.getFromMdId();
+                String sourId=mdDepe.getToMdId();
+
+                depDepeMappingModel.setDepe(this.getMetaDataBaseRepository().getById(depeId));
+                if (depDepeMappingModel.getDepe()==null){
+                    continue;
+                }
+                depDepeMappingModel.setTarget(this.getMetaDataBaseRepository().getById(sourId));
+                if (depDepeMappingModel.getTarget()==null){
+                    continue;
+                }
+                depDepeMappingModel.setSource(this.getMetaDataBaseRepository().findByTargetMappId(targetId,depDepeMappingModel.getDepe().getId()));
+                if (depDepeMappingModel.getDepe()==null||depDepeMappingModel.getSource()==null||depDepeMappingModel.getTarget()==null){
+                    continue;
+                }
+                depDepeMappingModels.add(depDepeMappingModel);
+            }
+
+
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            logger.error("查询映射关系失败",e);
+            throw new ModelException("查询映射关系失败");
+
+        }
+        return depDepeMappingModels;
+    }
+
+    public boolean delMapping(){
+        String depeId=this.getDepe().getId();
+        MdDependency mdDependency = new MdDependency();
+        mdDependency.setIsMapp(EnumRelation.TYPE_MAPPING+"");
+        mdDependency.setUpdateDate(null);
+        mdDependency.setFromMdId(depeId);
+
+        MdRelation mdRelation = new MdRelation();
+        mdRelation.setRelationtype(EnumRelation.TYPE_MAPPING);
+        mdRelation.setRelationmdid(depeId);
+        try {
+            List<MdDependency> list=this.getMetaDataBaseRepository().findByEntity(mdDependency,MdDependency.class);
+            if (ListUtil.isNotEmpty(list)){
+                for (MdDependency dependency:list) {
+                    this.getMetaDataBaseRepository().delete(dependency);
+                }
+            }
+
+            List<MdRelation> mdRelations = this.getMetaDataBaseRepository().findByEntity(mdRelation,MdRelation.class);
+            if (ListUtil.isNotEmpty(mdRelations)){
+                for (MdRelation relation : mdRelations) {
+                    this.getMetaDataBaseRepository().delete(relation);
+                }
+            }
+            MdMetadata depeMd=this.getMetaDataBaseRepository().getById(depeId);
+            this.getMetaDataBaseRepository().delete(depeMd);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            logger.info("删除映射失败",e);
+            return false;
+        }
+
+        return true;
+    }
+    public boolean delPassiveMapping(){
+
+        return false;
+    }
+
+
+
+    /*public List<MappDepeView> queryMapping(String mdId){
+
+        return null;
+    }
+
+    public List<MappDepeView> queryPassiveMapping(String mdId){
+
+        return null;
+    }
+
+    public List<MappDepeView> delMapping(String mappId){
+
+        return null;
+    }
+    public List<MappDepeView> delPassiveMapping(String mappId){
+
+        return null;
+    }*/
+    //public void query
+}

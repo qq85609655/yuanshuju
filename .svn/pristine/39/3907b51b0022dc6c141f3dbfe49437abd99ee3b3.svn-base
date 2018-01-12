@@ -1,0 +1,144 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IDataMapQueryDao;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IDataMapQueryRepository;
+
+public class DataMapQueryRepositoryImpl extends MetaDataRepositoryImpl implements IDataMapQueryRepository{
+	private IDataMapQueryDao dataMapQueryDao;
+	
+	
+	
+
+
+	public IDataMapQueryDao getDataMapQueryDao() {
+		return dataMapQueryDao;
+	}
+
+	public void setDataMapQueryDao(IDataMapQueryDao dataMapQueryDao) {
+		this.dataMapQueryDao = dataMapQueryDao;
+	}
+
+	public DataMapQueryRepositoryImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+	@Override
+	public IResponse create(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MmMetamodel getModelByCode(String code) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<MdComposition> getMetaDataComp(String tomdid)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			List<IEntity> list=dataMapQueryDao.findByProperty("toMdId", tomdid, MdComposition.class);
+			if(list==null||list.size()==0){
+				throw new RepositoryException("没有对应元数据关系");
+			}
+			MdComposition[] mcs=(MdComposition[]) list.toArray();
+			List<MdComposition> mclist= Arrays.asList(mcs);
+			return mclist;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据关系失败");
+		}
+		
+		
+	}
+	
+	
+	@Override
+	public List<MdComposition> getMetaDataComp(List<String> tomdids)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			List<IEntity> list=dataMapQueryDao.findByParamList("toMdId", tomdids, MdComposition.class);
+			if(list==null||list.size()==0){
+				return null;
+				//throw new RepositoryException("没有对应元数据关系");
+			}
+			MdComposition[] mcs=(MdComposition[]) list.toArray(new MdComposition[list.size()]);
+			List<MdComposition> mclist= Arrays.asList(mcs);
+			return mclist;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据关系失败");
+		}
+		
+		
+	}
+
+	@Override
+	public List<MdDependency> getMdDependencyByIdlist(List<String> ids)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			List<IEntity> list=dataMapQueryDao.getMdDependencyByIdlist(ids);
+			if(list==null||list.size()==0){
+				return new ArrayList<MdDependency>();
+			}
+			MdDependency[] mcs=(MdDependency[]) list.toArray(new MdDependency[list.size()]);
+			List<MdDependency> mclist= Arrays.asList(mcs);
+			return mclist;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据关系失败");
+		}
+	}
+	
+	
+
+}

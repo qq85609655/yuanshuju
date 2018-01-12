@@ -1,0 +1,89 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+/***
+ * 
+ * @ClassName: MetaModelInheritView
+ *             <p>
+ *             元模型继承关系 TODO<br>
+ * @author zps
+ * @date 2015年7月22日 上午8:53:51
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaModelInheritView extends MetaBaseView {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 元模型继承关系的id
+	 */
+	private String id;
+	/**
+	 * 元模型id
+	 */
+	private String mmId;
+	/**
+	 * 父元模型的id
+	 */
+	private String parentId;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMmId() {
+		return mmId;
+	}
+
+	public void setMmId(String mmId) {
+		this.mmId = mmId;
+	}
+
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaModelInheritView [id=" + id + ", mmId=" + mmId
+				+ ", parentId=" + parentId + ", remark=" + remark
+				+ ", updateDate=" + updateDate + "]";
+	}
+
+}

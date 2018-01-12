@@ -1,0 +1,628 @@
+/**   
+ * @Title: MetadataController.java  
+ * @Description: TODO 
+ * @author Rao junjun   
+ * @date 2015年7月14日 下午4:34:54
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.web.controller;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.ModelAndViewResult;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.ControllerException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.scope.MetaDataDepeScope;
+import com.gilight.dep.metadata.scope.MetaDataScope;
+import com.gilight.dep.metadata.scope.MetaHbiernateScope;
+import com.gilight.dep.metadata.service.IDataMapQueryService;
+import com.gilight.dep.metadata.service.IMetaDataBaseService;
+import com.gilight.dep.metadata.service.IMetaDataVersionService;
+import com.gilight.dep.metadata.service.IMetaDataViewService;
+import com.gilight.dep.metadata.view.AnalyseNodeLineView;
+import com.gilight.dep.metadata.view.MetaDataBaseView;
+import com.gilight.dep.metadata.view.MetaDataBasicView;
+import com.gilight.dep.metadata.view.MetaDataDepeView;
+import com.gilight.dep.metadata.view.MetaDataSubBaseView;
+import com.gilight.dep.metadata.view.PackageFolderBasicView;
+import com.gilight.dep.metadata.view.PackageTreeView;
+import com.gilight.dep.metadata.web.request.MetadataRequestData;
+import com.gilight.dep.metadata.web.response.ResultCode;
+
+@RequestMapping("/metadata")
+public class MetadataController extends MetadataBaseController {
+	/**
+	 * 
+	 */
+	private IMetaDataBaseService metadataService;
+
+	private IMetaDataViewService metaDataViewService;
+
+	private IMetaDataVersionService metaDataVersionService;
+
+	private IDataMapQueryService dataMapQueryService;
+
+	/**
+	 * 根据视图Id获取元数据（只获取第一层元数据信息）
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-14 下午6:06:11
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getByViewId", method = RequestMethod.GET)
+	public @ResponseBody
+	Object getByViewId(@ModelAttribute MetadataRequestData metadataRequestData)
+			throws Exception {
+
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithID(
+						metadataRequestData.getViewId());
+		context.getResponse().regiestResultHandler(new IResultHandler() {
+			@Override
+			public IResult<List<Map>> handle(IContext context, IResult result)
+					throws IllegalAccessException, InvocationTargetException {
+				PackageTreeView ptView = (PackageTreeView) result.getResult();
+				List<PackageFolderBasicView> list0 = ptView
+						.getPackageFolderList();
+				List<MetaDataBasicView> list1 = ptView.getMetaDataList();
+				List<Map> list = new ArrayList<Map>();
+				// 文件夹
+				for (PackageFolderBasicView md : list0) {
+					Map map = new HashMap();
+					map.put("id", md.getId());
+					map.put("text", md.getName());
+					map.put("leaf", false);
+					map.put("expanded", false);
+					map.put("nodeType", 10);
+					map.put("cacheData", null);
+					list.add(map);
+				}
+				// 元数据
+				for (MetaDataBasicView md : list1) {
+					Map map = new HashMap();
+					map.put("id", md.getId());
+					map.put("text", md.getMdName());
+					map.put("leaf", false);
+					map.put("expanded", false);
+					map.put("nodeType", 2);
+					map.put("cacheData", md);
+					list.add(map);
+				}
+				return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS,
+						"获取成功", list);
+			}
+		});
+		IResponse response = metaDataViewService.getChildContentTree(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 根据元数据Id获取 元数据及子元数据详情
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-14 下午6:06:11
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getDetailAndSubById", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getDetailAndSubById(
+			@ModelAttribute MetadataRequestData metadataRequestData)
+			throws Exception {
+		return null;
+	}
+
+	/**
+	 * 根据元数据Id获取分类及分类下的元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-14 下午6:06:11
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getSubById", method = RequestMethod.GET)
+	public @ResponseBody
+	Object getSubById(@ModelAttribute MetadataRequestData metadataRequestData)
+			throws Exception {
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithID(
+						metadataRequestData.getMetadataId());
+
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<List<MetaDataBasicView>>() {
+					@Override
+					public IResult<List<Map>> handle(IContext context,
+							IResult<List<MetaDataBasicView>> result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+
+						List<Map> list = new ArrayList<Map>();
+
+						List<Map> mmList = this.getModels(result.getResult());
+						for (Map m : mmList) {
+							m.put("children", this.getChildrens(
+									(String) m.get("id"), result.getResult()));
+							list.add(m);
+						}
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS, "获取成功", list);
+					}
+
+					// 获取分类模型下的元数据
+					public List<Map> getChildrens(String mmId,
+							List<MetaDataBasicView> mdList) {
+						List<Map> list = new ArrayList<Map>();
+						for (MetaDataBasicView md : mdList) {
+							if (!md.getMmId().equals(mmId)) {
+								continue;
+							}
+							Map map = new HashMap();
+							map.put("id", md.getId());
+							map.put("text", md.getMdName());
+							map.put("leaf", false);
+							map.put("expanded", false);
+							map.put("nodeType", 2);
+							map.put("cacheData", md);
+							list.add(map);
+						}
+						return list;
+					}
+
+					// 获取分类模型
+					public List<Map> getModels(List<MetaDataBasicView> mdList) {
+						List<Map> list = new ArrayList<Map>();
+						List<String> listId = new ArrayList<String>();
+						for (MetaDataBasicView md : mdList) {
+							if (listId.contains(md.getMmId())) {
+								continue;
+							}
+							listId.add(md.getMmId());
+							Map map = new HashMap();
+							map.put("id", md.getMmId());
+							map.put("text", md.getMmName());
+							map.put("leaf", false);
+							map.put("expanded", true);
+							map.put("nodeType", 3);
+							list.add(map);
+						}
+						return list;
+					}
+
+				});
+		this.metadataService.getCompData(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 获取元数据详情
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getDetail", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getDetail(@ModelAttribute MetadataRequestData metadataRequestData)
+			throws Exception {
+		try {
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithID(
+							metadataRequestData.getMetadataId());
+			IResponse response = null;
+			if (metadataRequestData.getIsEditMD() == 1) {
+				response = metadataService.getById(context);
+			} else {
+				response = metaDataVersionService.getById(context);
+			}
+			return response.getResult();
+		} catch (ServiceException e) {
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 创建元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public @ResponseBody
+	Object create(@RequestBody MetaDataBaseView view) throws Exception {
+		try {
+			// 校验参数
+			this.checkViewParameter(view);
+			// 构造上下文（异步响应）
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithView(view);
+			// 调用服务层的方法获取响应
+			IResponse response = metadataService.create(context);
+			// 返回结果
+			return response.getResult();
+		} catch (ServiceException e) {
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 创建元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/createSubMD", method = RequestMethod.POST)
+	public @ResponseBody
+	Object createSubMD(@RequestBody MetaDataSubBaseView view) throws Exception {
+		try {
+			// 校验参数
+			this.checkViewParameter(view);
+			// 构造上下文（异步响应）
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithView(view);
+			// 调用服务层的方法获取响应
+			IResponse response = metadataService.createCompMetaData(context);
+			// 返回结果
+			return response.getResult();
+		} catch (ServiceException e) {
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 编辑元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/edit", method = RequestMethod.POST)
+	public @ResponseBody
+	Object edit(@RequestBody MetaDataBaseView view) throws Exception {
+		try {
+			// 校验参数
+			this.checkViewParameter(view);
+			// 构造上下文（异步响应）
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithView(view);
+			// 调用服务层的方法获取响应
+			IResponse response = metadataService.update(context);
+			// 返回结果
+			return response.getResult();
+		} catch (ServiceException e) {
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 删除元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public @ResponseBody
+	Object delete(@ModelAttribute MetadataRequestData metadataRequestData)
+			throws Exception {
+		// IDParameters idObj = new IDParameters();
+		// idObj.setId(metadataRequestData.getMetadataId());
+		IContext context = ContextFactoryImpl
+				.getInstance()
+				.createDifferResponseContextWithID(metadataRequestData.getIds());
+		IResponse response = this.metadataService.delete(context);
+		return response.getResult();
+	}
+
+	/**
+	 * 查询元数据信息
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-14 下午6:06:11
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/queryMD", method = RequestMethod.POST)
+	public @ResponseBody
+	Object queryMD(@ModelAttribute MetaDataScope scope) throws Exception {
+
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithParams(scope);
+
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<List<MetaDataBasicView>>() {
+					@Override
+					public IResult<List<Map>> handle(IContext context,
+							IResult<List<MetaDataBasicView>> result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+
+						List<Map> list = new ArrayList<Map>();
+						for (MetaDataBasicView md : result.getResult()) {
+							Map map = new HashMap();
+							map.put("id", md.getId());
+							map.put("text", md.getMdName());
+							map.put("leaf", true);
+							map.put("expanded", true);
+							map.put("nodeType", 2);
+							map.put("cacheData", md);
+							list.add(map);
+						}
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS, "获取成功", list);
+					}
+				});
+		IResponse response = metadataService.getByScope(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 根据元模型ID查询元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-14 下午6:06:11
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/findNoDependMDs", method = RequestMethod.GET)
+	public @ResponseBody
+	Object queryByMMID(@ModelAttribute MetaDataDepeScope scope)
+			throws Exception {
+
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithParams(scope);
+		this.metadataService.getNoDepeMetaData(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 获取依赖关系的元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getDependMds", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getDependMds(@ModelAttribute MetadataRequestData metadataRequestData)
+			throws Exception {
+		try {
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithID(
+							metadataRequestData.getMetadataId());
+			IResponse response = this.metadataService
+					.getAllDepeMetaData(context);
+			return response.getResult();
+		} catch (ServiceException e) {
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 添加依赖关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/depend/add.do", method = RequestMethod.POST)
+	public @ResponseBody
+	Object addDepenMDs(@ModelAttribute MetadataRequestData metadataRequestData)
+			throws Exception {
+		try {
+			String fromId = metadataRequestData.getFromMdId();
+			List<String> toMdId = metadataRequestData.getToMDIdList();
+			String mmDepId = metadataRequestData.getMmDependId();
+
+			MetaDataDepeView view = new MetaDataDepeView();
+			view.setFromId(fromId);
+			view.setToIdList(toMdId);
+			view.setMmDepId(mmDepId);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithView(view);
+			IResponse response = this.metadataService.createDepeBatch(context);
+			return response.getResult();
+		} catch (ServiceException e) {
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 删除依赖关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/depend/delete.do", method = RequestMethod.POST)
+	public @ResponseBody
+	Object delDepenMDs(@ModelAttribute MetadataRequestData metadataRequestData)
+			throws Exception {
+		try {
+
+			String fromId = metadataRequestData.getFromMdId();
+			List<String> toMdId = metadataRequestData.getToMDIdList();
+
+			MetaDataDepeView view = new MetaDataDepeView();
+			view.setFromId(fromId);
+			view.setToIdList(toMdId);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithView(view);
+			IResponse response = this.metadataService.deteleDepe(context);
+			return response.getResult();
+		} catch (ServiceException e) {
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	
+	/**
+	 * 删除依赖关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/queryDataMap.do", method = RequestMethod.POST)
+	public @ResponseBody
+	Object queryDataMap(@ModelAttribute MetadataRequestData metadataRequestData)
+			throws Exception {
+		IContext context = ContextFactoryImpl.getInstance().createDifferResponseContextWithParams(null);
+		this.dataMapQueryService.getDataMapQuery(context);
+		return context.getResponse().getResult();
+	}
+	
+	
+	/**
+	 * 删除依赖关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getDataMapQuerySchema.do", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getDataMapQuerySchema(@ModelAttribute AnalyseNodeLineView view)
+			throws Exception {
+		IContext context = ContextFactoryImpl.getInstance().createDifferResponseContextWithView(view);
+		this.dataMapQueryService.getDataMapQuerySchema(context);
+		return context.getResponse().getResult();
+	}
+	
+	
+	public IMetaDataBaseService getMetadataService() {
+		return metadataService;
+	}
+
+	public void setMetadataService(IMetaDataBaseService metadataService) {
+		this.metadataService = metadataService;
+	}
+
+	public IMetaDataViewService getMetaDataViewService() {
+		return metaDataViewService;
+	}
+
+	public void setMetaDataViewService(IMetaDataViewService metaDataViewService) {
+		this.metaDataViewService = metaDataViewService;
+	}
+
+	public IMetaDataVersionService getMetaDataVersionService() {
+		return metaDataVersionService;
+	}
+
+	public void setMetaDataVersionService(
+			IMetaDataVersionService metaDataVersionService) {
+		this.metaDataVersionService = metaDataVersionService;
+	}
+
+	public IDataMapQueryService getDataMapQueryService() {
+		return dataMapQueryService;
+	}
+
+	public void setDataMapQueryService(IDataMapQueryService dataMapQueryService) {
+		this.dataMapQueryService = dataMapQueryService;
+	}
+
+}

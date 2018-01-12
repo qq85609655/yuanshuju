@@ -1,0 +1,239 @@
+package com.gilight.dep.metadata.service;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.service.IQueryService;
+import com.gilight.dep.metadata.entity.MdMetadata;
+
+/**
+ * 
+ * @ClassName: IMetaDataBaseService
+ *             <p>
+ *             元数据基本操作服务层接口<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:06:24
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaDataBaseService extends IMetaDataService, IQueryService {
+
+	// /**
+	// *
+	// * <p>
+	// * 创建属性<br>
+	// *
+	// * @param context
+	// * @return
+	// * @throws ServiceException
+	// * @author wzx
+	// * @date 2015年7月20日 下午7:01:49
+	// * @version V1.0
+	// */
+	// public IResponse findByScope(IContext context) throws ServiceException;
+
+	/**
+	 * 
+	 * <p>
+	 * 创建属性<br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月20日 下午7:01:49
+	 * @version V1.0
+	 */
+	public IResponse createAttr(IContext context) throws ServiceException;
+
+	/**
+	 * 编辑属性
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月20日 下午7:02:03
+	 * @version V1.0
+	 */
+	public IResponse updateAttr(IContext context) throws ServiceException;
+
+	/**
+	 * 删除属性
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月20日 下午7:02:10
+	 * @version V1.0
+	 */
+	public IResponse deleteAttr(IContext context) throws ServiceException;
+
+	/**
+	 * 获取属性信息
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月20日 下午7:02:18
+	 * @version V1.0
+	 */
+	public IResponse getByAttrId(IContext context) throws ServiceException;
+
+	/**
+	 * 属性查询
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月20日 下午7:02:28
+	 * @version V1.0
+	 */
+	public IResponse getByAttrScope(IContext context) throws ServiceException;
+
+	/**
+	 * 创建组合关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:44:44
+	 * @version V1.0
+	 */
+	public IResponse createCompMetaData(IContext context)
+			throws ServiceException;
+
+	/**
+	 * 更新关系组合
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:44:57
+	 * @version V1.0
+	 */
+	public IResponse updateCompMetaData(IContext context)
+			throws ServiceException;
+
+	/**
+	 * 删除组合关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:45:14
+	 * @version V1.0
+	 */
+	public IResponse deleteCompMetaData(IContext context)
+			throws ServiceException;
+
+	/**
+	 * 创建依赖关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:45:21
+	 * @version V1.0
+	 */
+	public IResponse createDepe(IContext context) throws ServiceException;
+
+	/**
+	 * 删除依赖关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:45:35
+	 * @version V1.0
+	 */
+	public IResponse deteleDepe(IContext context) throws ServiceException;
+
+	/**
+	 * 根据元数据查询依赖关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:45:53
+	 * @version V1.0
+	 */
+	public IResponse getAllDepeMetaData(IContext context)
+			throws ServiceException;
+
+	/**
+	 * 根据元数据Id获取分类及分类下的元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月28日 上午11:48:46
+	 * @version V1.0
+	 */
+	public IResponse getCompData(IContext context) throws ServiceException;
+
+	/**
+	 * 
+	 * <p>
+	 * 获取没有被依赖的元数据信息，供元数据添加依赖关系使用 <br>
+	 * 
+	 * @param context
+	 *            上下文，参数参考MetaDataDepeScope
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年7月31日 下午3:16:00
+	 * @version V1.0
+	 */
+	public IResponse getNoDepeMetaData(IContext context)
+			throws ServiceException;
+
+	/**
+	 * 
+	 * <p>
+	 * 批量增加依赖关系 <br>
+	 * 
+	 * @param context
+	 *            上下文 MetaModelDepeView
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月3日 下午3:42:29
+	 * @version V1.0
+	 */
+	public IResponse createDepeBatch(IContext context) throws ServiceException;
+}

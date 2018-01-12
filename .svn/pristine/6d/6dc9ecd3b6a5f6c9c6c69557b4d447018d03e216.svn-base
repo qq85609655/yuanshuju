@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_dep-metadata-util" default="compile.module.dep-metadata-util">
+  <dirname property="module.dep-metadata-util.basedir" file="${ant.file.module_dep-metadata-util}"/>
+  
+  <property name="module.jdk.home.dep-metadata-util" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.dep-metadata-util" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.dep-metadata-util" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.dep-metadata-util" value="-encoding UTF-8 -source 1.7 -target 1.7 ${compiler.args}"/>
+  
+  <property name="dep-metadata-util.output.dir" value="${module.dep-metadata-util.basedir}/target/classes"/>
+  <property name="dep-metadata-util.testoutput.dir" value="${module.dep-metadata-util.basedir}/target/test-classes"/>
+  
+  <path id="dep-metadata-util.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="dep-metadata-util.module.production.classpath">
+    <path refid="${module.jdk.classpath.dep-metadata-util}"/>
+    <path refid="library.maven:_gilight.dep.framework:gilightframework-util:2.0.0.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
+    <path refid="library.maven:_net.sf.json-lib:json-lib:jdk15:2.4.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.8.0.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
+    <path refid="library.maven:_net.sf.ezmorph:ezmorph:1.0.6.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.7.7.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils-core:1.8.3.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging-api:1.1.classpath"/>
+    <path refid="library.maven:_junit:junit:3.8.2.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aop:4.0.4.release.classpath"/>
+    <path refid="library.maven:_aopalliance:aopalliance:1.0.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aspects:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjweaver:1.7.4.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-beans:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-expression:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context-support:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-core:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-jdbc:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-orm:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-test:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-tx:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-web:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-webmvc:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-websocket:4.0.4.release.classpath"/>
+  </path>
+  
+  <path id="dep-metadata-util.runtime.production.module.classpath">
+    <pathelement location="${dep-metadata-util.output.dir}"/>
+    <path refid="library.maven:_gilight.dep.framework:gilightframework-util:2.0.0.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
+    <path refid="library.maven:_net.sf.json-lib:json-lib:jdk15:2.4.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.8.0.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
+    <path refid="library.maven:_net.sf.ezmorph:ezmorph:1.0.6.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.7.7.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils-core:1.8.3.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging-api:1.1.classpath"/>
+    <path refid="library.maven:_junit:junit:3.8.2.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aop:4.0.4.release.classpath"/>
+    <path refid="library.maven:_aopalliance:aopalliance:1.0.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aspects:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjweaver:1.7.4.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-beans:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-expression:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context-support:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-core:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-jdbc:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-orm:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-test:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-tx:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-web:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-webmvc:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-websocket:4.0.4.release.classpath"/>
+  </path>
+  
+  <path id="dep-metadata-util.module.classpath">
+    <path refid="${module.jdk.classpath.dep-metadata-util}"/>
+    <pathelement location="${dep-metadata-util.output.dir}"/>
+    <path refid="library.maven:_gilight.dep.framework:gilightframework-util:2.0.0.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
+    <path refid="library.maven:_net.sf.json-lib:json-lib:jdk15:2.4.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.8.0.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
+    <path refid="library.maven:_net.sf.ezmorph:ezmorph:1.0.6.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.7.7.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils-core:1.8.3.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging-api:1.1.classpath"/>
+    <path refid="library.maven:_junit:junit:3.8.2.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aop:4.0.4.release.classpath"/>
+    <path refid="library.maven:_aopalliance:aopalliance:1.0.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aspects:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjweaver:1.7.4.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-beans:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-expression:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context-support:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-core:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-jdbc:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-orm:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-test:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-tx:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-web:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-webmvc:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-websocket:4.0.4.release.classpath"/>
+  </path>
+  
+  <path id="dep-metadata-util.runtime.module.classpath">
+    <pathelement location="${dep-metadata-util.testoutput.dir}"/>
+    <pathelement location="${dep-metadata-util.output.dir}"/>
+    <path refid="library.maven:_gilight.dep.framework:gilightframework-util:2.0.0.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
+    <path refid="library.maven:_net.sf.json-lib:json-lib:jdk15:2.4.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.8.0.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
+    <path refid="library.maven:_net.sf.ezmorph:ezmorph:1.0.6.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.7.7.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils-core:1.8.3.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging-api:1.1.classpath"/>
+    <path refid="library.maven:_junit:junit:3.8.2.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aop:4.0.4.release.classpath"/>
+    <path refid="library.maven:_aopalliance:aopalliance:1.0.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-aspects:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.aspectj:aspectjweaver:1.7.4.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-beans:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-expression:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-context-support:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-core:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-jdbc:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-orm:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-test:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-tx:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-web:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-webmvc:4.0.4.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-websocket:4.0.4.release.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.dep-metadata-util">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.dep-metadata-util">
+    <patternset refid="excluded.from.module.dep-metadata-util"/>
+  </patternset>
+  
+  <path id="dep-metadata-util.module.sourcepath">
+    <dirset dir="${module.dep-metadata-util.basedir}">
+      <include name="src/main/java"/>
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  <path id="dep-metadata-util.module.test.sourcepath">
+    <dirset dir="${module.dep-metadata-util.basedir}">
+      <include name="src/test/java"/>
+      <include name="src/test/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.dep-metadata-util" depends="compile.module.dep-metadata-util.production,compile.module.dep-metadata-util.tests" description="Compile module dep-metadata-util"/>
+  
+  <target name="compile.module.dep-metadata-util.production" depends="register.custom.compilers" description="Compile module dep-metadata-util; production classes">
+    <mkdir dir="${dep-metadata-util.output.dir}"/>
+    <javac2 destdir="${dep-metadata-util.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.dep-metadata-util}/javac">
+      <compilerarg line="${compiler.args.dep-metadata-util}"/>
+      <bootclasspath refid="dep-metadata-util.module.bootclasspath"/>
+      <classpath refid="dep-metadata-util.module.production.classpath"/>
+      <src refid="dep-metadata-util.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.dep-metadata-util"/>
+    </javac2>
+    
+    <copy todir="${dep-metadata-util.output.dir}">
+      <fileset dir="${module.dep-metadata-util.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.dep-metadata-util.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.dep-metadata-util.tests" depends="register.custom.compilers,compile.module.dep-metadata-util.production" description="compile module dep-metadata-util; test classes" unless="skip.tests">
+    <mkdir dir="${dep-metadata-util.testoutput.dir}"/>
+    <javac2 destdir="${dep-metadata-util.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.dep-metadata-util}/javac">
+      <compilerarg line="${compiler.args.dep-metadata-util}"/>
+      <bootclasspath refid="dep-metadata-util.module.bootclasspath"/>
+      <classpath refid="dep-metadata-util.module.classpath"/>
+      <src refid="dep-metadata-util.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.dep-metadata-util"/>
+    </javac2>
+    
+    <copy todir="${dep-metadata-util.testoutput.dir}">
+      <fileset dir="${module.dep-metadata-util.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.dep-metadata-util.basedir}/src/test/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.dep-metadata-util" description="cleanup module">
+    <delete dir="${dep-metadata-util.output.dir}"/>
+    <delete dir="${dep-metadata-util.testoutput.dir}"/>
+  </target>
+</project>

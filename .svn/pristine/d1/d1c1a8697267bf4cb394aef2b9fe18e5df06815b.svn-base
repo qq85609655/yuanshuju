@@ -1,0 +1,22 @@
+package com.gilight.dep.metadata.util;
+
+import com.gilight.dep.metadata.view.DataAnalyzeView;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+public class DataMapCache {
+    private static DataAnalyzeView dataMap= new DataAnalyzeView();
+    public static DataAnalyzeView getDataMap(){
+        return dataMap;
+    }
+
+    public static void setDataMap(DataAnalyzeView dataAnalyzeView){
+        dataMap=dataAnalyzeView;
+    }
+}

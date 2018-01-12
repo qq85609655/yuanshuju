@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="gilightframework-web-common:war">
+    <output-path>D:/gilightframework-all/gilightframework-web-common/target</output-path>
+    <root id="archive" name="gilightframework-web-common-war.war">
+      <element id="artifact" artifact-name="gilightframework-web-common:war exploded" />
+    </root>
+  </artifact>
+</component>

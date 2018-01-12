@@ -1,0 +1,98 @@
+/**   
+ * @Title: MmDependencyScope.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年8月12日 上午10:22:17
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MmDependency;
+
+@SuppressWarnings("unchecked")
+public class MmDependencyScope extends BaseHbiernateScope {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 名字
+	 */
+	private String name;
+	/**
+	 * 起始元模型id，依赖端
+	 */
+	private String fromMmId;
+	/**
+	 * 目标元模型id，被依赖端
+	 */
+	private String toMmId;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getFromMmId() {
+		return fromMmId;
+	}
+
+	public void setFromMmId(String fromMmId) {
+		this.fromMmId = fromMmId;
+	}
+
+	public String getToMmId() {
+		return toMmId;
+	}
+
+	public void setToMmId(String toMmId) {
+		this.toMmId = toMmId;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Class getClazz() {
+		return MmDependency.class;
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+
+		StringBuffer sql = new StringBuffer();
+		if (!StringUtil.isEmpty(this.id)) {
+			sql.append(" and ").append(obj).append(".id = ? ");
+			this.paraList.add(this.id);
+		}
+		if (!StringUtil.isEmpty(this.fromMmId)) {
+			sql.append(" and ").append(obj).append(".fromMmId = ? ");
+			this.paraList.add(this.fromMmId);
+		}
+		return sql;
+	}
+
+	@Override
+	public String getDefaultOrderBy(String obj) {
+		// TODO Auto-generated method stub
+		return "order by " + obj + ".id";
+	}
+
+}

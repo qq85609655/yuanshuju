@@ -1,0 +1,197 @@
+package com.gilight.dep.metamodel.service.impl;
+
+import java.util.List;
+import java.util.UUID;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.EntityParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.ViewParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.ext.model.IDepBasicModel;
+import com.gilight.dep.framework.core.ext.service.DepBaseServiceImpl;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.metadata.entity.MmEnum;
+import com.gilight.dep.metadata.entity.MmEnumValue;
+import com.gilight.dep.metadata.repository.IMetaModelEnumValueRepository;
+import com.gilight.dep.metadata.view.MetaModelEnumValueView;
+import com.gilight.dep.metamodel.model.MetaModelEnumModel;
+import com.gilight.dep.metamodel.model.MetaModelEnumValueModel;
+import com.gilight.dep.metamodel.service.IMetaModelEnumService;
+import com.gilight.dep.metamodel.service.IMetaModelEnumValueService;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+/**
+ * 枚举值操作
+ *
+ * @author wzx
+ * @version V1.0
+ * @ClassName: MetaModelFolderServiceImpl
+ * <p>TODO<br>
+ * @date 2015年11月30日 下午6:27:33
+ * @since JDK 1.6
+ */
+public class MetaModelEnumValueServiceImpl extends DepBaseServiceImpl implements IMetaModelEnumValueService {
+    private static final Logger logger = Logger
+            .getLogger(MetaModelEnumValueServiceImpl.class);
+    
+    @Autowired
+    private IMetaModelEnumValueRepository metaModelEnumValueRepository;
+    
+
+    public IMetaModelEnumValueRepository getMetaModelEnumValueRepository() {
+		return metaModelEnumValueRepository;
+	}
+
+	public void setMetaModelEnumValueRepository(
+			IMetaModelEnumValueRepository metaModelEnumValueRepository) {
+		this.metaModelEnumValueRepository = metaModelEnumValueRepository;
+	}
+
+	public MetaModelEnumValueServiceImpl() {
+        // TODO Auto-generated constructor stub
+    }
+
+    @Override
+    public Class<? extends IModel> getModelClass() {
+        // TODO Auto-generated method stub
+        return MetaModelEnumValueModel.class;
+    }
+
+    protected void initModel(IContext context, IModel model)
+            throws ServiceException {
+        try {
+            IEntity data = (IEntity) SpringBeansUtils.copyProperties(
+                    MmEnumValue.class, this.getViewParameter(context));
+            if (model instanceof IDepBasicModel) {
+                ((IDepBasicModel) model).setData(data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e);
+            throw new ServiceException("初始化模型失败!");
+        }
+
+    }
+
+
+    @Override
+	public IResponse create(IContext paramIContext) throws ServiceException {
+		try {
+			ViewParameters vp = (ViewParameters) paramIContext.getParameters();
+			MetaModelEnumValueView view = (MetaModelEnumValueView)vp.getView();
+			if (view.getId() == null || view.getId().equals("")) {
+				view.setId(UUID.randomUUID().toString());
+			}
+			MmEnumValue evEntity = new MmEnumValue();
+			evEntity.setId(view.getId());
+			evEntity.setEnumId(view.getEnumId());
+			evEntity.setEnumKey(view.getEnumKey());
+			evEntity.setEnumValue(view.getEnumValue());
+			EntityParameters<IEntity> ep = new EntityParameters<IEntity>();
+			ep.setEntity(evEntity);
+			paramIContext.setParameters(ep);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithEntity(paramIContext, null);
+			metaModelEnumValueRepository.create(paramIContext);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(evEntity));
+			return paramIContext.getResponse();
+			
+			
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new ServiceException("添加枚举值失败!");
+		}
+	}
+
+	@Override
+	public IResponse delete(IContext arg0) throws ServiceException {
+		// TODO Auto-generated method stub
+		return super.delete(arg0);
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws ServiceException {
+		try {
+			ViewParameters vp = (ViewParameters) paramIContext.getParameters();
+			MetaModelEnumValueView view = (MetaModelEnumValueView)vp.getView();
+			if (view.getId() == null || view.getId().equals("")) {
+				view.setId(UUID.randomUUID().toString());
+			}
+			MmEnumValue evEntity = new MmEnumValue();
+			evEntity.setId(view.getId());
+			evEntity.setEnumId(view.getEnumId());
+			evEntity.setEnumKey(view.getEnumKey());
+			evEntity.setEnumValue(view.getEnumValue());
+			EntityParameters<IEntity> ep = new EntityParameters<IEntity>();
+			ep.setEntity(evEntity);
+			paramIContext.setParameters(ep);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithEntity(paramIContext, null);
+			metaModelEnumValueRepository.update(paramIContext);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(evEntity));
+			return paramIContext.getResponse();
+			
+			
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new ServiceException("更新枚举值失败!");
+		}
+	}
+
+	public static void main(String[] args) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected IResult getByScopeAfter(IContext paramIContext,
+                                      IResult paramIResult) throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult updateAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult deleteAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult createAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult getByIdAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected Class getDefaultModelClass() throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+}

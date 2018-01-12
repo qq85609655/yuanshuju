@@ -1,0 +1,11 @@
+package com.gilight.dep.metadata.dao.impl;
+
+import com.gilight.dep.metadata.dao.IGatherDao;
+
+public class GatherDaoImpl extends BaseDao implements IGatherDao{
+
+	public GatherDaoImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

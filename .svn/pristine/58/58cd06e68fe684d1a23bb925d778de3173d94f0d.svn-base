@@ -1,0 +1,57 @@
+package com.gilight.dep.metadata.repository;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.entity.MdAttributeArchive;
+
+/**
+ * 元数据版本
+* @ClassName: IMetaDataVersionRepository 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:48:31
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IMetaDataVersionRepository extends IMetaDataRepository {
+	/**
+	 * 审批驳回
+	* <p><br>
+	* @param paramIContext
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年7月23日 下午7:54:56
+	* @version V1.0
+	 */
+	IResponse approveReject(IContext paramIContext) throws RepositoryException;
+	/**
+	 * 审批通过
+	* <p><br>
+	* @param paramIContext
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年7月23日 下午7:55:04
+	* @version V1.0
+	 */
+	IResponse approveAgree(IContext paramIContext) throws RepositoryException;
+	
+	/**
+	 * 获取属性
+	* <p><br>
+	* @param mdid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年7月28日 下午4:23:48
+	* @version V1.0
+	 */
+	public List<IEntity> getArchiveAttr(String mdid)  throws RepositoryException;
+
+}

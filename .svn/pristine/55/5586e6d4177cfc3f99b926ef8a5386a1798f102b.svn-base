@@ -1,0 +1,46 @@
+/**   
+ * @Title: MetaModelCwmFactory.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月21日 下午7:07:56
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.init.data.cwm;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.gilight.dep.metadata.view.MetaModelView;
+import com.gilight.dep.metamodel.init.data.MetaModelInitFactory;
+
+public class MetaModelCwmFactory extends MetaModelInitFactory {
+
+	private static Map<String, MetaModelView> metaModel = new HashMap<String, MetaModelView>();
+
+	public static void main(String[] args) {
+		metaModel.clear();
+		init();
+		System.out.println("");
+		System.out.println(metaModel);
+	}
+
+	public static Map<String, MetaModelView> getCwmMetaModel() {
+		metaModel.clear();
+		init();
+		return metaModel;
+	}
+
+	private static void init() {
+		/**
+		 * cwm core包元模型
+		 */
+		Map<String, MetaModelView> map = MetaModelCwmCoreFactory
+				.getCwmMetaModel();
+		putCache(map);
+	}
+
+	private static void putCache(Map<String, MetaModelView> map) {
+		metaModel.putAll(map);
+	}
+}

@@ -1,0 +1,42 @@
+/**   
+ * @Title: MetaModelDisplayType.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月22日 上午10:49:51
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.enmu;
+
+import com.gilight.dep.framework.util.enmu.StringEnum;
+
+/**
+ * 
+ * @ClassName: MetaModelDisplayType
+ *             <p>
+ *             元模型属性显示控件枚举<br>
+ * @author zps
+ * @date 2015年7月22日 上午10:57:43
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetaModelDisplayType extends StringEnum {
+	/**
+	 * @Fields serialVersionUID : TODO 控件类型1：文本框；2：文本域；3：下拉框
+	 */
+	private static final long serialVersionUID = 1L;
+	public static String TEXT = "TEXT";
+	public static String TEXTAREA = "TEXTAREA";
+	public static String COMBOX = "COMBOX";
+	public static final MetaModelDisplayType TEXT_TYPE = new MetaModelDisplayType(
+			"文本框", TEXT);
+	public static final MetaModelDisplayType TEXTAREA_TYPE = new MetaModelDisplayType(
+			"文本域", TEXTAREA);
+
+	public static final MetaModelDisplayType COMBOX_TYPE = new MetaModelDisplayType(
+			"下拉框", COMBOX);
+
+	protected MetaModelDisplayType(String iName, String iValue) {
+		super(iName, iValue);
+	}
+}

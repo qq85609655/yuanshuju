@@ -1,0 +1,35 @@
+/**   
+ * @Title: MetaModelQueryServiceImplTest.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年8月10日 下午2:45:39
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.service.impl;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.gilight.dep.metamodel.service.IMetaModelQueryService;
+
+public class MetaModelQueryServiceImplTest {
+
+	IMetaModelQueryService test=null;
+	@Before
+	public void setUp() throws Exception {
+		 
+	}
+
+	
+	@Test
+	public void testGetAllChildModelsIContext() {
+		System.out.println("Not yet implemented");
+	}
+
+	@Test
+	public void testGetAllChildModelIds() {
+		System.out.println("Not yet implemented");
+	}
+
+}

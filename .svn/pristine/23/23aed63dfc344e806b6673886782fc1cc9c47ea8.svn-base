@@ -1,0 +1,158 @@
+package com.gilight.dep.metadata.web.request;
+
+import java.util.Arrays;
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.framework.util.string.StringUtil;
+
+/**
+ * 
+ * @ClassName: MetadataRequestData
+ *             <p>
+ *             TODO<br>
+ * @author Rao JunJun
+ * @date 2015-7-20 下午3:22:09
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetadataRequestData extends BaseRequestData implements IView {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String ids;
+
+	private String metadataId;
+
+	private String viewId;
+
+	private String modelId;
+
+	private String mdCode;
+
+	private String mdName;
+
+	private boolean flag = true; // 审核元数据同意或者拒绝
+
+	private String fromMdId; // 依赖的元数据id
+
+	private String toMdIds; // 被依赖的元数据ids
+
+	private String remark;
+
+	private String mmDependId;
+
+	private int isEditMD;
+
+	public String getViewId() {
+		return viewId;
+	}
+
+	public void setViewId(String viewId) {
+		this.viewId = viewId;
+	}
+
+	public String getMetadataId() {
+		return metadataId;
+	}
+
+	public void setMetadataId(String metadataId) {
+		this.metadataId = metadataId;
+	}
+
+	public String getIds() {
+		return ids;
+	}
+
+	public void setIds(String ids) {
+		this.ids = ids;
+	}
+
+	public String getModelId() {
+		return modelId;
+	}
+
+	public void setModelId(String modelId) {
+		this.modelId = modelId;
+	}
+
+	public String getMdCode() {
+		return mdCode;
+	}
+
+	public void setMdCode(String mdCode) {
+		this.mdCode = mdCode;
+	}
+
+	public String getMdName() {
+		return mdName;
+	}
+
+	public void setMdName(String mdName) {
+		this.mdName = mdName;
+	}
+
+	public boolean isFlag() {
+		return flag;
+	}
+
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
+
+	public String getFromMdId() {
+		return fromMdId;
+	}
+
+	public void setFromMdId(String fromMdId) {
+		this.fromMdId = fromMdId;
+	}
+
+	public String getToMdIds() {
+		return toMdIds;
+	}
+
+	public void setToMdIds(String toMdIds) {
+		this.toMdIds = toMdIds;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public int getIsEditMD() {
+		return isEditMD;
+	}
+
+	public void setIsEditMD(int isEditMD) {
+		this.isEditMD = isEditMD;
+	}
+
+	public String getMmDependId() {
+		return mmDependId;
+	}
+
+	public void setMmDependId(String mmDependId) {
+		this.mmDependId = mmDependId;
+	}
+
+	/**
+	 * 返回给后台使用
+	 * 
+	 * @return
+	 */
+	public List<String> getToMDIdList() {
+		if (!StringUtil.isEmpty(this.toMdIds)) {
+			return Arrays.asList(this.toMdIds.split(","));
+		}
+		return null;
+	}
+
+}

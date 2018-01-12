@@ -1,0 +1,263 @@
+@charset "utf-8";
+/* CSS Document */ 
+html, body {
+	height:100%;
+}
+body {
+	margin:0;
+	font-family:'microsoft yahei';
+}
+a:focus {
+	outline:none
+}
+.login-header a, .login-footer a {
+	text-decoration:none;
+	color:#848585;
+	font-size:14px;
+}
+.login-header a:hover, .login-footer a:hover {
+	color:#666;
+}
+.login-header {
+	height: 55px;
+	margin: 20px auto;
+	position:relative;
+}
+.login-mar-t50 {
+	margin-top:50px;
+}
+.login-header-infor {
+	color:#41a158;
+	font-weight:bold;
+	line-height: 51px;
+	margin-left: 15px;
+	overflow: hidden;
+	display:inline-block;
+	vertical-align:middle;
+}
+a.login-header-infor {
+	font-size:24px;
+	color:#309fcc;
+}
+a.login-header-infor:hover {
+	color:#309fcc;;
+}
+.login-bgcolor {
+	background:url(../img/login/bg-line-2.jpg) center center repeat;
+	height:62%;
+}
+.login-bg {
+	width:900px;
+	height:100%;
+	margin:0 auto;
+	position:relative;
+}
+.login-windows {
+	position:absolute;
+	top:30%;
+	right:0;
+	width:298px;
+	box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	background-color:rgba(255, 255, 255, 0.95);
+	padding:28px;
+	border-radius:10px;
+	box-shadow:-2px 2px 5px #677ba4;
+	border:1px solid #ccc;
+	background:#fff;
+}
+.login-windows input {
+	width:240px;
+	height:40px;
+	line-height:40px;
+	box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	padding-left: 52px;
+	padding-top: 2px;
+	border:1px solid #ccc;
+	border-radius:5px;
+	margin-bottom:20px;
+	font-family:'microsoft yahei';
+	position:relative;
+	 
+}
+.login-windows input:-moz-placeholder{ color:#ccc;}
+ .login-windows input::-moz-placeholder{
+color:#ccc;
+}
+  .login-windows input::-webkit-input-placeholder{
+	  color:#ccc;
+	  } 
+  .login-windows input:-ms-input-placeholder{ color:#ccc;}
+.login-windows input:focus { 
+	border:1px solid #0CB5DC;
+	box-shadow:0 0 6px #9BEDFB;
+	outline:none;
+	transition:all 0.5s ease 0s;
+	-webkit-transition:all 0.5s ease 0s;
+	-moz-transition:all 0.5s ease 0s;
+	-ms-transition:all 0.5s ease 0s;
+	-o-transition:all 0.5s ease 0s;
+}
+.login-windows input.login-zhanghao {
+	background:url(../img/login/zhanghao.png) 10px center no-repeat #fff;
+}
+.login-windows input.login-mima {
+	background:url(../img/login/mima.png) 10px center no-repeat #fff;
+}
+.login-button {
+	background-color: #3db0d6;
+	display: inline-block;
+	font-size: 18px;
+	font-weight: 700;
+	height: 42px;
+	line-height: 40px;
+	outline: 0 none;
+	padding: 0;
+	text-align: center;
+	vertical-align: baseline;
+	width: 244px;
+	border-radius:5px;
+	color:#fff;
+	text-decoration:none;
+	font-weight:normal;
+}
+.lg-mar-15{
+	margin-left:15px;
+	transition:all 0.5s ease 0s;
+	-webkit-transition:all 0.5s ease 0s;
+	-moz-transition:all 0.5s ease 0s;
+	-ms-transition:all 0.5s ease 0s;
+	-o-transition:all 0.5s ease 0s;
+	}
+.login-button:hover,.login-button:focus {
+	background-color: #23a4ce;
+	text-decoration:none;
+	color:#fff;
+	transition:all 0.5s ease 0s;
+	-webkit-transition:all 0.5s ease 0s;
+	-moz-transition:all 0.5s ease 0s;
+	-ms-transition:all 0.5s ease 0s;
+	-o-transition:all 0.5s ease 0s;
+}
+.login-button:hover .lg-mar-15,.login-button:focus .lg-mar-15{
+	margin-left:20px;
+	transition:all 0.5s ease 0s;
+	-webkit-transition:all 0.5s ease 0s;
+	-moz-transition:all 0.5s ease 0s;
+	-ms-transition:all 0.5s ease 0s;
+	-o-transition:all 0.5s ease 0s;
+	}
+.login-footer {
+	padding: 30px 0;
+	font-size: 12px;
+	color: #999;
+	text-align:center;
+}
+.login-header h3 {
+	display:inline-block;
+	margin:0;
+	padding:0;
+	border-right:1px solid #959595;
+	padding-right:20px;
+	vertical-align:middle;
+}
+.login-header h3 img {
+	vertical-align:inherit;
+}
+.login-header nav {
+	top:20px;
+	right:0px;
+	position:absolute;
+}
+/*系统选择*/
+.mu-babg {
+	background:#3e4565;
+}
+.mu-babg h3+a {
+	color:#b8c1e9
+}
+.mu-babg h3+a:hover {
+	color:#b8c1e9
+}
+.mu-babg nav>a {
+	color:#fff;
+}
+.mu-list {
+	margin:40px 0
+}
+.mu-list .row {
+	border-top:1px solid #f0f0f0;
+}
+.mu-list .row:first-child {
+	border:none
+}
+.mu-list .col-xs-3 {
+	padding: 0;
+	position:relative;
+	border-left:1px solid #f0f0f0;
+}
+.mu-list .row:nth-child(2n+1) .col-xs-3:nth-child(2n) {
+background:#f6f6f6;
+background:-moz-linear-gradient(top, #fff, #f0f0f0);
+background:-webkit-gradient(linear, top center, bottom center, from(#fff), to(#f0f0f0));
+background: -webkit-linear-gradient( top, #fff, #f0f0f0);
+background:-o-linear-gradient(top, #fff, #f0f0f0);
+}
+.mu-list .row:nth-child(2n) .col-xs-3:nth-child(2n+1) {
+background:#f6f6f6;
+background:-moz-linear-gradient(top, #f0f0f0, #fff);
+background:-webkit-gradient(linear, top center, bottom center, from(#f0f0f0), to(#fff));
+background: -webkit-linear-gradient( top, #f0f0f0, #fff);
+background:-o-linear-gradient(top, #f0f0f0, #fff)
+}
+.mu-list .col-xs-3 a {
+	padding:45px 0;
+	display:block;
+	color:#585858;
+	font-size:18px;
+	text-align:center;
+	text-decoration:none;
+}
+.mu-img-p {
+	margin-top:25px;
+}
+.mu-list .col-xs-3:last-child {
+	border-right:1px solid #f0f0f0;
+}
+.mu-sming{ line-height:28px; margin-bottom:50px;}
+.mu-sming h3 img {
+	margin-top:-3px;
+	margin-right:10px;
+}
+.mu-sming h3 {
+	font-size:16px;
+	color:#7f8cc6;
+	margin:30px 0;
+}
+.mu-sming h4 {
+	color:#585858;
+	font-size:14px;
+	margin:25px 0; 
+}
+.mu-sming h4 i {
+	display:inline-block;
+	width:11px;
+	height:11px;
+	margin-right:10px;
+	border-radius:50%;
+}
+.mu-cor-01 {
+	background:#9d70ba
+}
+.mu-cor-02 {
+	background:#95be5b
+}
+.mu-cor-03 {
+	background:#eb9d38
+}
+.mu-sming p {
+	color:#a6a5a5;
+	margin:0; 
+} 
+/*系统选择*/

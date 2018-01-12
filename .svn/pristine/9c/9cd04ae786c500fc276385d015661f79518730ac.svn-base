@@ -1,0 +1,72 @@
+package com.gilight.dep.metadata.service;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.service.IQueryService;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdView;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.view.MetaDataMapMDView;
+import com.gilight.dep.metadata.view.MetaDataMapTopView;
+/**
+ * 附加的处理映射关系的业务接口
+ */
+public interface IMetaDataMapTwoService extends IMetaDataService, IQueryService {
+	/**
+	 * 通过子类元数据id查询父类元数据
+	 * @param id
+	 * @return
+	 */
+	MdMetadata findParentMD(String id);
+
+	/**
+	 * 通过元数据id查询顶层视图
+	 * @param mdId
+	 * @return
+	 */
+	MdView findMdView(String mdId);
+	/**
+	 * 查出元模型的所有元数据
+	 * @param mmId
+	 * @return
+	 */
+	List<MdMetadata> findMdListByMmId(String mmId);
+	/**
+	 * 将元数据对象封装成视图
+	 * @param mdMetadata
+	 * @return
+	 */
+	MetaDataMapMDView packageMDView(MdMetadata mdMetadata);
+	/**
+	 * 将metaDataMapMDView的属性字段封装一次
+	 * @param metaDataMapMDView
+	 * @return
+	 */
+	MetaDataMapMDView packageMDView(MetaDataMapMDView metaDataMapMDView);
+	/**
+	 * 将MDView封装成视图
+	 * @param mdView
+	 * @return
+	 */
+	MetaDataMapTopView packageTopView(MdView mdView);
+	/**
+	 * 查询此元模型下的元数据的总数
+	 * @param mmId 所属元模型id
+	 * @return
+	 */
+	Integer findMdCountsByMmId(String mmId);
+	/**
+	 * 分页查询元数据
+	 * @param mmId 所属元模型id
+	 * @param startCount 开始行号
+	 * @param pageSize 查询条数
+	 * @return
+	 */
+	List<MdMetadata> findMdListPagesByMmId(String mmId, Integer startCount, Integer pageSize);
+	/**
+	 * 通过模型ID 查出上一层的元模型
+	 * @param mmId
+	 * @return
+	 */
+	MmMetamodel findParentMM(String mmId);
+}

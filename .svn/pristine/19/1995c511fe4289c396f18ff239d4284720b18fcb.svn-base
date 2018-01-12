@@ -1,0 +1,5 @@
+package com.gilight.dep.metadata.repository;
+
+public interface IMetaModelCompRepository extends IMetaModelRepository {
+
+}

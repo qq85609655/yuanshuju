@@ -1,0 +1,242 @@
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.entity.*;
+import com.gilight.dep.metadata.repository.impl.AnalyseExcuteRepositoryImpl;
+
+import java.util.List;
+
+/**
+ * 离线分析执行
+* @ClassName: IAnalyseExcuteRepository 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:46:28
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IAnalyseExcuteRepository extends IMetaDataRepository {
+	/**
+	 * 根据id获取元模型
+	* <p><br>
+	* @param id
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月3日 下午5:54:16
+	* @version V1.0
+	 */
+	public MmMetamodel getModelByid(String id)throws RepositoryException;
+	/**
+	 * 根据code获取元模型
+	* <p><br>
+	* @param code
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月3日 下午5:54:16
+	* @version V1.0
+	 */
+	public MmMetamodel getModelByCode(String code)throws RepositoryException;
+	/**
+	 * 根据fromid查询元模型继承关系
+	* <p><br>
+	* @param fromid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月3日 下午6:15:03
+	* @version V1.0
+	 */
+	public List<MmInherit> getMmInheritByfromid(String fromid)throws RepositoryException;
+	/**
+	 * 根据fromid查询元模型组合关系
+	* <p><br>
+	* @param fromid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月3日 下午6:15:03
+	* @version V1.0
+	 */
+	public List<MmComposition> getMmCompositionByfromid(String fromid)throws RepositoryException;
+	/**
+	 * 根据fromid查询元模型依赖关系
+	* <p><br>
+	* @param fromid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月3日 下午6:15:03
+	* @version V1.0
+	 */
+	public List<MmDependency> getMmDependencyByfromid(String fromid)throws RepositoryException;
+	
+	/**
+	 * 根据元数据id获取元模型
+	* <p><br>
+	* @param mdid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月4日 上午10:26:04
+	* @version V1.0
+	 */
+	public MmMetamodel getMetaModel(String mdid) throws RepositoryException ;
+	/**
+	 * 根据id获取依赖关系
+	* <p><br>
+	* @param mdid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月4日 上午10:43:20
+	* @version V1.0
+	 */
+	public List<MdDependency> getMetaDataDepe(String mdid) throws RepositoryException ;
+	/**
+	 * 根据id获取组合关系
+	* <p><br>
+	* @param mdid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月4日 上午10:43:59
+	* @version V1.0
+	 */
+	public List<MdComposition> getMetaDataComp(String mdid) throws RepositoryException ;
+	/**
+	 * 根据元模型id查询对应元数据
+	* <p><br>
+	* @param mdid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月4日 上午11:34:30
+	* @version V1.0
+	 */
+	public List<MdMetadata> getMetaDataByMmid(String mdid) throws RepositoryException ;
+	/**
+	 * 根据mmid查询依赖关系
+	* <p><br>
+	* @param mmids
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月21日 下午5:13:46
+	* @version V1.0
+	 */
+	public List<MdDependency> getMetaDataDepeById(List<String> mmids) throws RepositoryException ;
+	/**
+	 * 根据mmid查询依赖关系
+	* <p><br>
+	* @param mmids
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月21日 下午5:14:05
+	* @version V1.0
+	 */
+	public List<MdDependency> getMetaDataDepeByMmId(List<String> mmids) throws RepositoryException ;
+	/**
+	 * 根据name查询依赖关系
+	* <p><br>
+	* @param name
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月21日 下午5:14:21
+	* @version V1.0
+	 */
+	public List<MmDependency> getMetaModelDepeByName(String name) throws RepositoryException ;
+
+	/**
+	 * 
+	* <p><br>
+	* @param
+	* @param depename
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月4日 下午8:52:23
+	* @version V1.0
+	 */
+	public List<MdDependency> getMetaDataTargetDepe(String toid,String depename)
+			throws RepositoryException;
+	
+	/**
+	 * 
+	* <p><br>
+	* @param toid
+	* @param depeid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月4日 下午8:52:23
+	* @version V1.0
+	 */
+	public List<MdDependency> getMetaDataTargetDepeByToid(String toid,String depeid)
+			throws RepositoryException;
+	
+	/**
+	 * 根据id获取元数据
+	* <p><br>
+	* @param mdid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月5日 上午10:45:03
+	* @version V1.0
+	 */
+	public MdMetadata getMetaDataByMdid(String mdid)throws RepositoryException;
+
+    void resultDel() throws RepositoryException;
+
+    public void resultStatus()throws RepositoryException;
+	public List<MdMetadata> getMetaDataByMmid(String mmid, List<String> ids)
+			throws RepositoryException;
+	public List<MdDependency> findMetaDataDepeByIdList(List<String> idlist,
+			List<String> toidlist) throws RepositoryException;
+
+    /**
+     * 清理依赖表
+     */
+    void clearDepe();
+
+    /**
+     * 查询所有映射
+     */
+    List<AnalyseExcuteRepositoryImpl.DepeMapp> findAllMappTarget() throws RepositoryException;
+
+    /**
+	 * 查询不包含notId的映射，既查询映射另一端
+	 * @param fromMdId 映射元数据id
+	 * @param depeMmId 映射元模型id
+	 * @param notId  需要排除的元数据id
+	 * @return
+	 * @throws RepositoryException
+	 */
+	public List<MdMetadata> findByNotMdid(String fromMdId, String depeMmId,String notId)throws RepositoryException;
+
+
+
+
+	List<MdDependency> findMappDepeByMmId(String mmid);
+
+	void updateSource(List<MdDependency> mdMetadatas);
+
+	void updateTarget(List<MdDependency> mdDependencies);
+
+    //public class
+    /**
+     * 扫描映射依赖，插入关系表
+     */
+    void addRelation();
+
+    /**
+     *删除不存在的映射
+     * @param type 关系类型
+     */
+    void delRelation(Integer type);
+}

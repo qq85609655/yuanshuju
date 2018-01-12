@@ -1,0 +1,80 @@
+{
+	"fName" : "InheritMetaModel",
+	"fType" : "InheritMetaModel",
+	"description" : "继承元模型",
+	"groupId" : "mmmNodes",
+	"img" : "Dep/metamodel/modelmng/editor/config/figures/InheritMetaModel/MetaMetaModel.svg",
+	"viewConfig" : {
+		"width" : "60",
+		"height" : "60"
+	},
+	"persistentViewData" : false,
+	"persistentViewAttributes" : ["x", "y", "dimension"],
+	"port" : [],
+	"statuEnums" : [{
+				"code" : "0",
+				"name" : "未发布",
+				"img" : "Dep/metamodel/modelmng/editor/config/figures/InheritMetaModel/MetaMetaModel.svg",
+				"enableMenus" : ["修改元模型","依赖关系管理","删除","元模型属性管理","审批"]
+			},{
+				"code" : "11",
+				"name" : "已发布",
+				"img" : "Dep/metamodel/modelmng/editor/config/figures/InheritMetaModel/MetaMetaModel.svg",
+				"enableMenus" : ["组合关系管理","依赖关系管理","查看详情"]
+			}],
+	"contextMenus" : [{
+				"type" : "nomal",
+				"name" : "派生新的元模型",
+				"icon" : "img/btn/add.png",
+				"desc" : "派生新的元模型",
+				"action" : "addMetaModelFigure"
+			}, {
+				"type" : "nomal",
+				"name" : "组合关系管理",
+				"icon" : "",
+				"desc" : "组合关系管理",
+				"action" : "compositionRelationshipMng"
+			}, {
+				"type" : "nomal",
+				"name" : "依赖关系管理",
+				"icon" : "",
+				"desc" : "依赖关系管理",
+				"action" : "dependencyRelationshipMng"
+			}, {
+				"type" : "nomal",
+				"name" : "修改元模型",
+				"icon" : "img/btn/mod.png",
+				"desc" : "修改元模型",
+				"action" : "modifyMetaModel"
+			}, {
+				"type" : "nomal",
+				"name" : "删除继承元模型",
+				"icon" : "img/btn/delete.png",
+				"desc" : "删除元模型",
+				"action" : "deleteInheritMetaModel"
+			}, {
+				"type" : "nomal",
+				"name" : "元模型属性管理",
+				"icon" : "",
+				"desc" : "元模型属性管理",
+				"action" : "metamodelAttributeMng"
+			}, {
+				"type" : "nomal",
+				"name" : "审批",
+				"icon" : "",
+				"desc" : "审批",
+				"action" : "metamodelApproval"
+			}, {
+				"type" : "nomal",
+				"name" : "添加到文件夹（可多选）",
+				"icon" : "",
+				"desc" : "添加到文件夹",
+				"action" : "addToFolder"
+			}, {
+				"type" : "nomal",
+				"name" : "查看详情",
+				"icon" : "img/btn/show.png",
+				"desc" : "查看详情",
+				"action" : "lookoverDetail"
+			}]
+}

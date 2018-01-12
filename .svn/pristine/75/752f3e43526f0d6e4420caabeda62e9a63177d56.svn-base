@@ -1,0 +1,13 @@
+/**   
+* @Title: IExcepGatherAdaptor.java 
+* <p>TODO 
+* @author zps  
+* @date 2015年7月28日 下午8:47:16
+* @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+* @version V1.0   
+*/
+package com.gilight.dep.metadata.gather.excel;
+
+public interface IExcepGatherAdaptor {
+
+}

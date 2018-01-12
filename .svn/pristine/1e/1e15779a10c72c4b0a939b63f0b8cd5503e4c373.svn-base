@@ -1,0 +1,355 @@
+package com.gilight.dep.metadata.gather.common.util;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+public class ExcelUtil {
+
+	public ExcelUtil() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+	static public InputStream readFile(String file) throws Exception{
+		InputStream fs = null;
+		
+		try {
+			//fs = new POIFSFileSystem(new FileInputStream(file));
+			fs = new FileInputStream(file);
+			//XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
+			return fs; 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		}
+		return fs; 
+
+	}
+	static public InputStream readFile(File file) throws Exception{
+		InputStream fs = null;
+		
+		try {
+			//fs = new POIFSFileSystem(new FileInputStream(file));
+			fs = new FileInputStream(file);
+			//XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
+			return fs; 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		}
+		return fs; 
+
+	}
+	static public Workbook readWorkbook(String file) throws Exception  {
+		if(file==null&&file.equals("")){
+			return null;
+		}
+		Workbook wb;
+		InputStream fs;
+		try {
+			fs = readFile(file);
+			wb = new HSSFWorkbook(fs);			
+			return wb;
+		} catch (Exception e) {
+			fs = readFile(file);
+			wb = new XSSFWorkbook(fs);
+			return wb;
+		}
+		
+	}
+	static public Workbook readWorkbook(File file) throws Exception  {
+		if(file==null&&file.equals("")){
+			return null;
+		}
+		Workbook wb;
+		InputStream fs;
+		try {
+			fs = readFile(file);
+			wb = new HSSFWorkbook(fs);			
+			return wb;
+		} catch (Exception e) {
+			fs = readFile(file);
+			wb = new XSSFWorkbook(fs);
+			return wb;
+		}
+		
+	}
+	
+	
+	
+	static public Sheet  readSheet(Workbook wb,int sheetnum) {
+		if(wb==null){
+			return null;
+		}
+		Sheet sheet = wb.getSheetAt(sheetnum);
+		return sheet;
+	}
+	
+	static public Row  readRow(Sheet sheet,int num) {
+		Row row = sheet.getRow(num);   
+		return row;
+	}
+	
+	static public Cell  readCell(Row row,int num) {
+		Cell cell = row.getCell(num);	
+		if(cell==null){
+			return cell;
+		}
+		cell.setCellType(Cell.CELL_TYPE_STRING);
+		cell.getStringCellValue();
+		return cell;		
+	}
+	
+	static public String  readStringVal(Cell cell) {
+		if(cell==null){
+			return "";
+		}
+		cell.setCellType(Cell.CELL_TYPE_STRING);
+		return cell.getStringCellValue();		
+	}
+	
+	static public String  readStringVal(Row row,int cellnum) throws Exception{
+		if(row==null){
+			return "";
+		}
+		Cell cell = row.getCell(cellnum);
+		if(cell==null){
+			return "";
+		}
+		cell.setCellType(Cell.CELL_TYPE_STRING);
+		String val=cell.getStringCellValue();
+		//System.out.println(val);
+		return val;		
+	}
+	/**
+	 * 获取rownum行最大列数
+	* <p><br>
+	* @param row
+	* @param rownum
+	* @return
+	* @throws Exception  
+	* @author wzx
+	* @date 2015年8月11日 下午5:03:08
+	* @version V1.0
+	 */
+	static public int  readCellNum(Sheet sheet,int rownum) throws Exception{
+		if(sheet==null){
+			return 0;
+		}
+		Row row=sheet.getRow(rownum);
+		int num=0;
+		for (Cell cell : row) {
+			String str=cell.getStringCellValue();
+			if(str!=null&&!str.equals("")){
+				num++;
+			}
+			
+		}
+		//int num = row.getLastCellNum();
+		
+		if(num!=0){
+			num=num-1;
+		}
+		return num;		
+	}
+	/**
+	 * 指定sheet,行和列读取数据
+	* <p><br>
+	* @param sheet
+	* @param rownum
+	* @param cellnum
+	* @return
+	* @throws Exception  
+	* @author wzx
+	* @date 2015年8月10日 上午11:47:14
+	* @version V1.0
+	 */
+	static public String  readStringVal(Sheet sheet,int rownum,int cellnum) throws Exception{
+		if(sheet==null){
+			throw new Exception();
+		}
+		Row row = readRow(sheet,rownum);
+		String val=readStringVal(row,cellnum);
+		return val;		
+	}
+	/**
+	 * 获取第几个sheet
+	* <p><br>
+	* @param fs
+	* @param num
+	* @return
+	* @throws Exception  
+	* @author wzx
+	* @date 2015年8月10日 上午11:46:59
+	* @version V1.0
+	 */
+/*	static public Sheet  readSheet(InputStream fs ,int num) throws Exception{
+		if(fs==null){
+			throw new Exception();
+		}
+		Workbook wb= readWorkbook(fs);
+		Sheet sheet =readSheet(wb,num);
+		return sheet;		
+	}*/
+	/**
+	 * 获取文件中第几个sheet
+	* <p><br>
+	* @param file
+	* @param num
+	* @return
+	* @throws Exception  
+	* @author wzx
+	* @date 2015年8月10日 上午11:46:43
+	* @version V1.0
+	 */
+	static public Sheet  readSheet(String file ,int num) throws Exception{
+		if(file==null){
+			throw new Exception();
+		}
+		//InputStream fs= readFile(file);
+		Workbook wb= readWorkbook(file);
+		Sheet sheet =readSheet(wb,num);
+		return sheet;		
+	}
+	
+	/**
+	 * 文件中一个有几个sheet
+	* <p><br>
+	* @param file
+	* @param num
+	* @return
+	* @throws Exception  
+	* @author wzx
+	* @date 2015年8月11日 下午3:40:24
+	* @version V1.0
+	 */
+	static public int  readSheetNum(File file) throws Exception{
+		if(file==null){
+			throw new Exception();
+		}
+		//InputStream fs= readFile(file);
+		Workbook wb= readWorkbook(file);
+		int sheetnum= wb.getNumberOfSheets();
+		return sheetnum;		
+	}
+	
+	/**
+	 * 文件中一个有几个sheet
+	* <p><br>
+	* @param file
+	* @param num
+	* @return
+	* @throws Exception  
+	* @author wzx
+	* @date 2015年8月11日 下午3:40:24
+	* @version V1.0
+	 */
+	static public int  readSheetNum(String file) throws Exception{
+		if(file==null){
+			throw new Exception();
+		}
+		//InputStream fs= readFile(file);
+		Workbook wb= readWorkbook(file);
+		int sheetnum= wb.getNumberOfSheets();
+		return sheetnum;		
+	}
+	/**
+	 * 读取第rownum行start列到end列的数据存入list
+	* <p><br>
+	* @param sheet
+	* @param rownum
+	* @return
+	* @throws Exception  
+	* @author wzx
+	* @date 2015年8月10日 上午11:49:33
+	* @version V1.0
+	 */
+	static public List<String>  readStringVal(Sheet sheet,int rownum,int start,int end) throws Exception{
+		List<String> list = new ArrayList<String>();
+		Row row=readRow(sheet, rownum);
+		for (int i = start; i <= end; i++) {
+			String val = readStringVal(row,i);
+			list.add(val);
+		}
+		
+		return list;			
+	}
+	
+
+	/**
+	 * 
+	* <p><br>
+	* @param sheet
+	* @param rownum
+	* @param start
+	* @param end
+	* @return
+	* @throws Exception  
+	* @author wzx
+	* @date 2015年8月10日 下午3:14:22
+	* @version V1.0
+	 */
+	static public List<List>  readStringValList(Sheet sheet,int rownum,int start,int end) throws Exception{
+		List<List>  lists = new ArrayList<List>();		
+		int rowcount = getRowNum(sheet) ;
+		
+		for (int i=rownum;i<rowcount;i++) {
+			List<String> list = readStringVal(sheet,i,start,end);
+			lists.add(list);
+		}
+		return lists;			
+	}
+	/**
+	 * 获取行数
+	* <p><br>
+	* @param sheet
+	* @param rownum
+	* @param start
+	* @param end
+	* @return
+	* @throws Exception  
+	* @author wzx
+	* @date 2015年8月12日 上午11:32:32
+	* @version V1.0
+	 */
+	static public int getRowNum(Sheet sheet) throws Exception{
+		//List<List>  lists = new ArrayList<List>();		
+		int rowcount = sheet.getPhysicalNumberOfRows();
+		
+		int rownum=0;
+		for (int i=0;i<rowcount;i++) {
+			Row row = sheet.getRow(i);
+			String val=readStringVal(row,0);
+			if(val!=null&&!val.equals("")){
+				rownum++;
+			}
+			
+		}
+		return rownum;			
+	}
+
+	
+	
+	
+}

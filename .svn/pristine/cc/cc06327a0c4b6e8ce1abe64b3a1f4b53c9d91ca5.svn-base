@@ -1,0 +1,15 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.service.IQueryService;
+/**
+ * 
+* @ClassName: IGatherService 
+* <p>元数据采集配置基类接口<br>
+* @author wzx
+* @date 2015年7月9日 下午3:08:04
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IGatherService  extends IMetaDataService,IQueryService{
+
+}

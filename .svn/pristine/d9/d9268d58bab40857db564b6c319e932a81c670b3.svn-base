@@ -1,0 +1,47 @@
+package com.gilight.dep.metadata.service.impl;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.entity.MdSystemBackup;
+import com.gilight.dep.metadata.repository.ISystemBackupRepository;
+import com.gilight.dep.metadata.service.IInitBackupTimeService;
+
+/**
+ * 初始化系统备份的更新时间实现类
+ *
+ */
+public class InitBackupTimeServiceImpl implements IInitBackupTimeService{
+	private static final Logger logger = Logger
+			.getLogger(InitBackupTimeServiceImpl.class);
+	//注入属性
+	private ISystemBackupRepository systemBackupRepository = null;
+	public ISystemBackupRepository getSystemBackupRepository() {
+		return systemBackupRepository;
+	}
+	public void setSystemBackupRepository(ISystemBackupRepository systemBackupRepository) {
+		this.systemBackupRepository = systemBackupRepository;
+	}
+	/**
+	 * 获取CronExpression
+	 */
+	@Override
+	public String getCronExpressionFromDB() throws ServiceException{
+		logger.info("-------从数据库初始化最新的系统备份时间---------------");
+		try {
+			List<MdSystemBackup> list = systemBackupRepository.getAll();
+			if(list != null && list.size()>0){
+				//返回表达式
+				return list.get(0).getCronExpression();
+			}
+			return "";
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("从数据库获取最新系统备份时间异常");
+		}
+	}
+
+}

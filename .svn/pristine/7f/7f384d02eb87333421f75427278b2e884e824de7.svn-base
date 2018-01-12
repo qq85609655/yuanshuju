@@ -1,0 +1,383 @@
+package com.gilight.dep.metadata.web.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.gilight.dep.framework.core.context.response.result.ModelAndViewResult;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MmDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.service.IMetaDataMapService;
+import com.gilight.dep.metadata.service.IMetaDataMapTwoService;
+import com.gilight.dep.metadata.view.MetaDataMapMDView;
+import com.gilight.dep.metadata.view.MetaDataMapMMDepView;
+import com.gilight.dep.metadata.view.MetaDataMapTopView;
+import com.gilight.dep.metadata.web.response.ResultCode;
+
+/**
+ * 映射关系管理控制类
+ */
+@RequestMapping("/metadatamap")
+public class MetaDataMapController extends MetadataBaseController{
+	
+	private IMetaDataMapService metaDataMapService;
+	private IMetaDataMapTwoService me;//
+	public IMetaDataMapTwoService getMe() {
+		return me;
+	}
+	public void setMe(IMetaDataMapTwoService me) {
+		this.me = me;
+	}
+	public IMetaDataMapService getMetaDataMapService() {
+		return metaDataMapService;
+	}
+	public void setMetaDataMapService(IMetaDataMapService metaDataMapService) {
+		this.metaDataMapService = metaDataMapService;
+	}
+	
+	/**
+	 * 根据元数据id查出其依赖的所有元模型
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/getMMDep", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getMMDep(@RequestParam String id){
+		Map<String,Object> map = new HashMap<String,Object>();
+		List<MetaDataMapMMDepView> targetslist = metaDataMapService.findMapTargetsById(id);
+		List<MetaDataMapMMDepView> sourceslist = metaDataMapService.findMapSourcesById(id);
+		if(targetslist!=null&&targetslist.size()>0){
+			map.put("targets", targetslist);
+		}
+		if(sourceslist!=null&&sourceslist.size()>0){
+			map.put("sources", sourceslist);
+		}
+		System.out.println(map);
+		return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS, "查询成功", map);
+	}
+	
+	/**
+	 * 根据元模型id查出对应的所有的元数据
+	 * @param mmId
+	 * @return
+	 */
+	@RequestMapping(value = "/getMDAll", method = RequestMethod.GET)
+	public @ResponseBody
+	Object getMDAll(@RequestParam String mmId){
+		long a = System.currentTimeMillis();
+		String fromMdId = "映射源元数据id";
+		String mmDepeFromId = "依赖元模型FromId";
+		String toMdId = "映射目标元数据id";
+		List<MdMetadata> list = me.findMdListByMmId(mmId);
+		List<MetaDataMapMDView> startlist = new ArrayList<MetaDataMapMDView>();
+		for (MdMetadata old : list) {
+			MetaDataMapMDView mdView = me.packageMDView(old);
+			//在视图中新增几个显示字段//字符串为空的判断
+			if(!StringUtils.isEmpty(fromMdId)){//设置fromMdId
+				mdView.setFromMdId(fromMdId);
+			}else{
+				mdView.setFromMdId(mdView.getId());
+			}
+			if(!StringUtils.isEmpty(toMdId)){//设置toMdId
+				mdView.setToMdId(toMdId);
+			}else{
+				mdView.setToMdId(mdView.getId());
+			}
+			mdView.setMmDepeFromId(mmDepeFromId);//设置MmDepeFromId
+			startlist.add(mdView);
+		}
+		////判断有没有父类
+		while(metaDataMapService.hasParent(startlist)){
+			//有父类时继续向上封装
+			startlist = metaDataMapService.packageToParent(startlist);
+		}
+		//最终封装至顶层视图
+		List<MetaDataMapTopView> viewlist = metaDataMapService.packageToEndView(startlist);
+		long b = System.currentTimeMillis();
+		System.out.println("查"+mmId+"模型的list大小"+list.size()+",总用时:"+(b-a));
+		
+		return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS, "查询成功", viewlist);
+	}
+	/**
+	 * 根据依赖元模型id查出对应的所有的元数据
+	 * @param id 依赖模型的id
+	 * @param fromMdId 源映射id
+	 * @param toMdId 目标映射id
+	 * @return
+	 */
+	@RequestMapping(value = "/getMD2", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getMD2(@RequestParam String id,@RequestParam String fromMdId,
+			@RequestParam String toMdId){
+		long a = System.currentTimeMillis();
+		//id是依赖模型的id
+		MmDependency mmDependency = metaDataMapService.findMmDepById(id);	
+		//元模型id
+		String mmDepeFromId = mmDependency.getFromMmId();
+		String mmId = mmDependency.getToMmId();
+		//元模型下的元数据
+		List<MdMetadata> list = me.findMdListByMmId(mmId);
+		List<MetaDataMapMDView> startlist = new ArrayList<MetaDataMapMDView>();
+		for (MdMetadata old : list) {
+			MetaDataMapMDView mdView = me.packageMDView(old);
+			//在视图中新增几个显示字段//字符串为空的判断
+			if(!StringUtils.isEmpty(fromMdId)){//设置fromMdId
+				mdView.setFromMdId(fromMdId);
+			}else{
+				mdView.setFromMdId(mdView.getId());
+			}
+			if(!StringUtils.isEmpty(toMdId)){//设置toMdId
+				mdView.setToMdId(toMdId);
+			}else{
+				mdView.setToMdId(mdView.getId());
+			}
+			mdView.setMmDepeFromId(mmDepeFromId);//设置MmDepeFromId
+			startlist.add(mdView);
+		}
+		////判断有没有父类
+		while(metaDataMapService.hasParent(startlist)){
+			//有父类时继续向上封装
+			startlist = metaDataMapService.packageToParent(startlist);
+		}
+		//最终封装至顶层视图
+		List<MetaDataMapTopView> viewlist = metaDataMapService.packageToEndView(startlist);
+		long b = System.currentTimeMillis();
+		System.out.println("查"+mmId+"模型的list大小"+list.size()+",总用时:"+(b-a));
+		
+		return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS, "查询成功", viewlist);
+	}
+	/**
+	 * 根据依赖元模型id查出上层元模型在查对应的元数据
+	 * @param id 依赖模型的id
+	 * @param fromMdId 源映射id
+	 * @param toMdId 目标映射id
+	 * @return
+	 */
+	@RequestMapping(value = "/getMD", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getMD(@RequestParam String id,@RequestParam String fromMdId,
+			@RequestParam String toMdId){
+		
+		long a = System.currentTimeMillis();
+		//id是依赖模型的id
+		MmDependency mmDependency = metaDataMapService.findMmDepById(id);	
+		//元模型id
+		String mmDepeFromId = mmDependency.getFromMmId();
+		String mmId =mmDependency.getToMmId();
+		//初始元模型的上层元模型
+		MmMetamodel mmMetamodel = me.findParentMM(mmId);
+		List<MdMetadata> list = null;
+		if(mmMetamodel!=null){
+			//此时为第二层元数据集合
+			list = me.findMdListByMmId(mmMetamodel.getId());
+		}else{
+			//如果没有上层元模型还用
+			list = me.findMdListByMmId(mmId);
+		}
+		List<MetaDataMapMDView> startlist = new ArrayList<MetaDataMapMDView>();
+		for (MdMetadata old : list) {
+			MetaDataMapMDView mdView = me.packageMDView(old);
+			//在视图中新增几个显示字段//字符串为空的判断
+			if(!StringUtils.isEmpty(fromMdId)){//设置fromMdId
+				mdView.setFromMdId(fromMdId);
+			}else{
+				mdView.setFromMdId(mdView.getId());
+			}
+			if(!StringUtils.isEmpty(toMdId)){//设置toMdId
+				mdView.setToMdId(toMdId);
+			}else{
+				mdView.setToMdId(mdView.getId());
+			}
+			mdView.setMmDepeFromId(mmDepeFromId);//设置MmDepeFromId
+			startlist.add(mdView);
+		}
+		////判断有没有父类
+		while(metaDataMapService.hasParent(startlist)){
+			//有父类时继续向上封装
+			startlist = metaDataMapService.packageToParent(startlist);
+		}
+		//最终封装至顶层视图
+		List<MetaDataMapTopView> viewlist = metaDataMapService.packageToEndView(startlist);
+		
+		long b = System.currentTimeMillis();
+		System.out.println("查"+mmId+"模型的list大小"+list.size()+",总用时:"+(b-a));
+		
+		return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS, "查询成功", viewlist);
+	}
+	
+	/**
+	 * 根据上层元数据id查出下面的组合的元数据集合
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/getBottomMD", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getBottomMD(@RequestParam String id,@RequestParam String fromMdId,
+			@RequestParam String toMdId,@RequestParam String mmDepeFromId){
+//		String fromMdId = "映射源元数据id";
+//		String mmDepeFromId = "依赖元模型FromId";
+//		String toMdId = "映射目标元数据id";
+		
+		List<MetaDataMapMDView> list = new ArrayList<MetaDataMapMDView>();
+		List<MdMetadata> children = metaDataMapService.findChildrenMDByFromMdId(id);
+		for (MdMetadata old : children) {
+			MetaDataMapMDView mdView = me.packageMDView(old);
+			//在视图中新增几个显示字段//字符串为空的判断
+			if(!StringUtils.isEmpty(fromMdId)){//设置fromMdId
+				mdView.setFromMdId(fromMdId);
+			}else{
+				mdView.setFromMdId(mdView.getId());
+			}
+			if(!StringUtils.isEmpty(toMdId)){//设置toMdId
+				mdView.setToMdId(toMdId);
+			}else{
+				mdView.setToMdId(mdView.getId());
+			}
+			mdView.setMmDepeFromId(mmDepeFromId);//设置MmDepeFromId
+			list.add(mdView);
+		}
+		return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS, "查询成功", list );
+	}
+	/**
+	 * 测试分页查询：根据依赖元模型id查出对应的所有的元数据
+	 * @param mmId 依赖元模型id
+	 * @param currentPage 开始页 
+	 * @param pageSize 页的大小
+	 * @return 30条1.32s/40条1.74s/50条2.37s
+	 */
+	@RequestMapping(value = "/getPageMDTest", method = RequestMethod.GET)
+	public @ResponseBody
+	Object getPageMDTest(@RequestParam String mmId,
+			@RequestParam Integer currentPage,@RequestParam Integer pageSize){
+		long a = System.currentTimeMillis();
+		String fromMdId = "映射源元数据id";
+		String mmDepeFromId = "依赖元模型fromid";
+		String toMdId = "映射目标元数据id";
+		
+		//分页查询：从1到100; 从101到200;
+		//返回数据：list ，总条数 ，总页数，当前页
+		Integer totalCounts = me.findMdCountsByMmId(mmId);
+		Integer totalPages =(int) Math.ceil( (double)totalCounts / (double)pageSize);
+		Integer startCount = pageSize*(currentPage-1);
+		Integer endCount;
+		if(currentPage==totalPages){
+			endCount = totalCounts;
+		}else{
+			endCount = currentPage*pageSize;
+		}
+		
+		List<MdMetadata> list = me.findMdListPagesByMmId(mmId,startCount,pageSize);
+		List<MetaDataMapMDView> startlist = new ArrayList<MetaDataMapMDView>();
+		for (MdMetadata old : list) {
+			MetaDataMapMDView mdView = me.packageMDView(old);
+			//在视图中新增几个显示字段//字符串为空的判断
+			if(!StringUtils.isEmpty(fromMdId)){//设置fromMdId
+				mdView.setFromMdId(fromMdId);
+			}else{
+				mdView.setFromMdId(mdView.getId());
+			}
+			if(!StringUtils.isEmpty(toMdId)){//设置toMdId
+				mdView.setToMdId(toMdId);
+			}else{
+				mdView.setToMdId(mdView.getId());
+			}
+			mdView.setMmDepeFromId(mmDepeFromId);//设置MmDepeFromId
+			startlist.add(mdView);
+		}
+		////判断有没有父类
+		while(metaDataMapService.hasParent(startlist)){
+			//有父类时继续向上封装
+			startlist = metaDataMapService.packageToParent(startlist);
+		}
+		//最终封装至顶层视图
+		List<MetaDataMapTopView> viewlist = metaDataMapService.packageToEndView(startlist);
+		
+		Map<String, Object> map = new HashMap<String,Object>();
+		map.put("pagelist", viewlist);
+		map.put("totalCounts", totalCounts);
+		map.put("totalPages", totalPages);
+		map.put("currentPage", currentPage);
+		map.put("pageSize", pageSize);
+		map.put("startCount", startCount);
+		map.put("endCount", endCount);
+		long b = System.currentTimeMillis();
+		System.out.println("查"+mmId+"模型从"+startCount+"到"+endCount+"的list大小"+list.size()+",总用时:"+(b-a));
+		
+		return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS, "查询成功", map);
+	}
+	
+	
+	
+	/**
+	 * 创建目标映射关系
+	 * @param fromMdId 源id
+	 * @param toMdId 目标id
+	 * @param mmDepeFromId 依赖模型id : mm_dep_id
+	 * @return
+	 */
+	@RequestMapping(value = "/createMapping", method = RequestMethod.POST)
+	public @ResponseBody
+	Object createMapping(@RequestParam String fromMdId,@RequestParam String toMdId,
+			@RequestParam String mmDepeFromId){
+		
+		try{
+			metaDataMapService.createMapping(fromMdId,toMdId,mmDepeFromId);
+			return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS, "创建成功", null);
+		}catch(Exception e){
+			e.printStackTrace();
+			return new ModelAndViewResult(ResultCode.RESULT_CODE_FAILED, "创建失败", null);
+		}
+		
+		
+	}
+	
+	/**
+	 * 根据树形结构下的元数据id查询下一层符合映射元模型的数据；
+	 */
+	@RequestMapping(value = "/getMDFromTree", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getMDFromTree(@RequestParam String id,@RequestParam String fromMdId,
+			@RequestParam String toMdId,@RequestParam String metadataId){
+		if(!(StringUtils.isEmpty(id)&&StringUtils.isEmpty(fromMdId)&&StringUtils.isEmpty(toMdId))){
+			
+			//id是依赖模型的id
+			MmDependency mmDependency = metaDataMapService.findMmDepById(id);	
+			//元模型id
+			String mmDepeFromId = mmDependency.getFromMmId();
+			String mmId = mmDependency.getToMmId();
+			
+			List<MdMetadata> list = metaDataMapService.findMDFromTree(mmId,metadataId);
+			
+			List<MetaDataMapMDView> startlist = new ArrayList<MetaDataMapMDView>();
+			if(list!=null && list.size()>0){
+				for (MdMetadata old : list) {
+					//如果已经建立了映射关系可以不显示,移除,避免重复添加;;;;此功能待完善
+					MetaDataMapMDView mdView = me.packageMDView(old);
+					//在视图中新增几个显示字段//字符串为空的判断
+					if(!StringUtils.isEmpty(fromMdId)){//设置fromMdId
+						mdView.setFromMdId(fromMdId);
+					}else{
+						mdView.setFromMdId(mdView.getId());
+					}
+					if(!StringUtils.isEmpty(toMdId)){//设置toMdId
+						mdView.setToMdId(toMdId);
+					}else{
+						mdView.setToMdId(mdView.getId());
+					}
+					mdView.setMmDepeFromId(mmDepeFromId);//设置MmDepeFromId
+					startlist.add(mdView);
+				}
+			}
+			return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS, "创建成功", startlist);
+		}
+		return null;
+	}
+}

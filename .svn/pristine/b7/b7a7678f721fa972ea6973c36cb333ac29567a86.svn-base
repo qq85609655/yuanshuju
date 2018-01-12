@@ -1,0 +1,304 @@
+/**   
+ * @Title: MetaModelBussFactory.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月21日 下午7:02:45
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.init.data.buss;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelCompView;
+import com.gilight.dep.metadata.view.MetaModelDepeView;
+import com.gilight.dep.metadata.view.MetaModelView;
+import com.gilight.dep.metamodel.init.data.MetaModelInitFactory;
+import com.gilight.dep.metamodel.init.data.common.MetaModelCommonFactory;
+import com.gilight.dep.metamodel.init.data.phys.MetaModelPyhsDBFactory;
+
+/**
+ * 
+ * @ClassName: MetaModelBussMngFactory
+ *             <p>
+ *             公共元模型工厂数据类 TODO<br>
+ * @author zps
+ * @date 2015年7月21日 下午7:02:50
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetaModelBussMngFactory extends MetaModelInitFactory {
+	private static Map<String, MetaModelView> metaModel = new HashMap<String, MetaModelView>();
+
+	public static void main(String[] args) {
+		init();
+		System.out.println(metaModel.size());
+	}
+
+	public static Map<String, MetaModelView> getMetaModel() {
+		metaModel.clear();
+		init();
+		return metaModel;
+	}
+
+	private static void init() {
+		// TODO Auto-generated method stub
+		MetaModelBussMngFactory.setDepPkgDeploy();
+		MetaModelBussMngFactory.setDepNode();
+		MetaModelBussMngFactory.setDepSwiNode();
+		MetaModelBussMngFactory.setDepDataNode();
+		MetaModelBussMngFactory.setDepAppNode();
+		MetaModelBussMngFactory.setDepSystem();
+		MetaModelBussMngFactory.setDepService();
+	}
+
+	private static void putCache(MetaModelView m) {
+		// TODO Auto-generated method stub
+		if (!metaModel.containsKey(m.getCode())) {
+			metaModel.put(m.getCode(), m);
+		} else {
+			System.out.println("---------" + (m.getCode()));
+		}
+	}
+
+	private static MetaModelView getCache(String code) {
+		// TODO Auto-generated method stub
+		if (metaModel.containsKey(code)) {
+			return metaModel.get(code);
+		}
+		return null;
+	}
+
+	// 部署小类 DepPkgDeploy 否 DepPkgClassiSub
+	public static String DepPkgDeploy = "DepPkgDeploy";
+
+	public static MetaModelView setDepPkgDeploy() {
+		String name = "部署小类";
+		MetaModelView m = getCache(DepPkgDeploy);
+		if (m == null) {
+			m = getSystemMetaModel(DepPkgDeploy, name);
+		}
+		m.setIsabstract(false);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCommonFactory.setDepPkgClassiSub());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编码
+		MetaModelCompView comview = getMetaModelCompView(m, setDepNode());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 节点基类 DepNode 是 DepModelElement
+	public static String DepNode = "DepNode";
+
+	public static MetaModelView setDepNode() {
+		String name = "节点基类";
+		MetaModelView m = getCache(DepNode);
+		if (m == null) {
+			m = getSystemMetaModel(DepNode, name);
+		}
+		m.setIsabstract(true);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCommonFactory.setDepModelElement());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		return m;
+	}
+
+	// 交换节点 DepSwiNode 否 DepNode
+	public static String DepSwiNode = "DepSwiNode";
+
+	public static MetaModelView setDepSwiNode() {
+		String name = "交换节点";
+		MetaModelView m = getCache(DepSwiNode);
+		if (m != null) {
+			return m;
+		}
+		if (m == null) {
+			m = getSystemMetaModel(DepSwiNode, name);
+		}
+		m.setIsabstract(false);
+		// 设置属性
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepNode());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编码
+		MetaModelCompView comview = getMetaModelCompView(m, setDepSystem());
+		compList.add(comview);
+		m.setCompList(compList);
+
+		putCache(m);
+		// 设置依赖关系
+		List<MetaModelDepeView> depeList = new ArrayList<MetaModelDepeView>();
+		// 交换节点依赖数据节点
+		MetaModelDepeView depe1 = getMetaModelDepeView(m, setDepDataNode());
+		depeList.add(depe1);
+		// 交换节点依赖 应用节点
+		MetaModelDepeView depe2 = getMetaModelDepeView(m, setDepAppNode());
+		depeList.add(depe2);
+		m.setDepeList(depeList);
+		// 交换节点依赖交换节点
+		MetaModelDepeView depe3 = getMetaModelDepeView(m, setDepSwiNode());
+		depeList.add(depe3);
+		return m;
+	}
+
+	// 数据节点 DepDataNode 否 DepNode
+	public static String DepDataNode = "DepDataNode";
+
+	public static MetaModelView setDepDataNode() {
+		String name = "数据节点";
+		MetaModelView m = getCache(DepDataNode);
+		if (m != null) {
+			return m;
+		}
+		if (m == null) {
+			m = getSystemMetaModel(DepDataNode, name);
+		}
+		m.setIsabstract(false);
+		// 设置属性
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepNode());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编码
+		MetaModelCompView comview = getMetaModelCompView(m, setDepSystem());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		// 设置依赖关系
+		List<MetaModelDepeView> depeList = new ArrayList<MetaModelDepeView>();
+		// 数据节点依赖数据节点
+		MetaModelDepeView depe1 = getMetaModelDepeView(m, setDepDataNode());
+		depeList.add(depe1);
+		// 数据节点依赖 应用节点
+		MetaModelDepeView depe2 = getMetaModelDepeView(m, setDepAppNode());
+		depeList.add(depe2);
+		m.setDepeList(depeList);
+		return m;
+	}
+
+	// 应用节点 DepAppNode 否 DepNode
+	public static String DepAppNode = "DepAppNode";
+
+	public static MetaModelView setDepAppNode() {
+		String name = "应用节点";
+		MetaModelView m = getCache(DepAppNode);
+		if (m != null) {
+			return m;
+		}
+		if (m == null) {
+			m = getSystemMetaModel(DepAppNode, name);
+		}
+		m.setIsabstract(false);
+		// 设置属性
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepNode());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编码
+		MetaModelCompView comview = getMetaModelCompView(m, setDepSystem());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		// 设置依赖关系
+		List<MetaModelDepeView> depeList = new ArrayList<MetaModelDepeView>();
+		// 应用节点依赖数据节点
+		MetaModelDepeView depe1 = getMetaModelDepeView(m, setDepDataNode());
+		depeList.add(depe1);
+		// 应用节点依赖 应用节点
+		MetaModelDepeView depe2 = getMetaModelDepeView(m, setDepAppNode());
+		depeList.add(depe2);
+		m.setDepeList(depeList);
+		return m;
+	}
+
+	// 系统 DepSystem 否 DepModelElement
+	public static String DepSystem = "DepSystem";
+
+	public static MetaModelView setDepSystem() {
+		String name = "系统";
+		MetaModelView m = getCache(DepSystem);
+		if (m != null) {
+			return m;
+		}
+		if (m == null) {
+			m = getSystemMetaModel(DepSystem, name);
+		}
+		m.setIsabstract(false);
+		// 设置属性
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCommonFactory.setDepModelElement());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合服务
+		MetaModelCompView comview = getMetaModelCompView(m, setDepService());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		// 设置依赖关系
+		List<MetaModelDepeView> depeList = new ArrayList<MetaModelDepeView>();
+		// 系统依赖系统
+		MetaModelDepeView depe1 = getMetaModelDepeView(m, setDepSystem());
+		depe1.setName("相关的系统");
+		depeList.add(depe1);
+		m.setDepeList(depeList);
+
+		return m;
+	}
+
+	// 服务 DepService 否 DepModelElement
+	public static String DepService = "DepService";
+
+	public static MetaModelView setDepService() {
+		String name = "服务";
+		MetaModelView m = getCache(DepService);
+		if (m != null) {
+			return m;
+		}
+		if (m == null) {
+			m = getSystemMetaModel(DepService, name);
+		}
+		m.setIsabstract(false);
+		// 设置属性
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCommonFactory.setDepModelElement());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		// 设置依赖关系
+		List<MetaModelDepeView> depeList = new ArrayList<MetaModelDepeView>();
+		// 服务依赖数据库
+		MetaModelDepeView depe1 = getMetaModelDepeView(m,
+				MetaModelPyhsDBFactory.setDepSchema());
+		depe1.setName("相关的库");
+		depeList.add(depe1);
+		// 服务依赖服务
+		MetaModelDepeView depe2 = getMetaModelDepeView(m, setDepService());
+		depe2.setName("相关的服务");
+		depeList.add(depe2);
+		m.setDepeList(depeList);
+
+		return m;
+	}
+
+}

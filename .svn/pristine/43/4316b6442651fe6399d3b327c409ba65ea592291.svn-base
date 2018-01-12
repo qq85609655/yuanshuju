@@ -1,0 +1,190 @@
+package com.gilight.dep.metamodel.service.impl;
+
+import org.apache.log4j.Logger;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.EntityParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.ViewParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.entity.MmDependency;
+import com.gilight.dep.metadata.repository.IMetaModelDepeRepository;
+import com.gilight.dep.metadata.util.AutoSetCode;
+import com.gilight.dep.metadata.view.MetaModelDepeBasicView;
+import com.gilight.dep.metamodel.service.IMetaModelDepeService;
+
+public class MetaModelDepeServiceImpl implements IMetaModelDepeService {
+    private static final Logger logger = Logger
+            .getLogger(MetaModelDepeServiceImpl.class);
+    private IMetaModelDepeRepository metaModelDepeRepository;
+
+    public IMetaModelDepeRepository getMetaModelDepeRepository() {
+        return metaModelDepeRepository;
+    }
+
+    public void setMetaModelDepeRepository(
+            IMetaModelDepeRepository metaModelDepeRepository) {
+        this.metaModelDepeRepository = metaModelDepeRepository;
+    }
+
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+        AutoSetCode.autoCode(MetaModelDepeBasicView.class, "mmv",
+                MmDependency.class, "mme");
+
+		/*
+         * MmDependency mme=(MmDependency)
+		 * paramIContext.getResponse().getResult();
+		 * 
+		 * MetaModelDepeBasicView mmv =new MetaModelDepeBasicView();
+		 */
+
+        // AutoSetCode.autoCode( MmComposition.class,
+        // "mce",MetaModelCompBasicView.class,"mmv");
+    }
+
+    private MmDependency view2Entity(MmDependency mme,
+                                     MetaModelDepeBasicView mmv) {
+        mme.setId(mmv.getId());
+        mme.setName(mmv.getName());
+        mme.setFromMmId(mmv.getFromMid());
+        mme.setToMmId(mmv.getToMid());
+        mme.setRemark(mmv.getRemark());
+
+        return mme;
+
+    }
+
+    @Override
+    public IResponse create(IContext paramIContext) throws ServiceException {
+        // TODO Auto-generated method stub
+        try {
+            // TODO Auto-generated method stub
+            ViewParameters vp = (ViewParameters) paramIContext.getParameters();
+            EntityParameters<IEntity> ep = new EntityParameters();
+            MetaModelDepeBasicView mmv = (MetaModelDepeBasicView) vp.getView();
+            MmDependency mme = new MmDependency();
+            mme = view2Entity(mme, mmv);
+            ep.setEntity(mme);
+            paramIContext.setParameters(ep);
+            IContext context = ContextFactoryImpl.getInstance()
+                    .createContextWithEntity(paramIContext, mme);
+            return metaModelDepeRepository.create(paramIContext);
+        } catch (GilightException e) {
+            throw new ServiceException(e);
+
+        }
+    }
+
+    @Override
+    public IResponse delete(IContext paramIContext) throws ServiceException {
+        // TODO Auto-generated method stub
+        try {
+            // TODO Auto-generated method stub
+            /*ViewParameters vp = (ViewParameters) paramIContext.getParameters();
+            EntityParameters<IEntity> ep = new EntityParameters();
+            MetaModelDepeBasicView mmv = (MetaModelDepeBasicView) vp.getView();
+            MmDependency mme = new MmDependency();
+            mme = view2Entity(mme, mmv);
+            ep.setEntity(mme);
+            paramIContext.setParameters(ep);
+            IContext context = ContextFactoryImpl.getInstance()
+                    .createContextWithEntity(paramIContext, mme);*/
+            return metaModelDepeRepository.delete(paramIContext);
+        } catch (GilightException e) {
+            e.printStackTrace();
+            throw new ServiceException(e);
+
+        }
+    }
+
+    @Override
+    public IResponse getById(IContext paramIContext) throws ServiceException {
+        // TODO Auto-generated method stub
+        try {
+            // TODO Auto-generated method stub
+            IContext context;
+            IDParameters ids = (IDParameters) paramIContext.getParameters();
+
+            context = ContextFactoryImpl.getInstance().createContextWithParams(
+                    paramIContext, ids);
+            // context.getResponse().regiestResultHandler(new ResultHandler());
+            // 设置回调
+            context.getResponse().regiestResultHandler(
+                    new IResultHandler<String>() {
+                        @Override
+                        public IResult<Object> handle(IContext context,
+                                                      IResult<String> result) throws Exception {
+
+                            IContext paramIContext = (IContext) metaModelDepeRepository
+                                    .getById(context);
+                            MmDependency mme = (MmDependency) paramIContext
+                                    .getResponse().getResult();
+
+                            MetaModelDepeBasicView mmv = new MetaModelDepeBasicView();
+
+                            mmv.setId(mme.getId());
+                            mmv.setName(mme.getName());
+                            mmv.setFromMid(mme.getFromMmId());
+                            // mmv.setFromMName();
+                            mmv.setToMid(mme.getToMmId());
+                            // mmv.setToMName();
+                            mmv.setRemark(mme.getRemark());
+                            // mmv.setUpdatedate();
+
+                            // mmv.setAttList(attList);
+
+                            return ResultFactory.getInstance()
+                                    .createSuccessResult(mmv);
+                        }
+                    });
+            // return context.getResponse();
+            return metaModelDepeRepository.getById(context);
+        } catch (GilightException e) {
+            e.printStackTrace();
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public IResponse update(IContext paramIContext) throws ServiceException {
+        // TODO Auto-generated method stub
+        try {
+            ViewParameters vp = (ViewParameters) paramIContext.getParameters();
+            EntityParameters<IEntity> ep = new EntityParameters();
+            MetaModelDepeBasicView mmv = (MetaModelDepeBasicView) vp.getView();
+            MmDependency mme = new MmDependency();
+            mme = view2Entity(mme, mmv);
+            ep.setEntity(mme);
+            paramIContext.setParameters(ep);
+            IContext context = ContextFactoryImpl.getInstance()
+                    .createContextWithEntity(paramIContext, mme);
+            return metaModelDepeRepository.update(paramIContext);
+        } catch (GilightException e) {
+            e.printStackTrace();
+            throw new ServiceException(e);
+
+        }
+    }
+
+    @Override
+    public IResponse deleteAllDepe(IContext paramIContext) throws ServiceException {
+        // TODO Auto-generated method stub
+        try {
+            // TODO Auto-generated method stub
+
+            return metaModelDepeRepository.deleteAllDepe(paramIContext);
+        } catch (GilightException e) {
+            e.printStackTrace();
+            throw new ServiceException(e);
+
+        }
+    }
+}

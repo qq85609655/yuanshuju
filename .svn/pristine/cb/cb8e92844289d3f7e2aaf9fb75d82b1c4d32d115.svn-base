@@ -1,0 +1,130 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+/**
+ * 
+* @ClassName: PackageFolderBasicView 
+* <p>视图文件夹基本信息；<br>
+* @author wzx
+* @date 2015年7月9日 下午4:15:41
+* @version V1.0
+* @since JDK 1.7
+ */
+public class PackageFolderBasicView extends PackageBasicView implements IView{
+	/**
+	 * 视图文件夹的ID
+	 */
+	private String id;
+	/**
+	 * 视图的id
+	 */
+	private String viewId;
+	/**
+	 * 父文件夹的id
+	 */
+	private String parentId;
+	/**
+	 * 文件夹名称
+	 */
+	private String name;
+	/**
+	 * 命名空间
+	 */
+	private String namespace;
+	/**
+	 * 文件夹层级
+	 */
+	private String folderLevel;
+	/**
+	 * 显示顺序
+	 */
+	private String displayOrder;
+	/**
+	 * 是否隐藏 ：YES/NO
+	 */
+	private Integer ishidden;
+	/**
+	 * 包文件夹集合
+	 */
+	private List<PackageFolderBasicView> packageFolderList;
+	/**
+	 * 元数据集合
+	 */
+	private List<MetaDataBasicView> metaDataList;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getViewId() {
+		return viewId;
+	}
+	public void setViewId(String viewId) {
+		this.viewId = viewId;
+	}
+	public String getParentId() {
+		return parentId;
+	}
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getNamespace() {
+		return namespace;
+	}
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
+	}
+	public String getFolderLevel() {
+		return folderLevel;
+	}
+	public void setFolderLevel(String folderLevel) {
+		this.folderLevel = folderLevel;
+	}
+	public String getDisplayOrder() {
+		return displayOrder;
+	}
+	public void setDisplayOrder(String displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+	public Integer getIshidden() {
+		return ishidden;
+	}
+	public void setIshidden(Integer ishidden) {
+		this.ishidden = ishidden;
+	}
+	public List<PackageFolderBasicView> getPackageFolderList() {
+		return packageFolderList;
+	}
+	public void setPackageFolderList(List<PackageFolderBasicView> packageFolderList) {
+		this.packageFolderList = packageFolderList;
+	}
+	public List<MetaDataBasicView> getMetaDataList() {
+		return metaDataList;
+	}
+	public void setMetaDataList(List<MetaDataBasicView> metaDataList) {
+		this.metaDataList = metaDataList;
+	}
+	@Override
+	public String toString() {
+		return "PackageFolderBasicView [id=" + id + ", viewId=" + viewId
+				+ ", parentId=" + parentId + ", name=" + name + ", namespace="
+				+ namespace + ", folderLevel=" + folderLevel
+				+ ", displayOrder=" + displayOrder + ", ishidden=" + ishidden
+				+ ", packageFolderList=" + packageFolderList
+				+ ", metaDataList=" + metaDataList + "]";
+	}
+	
+	
+
+	
+}

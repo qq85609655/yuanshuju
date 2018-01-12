@@ -1,0 +1,24 @@
+/**   
+* @Title: MetaModelDataTypeRepositoryImplTest.java 
+* <p>TODO 
+* @author zps  
+* @date 2015年7月28日 下午3:23:43
+* @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+* @version V1.0   
+*/
+package com.gilight.dep.metadata.repository.impl;
+
+
+public class MetaModelDataTypeRepositoryImplTest {
+
+//	@Test
+//	public void testCreate() {
+//		System.out.println("Not yet implemented");
+//	}
+//
+//	@Test
+//	public void testGetDataTypeSelectByDId() {
+//		System.out.println("Not yet implemented");
+//	}
+
+}

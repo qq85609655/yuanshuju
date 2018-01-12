@@ -1,0 +1,40 @@
+/**   
+ * @Title: MetaModelYesOrNo.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月22日 上午10:58:30
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.enmu;
+
+import com.gilight.dep.framework.util.enmu.IntEnum;
+
+/**
+ * 
+ * @ClassName: MetaModelYesOrNo
+ *             <p>
+ *             元模型是否的枚举类选项 TODO<br>
+ * @author zps
+ * @date 2015年7月22日 上午11:00:03
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetaModelYesOrNo extends IntEnum {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	 public static int YES = 1;
+	 public static int NO = 0;
+	
+	 public static final MetaModelYesOrNo YES_TYPE = new MetaModelYesOrNo("是",
+	 YES);
+	 public static final MetaModelYesOrNo NO_TYPE = new MetaModelYesOrNo("否",
+	 NO);
+
+	protected MetaModelYesOrNo(String iName, int iValue) {
+		super(iName, iValue);
+		// TODO Auto-generated constructor stub
+	}
+}

@@ -1,0 +1,146 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+import java.math.BigDecimal;
+
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+/**
+ * 
+ * @ClassName: MdGatherJob
+ *             <p>
+ *             TODO<br>
+ * @author hww
+ * @date 2015年7月7日 下午3:50:15
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MdGatherJob extends BaseMetaDataEntity {
+
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 任务类型
+	 */
+	private String jobType;
+	/**
+	 * 任务名称
+	 */
+	private String jobName;
+	/**
+	 * 数据源
+	 */
+	private String datasource;
+	/**
+	 * 数据策略
+	 */
+	private String dbpolicy;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 状态
+	 */
+	private Integer status;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+
+	public MdGatherJob() {
+	}
+
+	public MdGatherJob(String id) {
+		this.id = id;
+	}
+
+	public MdGatherJob(String id, String jobType, String jobName,
+			String datasource, String dbpolicy, String remark, Integer status,
+			String updateDate) {
+		this.id = id;
+		this.jobType = jobType;
+		this.jobName = jobName;
+		this.datasource = datasource;
+		this.dbpolicy = dbpolicy;
+		this.remark = remark;
+		this.status = status;
+		this.updateDate = updateDate;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getJobType() {
+		return this.jobType;
+	}
+
+	public void setJobType(String jobType) {
+		this.jobType = jobType;
+	}
+
+	public String getJobName() {
+		return this.jobName;
+	}
+
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
+	}
+
+	public String getDatasource() {
+		return this.datasource;
+	}
+
+	public void setDatasource(String datasource) {
+		this.datasource = datasource;
+	}
+
+	public String getDbpolicy() {
+		return this.dbpolicy;
+	}
+
+	public void setDbpolicy(String dbpolicy) {
+		this.dbpolicy = dbpolicy;
+	}
+
+	public String getRemark() {
+		return this.remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	@Override
+	public String toString() {
+		return "MdGatherJob [id=" + id + ", jobType=" + jobType + ", jobName="
+				+ jobName + ", datasource=" + datasource + ", dbpolicy="
+				+ dbpolicy + ", remark=" + remark + ", status=" + status
+				+ ", updateDate=" + updateDate + "]";
+	}
+
+}

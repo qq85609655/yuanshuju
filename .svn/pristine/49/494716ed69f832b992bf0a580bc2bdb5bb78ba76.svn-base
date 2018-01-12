@@ -1,0 +1,128 @@
+package com.gilight.dep.metadata.entity;
+
+import java.util.List;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+/**
+ * 
+ * @ClassName: MdGatherDatasource
+ *             <p>
+ *             TODO<br>
+ * @author hww
+ * @date 2015年7月7日 下午3:49:51
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MdGatherDatasource extends BaseMetaDataEntity {
+
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 数据源名称
+	 */
+	private String dbsName;
+	/**
+	 * 适配器
+	 */
+	private String adapter;
+	/**
+	 * 采集模式
+	 */
+	private String gatherModel;
+	/**
+	 * 数据路径
+	 */
+	private String dataPath;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/***
+     * 参数设置
+     */
+	private List<MdGatherDatasourceParam> param = null;
+
+	public List<MdGatherDatasourceParam> getParam() {
+		return param;
+	}
+
+	public void setParam(List<MdGatherDatasourceParam> param) {
+		this.param = param;
+	}
+
+	public MdGatherDatasource() {
+	}
+
+	public MdGatherDatasource(String id) {
+		this.id = id;
+	}
+
+	public MdGatherDatasource(String id, String dbsName, String adapter,
+			String gatherModel, String dataPath, String remark) {
+		this.id = id;
+		this.dbsName = dbsName;
+		this.adapter = adapter;
+		this.gatherModel = gatherModel;
+		this.dataPath = dataPath;
+		this.remark = remark;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getDbsName() {
+		return this.dbsName;
+	}
+
+	public void setDbsName(String dbsName) {
+		this.dbsName = dbsName;
+	}
+
+	public String getAdapter() {
+		return this.adapter;
+	}
+
+	public void setAdapter(String adapter) {
+		this.adapter = adapter;
+	}
+
+	public String getGatherModel() {
+		return this.gatherModel;
+	}
+
+	public void setGatherModel(String gatherModel) {
+		this.gatherModel = gatherModel;
+	}
+
+	public String getDataPath() {
+		return this.dataPath;
+	}
+
+	public void setDataPath(String dataPath) {
+		this.dataPath = dataPath;
+	}
+
+	public String getRemark() {
+		return this.remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	@Override
+	public String toString() {
+		return "MdGatherDatasource [id=" + id + ", dbsName=" + dbsName
+				+ ", adapter=" + adapter + ", gatherModel=" + gatherModel
+				+ ", dataPath=" + dataPath + ", remark=" + remark + "]";
+	}
+
+}

@@ -1,0 +1,33 @@
+{
+
+		"core" : ["Dep/framework/editor/plugin/BasePlugin.js",
+			"Dep/framework/editor/plugin/ContainerPlugin.js",
+			"Dep/framework/editor/plugin/LoadOnPlugin.js",
+			"Dep/framework/editor/plugin/containers/BaseLayer.js"],
+
+
+	"containers" : [{
+				"name" : "Dep.framework.editor.plugin.containers.BussList",
+				"src" : "Dep/framework/editor/plugin/containers/BussList.js",
+				"config" : "BussList.json"
+			}, {
+				"name" : "Dep.framework.editor.plugin.containers.Layer",
+				"src" : "Dep/framework/editor/plugin/containers/Layer.js",
+				"config" : "Layer.json"
+			}, {
+				"name" : "Dep.framework.editor.plugin.containers.Canvas",
+				"src" : "Dep/framework/editor/plugin/containers/Canvas.js",
+				"config" : "Canvas.json"
+			}, {
+				"name" : "Dep.framework.editor.plugin.containers.PropertiesWindow",
+				"src" : "Dep/framework/editor/plugin/containers/PropertiesWindow.js",
+				"config" : "PropertiesWindow.json"
+			}],
+	"plugins" : [{
+				"name" : "Dep.framework.editor.plugin.DataManagePlugin",
+				"src" : "Dep/framework/editor/plugin/DataManagePlugin.js"
+			}, {
+				"name" : "Dep.framework.editor.plugin.UndoRedoPlugin",
+				"src" : "Dep/framework/editor/plugin/UndoRedoPlugin.js"
+			}]
+}

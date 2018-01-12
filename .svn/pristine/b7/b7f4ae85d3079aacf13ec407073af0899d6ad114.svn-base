@@ -1,0 +1,254 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.metadata.util.MetaDateUtils;
+import com.gilight.dep.metadata.util.Pinyin4jUtil;
+
+import java.util.List;
+
+/**
+ * 
+ * @ClassName: MetaDataBasicView
+ *             <p>
+ *             元数据基本信息<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:05:45
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaDataBasicView implements IView {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 元数据ID
+	 */
+	private String id;
+	/**
+	 * 元模型名称
+	 */
+	private String mmName;
+	/**
+	 * 元模型id
+	 */
+	private String mmId;
+	/**
+	 * 元数据编码
+	 */
+	private String mdCode;
+	/**
+	 * 元数据名称
+	 */
+	private String mdName;
+	/**
+	 * 所属包id
+	 */
+	private String mdPackageid;
+	/**
+	 * 是否属于系统初始化数据
+	 */
+	private Integer issys;
+	/**
+	 * 状态
+	 */
+	private Integer status;
+	/**
+	 * 系统版本
+	 */
+	private String sysver;
+	/**
+	 * 用户定义版本
+	 */
+	private String userver;
+	/**
+	 * 版本描述
+	 */
+	private String verRemark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 是否为当前版本,正在被使用
+	 */
+	private Integer isuse;
+
+	private String top;
+	
+	private String parentcode;
+	
+	private String parentid;
+
+	private List<MetaDataAttView> attribs;
+
+	public List<MetaDataAttView> getAttribs() {
+		return attribs;
+	}
+
+	public void setAttribs(List<MetaDataAttView> attribs) {
+		this.attribs = attribs;
+	}
+
+	public String getTop() {
+		//return top;
+		if(top!=null){
+			return top;
+		}
+		String name=this.getMdName();
+		
+		name=Pinyin4jUtil.top2PinYin(name);
+		if (name!=null&&name.length()>0){
+			this.setTop(name.toUpperCase().substring(0,1));
+		}else {
+			this.setTop("");
+		}
+
+		return top;
+	}
+
+	public void setTop(String top) {
+		this.top = top;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMmName() {
+		return mmName;
+	}
+
+	public void setMmName(String mmName) {
+		this.mmName = mmName;
+	}
+
+	public String getMmId() {
+		return mmId;
+	}
+
+	public void setMmId(String mmId) {
+		this.mmId = mmId;
+	}
+
+	public String getMdCode() {
+		return mdCode;
+	}
+
+	public void setMdCode(String mdCode) {
+		this.mdCode = mdCode;
+	}
+
+	public String getMdName() {
+		return mdName;
+	}
+
+	public void setMdName(String mdName) {
+		this.mdName = mdName;
+	}
+
+	public String getMdPackageid() {
+		return mdPackageid;
+	}
+
+	public void setMdPackageid(String mdPackageid) {
+		this.mdPackageid = mdPackageid;
+	}
+
+	public Integer getIssys() {
+		return issys;
+	}
+
+	public void setIssys(Integer issys) {
+		this.issys = issys;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getSysver() {
+		return sysver;
+	}
+
+	public void setSysver(String sysver) {
+		this.sysver = sysver;
+	}
+
+	public String getUserver() {
+		return userver;
+	}
+
+	public void setUserver(String userver) {
+		this.userver = userver;
+	}
+
+	public String getVerRemark() {
+		return verRemark;
+	}
+
+	public void setVerRemark(String verRemark) {
+		this.verRemark = verRemark;
+	}
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	
+	
+	public String getParentcode() {
+		return parentcode;
+	}
+
+	public void setParentcode(String parentcode) {
+		this.parentcode = parentcode;
+	}
+
+	public String getParentid() {
+		return parentid;
+	}
+
+	public void setParentid(String parentid) {
+		this.parentid = parentid;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaDataBasicView [id=" + id + ", mmName=" + mmName + ", mmId="
+				+ mmId + ", mdCode=" + mdCode + ", mdName=" + mdName
+				+ ", mdPackageid=" + mdPackageid + ", issys=" + issys
+				+ ", status=" + status + ", sysver=" + sysver + ", userver="
+				+ userver + ", verRemark=" + verRemark + ", updateDate="
+				+ updateDate + ", remark=" + remark + ", isuse=" + isuse
+				+ ", top=" + top + ", parentcode=" + parentcode + ", parentid="
+				+ parentid + "]";
+	}
+
+	
+
+}

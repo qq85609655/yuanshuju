@@ -1,0 +1,237 @@
+package com.gilight.dep.metadata.entity;
+
+import java.util.List;
+
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+/**
+ * 
+ * @ClassName: MdMetadataArchive
+ *             <p>
+ *             TODO<br>
+ * @author hww
+ * @date 2015年7月7日 下午3:51:01
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MdMetadataArchive extends BaseMetaDataEntity {
+
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 元模型名称
+	 */
+	private String mmName;
+	/**
+	 * 元模型id
+	 */
+	private String mmId;
+	/**
+	 * 元数据编码
+	 */
+	private String mdCode;
+	/**
+	 * 元数据名称
+	 */
+	private String mdName;
+	/**
+	 * 所属包id
+	 */
+	private String mdPackageid;
+	/**
+	 * 是否属于系统初始化数据
+	 */
+	private Integer issys;
+	/**
+	 * 状态
+	 */
+	private Integer status;
+	/**
+	 * 系统版本
+	 */
+	private String sysver;
+	/**
+	 * 用户定义版本
+	 */
+	private String userver;
+	/**
+	 * 版本描述
+	 */
+	private String verRemark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 是否当前版本
+	 */
+	private Integer isuse;
+
+	private List<MdAttributeArchive> attList;
+
+	public MdMetadataArchive() {
+	}
+
+	public MdMetadataArchive(String id) {
+		this.id = id;
+	}
+
+	public MdMetadataArchive(String id, String mmName, String mmId,
+			String mdCode, String mdName, String mdPackageid, Integer issys,
+			Integer status, String sysver, String userver, String verRemark,
+			String updateDate, String remark, Integer isuse) {
+		this.id = id;
+		this.mmName = mmName;
+		this.mmId = mmId;
+		this.mdCode = mdCode;
+		this.mdName = mdName;
+		this.mdPackageid = mdPackageid;
+		this.issys = issys;
+		this.status = status;
+		this.sysver = sysver;
+		this.userver = userver;
+		this.verRemark = verRemark;
+		this.updateDate = updateDate;
+		this.remark = remark;
+		this.isuse = isuse;
+	}
+
+	public List<MdAttributeArchive> getAttList() {
+		return attList;
+	}
+
+	public void setAttList(List<MdAttributeArchive> attList) {
+		this.attList = attList;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMmName() {
+		return this.mmName;
+	}
+
+	public void setMmName(String mmName) {
+		this.mmName = mmName;
+	}
+
+	public String getMmId() {
+		return this.mmId;
+	}
+
+	public void setMmId(String mmId) {
+		this.mmId = mmId;
+	}
+
+	public String getMdCode() {
+		return this.mdCode;
+	}
+
+	public void setMdCode(String mdCode) {
+		this.mdCode = mdCode;
+	}
+
+	public String getMdName() {
+		return this.mdName;
+	}
+
+	public void setMdName(String mdName) {
+		this.mdName = mdName;
+	}
+
+	public String getMdPackageid() {
+		return this.mdPackageid;
+	}
+
+	public void setMdPackageid(String mdPackageid) {
+		this.mdPackageid = mdPackageid;
+	}
+
+	public Integer getIssys() {
+		return this.issys;
+	}
+
+	public void setIssys(Integer issys) {
+		this.issys = issys;
+	}
+
+	public Integer getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getSysver() {
+		return this.sysver;
+	}
+
+	public void setSysver(String sysver) {
+		this.sysver = sysver;
+	}
+
+	public String getUserver() {
+		return this.userver;
+	}
+
+	public void setUserver(String userver) {
+		this.userver = userver;
+	}
+
+	public String getVerRemark() {
+		return this.verRemark;
+	}
+
+	public void setVerRemark(String verRemark) {
+		this.verRemark = verRemark;
+	}
+
+	public String getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public String getRemark() {
+		return this.remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getIsuse() {
+		return this.isuse;
+	}
+
+	public void setIsuse(Integer isuse) {
+		this.isuse = isuse;
+	}
+
+	@Override
+	public String toString() {
+		return "MdMetadataArchive [id=" + id + ", mmName=" + mmName + ", mmId="
+				+ mmId + ", mdCode=" + mdCode + ", mdName=" + mdName
+				+ ", mdPackageid=" + mdPackageid + ", issys=" + issys
+				+ ", status=" + status + ", sysver=" + sysver + ", userver="
+				+ userver + ", verRemark=" + verRemark + ", updateDate="
+				+ updateDate + ", remark=" + remark + ", isuse=" + isuse + "]";
+	}
+
+}

@@ -1,0 +1,42 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.dao.db.IHibernateDao;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.metadata.entity.MdVersionFlowLog;
+import com.gilight.dep.metadata.repository.IMetaDataVersionFlowLogRepository;
+
+public class MetaDataVersionFlowLogRepository implements
+		IMetaDataVersionFlowLogRepository {
+
+	private IHibernateDao baseDao;
+
+	public IHibernateDao getBaseDao() {
+		return baseDao;
+	}
+
+	public void setBaseDao(IHibernateDao baseDao) {
+		this.baseDao = baseDao;
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		return null;
+	}
+
+	@Override
+	public void addLog(MdVersionFlowLog log) throws RepositoryException {
+		// TODO Auto-generated method stub
+		if (log == null) {
+			return;
+		}
+		try {
+			this.getBaseDao().save(log);
+		} catch (DaoException e) {
+			throw new RepositoryException(e);
+		}
+	}
+}

@@ -1,0 +1,36 @@
+{
+	"fName" : "DependencyLine",
+	"fType" : "DependencyLine",
+	"description" : "依赖关系连接",
+	"groupId" : "mmrelation",
+	"viewConfig" : {
+		"width" : "64",
+		"height" : "64",
+		"targetDecDemension" : [6, 6]
+	},
+	"shape" : "Dep.framework.editor.figure.NoBussConnection",
+	"persistentViewData" : false,
+	"isRecurrenceVerticle" : "false",
+	"persistentViewAttributes" : ["x", "y", "dimension"],
+	"isPort" : "false",
+	"isConnection" : "true",
+	"isNoBussConnection" : "true",
+	"connectionRelationKeys" : {
+		"srcKey" : "fromMid",
+		"destKey" : "toMid"
+	},
+	"api" : {
+
+		"getAll" : "metamodelquery/findDepeList.do"
+
+	},
+	"port" : [],
+
+	"contextMenus" : [{
+				"type" : "nomal",
+				"name" : "删除",
+				"icon" : "Dep\/resource\/img\/common\/delete.png",
+				"desc" : "删除",
+				"action" : "delModel"
+			}]
+}

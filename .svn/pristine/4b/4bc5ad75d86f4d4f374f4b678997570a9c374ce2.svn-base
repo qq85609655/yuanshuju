@@ -1,0 +1,61 @@
+/**   
+* @Title: AutoFieldTypeMapp.java 
+* <p>TODO 
+* @author wzx 
+* @date 2015年7月13日 下午6:44:08
+* @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+* @version V1.0   
+*/
+
+package com.gilight.dep.metadata.util;
+
+/** 
+ * @ClassName: AutoFieldTypeMapp 
+ * <p>TODO<br>
+ * @author wzx
+ * @date 2015年7月13日 下午6:44:08
+ * @version V1.0
+ * @since JDK 1.6 
+ */
+
+public class AutoFieldTypeMapp {
+
+	/**  
+	 * <p>Description: </p>  
+	 */
+	public AutoFieldTypeMapp() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public static boolean autoTypeMapp(Integer val) {
+		// TODO Auto-generated constructor stub
+		if(val==null){
+			return false;
+		}
+		if(val==1){
+			return true;
+		}
+		return false;
+	}
+
+
+	public static Integer autoTypeMapp(boolean val) {
+		// TODO Auto-generated constructor stub
+		if(val==true){
+			return 1;
+		}
+		return 0;
+	}
+	/** 
+	 * <p><br>
+	 * @param args  
+	 * @author wzx
+	 * @date 2015年7月13日 下午6:44:08
+	 * @version V1.0  
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

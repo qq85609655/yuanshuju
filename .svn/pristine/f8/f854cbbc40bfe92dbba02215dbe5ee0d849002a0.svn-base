@@ -1,0 +1,54 @@
+package com.gilight.dep.metadata.util;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.gilight.dep.metadata.view.DepImpSucceeddata;
+import com.gilight.dep.metadata.view.DepLog;
+import com.gilight.dep.metadata.view.DepSucceeds;
+
+import com.thoughtworks.xstream.XStream;
+
+public class AutoObj2Xml {
+
+	public AutoObj2Xml() {
+		// TODO Auto-generated constructor stub
+	}
+	static public void main(String arg[]){
+		DepLog dl = new DepLog();
+		DepSucceeds ds = new DepSucceeds();
+		DepImpSucceeddata imp1 = new DepImpSucceeddata();
+		DepImpSucceeddata imp2 = new DepImpSucceeddata();
+		DepImpSucceeddata imp3 = new DepImpSucceeddata();
+		imp1.setName("1111");
+		imp1.setUuid("ddd111");
+		imp2.setName("1111");
+		imp2.setUuid("ddd111");
+		imp3.setName("1111");
+		imp3.setUuid("ddd111");
+		List<DepImpSucceeddata> list = new ArrayList<DepImpSucceeddata>();
+		list.add(imp1);
+		list.add(imp2);
+		list.add(imp3);
+		ds.setSucceedsList(list);
+		
+		dl.setSucceeds(ds);
+		
+		//KeyVal kv = new KeyVal();
+		
+		//List<KeyVal> alias 
+		
+		String xml=AutoObj2Xml.toXml(dl);
+		System.out.println(xml);
+	}
+	
+	static public String toXml(Object obj){
+		XStream xstream = new XStream();
+		xstream.autodetectAnnotations(true);
+		//xstream.addImplicitCollection(DepSucceeds.class, "succeedsList");
+		String xml=xstream.toXML(obj);
+		return xml;
+	}
+
+
+}

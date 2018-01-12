@@ -1,0 +1,25 @@
+package com.gilight.dep.metadata.dao;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+
+/**
+ * 离线分析
+* @ClassName: IAnalyseExcuteDao 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:12:02
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IAnalyseExcuteDao extends IMetaDataDao{
+
+	public List<IEntity> findMetaDataByIdList(List<String> idlist, String mmid)
+			throws DaoException;
+
+	public List<IEntity> findMetaDataDepeByIdList(List<String> idlist,
+			List<String> toidlist) throws DaoException;
+	
+}

@@ -1,0 +1,133 @@
+/**   
+ * @Title: ExcelMetaDataParse.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月29日 上午8:59:15
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.gather.excel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.metadata.gather.common.util.ExcelUtil;
+
+/***
+ * 
+ * @ClassName: ExcelMetaDataParse
+ *             <p>
+ *             TODO<br>
+ * @author zps
+ * @date 2015年7月29日 上午9:09:58
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class ExcelMetaDataParse extends ExcelPOIParse implements
+		IExcelMetaDataParse {
+	
+	private String excelFile = null;
+
+	public String getExcelFile() {
+		return excelFile;
+	}
+
+	public void setExcelFile(String excelFile) {
+		this.excelFile = excelFile;
+	}
+
+	@Override
+	public String getExcelAdaptor() throws GilightException {
+		// TODO Auto-generated method stub
+		String path=getExcelFile();
+		List<List> listdata = getExcel(path);
+		
+		return null;
+	}
+	/**
+	 * 解析excel文件
+	* <p><br>
+	* @param path
+	* @return
+	* @throws GilightException  
+	* @author wzx
+	* @date 2015年8月11日 下午8:12:42
+	* @version V1.0
+	 */
+	public List<List> getExcel(String path)throws GilightException{
+		try {
+			List<List> listdata=new ArrayList<List>();
+			//HSSFSheet sheet=ExcelUtil.readSheet(path, 1);
+			ReadExcel re = new ReadExcel();
+			int sheetnum=re.readSheetnum(path);
+			if(sheetnum==0){
+				return listdata;
+			}
+			
+			//读取分类sheet
+			Sheet sheetclass=re.readSheet(path, 1);
+			String model1code=re.readModel(sheetclass, 1);
+			if(model1code==null||model1code.equals("")){
+				throw new GilightException("没有元模型编码，停止导入");
+			}
+			Sheet sheet2class=re.readSheet(path, 2);
+			String model2code=re.readModel(sheet2class, 1);
+			if(model2code==null||model2code.equals("")){
+				throw new GilightException("没有元模型编码，停止导入");
+			}
+			
+			//Sheet sheet3class=re.readSheet(path, 3);
+			
+			Sheet sheet3class=null;
+			String model3code =null;
+			if(sheetnum==4){
+				sheet3class=re.readSheet(path, 3);
+				model3code=re.readModel(sheet3class, 1);
+				if(model3code==null||model3code.equals("")){
+					throw new GilightException("没有元模型编码，停止导入");
+				}
+			}
+			
+			//List<List> listdata=new ArrayList<List>();
+			int len=re.readCellNum(sheetclass,4);
+			
+			List<Map> mapc1=re.readData(sheetclass, 4, 1, len,model1code);
+			listdata.add(mapc1);
+			len=re.readCellNum(sheet2class,4);
+			List<Map> mapc2=re.readData(sheet2class, 4, 1, len,model2code);
+			listdata.add(mapc2);
+			
+			if(sheet3class!=null){
+				len=re.readCellNum(sheet3class,4);
+				List<Map> mapc3=re.readData(sheet3class, 4, 1, len,model3code);
+				listdata.add(mapc3);
+			}
+			
+			
+			return listdata;
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new GilightException("读取excel失败，停止导入");
+		}
+	} 
+	
+	public static void main (String arg[]){
+		
+		ExcelMetaDataParse ed = new ExcelMetaDataParse();
+		try {
+			List<List> listdata=ed.getExcel("f:/111.xls");
+			
+			System.out.println(listdata);
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

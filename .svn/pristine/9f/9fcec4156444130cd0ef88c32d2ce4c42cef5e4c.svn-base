@@ -1,0 +1,24 @@
+{
+	"fName" : "mdtype",
+	"fType" : "mdtype",
+	"description" : "元数据分类（元模型）",
+	"groupId" : "metadata",
+	"img" : "img/metadata/category.png",
+	"viewConfig": {
+		"width": "32",
+		"height": "32",
+		"isShowFigureStatus" : false
+	},
+	"persistentViewAttributes":["x","y","dimension"],
+	"api" : {
+		"create" : "",
+		"read" : "",
+		"update" : "",
+		"destroy" : "",
+		"getAll" : "",
+		"getAllView" : ""
+	},
+	"port" : [],
+	"statuEnums" : [],
+	"contextMenus" : []
+}

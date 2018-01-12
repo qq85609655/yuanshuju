@@ -1,0 +1,22 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+@XStreamAlias("Errors")
+public class DepErrordatas {
+	@XStreamImplicit
+	private List<DepImpErrordatas> errorsList;
+	public DepErrordatas() {
+		// TODO Auto-generated constructor stub
+	}
+	public List<DepImpErrordatas> getErrorsList() {
+		return errorsList;
+	}
+	public void setErrorsList(List<DepImpErrordatas> errorsList) {
+		this.errorsList = errorsList;
+	}
+
+	
+}

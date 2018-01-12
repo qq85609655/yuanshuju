@@ -1,0 +1,23 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+public class GatherDSBaseView extends GatherDataSourceBasicView {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/***
+	 * 数据源下的采集任务
+	 */
+	private List<GatherJobBasicView> jobList = null;
+
+	public List<GatherJobBasicView> getJobList() {
+		return jobList;
+	}
+
+	public void setJobList(List<GatherJobBasicView> jobList) {
+		this.jobList = jobList;
+	}
+
+}

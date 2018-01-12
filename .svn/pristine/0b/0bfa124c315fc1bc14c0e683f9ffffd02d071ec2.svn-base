@@ -1,0 +1,80 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+/**
+ * 
+* @ClassName: AnalyseNodeLineView 
+* <p>元数据分析结果视图 线<br>
+* @author wzx
+* @date 2015年7月9日 下午3:48:02
+* @version V1.0
+* @since JDK 1.7
+ */
+public class AnalyseNodeLineView implements IView{
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 起点id
+	 */
+	private String startNodeId;
+	/**
+	 * 终点id
+	 */
+	private String endNodeId;
+	/**
+	 * 类型
+	 */
+	private String type;
+	/***
+	 * 关系名称
+	 */
+	private String name;
+	
+	public String getStartNodeId() {
+		return startNodeId;
+	}
+	public void setStartNodeId(String startNodeId) {
+		this.startNodeId = startNodeId;
+	}
+	public String getEndNodeId() {
+		return endNodeId;
+	}
+	public void setEndNodeId(String endNodeId) {
+		this.endNodeId = endNodeId;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	@Override
+	public String toString() {
+		return "AnalyseNodeLineView [startNodeId=" + startNodeId
+				+ ", endNodeId=" + endNodeId + ", type=" + type + "]";
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if(this.toString().equals(obj.toString())){
+			return true;
+		}
+		return false;	
+	}
+	@Override
+	public int hashCode(){
+		   int result;
+		   result = (endNodeId == null?0:endNodeId.hashCode());
+		   result = 37*result + (startNodeId == null?0:startNodeId.hashCode());
+		   return result;
+	}
+	
+}

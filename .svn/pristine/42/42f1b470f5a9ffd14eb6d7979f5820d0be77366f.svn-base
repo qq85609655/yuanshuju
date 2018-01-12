@@ -1,0 +1,78 @@
+package com.gilight.dep.metadata.entity;
+// default package
+
+import com.gilight.dep.framework.core.model.entity.IEntity;
+
+
+/**
+ * MmFolder entity. @author MyEclipse Persistence Tools
+ */
+
+public class MmMapData implements IEntity {
+
+
+    // Fields
+
+     private String id;
+     private String mapdata;
+     private String status;
+     private String remark;
+
+
+
+    // Constructors
+
+    /** default constructor */
+    public MmMapData() {
+    }
+
+	/** minimal constructor */
+    public MmMapData(String id) {
+        this.id = id;
+    }
+
+    /** full constructor */
+    public MmMapData(String id, String mapdata, String status, String remark) {
+        this.id = id;
+        this.mapdata = mapdata;
+        this.status = status;
+        this.remark = remark;
+
+    }
+
+   
+    // Property accessors
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getMapdata() {
+        return mapdata;
+    }
+
+    public void setMapdata(String mapdata) {
+        this.mapdata = mapdata;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+}

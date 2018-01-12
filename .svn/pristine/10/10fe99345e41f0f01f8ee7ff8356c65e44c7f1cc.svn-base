@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       ">
+
+	<!-- jdon 上下文 -->
+	<bean id="appContextJdon" class="com.gilight.dep.metadata.test.jdon.AppContextJdonTest">
+	</bean>
+
+	<!-- 模型缓存管理器 -->
+	<bean id="cacheManager" class="com.gilight.dep.framework.common.cache.CacheManager" />
+	<!-- hibernate dao的基类 -->
+	<bean id="baseHibernateDao" class="com.gilight.dep.framework.core.dao.db.BaseHibernateDao">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<!-- hibernate 仓储的基类 -->
+	<bean id="baseQueryRepository"
+		class="com.gilight.dep.framework.core.ext.repository.DepBaseQueryRepository">
+		<property name="baseDao">
+			<ref bean="baseHibernateDao" />
+		</property>
+	</bean>
+
+	<!-- hibernate 默认仓储的实现 -->
+	<bean id="baseDefaultRepository"
+		class="com.gilight.dep.framework.core.ext.repository.DepBaseDefaultRepository">
+		<property name="baseDao">
+			<ref bean="baseHibernateDao" />
+		</property>
+	</bean>
+
+	<!-- 校验的基类 -->
+	<bean id="baseCheck"
+		class="com.gilight.dep.framework.core.ext.service.check.BaseCheck">
+		<property name="queryRepository">
+			<ref bean="baseQueryRepository" />
+		</property>
+	</bean>
+</beans>

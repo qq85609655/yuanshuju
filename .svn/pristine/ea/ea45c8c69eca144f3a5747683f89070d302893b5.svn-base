@@ -1,0 +1,28 @@
+package com.gilight.dep.metadata.view;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("DepLog")
+public class DepLog {
+	private DepSucceeds succeeds;
+	private DepErrordatas errors;
+	public DepLog() {
+		// TODO Auto-generated constructor stub
+	}
+	public DepSucceeds getSucceeds() {
+		return succeeds;
+	}
+	public void setSucceeds(DepSucceeds succeeds) {
+		this.succeeds = succeeds;
+	}
+	public DepErrordatas getErrors() {
+		return errors;
+	}
+	public void setErrors(DepErrordatas errors) {
+		this.errors = errors;
+	}
+
+	
+	
+	
+}

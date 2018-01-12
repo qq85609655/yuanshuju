@@ -1,0 +1,341 @@
+/**   
+ * @Title: MetamodelController.java  
+ * @Description: TODO 
+ * @author Rao junjun   
+ * @date 2015年7月14日 下午4:34:54
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.web.controller;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.ModelAndViewResult;
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.controller.BaseController;
+import com.gilight.dep.framework.core.exception.ControllerException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.exception.param.ControllerParamInvalidException;
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelFolderView;
+import com.gilight.dep.metadata.view.MetaModelView;
+import com.gilight.dep.metadata.web.request.MetamodelRequestData;
+import com.gilight.dep.metadata.web.response.ResultCode;
+import com.gilight.dep.metamodel.service.IMetaModelFolderService;
+import com.gilight.dep.metamodel.service.IMetaModelQueryService;
+
+@RequestMapping("/metamodelfolder")
+public class MetamodelFolderController extends BaseController {
+
+	private IMetaModelQueryService metaModelQueryService;
+	public IMetaModelQueryService getMetaModelQueryService() {
+		return metaModelQueryService;
+	}
+
+	public void setMetaModelQueryService(
+			IMetaModelQueryService metaModelQueryService) {
+		this.metaModelQueryService = metaModelQueryService;
+	}
+
+	private IMetaModelFolderService metaModelFolderService;
+
+	public IMetaModelFolderService getMetaModelFolderService() {
+		return metaModelFolderService;
+	}
+
+	public void setMetaModelFolderService(IMetaModelFolderService metaModelFolderService) {
+		this.metaModelFolderService = metaModelFolderService;
+	}
+
+	/**
+	 *
+	 * <p>
+	 * 检查view 参数<br>
+	 *
+	 * @throws ControllerException
+	 * @author YHY
+	 * @date 2015年7月22日 上午11:17:53
+	 * @version V1.0
+	 */
+	protected void checkViewParameter(IView view)
+			throws ControllerParamInvalidException {
+		if (view == null) {
+			throw new ControllerParamInvalidException("程序执行错误，传递参数不能为空。");
+		}
+	}
+
+
+	/**
+	 * 创建文件夹
+	 * <p>
+	 * <br>
+	 *
+	 * @param view
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public @ResponseBody
+	Object create(@RequestBody MetaModelFolderView view) throws Exception {
+		try {
+			// 校验参数
+			this.checkViewParameter(view);
+			// 构造上下文（异步响应）
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithView(view);
+			// 调用服务层的方法获取响应
+			IResponse response = metaModelFolderService.create(context);
+			// 返回结果
+			return response.getResult();
+		} catch (ServiceException e) {
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 删除文件夹
+	 * <p>
+	 * <br>
+	 *
+	 * @param metamodelRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public @ResponseBody
+	Object delete(@ModelAttribute MetamodelRequestData metamodelRequestData) throws Exception {
+		try {
+			IContext context = ContextFactoryImpl
+					.getInstance()
+					.createDifferResponseContextWithID(metamodelRequestData.getId());
+			IResponse response = this.metaModelFolderService.delete(context);
+			return response.getResult();
+		} catch (ServiceException e) {
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 修改文件夹
+	 * <p>
+	 * <br>
+	 *
+	 * @param view
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-20 下午3:18:31
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public @ResponseBody
+	Object update(@RequestBody MetaModelFolderView view) throws Exception {
+		try {
+			// 校验参数
+			this.checkViewParameter(view);
+			// 构造上下文（异步响应）
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithView(view);
+			// 调用服务层的方法获取响应
+			IResponse response = metaModelFolderService.update(context);
+			// 返回结果
+			return response.getResult();
+		} catch (ServiceException e) {
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+
+	/**
+	 * 查询文件夹
+	 * <p>
+	 * <br>
+	 *
+	 * @param metamodelRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-14 下午6:06:11
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getFolderTree", method = RequestMethod.GET)
+	public @ResponseBody
+	Object getFolderTree(@ModelAttribute MetamodelRequestData metamodelRequestData) throws Exception {
+		String id = metamodelRequestData.getId();
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithID(id);
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<MetaModelFolderView>() {
+					@Override
+					public IResult<Map<String, Object>> handle(
+							IContext context, IResult<MetaModelFolderView> result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+						List<Map<String, Object>> rootlist = new ArrayList<Map<String, Object>>();
+						MetaModelFolderView resultMmfv = (MetaModelFolderView) result
+								.getResult();
+						
+						List<MetaModelFolderView> subFolderList = resultMmfv.getSubFolderList();
+						if(subFolderList != null) {
+							for (MetaModelFolderView rootModel : subFolderList) {
+								Map<String, Object> map = new HashMap<String, Object>();
+								map.put("id", rootModel.getId());
+								map.put("name", rootModel.getName());
+								map.put("parentId", rootModel.getParentId());
+								map.put("namespace", rootModel.getNamespace());
+								map.put("folderLevel", rootModel.getFolderLevel());
+								map.put("displayOrder", rootModel.getDisplayOrder());
+								map.put("ishidden", rootModel.getIshidden());
+								map.put("subFolderList", rootModel.getSubFolderList());
+								map.put("modelList", rootModel.getModelList());
+								map.put("text", rootModel.getName());
+								map.put("leaf", false);
+								map.put("expanded", false);
+								map.put("nodeType", "folderNode");
+								rootlist.add(map);
+							}
+						}
+						List<MetaModelBasicView> modelList = resultMmfv.getModelList();
+						if(modelList != null) {
+							for(MetaModelBasicView mmodel : modelList) {
+								Map<String, Object> map = new HashMap<String, Object>();
+								map.put("id", mmodel.getId());
+								map.put("name", mmodel.getName());
+								map.put("code", mmodel.getCode());
+								map.put("graphSvg", mmodel.getGraphSvg());
+								map.put("isabstract", mmodel.isIsabstract());
+								map.put("issys", mmodel.getIssys());
+								map.put("packageid", mmodel.getPackageid());
+								map.put("parentId", mmodel.getParentId());
+								map.put("status", mmodel.getStatus());
+								map.put("graphSvg", mmodel.getGraphSvg());
+								map.put("remark", mmodel.getRemark());
+								map.put("isuse", mmodel.getIsuse());
+								map.put("text", mmodel.getName());
+								map.put("leaf", true);
+								map.put("expanded", false);
+								map.put("nodeType", "metaModelNode");
+								rootlist.add(map);
+							}
+						}
+						
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS, "获取用户文件夹树形菜单节点成功",
+								rootlist);
+					}
+				});
+		metaModelQueryService.findByParentid(context);
+		return context.getResponse().getResult();
+	}
+	
+	/**
+	 * 查询文件夹下包含的元模型
+	 * <p>
+	 * <br>
+	 *
+	 * @param metamodelRequestData
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-14 下午6:06:11
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getMetaModelsByFolderId", method = RequestMethod.GET)
+	public @ResponseBody
+	Object getMetaModelsByFolderId(@ModelAttribute MetamodelRequestData metamodelRequestData) throws Exception {
+		String id = metamodelRequestData.getId();
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithID(id);
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<List<MetaModelBasicView>>() {
+					@Override
+					public IResult<List<Map<String, Object>>> handle(
+							IContext context, IResult<List<MetaModelBasicView>> result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+						List<Map<String, Object>> rootlist = new ArrayList<Map<String, Object>>();
+						List<MetaModelBasicView> resultList = (List<MetaModelBasicView>) result
+								.getResult();
+						for (MetaModelBasicView rootModel : resultList) {
+							Map<String, Object> map = new HashMap<String, Object>();
+							map.put("id", rootModel.getId());
+							map.put("name", rootModel.getName());
+							map.put("code", rootModel.getCode());
+							map.put("isabstract", rootModel.isIsabstract());
+							map.put("packageid", rootModel.getPackageid());
+							map.put("remark", rootModel.getRemark());
+							map.put("parentId", rootModel.getParentId());
+							map.put("status", rootModel.getStatus());
+							map.put("graphSvg", rootModel.getGraphSvg());
+							map.put("remark", rootModel.getRemark());
+							map.put("text", rootModel.getName());
+							map.put("leaf", true);
+							map.put("expanded", false);
+							map.put("nodeType", "metaModelNode");
+							rootlist.add(map);
+						}
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS, "查询文件夹下包含的元模型成功",
+								rootlist);
+					}
+				});
+		metaModelQueryService.getModelByFolderid(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 向文件夹添加元模型
+	 * <p>
+	 * <br>
+	 *
+	 * @param view
+	 * @return
+	 * @throws Exception
+	 * @author Administrator
+	 * @date 2015-7-14 下午6:06:11
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/addModel", method = RequestMethod.POST)
+	public @ResponseBody
+	Object addModel(@RequestBody MetamodelRequestData metamodelRequestData) throws Exception {
+		MetaModelFolderView view = new MetaModelFolderView();
+		view.setId(metamodelRequestData.getId());
+		view.setModelList(metamodelRequestData.getModelList());
+		
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithView(view);
+		
+		IResponse response = metaModelFolderService.addModel(context);
+		return response.getResult();
+	}
+
+
+
+}

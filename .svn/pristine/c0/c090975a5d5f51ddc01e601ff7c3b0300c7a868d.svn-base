@@ -1,0 +1,55 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+/**
+ * 系统备份时间
+ */
+public class MetaDataBackupTimeView implements IView{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 属性数据模型view
+	 */
+	private String id;//字段id
+	private String userid;//操作用户id
+	private String saveTime;//操作时间
+	private String cronExpression;//备份时间表达式
+	private String period;//执行周期
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getUserid() {
+		return userid;
+	}
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
+	public String getSaveTime() {
+		return saveTime;
+	}
+	public void setSaveTime(String saveTime) {
+		this.saveTime = saveTime;
+	}
+	public String getCronExpression() {
+		return cronExpression;
+	}
+	public void setCronExpression(String cronExpression) {
+		this.cronExpression = cronExpression;
+	}
+	public String getPeriod() {
+		return period;
+	}
+	public void setPeriod(String period) {
+		this.period = period;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+}

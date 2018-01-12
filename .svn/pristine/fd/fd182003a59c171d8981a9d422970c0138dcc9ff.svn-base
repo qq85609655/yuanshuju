@@ -1,0 +1,161 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.EntityParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.ext.repository.DepBaseRepository;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IMetaModelEnumDao;
+import com.gilight.dep.metadata.dao.impl.BaseDao;
+import com.gilight.dep.metadata.entity.MmEnum;
+import com.gilight.dep.metadata.entity.MmEnumValue;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IMetaModelEnumRepository;
+
+public class MetaModelEnumRepositoryImpl extends DepBaseRepository implements IMetaModelEnumRepository {
+	@Override
+	protected IResult getByScopeAfter(IContext iContext, IResult iResult) throws RepositoryException {
+		return null;
+	}
+
+	@Override
+	protected IResult createAfter(IContext iContext, IResult iResult) throws RepositoryException {
+		return null;
+	}
+
+	@Override
+	protected IResult updateAfter(IContext iContext, IResult iResult) {
+		return null;
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext iContext, IResult iResult) throws RepositoryException {
+		return null;
+	}
+
+	@Override
+	protected IResult getByIdAfter(IContext iContext, IResult iResult) throws RepositoryException {
+		return null;
+	}
+
+	private IMetaModelEnumDao metaModelEnumDao;
+
+	public IMetaModelEnumDao getMetaModelEnumDao() {
+		return metaModelEnumDao;
+	}
+
+
+	public void setMetaModelEnumDao(IMetaModelEnumDao metaModelEnumDao) {
+		this.metaModelEnumDao = metaModelEnumDao;
+	}
+
+	private BaseDao baseDao = null;
+
+	public BaseDao getBaseDao() {
+		return baseDao;
+	}
+
+	public void setBaseDao(BaseDao baseDao) {
+		this.baseDao = baseDao;
+	}
+
+	
+
+
+	@Override
+	public IResponse create(IContext paramIContext) throws RepositoryException {
+		try {
+				EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+				IEntity mme=(IEntity)entityParameters.getEntity();
+			
+				metaModelEnumDao.save(mme);
+				paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mme));
+				
+			} catch (DaoException e) {
+				e.printStackTrace();
+				new RepositoryException("创建枚举类失败!-dao");
+			}
+			
+			return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		try {
+			EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+			IEntity mme=(IEntity)entityParameters.getEntity();
+		
+			metaModelEnumDao.update(mme);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mme));
+			
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新枚举类失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IDParameters idp = (IDParameters) paramIContext.getParameters();
+			//EntityParameters mme=(MmMetamodel)entityParameters.getEntity();
+			String id = idp.getId();
+			//metaModelBasicDao.getById(mme.getId(),MmMetamodel.class);
+			MmMetamodel mme=(MmMetamodel) metaModelEnumDao.findById(id,MmMetamodel.class);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mme));
+			
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询枚举类失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		//super.setBaseDao(this.getBaseDao());
+		//return super.delete(paramIContext);
+		try {
+			String id = (String)paramIContext.getParameter(ParameterKeys.ATT_ID);
+			IEntity mme = metaModelEnumDao.findById(id, MmEnum.class);
+			MmEnumValue meval = new MmEnumValue();
+			meval.setEnumId(id);
+			List<IEntity> mevalist = metaModelEnumDao.findByEntity(meval);
+			if(mevalist!=null && mevalist.size()>0) {
+				for(IEntity entity : mevalist) {
+					if(entity != null) {
+						metaModelEnumDao.delete(entity);
+					}
+				}
+			}
+			metaModelEnumDao.delete(mme);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mme));
+			return paramIContext.getResponse();
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("删除枚举类失败!-dao");
+		}
+		
+		
+	}
+}

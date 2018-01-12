@@ -1,0 +1,64 @@
+package com.gilight.dep.metadata.model;
+
+import com.gilight.dep.metadata.repository.*;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+public class DepBaseModel {
+
+    private IMetaDataBaseRepository metaDataBaseRepository;
+
+    private IMetaDataQueryRepository metaDataQueryRepository;
+
+    private IMetaDataVersionRepository metaDataVersionRepository;
+
+    private IMetaDataViewRepository metaDataViewRepository;
+    
+    private IMetaModelAttrRepository metaModelAttrRepository;
+
+    public IMetaDataBaseRepository getMetaDataBaseRepository() {
+        return metaDataBaseRepository;
+    }
+
+    public void setMetaDataBaseRepository(IMetaDataBaseRepository metaDataBaseRepository) {
+        this.metaDataBaseRepository = metaDataBaseRepository;
+    }
+
+    public IMetaDataQueryRepository getMetaDataQueryRepository() {
+        return metaDataQueryRepository;
+    }
+
+    public void setMetaDataQueryRepository(IMetaDataQueryRepository metaDataQueryRepository) {
+        this.metaDataQueryRepository = metaDataQueryRepository;
+    }
+
+    public IMetaDataVersionRepository getMetaDataVersionRepository() {
+        return metaDataVersionRepository;
+    }
+
+    public void setMetaDataVersionRepository(IMetaDataVersionRepository metaDataVersionRepository) {
+        this.metaDataVersionRepository = metaDataVersionRepository;
+    }
+
+    public IMetaDataViewRepository getMetaDataViewRepository() {
+        return metaDataViewRepository;
+    }
+
+    public void setMetaDataViewRepository(IMetaDataViewRepository metaDataViewRepository) {
+        this.metaDataViewRepository = metaDataViewRepository;
+    }
+
+    public IMetaModelAttrRepository getMetaModelAttrRepository() {
+        return metaModelAttrRepository;
+    }
+
+    public void setMetaModelAttrRepository(IMetaModelAttrRepository metaModelAttrRepository) {
+        this.metaModelAttrRepository = metaModelAttrRepository;
+    }
+}

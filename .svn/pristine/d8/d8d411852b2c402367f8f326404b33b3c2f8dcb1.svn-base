@@ -1,0 +1,139 @@
+/**   
+* @Title: IOffLineAnalyzer.java 
+* <p>TODO 
+* @author wzx 
+* @date 2015年8月3日 下午5:11:34
+* @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+* @version V1.0   
+*/
+
+package com.gilight.dep.metadata.analyzer.offline;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdDependency;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MmDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+
+/** 
+ * @ClassName: IOffLineAnalyzer 
+ * <p>离线分析<br>
+ * @author wzx
+ * @date 2015年8月3日 下午5:11:34
+ * @version V1.0
+ * @since JDK 1.6 
+ */
+
+public interface IOffLineAnalyzer {
+
+	/**
+	 * 根据id获取关系
+	* <p><br>
+	* @param id
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月4日 上午10:19:51
+	* @version V1.0
+	 */
+	public List<MdDependency> getMetaDataDepe(String id) throws ServiceException;
+	
+	public List<MdDependency> getMetaDataDepe(List<String> idlist) throws ServiceException;
+	/**
+	 * 根据元数据id获取元模型
+	* <p><br>
+	* @param mdid
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月4日 上午10:23:43
+	* @version V1.0
+	 */
+	public MmMetamodel getMetaModel(String mdid) throws ServiceException;
+	/**
+	 * 根据元数据id获取组合关系
+	* <p><br>
+	* @param mdid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月4日 上午11:00:34
+	* @version V1.0
+	 */
+	public List<MdComposition> getMetaDataComp(String mdid)
+			throws ServiceException;
+	
+	/**
+	 * 根据元模型code获取元模型
+	* <p><br>
+	* @param mdidlist
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月4日 上午11:25:03
+	* @version V1.0
+	 */
+	public List<MdMetadata> getMetaDataByCode(List<String> mmcodelist)
+			throws ServiceException;
+	
+	public List<MdMetadata> getMetaDataByCode(String mmcode)
+			throws ServiceException;
+	
+	/**
+	 * 根据元模型id查找相应元数据
+	* <p><br>
+	* @param mmid
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月4日 上午11:32:36
+	* @version V1.0
+	 */
+	public List<MdMetadata> getMetaDataByMmid(String mmid)
+			throws ServiceException;
+	
+	public List<MdMetadata> getMetaDataByMmid(List<String> mmidlist)
+			throws ServiceException;
+	/**
+	 * 根据名称获取元数据依赖关系
+	* <p><br>
+	* @param name
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月4日 下午4:00:22
+	* @version V1.0
+	 */
+	public List<MdDependency> getMetaDataDepeByName(String name)
+			throws ServiceException;
+	/**
+	 * 根据名称获取元模型依赖关系
+	* <p><br>
+	* @param name
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月4日 下午4:00:45
+	* @version V1.0
+	 */
+	public List<MmDependency> getMetaModelDepeByName(String name)
+			throws ServiceException;
+	
+	/**
+	 * 离线分析
+	* <p><br>
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月5日 下午4:03:41
+	* @version V1.0
+	 */
+	public void startAnalyzer()
+			throws ServiceException;
+
+
+
+}

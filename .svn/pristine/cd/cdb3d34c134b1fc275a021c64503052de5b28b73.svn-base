@@ -1,0 +1,41 @@
+package com.gilight.dep.metadata.dao;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.gilight.dep.framework.core.dao.db.IHibernateDao;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+/**
+ * 
+* @ClassName: IMetaModelDao 
+* <p>dao层接口<br>
+* @author wzx
+* @date 2015年7月17日 上午10:09:10
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IMetaModelDao extends IHibernateDao {
+	/*
+	 * (非 Javadoc) 
+	* <p>Description:查询详情 </p> 
+	* @param id
+	* @param entityClass
+	* @return
+	* @throws DaoException 
+	* @see com.gilight.dep.framework.core.dao.db.IHibernateDao#findById(java.io.Serializable, java.lang.Class)
+	 */
+	public <C> IEntity findById(Serializable id, Class<C> entityClass) throws DaoException; 
+	/**
+	 * 
+	* <p>按idlist查询<br>
+	* @param idlist
+	* @param type
+	* @return
+	* @throws DaoException  
+	* @author wzx
+	* @date 2015年7月17日 上午10:10:13
+	* @version V1.0
+	 */
+	public <T> List<IEntity> findByIdList(List<String> idlist,Class<T> type) throws DaoException;
+}

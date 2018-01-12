@@ -1,0 +1,100 @@
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MdDependency;
+
+@SuppressWarnings("unchecked")
+public class MetaDataDepeAssoScope extends BaseHbiernateScope {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 元模型定义依赖关系
+	 */
+	private String mmDepId;
+	/**
+	 * 起始元数据id
+	 */
+	private String fromMdId;
+	/**
+	 * 起始元数据编码
+	 */
+	private String fromMdCode;
+	/**
+	 * 目标元数据id
+	 */
+	private String toMdId;
+	/**
+	 * 目标元数据代码
+	 */
+	private String toMdCode;
+
+	public String getMmDepId() {
+		return mmDepId;
+	}
+
+	public void setMmDepId(String mmDepId) {
+		this.mmDepId = mmDepId;
+	}
+
+	public String getFromMdId() {
+		return fromMdId;
+	}
+
+	public void setFromMdId(String fromMdId) {
+		this.fromMdId = fromMdId;
+	}
+
+	public String getFromMdCode() {
+		return fromMdCode;
+	}
+
+	public void setFromMdCode(String fromMdCode) {
+		this.fromMdCode = fromMdCode;
+	}
+
+	public String getToMdId() {
+		return toMdId;
+	}
+
+	public void setToMdId(String toMdId) {
+		this.toMdId = toMdId;
+	}
+
+	public String getToMdCode() {
+		return toMdCode;
+	}
+
+	public void setToMdCode(String toMdCode) {
+		this.toMdCode = toMdCode;
+	}
+
+	@Override
+	public Class getClazz() {
+		// TODO Auto-generated method stub
+		return MdDependency.class;
+	}
+
+	@Override
+	public String getDefaultOrderBy(String paramString) {
+		return "";
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+		StringBuffer sql = new StringBuffer();
+		if (!StringUtil.isEmpty(this.fromMdId)) {
+			sql.append(" and ").append(obj).append(".fromMdId = ? ");
+			this.paraList.add(this.fromMdId);
+		}
+		if (!StringUtil.isEmpty(this.toMdId)) {
+			sql.append(" and ").append(obj).append(".toMdId = ? ");
+			this.paraList.add(this.toMdId);
+		}
+		return sql;
+	}
+
+}

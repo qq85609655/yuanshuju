@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gilight.dep.metadata.entity.MmEnumValue" table="MM_ENUM_VALUE">
+        <id name="id" type="string">
+            <column name="ID" length="64" />
+            <generator class="assigned" />
+        </id>
+        <property name="enumId" type="string">
+            <column name="ENUM_ID" length="64" />
+        </property>
+        <property name="enumKey" type="string">
+            <column name="ENUM_KEY" length="64" />
+        </property>
+        <property name="enumValue" type="string">
+            <column name="ENUM_VALUE" length="256" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,185 @@
+if (!window.Dep) {
+	window.Dep = {};
+}
+if (!Dep.framework) {
+	Dep.framework = {};
+}
+if (!Dep.framework.editor) {
+	Dep.framework.editor = {};
+}
+if (!Dep.framework.editor) {
+	Dep.framework.editor = {};
+}
+if (!Dep.framework.editor.plugin) {
+	Dep.framework.editor.plugin = {};
+}
+if (!Dep.framework.editor.plugin.containers) {
+	Dep.framework.editor.plugin.containers = {};
+}
+if (!Dep.framework.editor.plugin.containers.layer) {
+	Dep.framework.editor.plugin.containers.layer = {};
+}
+
+/**
+ * 编辑元数据
+ */
+Dep.framework.editor.plugin.containers.layer.EditMetadata = Dep.framework.editor.plugin.BasePlugin.extend({
+	/**
+	 * 插件名称
+	 */
+	NAME : "Dep.framework.editor.plugin.containers.layer.EditMetadata",
+	
+	/**
+	 * 完成事件注册
+	 */
+	init : function(container) {
+		var me = this;
+		me._super(container);
+		me.getContainer().on(Dep.framework.editor.EVENT.LAYER.INIT_COMPONENT,
+	            me._initEvent.bind(me));
+	},
+	/**
+	 * @param {plugin.Layer}
+	 *            Layer 编辑器
+	 */
+	_initEvent : function() {
+		var me = this;
+		me.getContainer().regiestActions([ {
+			name : "editMetadata",
+			functionality : Ext.Function.bind(me.editMetadata, me),
+			group : "editMD"
+		}]);		
+		me.getContainer().regiestActions([ {
+			name : "saveMetadata",
+			functionality : Ext.Function.bind(me.saveMetadata, me),
+			group : "editMD"
+		}]);
+	},
+    /**
+     * 修改元数据
+     * @param id
+     */
+    editMetadata: function (id) {
+        var me = this;
+        me.getContainer().showMdBaseInfoWin(false, id);
+    },	
+    /**
+     * 保存元数据（增加/编辑）
+     */
+    saveMetadata: function () {
+        var me = this;
+        var data =me.buildModelData(),win = me.getContainer().getMdBaseInfoWin(),parnetIdMd =win.getParentMDId(),isSaveSubMD = (parnetIdMd ? true : false);
+        var params = data.data,fromMdCode=null,curMDDetail = me.getContainer().getCurMdDetailCache();
+        if(isSaveSubMD){
+        	data.url = "metadata/createSubMD.do"; //添加子元数据
+        	data.data.mdPackageid = null;
+        	fromMdCode = curMDDetail ? curMDDetail.mdCode : null;
+        	params ={
+        		parentMdId: win.getParentMDId(),
+        		fromMdCode : fromMdCode,
+        		subMetaData : data.data
+        	};
+        }
+        //发送Ajax请求
+        Fn.RequestObj(data.url, true, params, "保存失败！", function (result) {
+            if (result) {
+                if (result.resultCode === 1) {
+                	win.hide();
+                    Dep.framework.editor.util.Msg.success(result.resultText, "提示");
+                    if(!isSaveSubMD){
+                        me.updateMD(data.data.id,data.data.mmId);
+                        me.getContainer().bulidMDTreePanel().updataNode(data.data);                    	
+                    }else{
+                    	me.reloadSubMD(parnetIdMd);
+                    }
+                } else {
+                    Dep.framework.editor.util.Msg.failed(result.resultText, "提示");
+                }
+            }
+        });        
+    },
+    /**
+     * 构建ajax的请求数据
+     * @param obj
+     */
+    buildModelData: function () {
+        var me = this,curMDDetail = me.getContainer().getCurMdDetailCache();;
+        var model = Ext.create("Dep.metadata.metadatamng.model.MDModel");
+        var id = "",win = me.getContainer().getMdBaseInfoWin();
+        var data = null, url = "metadata/create.do";
+        //元模型组件
+        var mm = win.getMMCmpt();
+        var mmrec = mm.getStore().findRecord("id", mm.getValue());
+        model.set("mmName", (mmrec ? mmrec.get("name") : ""));
+        model.set("mmId", mm.getValue());
+
+        var code = Ext.ComponentQuery.query('#code', win);
+        var name = Ext.ComponentQuery.query('#name', win);
+        model.set("mdCode", code[0].getValue());
+        model.set("mdName", name[0].getValue());
+        
+        //视图Id
+        var attList = win.getPropsVals(id);
+        if (!win.getWinType()) {  //true:新增；false:编辑
+            var idcmpt = Ext.ComponentQuery.query('#id', win);
+            if (idcmpt)id = idcmpt[0].getValue();
+            model.set("id", id);
+            url = "metadata/edit.do";
+            //转换属性中的id
+            if (curMDDetail && id == curMDDetail.id) {  //先判断是否是当前所编辑的元数据
+                var atList = curMDDetail.attList;
+                for (var i = 0; i < attList.length; i++) {
+                    for (var j = 0; j < atList.length; j++) {
+                        if (attList[i].mmAttName == atList[j].mmAttName) {
+                            attList[i].id = atList[j].id;  //添加属性的Id
+                            attList[i].mdId = id;   //在属性对象中添加元数据Id
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        var viewId = me.getContainer().bulidMDTreePanel().getPackageId(id,win.getWinType());
+        model.set("mdPackageid", viewId);
+        
+        data = model.getData();
+        data.attList = attList;
+        return {url:url,data:data};
+    },  
+    /**
+     * 更新元数据后修改前台缓存及更新grid中的数据
+     * @param mdId  元数据Id
+     */
+    updateMD: function (mdId,mmId) {
+        var me = this;
+        if (!mdId)return;
+        me.getContainer().setCurMdDetailCache(null);
+        //重新获取详情
+        me.getContainer().getMdDetail(mdId);
+        var source = me.getContainer().changeDataToPropsData();
+        var mmModel = me.getContainer().getCacheModels(mmId);
+        var layer = me.getContainer().getCurrentEditLayer();
+        if(layer){
+        	var store = layer.getStoreManager().get(mmModel.code);
+            var model = store.findRecord("id", mdId);
+            if (model) {
+                model.updateBussProperties("mdName", source.mdName);
+            }        	
+        }
+        
+    },
+    /**
+     * 加载子元数据
+     */
+    reloadSubMD :function(parentMDId){
+    	var me = this;
+    	if(parentMDId){
+//    		var reuslt = Fn.Request("metadata/getSubById.do", true, {metadataId: parentMDId},function(result){
+//        		if(result && result.result){
+//        			var data = result.result;
+//        			console.log(data);
+//        		}    			
+//    		});	
+    	}
+    }
+});

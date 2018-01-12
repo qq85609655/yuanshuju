@@ -1,0 +1,143 @@
+package com.gilight.dep.metamodel.service.impl;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.ext.model.IDepBasicModel;
+import com.gilight.dep.framework.core.ext.service.DepBaseServiceImpl;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.metadata.entity.MmFolder;
+import com.gilight.dep.metadata.repository.IMetaModelFolderRepository;
+import com.gilight.dep.metamodel.model.ModelFolderModel;
+import com.gilight.dep.metamodel.service.IMetaModelFolderService;
+import org.apache.log4j.Logger;
+
+/**
+ * 文件夹操作
+ *
+ * @author wzx
+ * @version V1.0
+ * @ClassName: MetaModelFolderServiceImpl
+ * <p>TODO<br>
+ * @date 2015年11月30日 下午6:27:33
+ * @since JDK 1.6
+ */
+public class MetaModelFolderServiceImpl extends DepBaseServiceImpl implements IMetaModelFolderService {
+    private static final Logger logger = Logger
+            .getLogger(MetaModelFolderServiceImpl.class);
+
+
+    private IMetaModelFolderRepository metaModelFolderRepository;
+
+    public IMetaModelFolderRepository getMetaModelFolderRepository() {
+        return metaModelFolderRepository;
+    }
+
+    public void setMetaModelFolderRepository(IMetaModelFolderRepository metaModelFolderRepository) {
+        this.metaModelFolderRepository = metaModelFolderRepository;
+    }
+
+    public MetaModelFolderServiceImpl() {
+        // TODO Auto-generated constructor stub
+    }
+
+    @Override
+    public IResponse addModel(IContext paramIContext) throws ServiceException {
+        try {
+            return metaModelFolderRepository.addModel(paramIContext);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            throw new ServiceException("向文件夹添加元模型失败");
+        }
+    }
+
+    @Override
+    public Class<? extends IModel> getModelClass() {
+        // TODO Auto-generated method stub
+        return ModelFolderModel.class;
+    }
+
+    protected void initModel(IContext context, IModel model)
+            throws ServiceException {
+        try {
+            IEntity data = (IEntity) SpringBeansUtils.copyProperties(
+                    MmFolder.class, this.getViewParameter(context));
+            if (model instanceof IDepBasicModel) {
+                ((IDepBasicModel) model).setData(data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e);
+            throw new ServiceException("初始化模型失败!");
+        }
+
+    }
+
+
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected IResult getByScopeAfter(IContext paramIContext,
+                                      IResult paramIResult) throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult updateAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult deleteAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult createAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult getByIdAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected Class getDefaultModelClass() throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    @Override
+    public IResponse getTree(IContext paramIContext) throws ServiceException {
+        try {
+            IResponse iResponse = metaModelFolderRepository.findTree(paramIContext);
+
+            return iResponse;
+        } catch (RepositoryException e) {
+
+            e.printStackTrace();
+            throw new ServiceException("查询文件夹失败");
+        }
+
+    }
+
+
+}

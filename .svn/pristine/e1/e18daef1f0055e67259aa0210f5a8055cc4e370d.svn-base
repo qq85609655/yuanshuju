@@ -1,0 +1,38 @@
+package com.gilight.dep.metadata.repository;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.metadata.entity.MdSystemBackup;
+
+/**
+ * 系统备份
+ *
+ */
+public interface ISystemBackupRepository extends IMetaDataBasicRepository{
+	
+	public void create(MdSystemBackup mdSystemBackup) throws RepositoryException;
+	
+	public void update(MdSystemBackup mdSystemBackup) throws RepositoryException;
+	
+	public void delete(MdSystemBackup mdSystemBackup) throws RepositoryException;
+	
+	public MdSystemBackup getById(String id) throws RepositoryException;
+	/**
+	 * 获得所有数据
+	 * @return
+	 * @throws RepositoryException
+	 */
+	public List<MdSystemBackup> getAll() throws RepositoryException;
+	/**
+	 * 获得上一次的数据
+	 * @return
+	 * @throws RepositoryException
+	 */
+	public MdSystemBackup getLatestMdSystemBackup() throws RepositoryException;
+	/**
+	 * 清空表数据
+	 * @throws RepositoryException
+	 */
+	public void empty() throws RepositoryException;
+}

@@ -1,0 +1,19 @@
+{
+	"name": "Dep.framework.editor.base.Editor",
+	"loadOnPlugin": "Dep.framework.editor.plugin.LoadOnPlugin",
+	"viewConfig":{
+		"west":{
+			"unInit":true,
+		},
+		"north":{
+			"unInit":true,
+		},
+		"south":{
+			"unInit":true,
+		},
+		"east":{
+			"unInit":false
+		}
+	}
+}
+

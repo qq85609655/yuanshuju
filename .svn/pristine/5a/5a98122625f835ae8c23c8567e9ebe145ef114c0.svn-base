@@ -1,0 +1,139 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+/**
+ * 
+ * @ClassName: MetaModelDepeBasicView
+ *             <p>
+ *             元模型依赖关系详情基类，包括依赖端的元模型、被依赖端的元模型基本信息。<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:15:58
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaModelDepeBasicView extends MetaBaseView {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 元模型依赖关系的ID
+	 */
+	String id;
+	/**
+	 * 元模型依赖关系的名称
+	 */
+	String name;
+	/**
+	 * 依赖起始端元模型的id
+	 */
+	String fromMid;
+	/**
+	 * 依赖起始端元模型的名称
+	 */
+	String fromMName;
+	/**
+	 * 被依赖端的元模型id
+	 */
+	String toMid;
+	/**
+	 * 被依赖端的元模型名称
+	 */
+	String toMName;
+	/**
+	 * 描述，备注
+	 */
+	String remark;
+	/**
+	 * 创建时间
+	 */
+	String updatedate = MetaDateUtils.getDefaultUpdateDate();
+
+	String trole;
+
+	public String getTrole() {
+		return trole;
+	}
+
+	public void setTrole(String trole) {
+		this.trole = trole;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getFromMid() {
+		return fromMid;
+	}
+
+	public void setFromMid(String fromMid) {
+		this.fromMid = fromMid;
+	}
+
+	public String getFromMName() {
+		return fromMName;
+	}
+
+	public void setFromMName(String fromMName) {
+		this.fromMName = fromMName;
+	}
+
+	public String getToMid() {
+		return toMid;
+	}
+
+	public void setToMid(String toMid) {
+		this.toMid = toMid;
+	}
+
+	public String getToMName() {
+		return toMName;
+	}
+
+	public void setToMName(String toMName) {
+		this.toMName = toMName;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getUpdatedate() {
+		return updatedate;
+	}
+
+	public void setUpdatedate(String updatedate) {
+		this.updatedate = updatedate;
+	}
+
+	public MetaModelDepeBasicView() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String toString() {
+		return "MetaModelDepeBasicView [id=" + id + ", name=" + name
+				+ ", fromMid=" + fromMid + ", fromMName=" + fromMName
+				+ ", toMid=" + toMid + ", toMName=" + toMName + ", remark="
+				+ remark + ", updatedate=" + updatedate + "]";
+	}
+
+}

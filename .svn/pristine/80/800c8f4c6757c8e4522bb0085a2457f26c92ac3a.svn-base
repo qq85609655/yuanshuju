@@ -1,0 +1,101 @@
+<%@page import="com.gilight.dep.framework.util.string.StringUtil"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<%
+
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://"
+			+ request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+	String msg = (String)request.getSession().getAttribute("ERROR_MSG");
+	if(StringUtil.isEmpty(msg) || msg.equalsIgnoreCase("null"))msg="";	
+%>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>元数据管理系统2.0版登录</title>
+<link rel="icon" href="<%=path%>/img/login/favicon.ico" mce_href="<%=path%>/img/login/favicon.ico" type="image/x-icon">  
+<link rel="shortcut icon" href="<%=path%>/img/login/favicon.ico" mce_href="<%=path%>/img/login/favicon.ico" type="image/x-icon"> 
+<link href="Dep/metadata/resource/css/login-style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="Dep/framework/commonlib/extjs/ext-all-debug.js"></script>
+</head>
+<body bgcolor="#ffffff">
+	<div class="login-container">
+		<div class="login-content">
+
+<div class="login-first">
+           
+        </div>
+			<div class="login-form">
+				<form action="<%=basePath%>auth/admin/login.do" method="post">
+					<div class="login-third">
+						<table width="100%" height="40" border="0" cellpadding="0"
+							cellspacing="0">
+							<tr>
+								<td width="30%" align="right"></td>
+								<td width="70%"><input id="loginName" class="login-input"
+									type="text" name="loginName" /></td>
+							</tr>
+						</table>
+					</div>
+					<div class="login-fourth">
+						<table width="100%" height="40" border="0" cellpadding="0"
+							cellspacing="0">
+							<tr>
+								<td width="30%" valign="middle" align="right"></td>
+								<td width="70%" valign="middle"><input id="password"
+									name="password" class="login-input" type="password" /></td>
+							</tr>
+						</table>
+					</div>
+					<div class="login-fifth">
+						<input class="login-button" type="submit" value=""
+							onClick="return check()">
+					</div>
+				</form>
+			</div>
+		</div>
+		<div id="errorMsg" class="login-message"></div>
+	</div>
+	<div class="login-author">河南省精华科技有限公司 版权所有</div>
+	<div id='loading-mask'></div>
+	<div id="loading" style="display: none;">
+	    <div class="loading-indicator">
+	       <img src="img/login/wating.gif" style="margin-right:5px;float:left;vertical-align:top;margin-top: -2px;"/>
+	       <div id="loading-msg">正在登录，请稍后...</div>    </div>
+	</div>	
+</body>
+
+<script>
+    var msg ="<%=msg%>";
+	var errorMsg = document.getElementById("errorMsg");
+  	Ext.onReady(function () {
+  	});
+  	
+	String.prototype.trim = function() {
+		return this.replace(/(^\s*)|(\s*$)/g, "");
+	};
+	function check() {
+
+		var nameObj = document.getElementById("loginName");
+		var passwordObj = document.getElementById("password");
+		var errorMsg = document.getElementById("errorMsg");
+		nameObj.value = nameObj.value.trim();
+		passwordObj.value = passwordObj.value.trim();
+		if (nameObj.value == "" || nameObj.value == "请输入用户名") {
+			errorMsg.innerHTML ="<font color='red'>请输入用户名!</font>";
+			nameObj.focus();
+			return false;
+		} else if (passwordObj.value == "" || passwordObj.value == "请输入密码") {
+			errorMsg.innerHTML ="<font color='red'>请输入密码!</font>";
+			passwordObj.focus();
+			return false;
+		}
+		document.getElementById("loading-mask").style.display = "block";
+		document.getElementById("loading").style.display = "block";			
+		return true;
+	}
+	if(msg)errorMsg.innerHTML ="<font color='red'>"+msg+"</font>"; 	
+</script>
+</html>

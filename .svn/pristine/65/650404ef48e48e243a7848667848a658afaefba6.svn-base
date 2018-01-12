@@ -1,0 +1,112 @@
+/**   
+ * @Title: MetaModelDataTypeRepositoryImpl.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月24日 下午5:19:01
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.impl.BaseDao;
+import com.gilight.dep.metadata.entity.MmEnum;
+import com.gilight.dep.metadata.entity.MmEnumValue;
+import com.gilight.dep.metadata.repository.IMetaModelDataTypeRepository;
+import com.gilight.dep.metadata.scope.MetaDateEnumValueScope;
+import com.gilight.dep.metadata.scope.MetaHbiernateScope;
+
+public class MetaModelDataTypeRepositoryImpl implements
+		IMetaModelDataTypeRepository {
+	private static final Logger logger = Logger
+			.getLogger(MetaModelDataTypeRepositoryImpl.class);
+	private BaseDao baseDao = null;
+
+	public BaseDao getBaseDao() {
+		return baseDao;
+	}
+
+	public void setBaseDao(BaseDao baseDao) {
+		this.baseDao = baseDao;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IResponse create(IContext context) throws RepositoryException {
+		try {
+			MmEnum dataType = (MmEnum) context
+					.getParameter(ParameterKeys.ATT_ENTITY);
+			List<IEntity> saveList = new ArrayList<IEntity>();
+			saveList.add(dataType);
+			saveList.addAll(dataType.getValueList());
+			this.baseDao.save(saveList);
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return context.getResponse();
+		} catch (DaoException e) {
+			logger.error(e);
+			new RepositoryException("创建元数据失败!-dao");
+		}
+		return context.getResponse();
+	}
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	 
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse getDataTypeSelectByDId(IContext<IDParameters> context)
+			throws RepositoryException {
+		try {
+			String enumId = (String) context.getParameter(ParameterKeys.ATT_ID);
+			MetaDateEnumValueScope scope = new MetaDateEnumValueScope();
+			scope.setEnumId(enumId);
+			List<IEntity> result = this.baseDao.findByScope(scope);
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(result));
+			return context.getResponse();
+		} catch (DaoException e) {
+			logger.error(e);
+			e.printStackTrace();
+			new RepositoryException("查询失败", e);
+		}
+		return context.getResponse();
+
+	}
+
+}

@@ -1,0 +1,154 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.EntityParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.common.UUIDGenerator;
+import com.gilight.dep.metadata.dao.IMetaModelAttrDao;
+import com.gilight.dep.metadata.entity.MmAttribute;
+import com.gilight.dep.metadata.repository.IMetaModelAttrRepository;
+import com.gilight.dep.metadata.view.MetaModelAttView;
+
+public class MetaModelAttrRepositoryImpl implements IMetaModelAttrRepository {
+
+	IMetaModelAttrDao metaModelAttrDao;
+	
+	
+	
+	public IMetaModelAttrDao getMetaModelAttrDao() {
+		return metaModelAttrDao;
+	}
+
+	public void setMetaModelAttrDao(IMetaModelAttrDao metaModelAttrDao) {
+		this.metaModelAttrDao = metaModelAttrDao;
+	}
+
+	public MetaModelAttrRepositoryImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+
+	@Override
+	public IResponse create(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			//paramIContext.getRequest()create(paramIContext)
+				/*EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+				IEntity mme=(IEntity)entityParameters.getEntity();*/
+			MmAttribute mma = (MmAttribute) paramIContext.getParameter(ParameterKeys.ATT_ENTITY);
+			//MetaModelAttView mmav= (MetaModelAttView) paramIContext.getParameter(ParameterKeys.ATT_ENTITY);
+			
+			/*mma.setId(UUIDGenerator.getUUID());
+			mma.setMmId(mmav.getModelId());
+			mma.setAttCode(mmav.getCode());
+			mma.setAttLength(mmav.getLength());
+			mma.setAttMax(mmav.getMax());
+			mma.setAttMin(mmav.getMin());
+			mma.setDatatypeId(mmav.getDatatypeId());
+			mma.setDisplayOrder(mmav.getDisplayorder());
+			mma.setAttName(mmav.getName());
+			//mma.setEnumId(mmav.get);
+			mma.setDisplayType(mmav.getDispalyType());
+			//mma.setInheritFlag(mmav.get);
+			//mma.setInheritFlag(mmav.get);
+			mma.setRemark(mmav.getRemark());*/
+		/*mma.setIskey(mmav.isIskey());
+		mma.setIsnull(mmav.isIsnull());
+		mma.setIsshow(mmav.isIsshow());
+		mma.setIsread(mmav.isIsread());*/
+			//mma.setIsread(mmav.geti);
+
+
+				metaModelAttrDao.save(mma);
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new RepositoryException("创建元模型属性失败!-dao");
+			}
+			
+			return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+				/*EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+				IEntity mme=(IEntity)entityParameters.getEntity();*/
+
+			//metaModelBasicDao.save(paramIEntity);
+				String id= (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+
+				MmAttribute ma= (MmAttribute) metaModelAttrDao.findById(id,MmAttribute.class);
+				metaModelAttrDao.delete(ma);
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new RepositoryException("删除元模型失败!-dao");
+			}
+			
+			return paramIContext.getResponse();
+	}
+
+	 
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IDParameters idp = (IDParameters) paramIContext.getParameters();
+			//EntityParameters mme=(MmMetamodel)entityParameters.getEntity();
+			String id = idp.getId();
+			//metaModelBasicDao.getById(mme.getId(),MmMetamodel.class);
+			MmAttribute mme=(MmAttribute) metaModelAttrDao.findById(id,MmAttribute.class);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mme));
+			
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询元模型失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+		//return null;
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+			IEntity mme=(IEntity)entityParameters.getEntity();
+			//metaModelBasicDao.save(paramIEntity);
+		
+			metaModelAttrDao.update(mme);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(null));
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元模型失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+
+}

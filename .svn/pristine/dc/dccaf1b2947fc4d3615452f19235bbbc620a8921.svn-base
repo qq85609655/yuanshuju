@@ -1,0 +1,3 @@
+file.uploadpath=C:/gather/
+file.goodfilepath=gather/excel/temp/
+file.badfilepath=gather/excel/bad/

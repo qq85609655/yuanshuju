@@ -1,0 +1,236 @@
+/**   
+ * @Title: MetaModelAttributeScope.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月30日 上午11:13:24
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MmAttribute;
+
+@SuppressWarnings("unchecked")
+public class MetaModelAttributeScope extends BaseHbiernateScope {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 属性代码
+	 */
+	private String attCode;
+	/**
+	 * 属性名称
+	 */
+	private String attName;
+	/**
+	 * 元模型的ID
+	 */
+	private String mmId;
+	/**
+	 * 是否可继承:YES/NO
+	 */
+	private Integer inheritFlag;
+	/**
+	 * 是否只读:YES/NO
+	 */
+	private Integer isread;
+	/**
+	 * 是否可为null::YES/NO
+	 */
+	private Integer isnull;
+	/**
+	 * 类型id
+	 */
+	private String datatypeId;
+	/**
+	 * 控件类型 1：文本框；2：文本域；3：下拉框
+	 */
+	private String displayType = "TEXT";
+	/**
+	 * 枚举值，下拉框的选项
+	 */
+	private String enumId;
+	/**
+	 * 属性长度
+	 */
+	private Integer attLength;
+	/**
+	 * 属性最大值
+	 */
+	private Integer attMax;
+	/**
+	 * 属性最小值
+	 */
+	private Integer attMin;
+	/**
+	 * 是否可见: YES/NO
+	 */
+	private Integer isshow;
+	/**
+	 * 是否逻辑主键
+	 */
+	private Integer iskey;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 显示顺序
+	 */
+	private String displayOrder;
+
+	public String getAttCode() {
+		return attCode;
+	}
+
+	public void setAttCode(String attCode) {
+		this.attCode = attCode;
+	}
+
+	public String getAttName() {
+		return attName;
+	}
+
+	public void setAttName(String attName) {
+		this.attName = attName;
+	}
+
+	public String getMmId() {
+		return mmId;
+	}
+
+	public void setMmId(String mmId) {
+		this.mmId = mmId;
+	}
+
+	public Integer getInheritFlag() {
+		return inheritFlag;
+	}
+
+	public void setInheritFlag(Integer inheritFlag) {
+		this.inheritFlag = inheritFlag;
+	}
+
+	public Integer getIsread() {
+		return isread;
+	}
+
+	public void setIsread(Integer isread) {
+		this.isread = isread;
+	}
+
+	public Integer getIsnull() {
+		return isnull;
+	}
+
+	public void setIsnull(Integer isnull) {
+		this.isnull = isnull;
+	}
+
+	public String getDatatypeId() {
+		return datatypeId;
+	}
+
+	public void setDatatypeId(String datatypeId) {
+		this.datatypeId = datatypeId;
+	}
+
+	public String getDisplayType() {
+		return displayType;
+	}
+
+	public void setDisplayType(String displayType) {
+		this.displayType = displayType;
+	}
+
+	public String getEnumId() {
+		return enumId;
+	}
+
+	public void setEnumId(String enumId) {
+		this.enumId = enumId;
+	}
+
+	public Integer getAttLength() {
+		return attLength;
+	}
+
+	public void setAttLength(Integer attLength) {
+		this.attLength = attLength;
+	}
+
+	public Integer getAttMax() {
+		return attMax;
+	}
+
+	public void setAttMax(Integer attMax) {
+		this.attMax = attMax;
+	}
+
+	public Integer getAttMin() {
+		return attMin;
+	}
+
+	public void setAttMin(Integer attMin) {
+		this.attMin = attMin;
+	}
+
+	public Integer getIsshow() {
+		return isshow;
+	}
+
+	public void setIsshow(Integer isshow) {
+		this.isshow = isshow;
+	}
+
+	public Integer getIskey() {
+		return iskey;
+	}
+
+	public void setIskey(Integer iskey) {
+		this.iskey = iskey;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getDisplayOrder() {
+		return displayOrder;
+	}
+
+	public void setDisplayOrder(String displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+
+	@Override
+	public <C> Class<C> getClazz() {
+		return (Class<C>) MmAttribute.class;
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+		StringBuffer sb = new StringBuffer();
+		if (!StringUtil.isEmpty(this.mmId)) {
+			sb.append(" and ").append(obj).append(".mmId = ? ");
+			this.paraList.add(this.mmId);
+		}
+		return sb;
+
+	}
+
+	@Override
+	public String getDefaultOrderBy(String obj) {
+		return " order by " + obj + ".displayOrder";
+	}
+
+}

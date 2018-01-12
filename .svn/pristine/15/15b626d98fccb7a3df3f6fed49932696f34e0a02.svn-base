@@ -1,0 +1,10 @@
+package com.gilight.dep.metadata.enums;
+
+public class MdAnalyseResultParam {
+	public static final Integer yes= 1; 
+	public static final Integer no= 0; 
+	public MdAnalyseResultParam() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

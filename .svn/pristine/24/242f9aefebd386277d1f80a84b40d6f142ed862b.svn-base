@@ -1,0 +1,35 @@
+{
+
+	"plugins" : [],
+	"padding" : "5 10 5 10",
+	"details" : [{
+
+				"lType" : "default",
+				"items" : [{
+							"action" : "figures_alignLeft"
+						}, {
+							"action" : "figures_alignCenterH"
+						}, {
+							"action" : "figures_alignRight"
+						}, {
+							"action" : "figures_alignTop"
+						}, {
+							"action" : "figures_alignCenterV"
+						}, {
+							"action" : "figures_alignBottom"
+						}, {
+							"action" : "canvas_enlarged"
+						}, {
+							"action" : "canvas_reduce"
+						}, {
+							"action" : "canvas_reversion"
+						}, {
+							"action" : "canvas_defaultlayout"
+						}, {
+							"action" : "layer_toTop"
+						}, {
+							"action" : "layer_toUp"
+						}]
+
+			}]
+}

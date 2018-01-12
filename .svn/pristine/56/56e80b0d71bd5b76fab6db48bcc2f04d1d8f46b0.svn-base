@@ -1,0 +1,91 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+/**
+ * 
+* @ClassName: MmEnumValue 
+* <p>TODO<br>
+* @author hww
+* @date 2015年7月7日 下午3:52:37
+* @version V1.0
+* @since JDK 1.7
+ */
+public class MmEnumValue extends BaseMetaDataEntity {
+
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+	/**
+	 * ID
+	 */
+	private String id;
+	/**
+	 * 枚举id
+	 */
+	private String enumId;
+	/**
+	 * 枚举的键
+	 */
+	private String enumKey;
+	/**
+	 * 枚举的值
+	 */
+	private String enumValue;
+
+
+	public MmEnumValue() {
+	}
+
+	public MmEnumValue(String id) {
+		this.id = id;
+	}
+
+	public MmEnumValue(String id, String enumId, String enumKey,
+			String enumValue) {
+		this.id = id;
+		this.enumId = enumId;
+		this.enumKey = enumKey;
+		this.enumValue = enumValue;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getEnumId() {
+		return this.enumId;
+	}
+
+	public void setEnumId(String enumId) {
+		this.enumId = enumId;
+	}
+
+	public String getEnumKey() {
+		return this.enumKey;
+	}
+
+	public void setEnumKey(String enumKey) {
+		this.enumKey = enumKey;
+	}
+
+	public String getEnumValue() {
+		return this.enumValue;
+	}
+
+	public void setEnumValue(String enumValue) {
+		this.enumValue = enumValue;
+	}
+
+	@Override
+	public String toString() {
+		return "MmEnumValue [id=" + id + ", enumId=" + enumId + ", enumKey="
+				+ enumKey + ", enumValue=" + enumValue + "]";
+	}
+
+}

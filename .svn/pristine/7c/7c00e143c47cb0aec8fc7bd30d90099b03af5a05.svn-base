@@ -1,0 +1,66 @@
+package com.gilight.dep.metamodel.model;
+
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.entity.MmAttribute;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.util.AutoCopyList;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+@Component
+@Scope("prototype")
+public class MmMetaModelModel extends MmDepBaseModel {
+    private MmMetamodel mmMetamodel;
+    private List<MmAttribute> mmAttributeList;
+
+    public MmMetamodel getMmMetamodel() {
+        return mmMetamodel;
+    }
+
+    public void setMmMetamodel(MmMetamodel mmMetamodel) {
+        this.mmMetamodel = mmMetamodel;
+    }
+
+    public List<MmAttribute> getMmAttributeList() {
+        return mmAttributeList;
+    }
+
+    public void setMmAttributeList(List<MmAttribute> mmAttributeList) {
+        this.mmAttributeList = mmAttributeList;
+    }
+
+    public MmMetamodel queryMmMetamodel(){
+        try {
+            mmMetamodel= (MmMetamodel) this.metaModelBasicRepository.getById(mmMetamodel.getId());
+
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+
+        return mmMetamodel;
+    }
+    public MmMetamodel queryMmMetamodelById(){
+        try {
+            mmMetamodel= (MmMetamodel) this.metaModelBasicRepository.getById(mmMetamodel.getId());
+            List<IEntity> atts=this.metaModelBasicRepository.findAttribByMmid(mmMetamodel.getId());
+            List<MmAttribute> attList=AutoCopyList.getObjList(atts,MmAttribute.class);
+            mmMetamodel.setAttList(attList);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+
+        return mmMetamodel;
+    }
+
+}

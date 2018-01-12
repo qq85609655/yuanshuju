@@ -1,0 +1,32 @@
+package com.gilight.dep.metadata.model;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.message.producer.IMessageProducer;
+import com.gilight.dep.framework.core.model.IBasicModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.core.model.impl.BaseBasicModel;
+import com.gilight.dep.metadata.message.procuder.MetaDataBaseMessageProducer;
+import com.gilight.dep.metadata.message.procuder.MetaDataGatherDBSProducer;
+import com.jdon.domain.dci.RoleAssigner;
+
+public class MetaDataGatherDBSModel extends BaseBasicModel<String>  {
+
+	@Override
+	public String getModelName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class getMessageProcuderClass() {
+		// TODO Auto-generated method stub
+		return MetaDataGatherDBSProducer.class;
+	}
+
+
+
+
+}

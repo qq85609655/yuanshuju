@@ -1,0 +1,107 @@
+/**   
+ * @Title: ExcelGatherServiceImpl.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月28日 下午8:39:28
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.gather.excel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.enmu.MetaDataGatherAdaptor;
+import com.gilight.dep.metadata.entity.MdAttributeImp;
+import com.gilight.dep.metadata.entity.MdGatherLog;
+import com.gilight.dep.metadata.entity.MdMetadataImp;
+import com.gilight.dep.metadata.enums.GatherDataBase;
+import com.gilight.dep.metadata.gather.common.IBuildMetadataService;
+import com.gilight.dep.metadata.gather.common.IGatherJobTaskModel;
+import com.gilight.dep.metadata.repository.IGatherAdaptorRepository;
+import com.gilight.dep.metadata.util.CustomizedPropertySpringConfigurer;
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+/***
+ * 
+ * @ClassName: ExcelGatherServiceImpl
+ *             <p>
+ *             excel采集服务 TODO<br>
+ * @author zps
+ * @date 2015年7月28日 下午8:48:25
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class ExcelGatherServiceImpl implements IBuildMetadataService {
+	@Autowired
+	IGatherAdaptorRepository gatherAdaptorRepository;
+	private static MetaDataGatherAdaptor adaptorInfo = MetaDataGatherAdaptor.EXCEL_TYPE;
+	
+	@Override
+	public void buildMetadatas(IGatherJobTaskModel jobTaskModel)
+			throws ServiceException {
+		try {
+
+			((ExcelGatherJobTaskModel) jobTaskModel).setGatherAdaptorRepository(gatherAdaptorRepository);
+			
+			MdGatherLog logentity = new MdGatherLog();
+			logentity.setId(UUID.randomUUID().toString());
+			logentity.setStartDate(MetaDateUtils.getDefaultUpdateDate());
+
+			ExcelMetaDataParse edp = new ExcelMetaDataParse();
+			String path=(String) CustomizedPropertySpringConfigurer.getContextProperty("file.uploadpath");
+			String file=path+jobTaskModel.getJobId()+".xlsx";
+			
+			edp.setExcelFile(file);
+			
+			List<List> listdata=edp.getExcel(edp.getExcelFile());
+			((ExcelGatherJobTaskModel) jobTaskModel).saveData(listdata,logentity);
+			
+			//jobTaskModel.excute();
+			//jobTaskModel.excute();
+		} catch (ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ServiceException("采集失败");
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			
+			e.printStackTrace();
+			throw new ServiceException("采集失败");
+		}
+	}
+	
+	/** 
+	 * <p><br>
+	 * @param args  
+	 * @author wzx
+	 * @date 2015年8月3日 下午5:11:34
+	 * @version V1.0  
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		ApplicationContext factory = new ClassPathXmlApplicationContext("spring-dispather.xml");
+		ExcelGatherServiceImpl off=(ExcelGatherServiceImpl) factory.getBean("excelGatherService");
+		ExcelGatherJobTaskModel jobmodel = new ExcelGatherJobTaskModel();
+		//jobmodel.setGatherAdaptorRepository(gatherAdaptorRepository);
+		//jobmodel.excute();
+		try {
+			off.buildMetadatas(jobmodel);
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(off);
+	}
+}

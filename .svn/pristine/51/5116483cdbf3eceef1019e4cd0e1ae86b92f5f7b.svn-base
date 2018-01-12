@@ -1,0 +1,665 @@
+package com.gilight.dep.metadata.service.impl;
+
+import com.csvreader.CsvWriter;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.IParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.ResultCode;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.response.view.PageView;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.ext.model.IDepBasicModel;
+import com.gilight.dep.framework.core.ext.service.DepBaseServiceImpl;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.metadata.entity.*;
+import com.gilight.dep.metadata.gather.common.IGatherAdaptorService;
+import com.gilight.dep.metadata.gather.common.IGatherJobTaskModel;
+import com.gilight.dep.metadata.model.MetaDataGatherJobModel;
+import com.gilight.dep.metadata.repository.IGatherJobRepository;
+import com.gilight.dep.metadata.repository.IMetaDataBaseRepository;
+import com.gilight.dep.metadata.repository.IMetaModelBasicRepository;
+import com.gilight.dep.metadata.repository.IMetaModelCompRepository;
+import com.gilight.dep.metadata.scope.GatherLogScope;
+import com.gilight.dep.metadata.service.IGatherExcuteService;
+import com.gilight.dep.metadata.service.IGatherJobService;
+import com.gilight.dep.metadata.util.CustomizedPropertySpringConfigurer;
+import com.gilight.dep.metadata.util.ListUtil;
+import com.gilight.dep.metadata.view.*;
+import com.gilight.dep.metamodel.model.MmMetaModelModel;
+import com.gilight.dep.metamodel.service.IMetaModelQueryService;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public class GatherJobServiceImpl extends DepBaseServiceImpl implements
+		IGatherJobService {
+	@Autowired
+	private MmMetaModelModel mmMetaModelModel;
+	@Autowired
+	IGatherAdaptorService adaptorService;
+
+	private IMetaDataBaseRepository metaDataBaseRepository ;
+
+	private IMetaModelQueryService metaModelQueryService  ;
+
+	private IMetaModelCompRepository metaModelCompRepository;
+
+
+	private IMetaModelBasicRepository metaModelBasicRepository;
+	private IGatherExcuteService gatherExcuteService;
+
+	public IGatherExcuteService getGatherExcuteService() {
+		return gatherExcuteService;
+	}
+
+	public void setGatherExcuteService(IGatherExcuteService gatherExcuteService) {
+		this.gatherExcuteService = gatherExcuteService;
+	}
+
+	public IMetaDataBaseRepository getMetaDataBaseRepository() {
+		return metaDataBaseRepository;
+	}
+
+	public void setMetaDataBaseRepository(IMetaDataBaseRepository metaDataBaseRepository) {
+		this.metaDataBaseRepository = metaDataBaseRepository;
+	}
+
+	public IMetaModelQueryService getMetaModelQueryService() {
+		return metaModelQueryService;
+	}
+
+	public void setMetaModelQueryService(IMetaModelQueryService metaModelQueryService) {
+		this.metaModelQueryService = metaModelQueryService;
+	}
+
+	public IMetaModelCompRepository getMetaModelCompRepository() {
+		return metaModelCompRepository;
+	}
+
+	public void setMetaModelCompRepository(IMetaModelCompRepository metaModelCompRepository) {
+		this.metaModelCompRepository = metaModelCompRepository;
+	}
+
+	public IMetaModelBasicRepository getMetaModelBasicRepository() {
+		return metaModelBasicRepository;
+	}
+
+	public void setMetaModelBasicRepository(IMetaModelBasicRepository metaModelBasicRepository) {
+		this.metaModelBasicRepository = metaModelBasicRepository;
+	}
+
+	private static final Logger logger = Logger
+			.getLogger(GatherJobServiceImpl.class);
+
+	private static String defaultPath = "gather/excel/";
+
+	public static String getDefaultPath() {
+		return defaultPath;
+	}
+
+	public static void setDefaultPath(String defaultPath) {
+		GatherJobServiceImpl.defaultPath = defaultPath;
+	}
+
+	public IGatherJobRepository getJobRepository() {
+		return (IGatherJobRepository) this.getRepository();
+	}
+
+	@Override
+	protected IResult getByScopeAfter(IContext context, IResult result)
+			throws ServiceException {
+		try {
+			List<IEntity> list = (List<IEntity>) result.getResult();
+			List<GatherJobBasicView> viewList = new ArrayList<GatherJobBasicView>();
+			if (list != null) {
+				for (IEntity entity : list) {
+					MdGatherJob job = (MdGatherJob) entity;
+					GatherJobBasicView viewJob = (GatherJobBasicView) SpringBeansUtils
+							.copyProperties(GatherJobBasicView.class, job);
+					viewList.add(viewJob);
+				}
+			}
+			return createSuccessModelAndView("查询任务成功!", viewList);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+			throw new ServiceException("查询采集作业错误!");
+		}
+	}
+	@Override
+	protected IResult createAfter(IContext context, IResult result)
+			throws ServiceException {
+
+		return createSuccessModelAndView("新增采集作业成功!", result);
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext context, IResult result)
+			throws ServiceException {
+		return createSuccessModelAndView("删除采集作业成功!", null);
+	}
+
+	@Override
+	protected IResult getByIdAfter(IContext context, IResult result)
+			throws ServiceException {
+		try {
+			MdGatherJob job = (MdGatherJob) result.getResult();
+			GatherJobBasicView viewJob = (GatherJobBasicView) SpringBeansUtils
+					.copyProperties(GatherJobBasicView.class, job);
+			return ResultFactory.getInstance().createSuccessResult(viewJob);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+			throw new ServiceException("查询采集作业错误!");
+		}
+
+	}
+
+	@Override
+	protected Class getDefaultModelClass() throws ServiceException {
+		return MetaDataGatherJobModel.class;
+	}
+
+	@Override
+	protected void initModel(IContext context, IModel model)
+			throws ServiceException {
+		try {
+			IEntity data = (IEntity) SpringBeansUtils.copyProperties(
+					MdGatherJob.class, this.getViewParameter(context));
+			if (model instanceof IDepBasicModel) {
+				((IDepBasicModel) model).setData(data);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			throw new ServiceException("初始化模型失败!");
+		}
+
+	}
+
+	@Override
+	protected IResult updateAfter(IContext context, IResult result)
+			throws ServiceException {
+		return createSuccessModelAndView("修改采集作业成功!", null);
+	}
+
+	@Override
+	public IResponse excute(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			String id = this.getIDParameter(context);
+			MdGatherJob job = this.getJobRepository().getJob(id);
+
+			String dbsid = job.getDatasource();
+			MdGatherDatasource mddbs = this.getJobRepository().getDbs(dbsid);
+			String adaptername = mddbs.getAdapter();
+			IGatherJobTaskModel jobmedol = adaptorService
+					.getGatherJobTaskModelByAdaptor(adaptername);
+			jobmedol.setJobId(id);
+			jobmedol.excute();
+			context.getResponse().setResult(
+					createSuccessModelAndView("采集数据成功!", null));
+			return context.getResponse();
+		} catch (Exception e) {
+			logger.error("采集任务执行失败!", e);
+			e.printStackTrace();
+			throw new ServiceException("采集任务执行失败!", e);
+		}
+	}
+
+	@Override
+	public IResponse getJobExcuteDetail(IContext context)
+			throws ServiceException {
+		try {
+			String id = this.getIDParameter(context);
+			GatherLogScope scope = new GatherLogScope();
+			scope.setJobId(id);
+			IContext nextContext = this.getContextWithParams(context, scope);
+			nextContext.getResponse().regiestResultHandler(
+					new IResultHandler() {
+						@Override
+						public IResult handle(IContext context, IResult result)
+								throws Exception {
+							// 如果消息层返回的结构是异常，或者没有结果集，则直接返回给上一层，不在回调处理；
+							if (result != null
+									&& result.getResultCode() == ResultCode.RESULT_CODE_FAILED) {
+								return result;
+							}
+							List logs = (List) result.getResult();// MdGatherLog
+							List<GatherLogBasicView> viewLogs = SpringBeansUtils
+									.copyPropertiesForList(
+											GatherLogBasicView.class, logs,
+											null);
+							return createSuccessModelAndView("获取采集执行情况成功!",
+									viewLogs);
+						}
+					});
+			this.getJobRepository().getByScope(nextContext);
+			return nextContext.getResponse();
+		} catch (RepositoryException e) {
+			logger.error("查询采集作业执行情况失败!", e);
+			throw new ServiceException("查询采集作业执行情况失败!", e);
+		} catch (GilightException e) {
+			logger.error("查询采集作业执行情况失败!", e);
+			throw new ServiceException("查询采集作业执行情况失败!", e);
+		} catch (Exception e) {
+			logger.error("查询采集作业执行情况失败!", e);
+			throw new ServiceException("查询采集作业执行情况失败!", e);
+		}
+	}
+
+	@Override
+	public IResponse getJobGatherMetaData(IContext context)
+			throws ServiceException {
+		try {
+			IContext nextContext = this.getContextWithParams(context,
+					(IParameters) context.getParameters());
+			return getAuditingGatherMetaData(nextContext);
+		} catch (GilightException e) {
+			logger.error("获取采集数据失败!", e);
+			throw new ServiceException("获取采集数据失败!", e);
+		}
+	}
+
+	@Override
+	public IResponse getJobGatherSubMetaData(IContext context)
+			throws ServiceException {
+		try {
+			IContext nextContext = this.getContextWithParams(context,
+					(IParameters) context.getParameters());
+			nextContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					// 如果消息层返回的结构是异常，或者没有结果集，则直接返回给上一层，不在回调处理；
+					if (result != null
+							&& result.getResultCode() == ResultCode.RESULT_CODE_FAILED) {
+						return result;
+					}
+					//ResultImpl mdImpViews = (ResultImpl) result.getResult();// MdMetadataImp
+					
+					List<IEntity> mdImpList = (List)result.getResult();
+					
+					
+					List<MetaDataBasicView> viewlist = SpringBeansUtils
+							.copyPropertiesForList(MetaDataBasicView.class,
+									mdImpList, null);
+					//mdImpViews.setPageData(viewLogs);
+					return createSuccessModelAndView("获取子元数据成功!", viewlist);
+				}
+			});
+			
+			this.getJobRepository().getJobGatherSubMetaData(nextContext);
+			return nextContext.getResponse();
+		} catch (GilightException e) {
+			logger.error("获取采集数据失败!", e);
+			throw new ServiceException("获取采集数据失败!", e);
+		}
+	}
+	
+	@Override
+	public IResponse getAuditingGatherMetaData(IContext context)
+			throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					// 如果消息层返回的结构是异常，或者没有结果集，则直接返回给上一层，不在回调处理；
+					if (result != null
+							&& result.getResultCode() == ResultCode.RESULT_CODE_FAILED) {
+						return result;
+					}
+					PageView mdImpViews = (PageView) result.getResult();// MdMetadataImp
+					List mdImp = (List) mdImpViews.getPageData();
+					List<MetaDataBasicView> viewLogs = SpringBeansUtils
+							.copyPropertiesForList(MetaDataBasicView.class,
+									mdImp, null);
+					mdImpViews.setPageData(viewLogs);
+					return createSuccessModelAndView("获取采集数据成功!", mdImpViews);
+				}
+			});
+			this.getJobRepository().getPageViewByScope(context);
+			return context.getResponse();
+		} catch (RepositoryException e) {
+			logger.error("获取采集数据失败!", e);
+			throw new ServiceException("获取采集数据失败!", e);
+		}
+	}
+
+	@Override
+	public IResponse approveAgree(IContext context) throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					// 如果消息层返回的结构是异常，或者没有结果集，则直接返回给上一层，不在回调处理；
+					if (result != null
+							&& result.getResultCode() == ResultCode.RESULT_CODE_FAILED) {
+						return result;
+					}
+					return createSuccessModelAndView("审批成功!", null);
+				}
+			});
+			this.getJobRepository().approveAgree(context);
+			return context.getResponse();
+		} catch (RepositoryException e) {
+			logger.error("审批采集数据失败!", e);
+			throw new ServiceException("审批采集数据失败!", e);
+		}
+	}
+
+	@Override
+	public IResponse approveReject(IContext context) throws ServiceException {
+		try {
+			/*
+			 * GatherJobFileView view = (GatherJobFileView) this
+			 * .getViewParameter(context);
+			 * ContextFactoryImpl.getInstance().create
+			 */
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					// 如果消息层返回的结构是异常，或者没有结果集，则直接返回给上一层，不在回调处理；
+					if (result != null
+							&& result.getResultCode() == ResultCode.RESULT_CODE_FAILED) {
+						return result;
+					}
+					return createSuccessModelAndView("审批成功!", null);
+				}
+			});
+			this.getJobRepository().approveReject(context);
+			return context.getResponse();
+		} catch (RepositoryException e) {
+			logger.error("审批采集数据失败!", e);
+			throw new ServiceException("审批采集数据失败!", e);
+		}
+
+	}
+
+	
+	
+	@Override
+	public IResponse upLoad(IContext context) throws ServiceException {
+		try {
+			GatherJobFileView view = (GatherJobFileView) this
+					.getViewParameter(context);
+			MultipartFile file = view.getFile();
+			String jdFilePath = null;
+			System.out.println("upLoad()===================================="
+					+ view.getJobId() + file.getOriginalFilename());
+			String suffix = file.getOriginalFilename().substring(
+					file.getOriginalFilename().lastIndexOf("."));
+			// 判断文件是否存在
+			if (!file.isEmpty()) {
+				String savepath = (String) CustomizedPropertySpringConfigurer
+						.getContextProperty("file.uploadpath");
+				if (savepath == null || "".equals(savepath.trim())) {
+					savepath = defaultPath;
+				}
+				/*
+				 * jdFilePath = GatherJobServiceImpl.class.getResource("/")
+				 * .getFile() + savepath;
+				 */
+				jdFilePath = savepath;
+				String newFileName = jdFilePath + view.getJobId() + suffix;
+				createAndWrite(jdFilePath, newFileName, file); // 创建新文件
+				context.getResponse().setResult(
+						ResultFactory.getInstance().createSuccessModelAndView(
+								"上传成功", null));
+				return context.getResponse();
+			} else {
+				throw new ServiceException("导入采集文件失败!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("导入采集文件失败!", e);
+			throw new ServiceException("导入采集文件失败!", e);
+		}
+	}
+	@Override
+	/**
+	 * 根据元模型生成并下载csv导入模板
+	 * @param mmId
+	 * @return
+	 */
+	public String downLoadMmModelCsv(String mmId){
+		String savepath = (String) CustomizedPropertySpringConfigurer
+				.getContextProperty("file.uploadpath");
+		if (savepath == null || "".equals(savepath.trim())) {
+			savepath = defaultPath;
+		}
+
+		String newFileName = savepath + mmId + ".csv";
+		String[] names=this.getMmDetails(mmId);
+		this.createCsv(names,newFileName);
+		return newFileName;
+	}
+
+	/**
+	 * 获取元模型信息
+	 * @param mmId
+	 * @return
+	 */
+	private String[] getMmDetails(String mmId){
+		Set<String> nameSet= new LinkedHashSet<String>();
+		nameSet.add("name");
+		nameSet.add("remark");
+
+		MmMetamodel mmMetamodel = new MmMetamodel();
+		mmMetamodel.setId(mmId);
+		mmMetaModelModel.setMmMetamodel(mmMetamodel);
+		mmMetamodel=mmMetaModelModel.queryMmMetamodelById();
+		List<MmAttribute> attributeList =mmMetamodel.getAttList();
+		if (ListUtil.isNotEmpty(attributeList)){
+			for (MmAttribute mmAttribute : attributeList) {
+				nameSet.add(mmAttribute.getAttCode());
+			}
+		}
+		String[] names=nameSet.toArray(new  String [nameSet.size()]);
+
+		return names;
+
+
+	}
+
+	/**
+	 * 创建csv文件
+	 * @param names 列名
+	 * @param pathname 路径+文件名
+	 * @return
+	 */
+	private String createCsv(String[] names,String pathname){
+		try {
+			File file = new File(pathname);
+			Writer writer = new FileWriter(file);
+			CsvWriter csvWriter = new CsvWriter(writer, ',');
+			csvWriter.writeRecord(names);
+			csvWriter.close();
+		} catch (IOException e) {
+			logger.error("生成模板文件失败",e);
+			e.printStackTrace();
+		}
+		return pathname;
+	}
+	@Override
+	/**
+	 * 上传并导入csv
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 */
+	public IResponse upLoadImpCsv(IContext context) throws ServiceException {
+		try {
+			GatherJobFileView view = (GatherJobFileView) this
+					.getViewParameter(context);
+			MultipartFile file = view.getFile();
+			String jdFilePath = null;
+			System.out.println("upLoad()===================================="
+					+ view.getJobId() + file.getOriginalFilename());
+			String suffix = file.getOriginalFilename().substring(
+					file.getOriginalFilename().lastIndexOf("."));
+			// 判断文件是否存在
+			if (!file.isEmpty()) {
+				String savepath = (String) CustomizedPropertySpringConfigurer
+						.getContextProperty("file.uploadpath");
+				if (savepath == null || "".equals(savepath.trim())) {
+					savepath = defaultPath;
+				}
+				/*
+				 * jdFilePath = GatherJobServiceImpl.class.getResource("/")
+				 * .getFile() + savepath;
+				 */
+				jdFilePath = savepath;
+				String newFileName = jdFilePath + view.getJobId() + suffix;
+				createAndWrite(jdFilePath, newFileName, file); // 创建新文件
+
+				System.out.println(jdFilePath);
+				System.out.println(newFileName);
+
+				//查询关系元模型
+				String mdid=view.getMdId();
+				String toMmId=view.getMmId();
+				MdMetadata mdMetadata = this.getMetaDataBaseRepository().getById(mdid);
+				if(mdMetadata!=null){
+					String formMmId=mdMetadata.getMmId();
+					MmComposition mmComposition = new MmComposition();
+					mmComposition.setUpdateDate(null);
+					mmComposition.setFromMmId(formMmId);
+					mmComposition.setToMmId(toMmId);
+					List<IEntity> list=this.getMetaDataBaseRepository().findByEntity(mmComposition);
+
+					if (list==null||list.size()!=1){
+						logger.error("查找关系元模型错误");
+						throw new ServiceException("查找关系元模型错误");
+					}
+
+					mmComposition = (MmComposition) list.get(0);
+
+					String compId=mmComposition.getId();
+					this.getGatherExcuteService().getherCsv(mdid,compId,newFileName);
+
+
+				}
+
+				context.getResponse().setResult(
+						ResultFactory.getInstance().createSuccessModelAndView(
+								"上传成功", null));
+				return context.getResponse();
+			} else {
+				throw new ServiceException("导入采集文件失败!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("导入采集文件失败!", e);
+			throw new ServiceException("导入采集文件失败!", e);
+		}
+	}
+
+	private void createAndWrite(String jdFilePath, String newFileName,
+			MultipartFile file) throws ServiceException {
+		try {
+			File logoSaveFile = new File(jdFilePath);
+			if (!logoSaveFile.exists()) {
+				logoSaveFile.mkdirs();
+			}
+			File saveFile = new File(newFileName);
+			file.transferTo(saveFile);
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+			logger.error("导入采集文件失败!", e);
+			throw new ServiceException("导入采集文件失败!", e);
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.error("导入采集文件失败!", e);
+			throw new ServiceException("导入采集文件失败!", e);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("导入采集文件失败!", e);
+			throw new ServiceException("导入采集文件失败!", e);
+		}
+		// try {
+		// File logoSaveFile = new File(newFileName);
+		// if (!logoSaveFile.exists()) {
+		// logoSaveFile.mkdirs();
+		// }
+		// byte[] data = null;
+		// data = file.getBytes();
+		// DataOutputStream out = new DataOutputStream(new FileOutputStream(
+		// newFileName));
+		// IOUtils.write(data, out);
+		// } catch (FileNotFoundException e) {
+		// logger.error("导入采集文件失败!", e);
+		// throw new ServiceException("导入采集文件失败!", e);
+		// } catch (IOException e) {
+		// logger.error("导入采集文件失败!", e);
+		// throw new ServiceException("导入采集文件失败!", e);
+		// } catch (Exception e) {
+		// logger.error("导入采集文件失败!", e);
+		// throw new ServiceException("导入采集文件失败!", e);
+		// }
+	}
+
+	public static void main(String[] args) {
+		// 当前类的绝对路径
+		System.out.println(GatherJobServiceImpl.class.getResource("/")
+				.getFile());
+		// 指定CLASSPATH文件的绝对路径
+		System.out.println(GatherJobServiceImpl.class
+				.getResource(GatherJobServiceImpl.defaultPath));
+		// 指定CLASSPATH文件的绝对路径
+		// File f = new
+		// File(GatherJobServiceImpl.class.getResource(cp).getFile());
+		// System.out.println(f.getPath());
+	}
+
+	@Override
+	public IResponse getGatherMetaDataById(IContext context)
+			throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					// 如果消息层返回的结构是异常，或者没有结果集，则直接返回给上一层，不在回调处理；
+					if (result != null
+							&& result.getResultCode() == ResultCode.RESULT_CODE_FAILED) {
+						return result;
+					}
+					MdMetadataImp md = (MdMetadataImp) result.getResult();// MdMetadataImp
+					MetaDataBaseView baseView= (MetaDataBaseView) SpringBeansUtils.copyProperties(MetaDataBaseView.class,md);
+					List atts = (List) md.getAttList();
+					List<MetaDataAttView> attVs = SpringBeansUtils
+							.copyPropertiesForList(MetaDataAttView.class,
+									atts, null);
+					baseView.setAttList(attVs);
+					return createSuccessModelAndView("获取采集数据成功!", baseView);
+				}
+			});
+			this.getJobRepository().getGatherMetaDataById(context);
+			return context.getResponse();
+		} catch (RepositoryException e) {
+			logger.error("获取采集数据失败!", e);
+			throw new ServiceException("获取采集数据失败!", e);
+		}
+	
+	}
+}

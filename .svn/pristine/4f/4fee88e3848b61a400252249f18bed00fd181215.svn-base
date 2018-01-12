@@ -1,0 +1,98 @@
+package com.gilight.dep.metadata.util;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.IViewParameters;
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.framework.core.exception.param.ParameterInvalidException;
+import com.gilight.dep.framework.core.model.entity.BaseViewEntity;
+import com.gilight.dep.framework.core.model.entity.IDEntity;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+
+public class AutoCopyObj {
+
+	public AutoCopyObj() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+	
+	/**
+	 * copy对象
+	* <p><br>
+	* @param type
+	* @param e
+	* @return
+	* @throws Exception  
+	* @author wzx
+	* @date 2015年7月20日 下午6:48:07
+	* @version V1.0
+	 */
+	public static <T extends IView> T objCopy(Class<T> type,IEntity e) throws Exception{	
+		return (T) SpringBeansUtils.copyProperties(type, e);
+	}
+	
+	public static <T extends IEntity> T objCopy(Class<T> type,IView e) throws Exception{	
+		return (T) SpringBeansUtils.copyProperties(type, e);
+	}
+	
+	
+	/**
+	 * 
+	* <p>拷贝实体到视图<br>
+	* @param context
+	* @return
+	* @throws Exception  
+	* @author wzx
+	* @date 2015年7月20日 下午6:26:34
+	* @version V1.0
+	 */
+	public static IDEntity<String> createViewEntityFromContext(IContext context)
+			throws Exception {
+		IContext<IViewParameters> cxt = context;
+		IViewParameters param = cxt.getParameters();
+		if (param == null) {
+			throw new ParameterInvalidException("参数传递错误，没有传递view对象。");
+		}
+		return (IDEntity<String>) SpringBeansUtils.copyProperties(
+				BaseViewEntity.class, param);
+
+	}
+	
+	/**
+	 * 
+	 * <p>
+	 * 获取上下文参数中的view参数<br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 * @author YHY
+	 * @date 2015年7月8日 下午5:09:26
+	 * @version V1.0
+	 */
+	public static IView getViewParam(IContext context) throws Exception {
+		IContext<IViewParameters> cxt = context;
+		IViewParameters param = cxt.getParameters();
+		if (param == null) {
+			throw new ParameterInvalidException("参数传递错误，没有传递view对象。");
+		}
+		return param.getView();
+	}
+
+	public static IContext setViewParam(IContext context,IView view) throws Exception {
+		IContext<IViewParameters> cxt = context;
+		IViewParameters param = cxt.getParameters();
+		if (param == null) {
+			throw new ParameterInvalidException("参数传递错误，没有传递view对象。");
+		}
+		param.setView(view);
+		cxt.setParameters(param);
+		return cxt;
+	}
+	
+}

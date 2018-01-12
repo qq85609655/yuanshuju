@@ -1,0 +1,343 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.IBasicModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.metadata.dao.IMetaDataVersionDao;
+import com.gilight.dep.metadata.enmu.MetaModelYesOrNo;
+import com.gilight.dep.metadata.entity.MdAttribute;
+import com.gilight.dep.metadata.entity.MdAttributeArchive;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdMetadataArchive;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.enums.MetaDataStatus;
+import com.gilight.dep.metadata.repository.IMetaDataVersionRepository;
+import com.gilight.dep.metadata.scope.MetaHbiernateScope;
+import com.gilight.dep.metadata.view.MetaDataBizFlowView;
+
+public class MetaDataVersionRepositoryImpl extends MetaDataRepositoryImpl
+		implements IMetaDataVersionRepository {
+
+	private IMetaDataVersionDao metaDataVersionDao;
+
+	public IMetaDataVersionDao getMetaDataVersionDao() {
+		return metaDataVersionDao;
+	}
+
+	public void setMetaDataVersionDao(IMetaDataVersionDao metaDataVersionDao) {
+		this.metaDataVersionDao = metaDataVersionDao;
+	}
+
+	public MetaDataVersionRepositoryImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public IResponse create(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataVersionDao.save(model.getData()/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("创建元模型失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataVersionDao.update(model.getData()/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元模型失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataVersionDao.delete(model.getData()/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元模型失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IDParameters idp = (IDParameters) paramIContext.getParameters();
+			String id = idp.getId();
+			MdMetadataArchive mme = (MdMetadataArchive) metaDataVersionDao
+					.findById(id, MdMetadataArchive.class);
+			List attList = this.getArchiveAttr(id);
+			mme.setAttList(attList);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mme));
+
+		} catch (DaoException e) {
+			e.printStackTrace();
+			new RepositoryException("查询元模型失败!-dao");
+		}
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			BaseHbiernateScope scope = (BaseHbiernateScope) paramIContext
+					.getParameters();
+			List<IEntity> mmelist = metaDataVersionDao.findByScope(scope);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmelist));
+		} catch (DaoException e) {
+			e.printStackTrace();
+			new RepositoryException("查询元数据失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse approveReject(IContext context) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+
+			MetaDataBizFlowView view = (MetaDataBizFlowView) context
+					.getParameter(ParameterKeys.ATT_VIEW);
+			List<String> ids = new ArrayList();
+			String mdid=view.getMdId();
+			
+			MdMetadataArchive mma=(MdMetadataArchive) metaDataVersionDao.findById(mdid, MdMetadataArchive.class);
+			mma.setStatus(MetaDataStatus.approveReject);
+			metaDataVersionDao.update(mma);
+			/*ids.add(view.getMdId());
+			String allid = compIds(ids);
+			if (allid == null || allid.equals("")) {
+				context.getResponse().setResult(
+						ResultFactory.getInstance().createSuccessResult(null));
+				return context.getResponse();
+			}
+			String sql = "UPDATE md_metadata_archive SET STATUS = "
+					+ MetaDataStatus.approveReject + "  WHERE id IN (" + allid
+					+ ")";
+			metaDataVersionDao.executeSql(sql);*/
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元数据状态失败!-dao");
+		}
+
+		return context.getResponse();
+	}
+
+	private String compIds(List<String> ids) {
+		String compid = "";
+		if (ids == null) {
+			return "";
+		}
+		for (String id : ids) {
+			compid = compid + "'" + id + "',";
+		}
+		compid = compid.substring(0, compid.length() - 1);
+		return compid;
+	}
+
+	@Override
+	public IResponse approveAgree(IContext context) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			MetaDataBizFlowView view = (MetaDataBizFlowView) context
+					.getParameter(ParameterKeys.ATT_VIEW);
+			
+			String mdid=view.getMdId();
+			
+			MdMetadataArchive mma=(MdMetadataArchive) metaDataVersionDao.findById(mdid, MdMetadataArchive.class);
+			if(mma==null){
+				new RepositoryException("更新元数据状态失败!-dao");
+			}
+			mma.setStatus(MetaDataStatus.approveAgree);
+			metaDataVersionDao.update(mma);
+			/*
+			List<String> ids = new ArrayList();
+			ids.add(view.getMdId());
+			String allid = compIds(ids);
+			String sql = "UPDATE md_metadata_archive SET STATUS = "
+					+ MetaDataStatus.approveAgree + "  WHERE id IN (" + allid
+					+ ")";
+			metaDataVersionDao.executeSql(sql);*/
+			// 归档
+			approveArchive(mdid);
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+		} catch (DaoException e) {
+			e.printStackTrace();
+			new RepositoryException("更新元数据状态失败!-dao");
+		}
+
+		return context.getResponse();
+	}
+
+	private void approveArchive(String mdid) throws RepositoryException {
+		try {
+			if (mdid == null ) {
+				return;
+			}
+			
+			MdMetadataArchive mdarc = (MdMetadataArchive) metaDataVersionDao.findById(mdid, MdMetadataArchive.class);
+			if (mdarc == null) {
+				return;
+			}
+			
+				
+			mdarc.setIsuse(MetaModelYesOrNo.YES);
+			
+			MdMetadataArchive ma= new MdMetadataArchive();
+			ma.setMdCode(mdarc.getMdCode());
+			ma.setUpdateDate(null);
+			List<IEntity> list=metaDataVersionDao.findByEntity(ma);
+			for (IEntity iEntity : list) {
+				MdMetadataArchive mma = (MdMetadataArchive) iEntity;
+				mma.setIsuse(MetaModelYesOrNo.NO);
+				metaDataVersionDao.update(mma);
+			}	
+			metaDataVersionDao.save(mdarc);
+			/*for (String id : ids) {
+				List<IEntity> mdlist = metaDataVersionDao.findByProperty("id",
+						id, MdMetadataArchive.class);
+				if (mdlist == null) {
+					continue;
+				}
+				for (IEntity iEntity : mdlist) {
+					// 产生新的md对象
+					MdMetadataArchive mdarc = (MdMetadataArchive) iEntity;
+					mdarc.setIsuse(MetaModelYesOrNo.YES);
+					String sql = "UPDATE MD_METADATA_ARCHIVE SET ISUSE = "
+							+ MetaModelYesOrNo.NO + "  WHERE MD_CODE ='"
+							+ mdarc.getMdCode()+"'";
+					metaDataVersionDao.executeSql(sql);
+
+					// // 归档属性
+					// approveAttrArchive(md.getId(), mdarc.getId());
+
+					// 保存对象
+					metaDataVersionDao.save(mdarc);
+				}
+
+			}*/
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("归档元数据失败");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("归档元数据失败");
+		}
+	}
+
+	/**
+	 * 归档元数据属性
+	 * <p>
+	 * <br>
+	 * 
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月24日 上午10:23:32
+	 * @version V1.0
+	 */
+	private void approveAttrArchive(String mdid, String newmdid)
+			throws RepositoryException {
+		try {
+			List<IEntity> mdlist = metaDataVersionDao.findByProperty("mdId",
+					mdid, MdAttribute.class);
+			if (mdlist == null) {
+				return;
+			}
+			for (IEntity iEntity : mdlist) {
+				if (iEntity == null) {
+					continue;
+				}
+				MdAttributeArchive mdatt = (MdAttributeArchive) SpringBeansUtils
+						.copyProperties(MdAttributeArchive.class, iEntity);
+				mdatt.setMdId(UUID.randomUUID().toString());
+				mdatt.setMdId(newmdid);
+				metaDataVersionDao.save(mdatt);
+			}
+
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("归档元数据属性失败");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public List<IEntity> getArchiveAttr(String mdid) throws RepositoryException {
+		// TODO Auto-generated method stub
+
+		try {
+			List<IEntity> list = metaDataVersionDao.findByProperty("mdId",
+					mdid, MdAttributeArchive.class);
+			return list;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据属性失败");
+		}
+		// return null;
+	}
+
+}

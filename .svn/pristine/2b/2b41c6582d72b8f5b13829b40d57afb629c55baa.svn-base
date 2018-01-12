@@ -1,0 +1,48 @@
+package com.gilight.dep.metadata.view;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("succeeddata")
+public class DepImpSucceeddata {
+	private String uuid;
+	private String name;
+	private String mmcode;
+	private String operation;
+	private String data2str;
+	public DepImpSucceeddata() {
+		// TODO Auto-generated constructor stub
+	}
+	public String getUuid() {
+		return uuid;
+	}
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getMmcode() {
+		return mmcode;
+	}
+	public void setMmcode(String mmcode) {
+		this.mmcode = mmcode;
+	}
+	public String getData2str() {
+		return data2str;
+	}
+	public void setData2str(String data2str) {
+		this.data2str = data2str;
+	}
+	public String getOperation() {
+		return operation;
+	}
+	public void setOperation(String operation) {
+		this.operation = operation;
+	}
+
+	
+	
+}

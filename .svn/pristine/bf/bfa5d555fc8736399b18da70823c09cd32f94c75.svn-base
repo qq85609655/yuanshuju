@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       ">
+
+
+
+	<!-- 元数据的采集操作 -->
+<!--	<bean id="gatherExcuteService"
+		  class="com.gilight.dep.metadata.service.impl.GatherExcuteServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+		<property name="metaDataBaseRepository" ref="metaDataBaseRepository"></property>
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+		<property name="metaModelCompRepository" ref="metaModelCompRepository"></property>
+		<property name="metaModelBasicRepository" ref="metaModelBasicRepository"></property>
+	</bean>-->
+
+	<!-- 元数据的备份操作 -->
+	<bean id="metaDataDbBackupService"
+		  class="com.gilight.dep.metadata.service.impl.MetaDataDbBackupServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+		<property name="metaDataBaseRepository" ref="metaDataBaseRepository"></property>
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+	</bean>
+
+	<!-- 元数据的基本操作 -->
+	<bean id="metaDataBaseService"
+		class="com.gilight.dep.metadata.service.impl.MetaDataBaseServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+		<property name="metaDataBaseRepository" ref="metaDataBaseRepository"></property>
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+	</bean>
+	<bean id="metaDataQueryService"
+		class="com.gilight.dep.metadata.service.impl.MetaDataQueryServiceImpl">
+		<property name="metaDataQueryRepository" ref="metaDataQueryRepository"></property>
+	</bean>
+	<bean id="metaDataVersionService"
+		class="com.gilight.dep.metadata.service.impl.MetaDataVersionServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+		<property name="repository" ref="metaDataVersionRepository"></property>
+	</bean>
+	<!-- 视图管理 -->
+	<bean id="metaDataViewService"
+		class="com.gilight.dep.metadata.service.impl.MetaDataViewServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+		<property name="repository" ref="baseQueryRepository"></property>
+		<property name="metaDataService" ref="metaDataBaseService"></property>
+	</bean>
+	<!-- 分析查询 -->
+	<bean id="analyseExcuteService"
+		class="com.gilight.dep.metadata.service.impl.AnalyseExcuteServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+	</bean>
+
+	<bean id="analyseQueryService"
+		class="com.gilight.dep.metadata.service.impl.AnalyseQueryServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+	</bean>
+
+	<bean id="dataMapQueryService"
+		class="com.gilight.dep.metadata.service.impl.DataMapQueryServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+	</bean>
+</beans>

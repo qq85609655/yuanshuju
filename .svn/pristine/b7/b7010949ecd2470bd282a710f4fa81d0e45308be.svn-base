@@ -1,0 +1,40 @@
+/**   
+ * @Title: MetaDataGatherAdaptor.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月28日 下午8:40:10
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.enmu;
+
+import com.gilight.dep.framework.util.enmu.StringEnum;
+
+/***
+ * 
+ * @ClassName: MetaDataGatherAdaptor
+ *             <p>采集适配器枚举
+ *             TODO<br>
+ * @author zps
+ * @date 2015年7月29日 上午9:32:07
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaDataGatherAdaptor extends StringEnum {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	public static String EXCEL = "excel";
+	public static String DBSchema = "dbSchema";
+	public static final MetaDataGatherAdaptor EXCEL_TYPE = new MetaDataGatherAdaptor(
+			"业务元数据采集适配器", EXCEL);
+	public static final MetaDataGatherAdaptor DBSchema_TYPE = new MetaDataGatherAdaptor(
+			"数据字典采集适配器", DBSchema);
+
+	protected MetaDataGatherAdaptor(String iName, String iValue) {
+		super(iName, iValue);
+	}
+
+}

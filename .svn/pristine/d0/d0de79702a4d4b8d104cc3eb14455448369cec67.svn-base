@@ -1,0 +1,884 @@
+package com.gilight.dep.metadata.service.impl;
+
+import com.csvreader.CsvReader;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.ext.service.DepBasicServiceImpl;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.util.common.UUIDGenerator;
+import com.gilight.dep.metadata.entity.*;
+import com.gilight.dep.metadata.enums.DataMapParam;
+import com.gilight.dep.metadata.repository.IAnalyseExcuteRepository;
+import com.gilight.dep.metadata.repository.IDataMapQueryRepository;
+import com.gilight.dep.metadata.repository.IMetaDataBaseRepository;
+import com.gilight.dep.metadata.repository.IMetaDataQueryRepository;
+import com.gilight.dep.metadata.service.IDataMapQueryService;
+import com.gilight.dep.metadata.util.DataMapCache;
+import com.gilight.dep.metadata.view.AnalyseNodeLineView;
+import com.gilight.dep.metadata.view.AnalyseResultTreeNodeView;
+import com.gilight.dep.metadata.view.DataAnalyzeView;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
+import java.util.*;
+
+public class DataMapQueryServiceImpl extends DepBasicServiceImpl implements
+		IDataMapQueryService {
+	private static final Logger logger = Logger
+			.getLogger(DataMapQueryServiceImpl.class);
+
+
+
+	@Autowired
+	IMetaDataBaseRepository metaDataBaseRepository;
+	@Autowired
+	IMetaDataQueryRepository metaDataQueryRepository;
+	@Autowired
+	IDataMapQueryRepository dataMapQueryRepository;
+	@Autowired 
+	IAnalyseExcuteRepository  analyseExcuteRepository;
+
+	public String svgPath;
+
+	public String getSvgPath() {
+		return svgPath;
+	}
+
+	public void setSvgPath(String svgPath) {
+		this.svgPath = svgPath;
+	}
+
+	@Override
+	public IResponse getByScope(IContext arg0) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IModel initModel(IContext context) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class getModelClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/**
+	 * 获取依赖关系的toid
+	* <p><br>
+	* @param mddepelsit
+	* @return  
+	* @author wzx
+	* @date 2015年8月21日 下午6:26:17
+	* @version V1.0
+	 */
+	private List<String> getToids(List<MdDependency> mddepelsit){
+		if(mddepelsit==null){
+			return null;
+		}
+		List<String> list = new ArrayList<String>();
+		for (MdDependency mdDependency : mddepelsit) {
+			list.add(mdDependency.getToMdId());
+		}
+		return list;
+	}
+	/**
+	 * 获取元数据的idlist
+	* <p><br>
+	* @param
+	* @return  
+	* @author wzx
+	* @date 2015年8月21日 下午6:26:51
+	* @version V1.0
+	 */
+	private List<String> getMetadataids(List<MdMetadata> mdlist){
+		if(mdlist==null){
+			return null;
+		}
+		List<String> list = new ArrayList<String>();
+		for (MdMetadata tmp : mdlist) {
+			list.add(tmp.getId());
+		}
+		return list;
+	}
+	@Override
+	public IResponse getDataMapQuerySchema(IContext context) throws ServiceException {
+		List<AnalyseResultTreeNodeView> arts = new ArrayList<AnalyseResultTreeNodeView>();
+		try {
+			
+
+			
+			DataAnalyzeView dav = DataMapCache.getDataMap();
+
+			
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"查询元数据成功!", dav));
+			return context.getResponse();
+			
+			//List<MdMetadata> nodes=analyseExcuteRepository.getMetaDataByMmid(schemaMM.getId());
+
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			logger.error("查询元数据失败",e);
+			throw new ServiceException("查询元数据失败");
+		}
+		
+		
+	}
+	
+	@Override
+	public IResponse getDataMapQuery(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			DataAnalyzeView dav = DataMapCache.getDataMap();
+			
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"查询元数据成功!", dav));
+			return context.getResponse();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("查询元数据失败",e);
+			throw new ServiceException("查询元数据失败");
+		}
+		
+	}
+
+
+	/**
+	 * 递归将AnalyseResultTreeNodeView生成树
+	 * <p><br>
+	 * @param
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月21日 下午2:35:22
+	 * @version V1.0
+	 */
+	public List<AnalyseResultTreeNodeView> getResultTree(List<AnalyseResultTreeNodeView> arts,DataMapList dataMapList){
+		List<AnalyseResultTreeNodeView> artlist = new ArrayList<AnalyseResultTreeNodeView>();
+		List<AnalyseResultTreeNodeView> artvlist = new ArrayList<AnalyseResultTreeNodeView>();
+		try {
+			artlist.addAll(arts);
+			arts=getTreeNodeViewList(arts,artlist);
+			artlist=arts;
+
+			List<AnalyseResultTreeNodeView> rootlist=getRootViewList(artlist);
+			artlist.removeAll(rootlist);
+			for (AnalyseResultTreeNodeView analyseResultTreeNodeView : rootlist) {
+				AnalyseResultTreeNodeView artv=getTreeNodeView(analyseResultTreeNodeView,artlist,dataMapList);
+				artvlist.add(artv);
+			}
+			return artvlist;
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return artvlist;
+
+	}
+
+	
+	/**
+	 * 递归将AnalyseResultTreeNodeView生成树
+	* <p><br>
+	* @param
+	* @return  
+	* @author wzx
+	* @date 2015年8月21日 下午2:35:22
+	* @version V1.0
+	 */
+	public List<AnalyseResultTreeNodeView> getResultTree(List<AnalyseResultTreeNodeView> arts){
+		List<AnalyseResultTreeNodeView> artlist = new ArrayList<AnalyseResultTreeNodeView>();
+		List<AnalyseResultTreeNodeView> artvlist = new ArrayList<AnalyseResultTreeNodeView>();
+		try {
+			artlist.addAll(arts);
+			arts=getTreeNodeViewList(arts,artlist);
+			artlist=arts;
+			
+			List<AnalyseResultTreeNodeView> rootlist=getRootViewList(artlist);
+			artlist.removeAll(rootlist);
+			for (AnalyseResultTreeNodeView analyseResultTreeNodeView : rootlist) {
+				AnalyseResultTreeNodeView artv=getTreeNodeView(analyseResultTreeNodeView,artlist);
+				artvlist.add(artv);
+			}
+			return artvlist;
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return artvlist;
+		
+	}
+	
+	public IResponse getDataMapQuerybak(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			MmMetamodel sysmm= getModelByCode(DataMapParam.SYSTEM);
+			MmMetamodel syslevelmm= getModelByCode(DataMapParam.SYSTEMLEVEL);
+			//查询元数据
+			List<MdMetadata> allmds = new ArrayList<MdMetadata>();
+			List<String> tomdids = new ArrayList<String>();
+			List<AnalyseResultTreeNodeView> arts = new ArrayList<AnalyseResultTreeNodeView>();
+			if(sysmm!=null&&!sysmm.getId().equals("")){
+				List<MdMetadata> sysmds=analyseExcuteRepository.getMetaDataByMmid(sysmm.getId());
+				//将md转换为AnalyseResultTreeNodeView
+				for (MdMetadata mdMetadata : sysmds) {
+					AnalyseResultTreeNodeView art =md2AnalyseResultTreeNodeView(mdMetadata,sysmm.getMmCode());
+					
+					arts.add(art);
+					tomdids.add(art.getNodeId());
+				}
+				
+				//allmds.addAll(sysmds);	
+			}
+			if(syslevelmm!=null&&!syslevelmm.getId().equals("")){
+				List<MdMetadata> syslevelmds=analyseExcuteRepository.getMetaDataByMmid(syslevelmm.getId());
+				//将md转换为AnalyseResultTreeNodeView
+				for (MdMetadata mdMetadata : syslevelmds) {
+					AnalyseResultTreeNodeView art =md2AnalyseResultTreeNodeView(mdMetadata,syslevelmm.getMmCode());
+					arts.add(art);
+					tomdids.add(art.getNodeId());
+				}
+				//allmds.addAll(syslevelmds);
+			}	
+
+			//查询组合关系
+			List<MdComposition> mclsit=getMetaDataComp(tomdids);
+			if(mclsit == null) {
+				context.getResponse().setResult(
+						ResultFactory.getInstance().createSuccessModelAndView(
+								"查询元数据成功!", null));
+				return context.getResponse();
+			}
+			//将parentid写入
+			Map<String,String> parentmap=new HashMap<String,String>();
+			for (MdComposition mdComposition : mclsit) {
+				for (AnalyseResultTreeNodeView artv : arts) {
+					if(mdComposition.getToMdId().equals(artv.getNodeId())){
+						artv.setParentid(mdComposition.getFromMdId());
+						parentmap.put(artv.getNodeId(), artv.getParentid());
+					}
+				}
+			}
+			//递归将AnalyseResultTreeNodeView生成树
+			List<AnalyseResultTreeNodeView> artlist = new ArrayList<AnalyseResultTreeNodeView>();
+			artlist.addAll(arts);
+			arts=getTreeNodeViewList(arts,artlist);
+			artlist=arts;
+			List<AnalyseResultTreeNodeView> artvlist = new ArrayList<AnalyseResultTreeNodeView>();
+			List<AnalyseResultTreeNodeView> rootlist=getRootViewList(artlist);
+			for (AnalyseResultTreeNodeView analyseResultTreeNodeView : rootlist) {
+				AnalyseResultTreeNodeView artv=getTreeNodeView(analyseResultTreeNodeView,artlist);
+				artvlist.add(artv);
+			}
+			DataAnalyzeView dav = new DataAnalyzeView();
+			//生成线数据
+			List<String> ids = getMdDependencyIdlist(arts);
+			List<MdDependency> mddepes=getMdDependencyByIdlist(ids);
+			
+			List<AnalyseNodeLineView> lines=getLines(mddepes,parentmap);
+			
+			dav.setNode(artvlist);
+			dav.setLines(lines);
+			
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"查询元数据成功!", dav));
+			return context.getResponse();
+			
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			logger.error("查询元数据失败",e);
+			throw new ServiceException("查询元数据失败");
+		}
+		
+	}
+	/**
+	 * 
+	* <p><br>
+	* @return  
+	* @author wzx
+	* @date 2015年8月21日 下午4:32:22
+	* @version V1.0
+	 */
+	private List<AnalyseNodeLineView> getParentline(String startid,String endid,Map<String,String> parentmap){
+		List<AnalyseNodeLineView> parentlist = new ArrayList<AnalyseNodeLineView>();
+		String parentstartid=parentmap.get(startid);
+		String parentendid=parentmap.get(endid);
+		
+		if(parentstartid!=null&&parentendid!=null){
+			AnalyseNodeLineView parentline = new AnalyseNodeLineView();
+			parentline.setStartNodeId(parentstartid);
+			parentline.setEndNodeId(parentendid);
+			parentlist.add(parentline);
+			
+			List<AnalyseNodeLineView> tmplist = getParentline(parentstartid,parentendid, parentmap);
+			parentlist.addAll(tmplist);
+			
+		}
+		
+		return parentlist;
+		
+	}
+	
+	/**
+	 * 将关系转换为线
+	* <p><br>
+	* @param mddepes
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月7日 下午3:38:53
+	* @version V1.0
+	 */
+	private List<AnalyseNodeLineView> getLines(List<MdDependency> mddepes,Map<String,String> parentmap) throws ServiceException{
+		List<AnalyseNodeLineView> lines = new ArrayList<AnalyseNodeLineView>();
+		HashSet<AnalyseNodeLineView> hashSet = new HashSet<AnalyseNodeLineView>();
+		for (MdDependency mdDependency : mddepes) {
+			AnalyseNodeLineView line = new AnalyseNodeLineView();
+			AnalyseNodeLineView parentline = new AnalyseNodeLineView();
+			String startid=mdDependency.getFromMdId();
+			String endid=mdDependency.getToMdId();
+			
+			
+			line.setStartNodeId(mdDependency.getFromMdId());
+			line.setEndNodeId(mdDependency.getToMdId());
+			
+			
+			List<AnalyseNodeLineView> tmplsit=getParentline(startid,endid,parentmap);
+			
+			hashSet.addAll(tmplsit);
+			
+			hashSet.add(line);
+			//lines.add(line);
+		}
+		lines.addAll(hashSet);
+		return lines;
+		
+	}
+	/**
+	 * 获取所有id
+	* <p><br>
+	* @param artlist
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月7日 下午3:23:00
+	* @version V1.0
+	 */
+	private List<String>  getMdDependencyIdlist(List<AnalyseResultTreeNodeView> artlist) throws ServiceException {
+		List<String> ids = new ArrayList<String>();
+		for (AnalyseResultTreeNodeView analyseResultTreeNodeView : artlist) {
+			ids.add(analyseResultTreeNodeView.getNodeId());
+		}
+		return ids;
+		
+	}
+	/**
+	 * 获取依赖关系
+	* <p><br>
+	* @param ids
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月7日 下午3:23:23
+	* @version V1.0
+	 */
+	private List<MdDependency>  getMdDependencyByIdlist(List<String> ids) throws ServiceException {
+		try {
+			List<MdDependency> mddpeps=dataMapQueryRepository.getMdDependencyByIdlist(ids);
+			return mddpeps;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据失败",e);
+			throw new ServiceException("查询元数据失败");
+		}	
+	}
+
+
+	/**
+	 * 生成元数据结构
+	 * <p><br>
+	 * @param artv
+	 * @param artlist
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年8月7日 上午11:42:44
+	 * @version V1.0
+	 */
+	private AnalyseResultTreeNodeView getTreeNodeView(AnalyseResultTreeNodeView artv,List<AnalyseResultTreeNodeView> artlist,DataMapList dataMapList) throws ServiceException{
+		List<AnalyseResultTreeNodeView> arts = new ArrayList<AnalyseResultTreeNodeView>();
+		List<AnalyseResultTreeNodeView> artlisttmp = new ArrayList<AnalyseResultTreeNodeView>();
+		artlist=dataMapList.getData(artv.getNodeId());
+		if (artlist==null||artlist.size()==0){
+			return artv;
+		}
+		artlisttmp.addAll(artlist);
+		for (AnalyseResultTreeNodeView analyseResultTreeNodeView : artlist) {
+
+			if(artv.getNodeId().equals(analyseResultTreeNodeView.getParentid())){
+				arts.add(analyseResultTreeNodeView);
+				//arts.addAll(dataMapList.getData(artv.getNodeId()));
+				artlisttmp.remove(analyseResultTreeNodeView);
+			}
+			artlisttmp.remove(analyseResultTreeNodeView);
+			analyseResultTreeNodeView= getTreeNodeView(analyseResultTreeNodeView,artlisttmp,dataMapList) ;
+
+		}
+		if(arts.size()>0){
+			artv.setChildren(arts);
+		}
+
+		return artv;
+
+	}
+
+	/**
+	 * 生成元数据结构
+	* <p><br>
+	* @param artv
+	* @param artlist
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月7日 上午11:42:44
+	* @version V1.0
+	 */
+	private AnalyseResultTreeNodeView getTreeNodeView(AnalyseResultTreeNodeView artv,List<AnalyseResultTreeNodeView> artlist) throws ServiceException{
+		List<AnalyseResultTreeNodeView> arts = new ArrayList<AnalyseResultTreeNodeView>();
+		List<AnalyseResultTreeNodeView> artlisttmp = new ArrayList<AnalyseResultTreeNodeView>();
+		artlisttmp.addAll(artlist);
+		for (AnalyseResultTreeNodeView analyseResultTreeNodeView : artlist) {
+			
+			if(artv.getNodeId().equals(analyseResultTreeNodeView.getParentid())){
+				
+				arts.add(analyseResultTreeNodeView);
+				artlisttmp.remove(analyseResultTreeNodeView);
+			}
+			artlisttmp.remove(analyseResultTreeNodeView);
+			analyseResultTreeNodeView= getTreeNodeView(analyseResultTreeNodeView,artlisttmp) ;
+			
+		}
+		if(arts.size()>0){
+			artv.setChildren(arts);
+		}
+		
+		return artv;
+		
+	}
+	
+	
+	/**
+	 * 获取根数据
+	* <p><br>
+	* @param list
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月7日 上午11:16:55
+	* @version V1.0
+	 */
+	private List<AnalyseResultTreeNodeView> getRootViewList(List<AnalyseResultTreeNodeView> list) throws ServiceException{
+		List<AnalyseResultTreeNodeView> rootlist = new ArrayList<AnalyseResultTreeNodeView>();
+		for (AnalyseResultTreeNodeView analyseResultTreeNodeView : list) {
+			if((analyseResultTreeNodeView.getParentid()==null||analyseResultTreeNodeView.getParentid().equals(""))&&analyseResultTreeNodeView.getType().equals(DataMapParam.SYSTEMLEVEL)){
+				rootlist.add(analyseResultTreeNodeView);
+			}
+		}
+		//list.removeAll(rootlist);
+		return rootlist;	
+	}
+	/**
+	 * 
+	* <p><br>
+	* @param list
+	* @param artlist
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月7日 上午10:59:58
+	* @version V1.0
+	 */
+	private List<AnalyseResultTreeNodeView> getTreeNodeViewList(List<AnalyseResultTreeNodeView> list,List<AnalyseResultTreeNodeView> artlist) throws ServiceException{
+		for (AnalyseResultTreeNodeView analyseResultTreeNodeView : list) {
+			int t=0;
+			if(analyseResultTreeNodeView.getParentid()==null){
+				t=1;
+				continue;
+			}
+			for (AnalyseResultTreeNodeView art : artlist) {
+				if(analyseResultTreeNodeView.getParentid().equals(art.getNodeId())){
+					t=1;
+				}
+			}
+			if(t==0){
+				analyseResultTreeNodeView.setParentid("");
+			}
+		}
+		return list;	
+	}
+	
+	private AnalyseResultTreeNodeView md2AnalyseResultTreeNodeView(MdMetadata md,String type){
+		AnalyseResultTreeNodeView art =new AnalyseResultTreeNodeView();
+		art.setCode(md.getMdCode());
+		art.setName(md.getMdName());
+		art.setNodeId(md.getId());
+		art.setType(type);
+		return art;
+		
+	}
+	
+	
+	/**
+	 * 根据code获取元模型
+	* <p><br>
+	* @param code
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月6日 下午6:37:43
+	* @version V1.0
+	 */
+	private MmMetamodel getModelByCode(String code) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			MmMetamodel mm= analyseExcuteRepository.getModelByCode(code);
+			return mm;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元模型失败",e);
+			throw new ServiceException("查询元模型失败");
+		}
+	}
+	/**
+	 * 获取组合关系
+	* <p><br>
+	* @param tomdids
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月6日 下午7:21:47
+	* @version V1.0
+	 */
+	private List<MdComposition> getMetaDataComp(List<String> tomdids) throws ServiceException {
+		try {
+			if(tomdids.size()==0) {
+				return null;
+			}
+			List<MdComposition> mcs= dataMapQueryRepository.getMetaDataComp(tomdids);
+			return mcs;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据关系失败",e);
+			throw new ServiceException("查询元数据关系失败");
+		}
+	}
+
+
+	@Override
+	public IResponse create(IContext arg0) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse delete(IContext arg0) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse getById(IContext arg0) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse update(IContext arg0) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult updateAfter(IContext paramIContext, IResult paramIResult)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void initModel(IContext paramIContext, IModel paramIModel)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext paramIContext, IResult paramIResult)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult createAfter(IContext paramIContext, IResult paramIResult)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult getByIdAfter(IContext paramIContext, IResult paramIResult)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Class getDefaultModelClass() throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	private class DataMapList{
+		private HashMap<String,ArrayList> dataMap=new HashMap<String,ArrayList>();
+
+		public void putData(String id,AnalyseResultTreeNodeView arv){
+			ArrayList valList =dataMap.get(id);
+			if (valList==null||valList.size()==0){
+				valList=new ArrayList<AnalyseResultTreeNodeView>();
+				valList.add(arv);
+			}else {
+				valList.add(arv);
+			}
+			dataMap.put(id,valList);
+
+
+		}
+
+		public ArrayList getData(String id){
+			return dataMap.get(id);
+		}
+
+	}
+	/**
+	 * 计算数据地图
+	 * @param
+	 * @throws ServiceException
+	 */
+	public void getDataMapAnalyse() throws RepositoryException,ServiceException {
+		MmMetamodel nodeMM= getModelByCode(DataMapParam.SYSTEMLEVEL);
+		MmMetamodel sysMM= getModelByCode(DataMapParam.SYSTEM);
+		MmMetamodel schemaMM= getModelByCode(DataMapParam.SCHEMA);
+		MmMetamodel tableMM= getModelByCode(DataMapParam.TABLE);
+		MmMetamodel columnMM= getModelByCode(DataMapParam.COLUMN);
+		MmMetamodel serverMM= getModelByCode(DataMapParam.SERVICE);
+		MmMetamodel dataNodeMM=getModelByCode(DataMapParam.DATANODE);
+
+		//查询元数据
+		List<MdMetadata> allmds = new ArrayList<MdMetadata>();
+		List<String> tomdids = new ArrayList<String>();
+		List<AnalyseResultTreeNodeView> arts = new ArrayList<AnalyseResultTreeNodeView>();
+
+		if(nodeMM!=null&&!nodeMM.getId().equals("")){
+			List<MdMetadata> nodes=analyseExcuteRepository.getMetaDataByMmid(nodeMM.getId());
+			//将md转换为AnalyseResultTreeNodeView
+			for (MdMetadata mdMetadata : nodes) {
+				AnalyseResultTreeNodeView art =md2AnalyseResultTreeNodeView(mdMetadata,DataMapParam.SYSTEMLEVEL);
+
+				arts.add(art);
+				tomdids.add(art.getNodeId());
+			}
+			//allmds.addAll(sysmds);
+		}
+
+
+		if(sysMM!=null&&!sysMM.getId().equals("")){
+			List<MdMetadata> sysmds=analyseExcuteRepository.getMetaDataByMmid(sysMM.getId());
+			//将md转换为AnalyseResultTreeNodeView
+			for (MdMetadata mdMetadata : sysmds) {
+				AnalyseResultTreeNodeView art =md2AnalyseResultTreeNodeView(mdMetadata,DataMapParam.SYSTEM);
+
+				arts.add(art);
+				tomdids.add(art.getNodeId());
+			}
+
+			//allmds.addAll(sysmds);
+		}
+
+		if(serverMM!=null&&!serverMM.getId().equals("")){
+			List<MdMetadata> services=analyseExcuteRepository.getMetaDataByMmid(serverMM.getId());
+			//将md转换为AnalyseResultTreeNodeView
+			for (MdMetadata mdMetadata : services) {
+				AnalyseResultTreeNodeView art =md2AnalyseResultTreeNodeView(mdMetadata,DataMapParam.SERVICE);
+				arts.add(art);
+				tomdids.add(art.getNodeId());
+			}
+			//allmds.addAll(sysmds);
+		}
+
+			/*if(schemaMM!=null&&!schemaMM.getId().equals("")){
+				List<MdMetadata> schemamds=analyseExcuteRepository.getMetaDataByMmid(schemaMM.getId());
+				//将md转换为AnalyseResultTreeNodeView
+				for (MdMetadata mdMetadata : schemamds) {
+					AnalyseResultTreeNodeView art =md2AnalyseResultTreeNodeView(mdMetadata,DataMapParam.SCHEMA);
+
+					arts.add(art);
+					tomdids.add(art.getNodeId());
+				}
+
+				//allmds.addAll(sysmds);
+			}
+			*/
+		/*	if(tableMM!=null&&!tableMM.getId().equals("")){
+				List<MdMetadata> syslevelmds=analyseExcuteRepository.getMetaDataByMmid(tableMM.getId());
+				//将md转换为AnalyseResultTreeNodeView
+				for (MdMetadata mdMetadata : syslevelmds) {
+					AnalyseResultTreeNodeView art =md2AnalyseResultTreeNodeView(mdMetadata,DataMapParam.TABLE);
+					//arts.add(art);
+					//tomdids.add(art.getNodeId());
+				}
+				//allmds.addAll(syslevelmds);
+			}	*/
+
+		//查询组合关系
+		Map<String,String> parentmap=new HashMap<String,String>();
+		List<MdComposition> mclsit=getMetaDataComp(tomdids);
+		if(mclsit == null) {
+			DataMapCache.setDataMap(new DataAnalyzeView());
+			return;
+		}
+		DataMapList dataMapList = new DataMapList();
+		//将parentid写入
+		for (MdComposition mdComposition : mclsit) {
+			for (AnalyseResultTreeNodeView artv : arts) {
+				if(mdComposition.getToMdId().equals(artv.getNodeId())){
+					artv.setParentid(mdComposition.getFromMdId());
+					parentmap.put(artv.getNodeId(), artv.getParentid());
+					dataMapList.putData( artv.getParentid(),artv);
+				}
+			}
+		}
+
+		//递归将AnalyseResultTreeNodeView生成树
+		List<AnalyseResultTreeNodeView> artvlist = getResultTree(arts,dataMapList);
+
+
+		//生成线数据
+		List<String> ids = getMdDependencyIdlist(arts);
+		List<MdDependency> mddepes=getMdDependencyByIdlist(ids);
+		List<AnalyseNodeLineView> lines=getLines(mddepes,parentmap);
+		DataAnalyzeView dav = new DataAnalyzeView();
+		dav.setNode(artvlist);
+		dav.setLines(lines);
+		DataMapCache.setDataMap(dav);
+		//return null;
+	}
+
+	public void impDb() throws Exception{
+		String url="F:\\v2\\test\\flow\\pub.csv";
+		ArrayList<HashMap<String,String>> mapList = new ArrayList<HashMap<String,String>>(); //用来保存数据
+		try {
+			CsvReader r = new CsvReader(url, ',', Charset.forName("GBK"));
+			//读取表头
+			r.readHeaders();
+			while (r.readRecord()) {
+				String publishid=r.get("发布标识");
+				String takeid=r.get("订阅任务标识");
+				//String =r.get("发布任务名称");
+
+				//String publish=r.get("发布数据源标识");
+				String publishurl=r.get("发布数据源Url");
+				String takeurl=r.get("订阅数据源url");
+
+				String publishuser=r.get("发布数据源用户名");
+				String takeuser=r.get("订阅数据源用户名");
+
+				//String targetTable=r.get("订阅任务标识");
+
+				//String soruceColunm=r.get("订阅任务名称");
+				//String targetColunm=r.get("订阅数据源标识");
+
+
+
+				String publishtable=r.get("发布表名称");
+				String taketable=r.get("订阅表名称");
+
+				HashMap map=new HashMap();
+
+				System.out.println(publishurl);
+				Mdmetadatapubtake mdmetadatapubtake = new Mdmetadatapubtake();
+				mdmetadatapubtake.setId(UUIDGenerator.getUUID());
+
+				mdmetadatapubtake.setPublishid(publishid);
+				mdmetadatapubtake.setTakeid(takeid);
+
+				mdmetadatapubtake.setPublishurl(publishurl);
+				mdmetadatapubtake.setTakeurl(takeurl);
+
+				mdmetadatapubtake.setPublishuser(publishuser);
+				mdmetadatapubtake.setTakeuser(takeuser);
+
+				mdmetadatapubtake.setPublishtable(publishtable);
+				mdmetadatapubtake.setTaketable(taketable);
+
+
+				String sourceurl=publishurl+"_"+publishuser;
+				String targeturl=takeurl+"_"+takeuser;
+
+				System.out.println(publishtable);
+				System.out.println(taketable);
+				MdMetadata sourcemd=metaDataBaseRepository.findTableByUrl(sourceurl,publishtable);
+				MdMetadata targetmd=metaDataBaseRepository.findTableByUrl(targeturl,taketable);
+
+				if (sourcemd!=null&&targetmd!=null){
+					mdmetadatapubtake.setPublishdb_mdid(sourcemd.getId());
+
+					mdmetadatapubtake.setTakedb_mdid(targetmd.getId());
+					metaDataQueryRepository.create(mdmetadatapubtake);
+				}
+
+
+				//metaDataBaseRepository.
+
+
+			}
+			r.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public void upDb(){
+		Mdmetadatapubtake mdmetadatapubtake = new Mdmetadatapubtake();
+
+	}
+
+	public static void main(String arg[]){
+		DataMapQueryServiceImpl qm = new  DataMapQueryServiceImpl();
+		try {
+			qm.impDb();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+}

@@ -1,0 +1,19 @@
+package com.gilight.dep.metamodel.service.impl;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.test.context.ContextConfiguration;
+//import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+//import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.context.WebApplicationContext;
+
+import com.google.gson.Gson;
+
+//@RunWith(SpringJUnit4ClassRunner.class)  
+//@WebAppConfiguration  
+//@ContextConfiguration(locations = { "file:/spring-dispather.xml" })   
+public class JUnitActionBase {
+	@Autowired  
+	protected WebApplicationContext wac;  
+	protected Gson gson = new Gson();
+
+}

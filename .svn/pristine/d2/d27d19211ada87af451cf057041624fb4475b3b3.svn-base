@@ -1,0 +1,24 @@
+package com.gilight.dep.metadata.dao;
+
+import java.io.Serializable;
+
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+
+/**
+ * 元模型基本操作
+ * 
+ * @ClassName: IMetaModelBasicDao
+ *             <p>
+ *             TODO<br>
+ * @author wzx
+ * @date 2015年7月13日 下午3:35:59
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaModelBasicDao extends IMetaModelDao {
+
+	public <C> IEntity findById(Serializable id, Class<C> entityClass)
+			throws DaoException;
+
+}

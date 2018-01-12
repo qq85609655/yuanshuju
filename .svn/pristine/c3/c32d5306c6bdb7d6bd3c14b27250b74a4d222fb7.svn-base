@@ -1,0 +1,10 @@
+{
+    "plugins": [{"src": "Dep/framework/editor/plugin/containers/toolbox/QueryToolItem.js","name": "Dep.framework.editor.plugin.containers.toolbox.QueryToolItem"}],
+	"title": "图元工具箱",
+    "detail": [
+        {
+            "title": "图元工具箱",
+            "lType": "default",
+        }
+    ]
+}

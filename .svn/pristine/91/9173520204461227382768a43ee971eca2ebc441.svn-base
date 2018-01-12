@@ -1,0 +1,105 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+/***
+ * 
+* @ClassName: MdAttribute 
+* <p>TODO<br>
+* @author hww
+* @date 2015年7月7日 下午3:46:58
+* @version V1.0
+* @since JDK 1.7
+ */
+ 
+public class MdAttribute extends BaseMetaDataEntity {
+
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 元模型属性id
+	 */
+	private String mmAttId;
+	/**
+	 * 元模型属性名称
+	 */
+	private String mmAttName;
+	/**
+	 * 元数据ID
+	 */
+	private String mdId;
+	/**
+	 * 属性值
+	 */
+	private String valUe;
+
+	public MdAttribute() {
+	}
+
+	public MdAttribute(String id) {
+		this.id = id;
+	}
+
+	public MdAttribute(String id, String mmAttId, String mmAttName,
+			String mdId, String valUe) {
+		this.id = id;
+		this.mmAttId = mmAttId;
+		this.mmAttName = mmAttName;
+		this.mdId = mdId;
+		this.valUe = valUe;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMmAttId() {
+		return this.mmAttId;
+	}
+
+	public void setMmAttId(String mmAttId) {
+		this.mmAttId = mmAttId;
+	}
+
+	public String getMmAttName() {
+		return this.mmAttName;
+	}
+
+	public void setMmAttName(String mmAttName) {
+		this.mmAttName = mmAttName;
+	}
+
+	public String getMdId() {
+		return this.mdId;
+	}
+
+	public void setMdId(String mdId) {
+		this.mdId = mdId;
+	}
+
+	public String getValUe() {
+		return this.valUe;
+	}
+
+	public void setValUe(String valUe) {
+		this.valUe = valUe;
+	}
+
+	@Override
+	public String toString() {
+		return "MdAttribute [id=" + id + ", mmAttId=" + mmAttId
+				+ ", mmAttName=" + mmAttName + ", mdId=" + mdId + ", valUe="
+				+ valUe + "]";
+	}
+
+}

@@ -1,0 +1,43 @@
+package com.gilight.dep.metadata.view;
+
+public class FiledValView {
+	private String name;
+	private Object val;
+	private Class<?> type;
+	
+	
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Object getVal() {
+		return val;
+	}
+
+	public void setVal(Object val) {
+		this.val = val;
+	}
+
+	public Class<?> getType() {
+		return type;
+	}
+
+	public void setType(Class<?> type) {
+		this.type = type;
+	}
+
+	public FiledValView() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

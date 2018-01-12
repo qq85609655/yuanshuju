@@ -1,0 +1,189 @@
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.repository.IQueryRepository;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+
+/**
+ * 
+ * @ClassName: IMetaModelQueryRepository
+ *             <p>
+ *             TODO<br>
+ * @author wzx
+ * @date 2015年7月30日 下午6:30:51
+ * @version V1.0
+ * @since JDK 1.6
+ */
+@SuppressWarnings("rawtypes")
+public interface IMetaModelQueryRepository extends IQueryRepository {
+
+	/***
+	 * 
+	 * <p>
+	 * 根据条件获取元模型列表，包含元模型的属性信息 <br>
+	 * 
+	 * @param context
+	 *            上下文 scopeparameters
+	 * @return
+	 * @throws RepositoryException
+	 * @author zps
+	 * @date 2015年8月10日 上午11:54:22
+	 * @version V1.0
+	 */
+
+	IResponse getBaseByScope(IContext context) throws RepositoryException;
+
+	/**
+	 * 根据名称模糊查询
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+     */
+	IResponse getModelByName(IContext context) throws RepositoryException, DaoException;
+
+
+	/**
+	 * 获取继承图根元模型
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 */
+	public IResponse findRootModel(IContext paramIContext)
+			throws RepositoryException, DaoException;
+
+	/**
+	 *获取节点元模型
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 */
+	public IResponse findNodeModel(IContext paramIContext)
+			throws RepositoryException;
+
+	/**
+	 * 获取组合图根元模型
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 */
+	public IResponse findCompRootModel(IContext paramIContext)
+			throws RepositoryException;
+
+	/**
+	 * 获取组合图节点模型
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 */
+	public IResponse findCompNodeModel(IContext paramIContext)
+			throws RepositoryException;
+
+	/**
+	 * 查询枚举列表
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+     */
+	public IResponse findEnumList(IContext paramIContext) throws RepositoryException;
+
+	/**
+	 * 查询枚举值
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+     */
+	public IResponse findEnumValueList(IContext paramIContext) throws RepositoryException;
+
+	IResponse findEnumById(IContext paramIContext) throws RepositoryException;
+
+	/**
+	 * 查询所有继承关系
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+     */
+	public IResponse findInheList(IContext paramIContext) throws RepositoryException;
+	/**
+	 * 查询所有组合关系
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 */
+	public IResponse findCompList(IContext paramIContext) throws RepositoryException;
+	/**
+	 * 查询所有依赖关系
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 */
+	public IResponse findDepeList(IContext paramIContext) throws RepositoryException;
+
+	/**
+	 * 查询所有元模型
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+     */
+	IResponse findAllModel(IContext paramIContext) throws RepositoryException;
+
+	/**
+	 * 按id查询元模型
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+     */
+	IResponse findModelById(IContext paramIContext) throws RepositoryException;
+
+	MmMetamodel findModelById(String id) throws RepositoryException;
+
+	/**
+	 * 按元模型id查询属性
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+     */
+	IResponse findAttrByModelId(IContext paramIContext) throws RepositoryException;
+
+	/**
+	 *  根据id查询全部继承关系
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+     */
+	IResponse findAllMmInheritById(IContext paramIContext) throws RepositoryException;
+	/**
+	 *根据id查询全部组合关系
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 */
+	IResponse findAllMmCompositionById(IContext paramIContext) throws RepositoryException;
+	/**
+	 *根据id查询全部依赖关系
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 */
+	IResponse findAllMmDependencyById(IContext paramIContext) throws RepositoryException;
+
+	/**
+	 * 获取依赖左侧列表
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+     */
+	IResponse getByLeftDepeScope(IContext paramIContext)
+			throws RepositoryException;
+
+	/**
+	 * 获取组合 左侧列表
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 */
+	IResponse getByLeftCompScope(IContext paramIContext)
+			throws RepositoryException;
+}

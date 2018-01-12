@@ -1,0 +1,95 @@
+/**   
+ * @Title: MetaModeDataTypeView.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月24日 下午5:39:41
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+public class MetaModeDataTypeView extends MetaBaseView {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 标识
+	 */
+	private String id;
+	/**
+	 * 名称
+	 */
+	private String name;
+	/**
+	 * 描述
+	 */
+	private String remark;
+	/**
+	 * 最后更新时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+	/***
+	 * 数据类型选项
+	 */
+	private List<MetaModeSelectedView> selectedList = null;
+
+	public MetaModeDataTypeView() {
+		super();
+	}
+
+	public MetaModeDataTypeView(String id, String name, String remark,
+			String updateDate, List<MetaModeSelectedView> selectedList) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.remark = remark;
+		this.updateDate = updateDate;
+		this.selectedList = selectedList;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public List<MetaModeSelectedView> getSelectedList() {
+		return selectedList;
+	}
+
+	public void setSelectedList(List<MetaModeSelectedView> selectedList) {
+		this.selectedList = selectedList;
+	}
+
+}

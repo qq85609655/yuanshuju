@@ -1,0 +1,1071 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.UUID;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.ext.repository.DepBaseRepository;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.metadata.dao.IGatherJobDao;
+import com.gilight.dep.metadata.entity.BatchIdEntity;
+import com.gilight.dep.metadata.entity.MdAttribute;
+import com.gilight.dep.metadata.entity.MdAttributeImp;
+import com.gilight.dep.metadata.entity.MdAttributeReject;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdGatherDatasource;
+import com.gilight.dep.metadata.entity.MdGatherDatasourceParam;
+import com.gilight.dep.metadata.entity.MdGatherJob;
+import com.gilight.dep.metadata.entity.MdGatherJobParam;
+import com.gilight.dep.metadata.entity.MdGatherLog;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdMetadataImp;
+import com.gilight.dep.metadata.entity.MdMetadataReject;
+import com.gilight.dep.metadata.entity.MmAttribute;
+import com.gilight.dep.metadata.entity.MmComposition;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.enums.ImpModelCode;
+import com.gilight.dep.metadata.repository.IGatherJobRepository;
+import com.gilight.dep.metadata.view.MetaDataBatchAuditView;
+import com.gilight.dep.metadata.view.MetaDataBizFlowView;
+
+@SuppressWarnings("rawtypes")
+public class GatherJobRepositoryImpl extends DepBaseRepository implements
+		IGatherJobRepository {
+	MdGatherJob job;
+
+	public GatherJobRepositoryImpl() {
+	}
+
+	private IGatherJobDao gatherJobDao;
+
+	public IGatherJobDao getGatherJobDao() {
+		return gatherJobDao;
+	}
+
+	public void setGatherJobDao(IGatherJobDao gatherJobDao) {
+		this.gatherJobDao = gatherJobDao;
+	}
+
+	@Override
+	protected IResult createAfter(IContext context, IResult result)
+			throws RepositoryException {
+		return result;
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext context, IResult result)
+			throws RepositoryException {
+		return result;
+	}
+
+	@Override
+	protected IResult getByIdAfter(IContext context, IResult result)
+			throws RepositoryException {
+		return result;
+	}
+
+	@Override
+	protected IResult getByScopeAfter(IContext context, IResult result)
+			throws RepositoryException {
+		return result;
+	}
+
+	@Override
+	protected IResult updateAfter(IContext context, IResult result) {
+		return result;
+	}
+
+	private List<IEntity> findByIdList(List<String> ids, Class type)
+			throws DaoException {
+		List<IEntity> mdlist = new ArrayList<IEntity>();
+		if (ids == null || ids.size() == 0) {
+			return null;
+		}
+		if (ids.size() > 1000) {
+			int num = ids.size();
+			int t = 0;
+			for (int i = 0; i < num; i = i + 1000) {
+				t = i + 1000;
+				if (t >= num) {
+					t = num - 1;
+				}
+				List<String> idstmp = ids.subList(i, t);
+				List<IEntity> mdtmp = gatherJobDao.findByIdList(idstmp, type);
+				mdlist.addAll(mdtmp);
+
+			}
+		} else {
+			mdlist = gatherJobDao.findByIdList(ids, type);
+		}
+		return mdlist;
+
+	}
+
+	private List<IEntity> findByParentIdOrCode(String id, String code) throws DaoException {
+		MdMetadataImp mdMetadataImpA = new MdMetadataImp();
+		MdMetadataImp mdMetadataImpB = new MdMetadataImp();
+		mdMetadataImpA.setParentcode(code);
+		mdMetadataImpA.setUpdateDate(null);
+		mdMetadataImpA.setStatus(null);
+		mdMetadataImpB.setParentid(id);
+		mdMetadataImpB.setStatus(null);
+		mdMetadataImpB.setUpdateDate(null);
+		List<IEntity> eneityList= new ArrayList<IEntity>();
+		eneityList.add(mdMetadataImpA);
+		eneityList.add(mdMetadataImpB);
+		List<IEntity> subMdEntitys = gatherJobDao.findByOrEntity(eneityList);
+		return subMdEntitys;
+	}
+	
+	@Override
+	public IResponse approveAgree(IContext context) throws RepositoryException {
+		try {
+			List<String> idStrs = new ArrayList<String>();
+			List<String> delids= new ArrayList<String>();
+			List<String> delcodes= new ArrayList<String>();
+			List<IEntity> dellist = new ArrayList<IEntity>();//需被删除的元数据list
+			List<IEntity> implist = new ArrayList<IEntity>(); //
+			List<IEntity> allrej = new ArrayList<IEntity>(); // list
+			List<IEntity> allimp = new ArrayList<IEntity>(); // list
+			List<MdComposition> mdclist = new ArrayList<MdComposition>(); // 关系list
+			List<MdMetadata> mdagreelist = new ArrayList<MdMetadata>(); // 审批通过list
+			List<MdMetadataImp> mdimplist = new ArrayList<MdMetadataImp>(); // 临时表list
+			List<MdAttribute> mdattagreelist = new ArrayList<MdAttribute>(); // 属性审批
+			List<MdMetadataReject> mdrejlist = new ArrayList<MdMetadataReject>(); // 驳回list
+			List<MdAttributeReject> mdattrejlist = new ArrayList<MdAttributeReject>(); // 属性驳回
+			// 验证code
+			MetaDataBatchAuditView view = (MetaDataBatchAuditView) context
+					.getParameter("view");
+
+			List<Object> ids = view.getMdIdList();
+			if (ids == null) {
+				throw new RepositoryException("处理失败");
+			}
+			//循环审核三层元数据id
+			for(int i=0; i<ids.size(); i++) {
+				BatchIdEntity idEntity = (BatchIdEntity)ids.get(i);
+				String id = idEntity.getId();//一级id
+				if(id == null) {
+					continue;
+				}
+				String code = "";
+				IEntity iMdImpEty = gatherJobDao.findById(id, MdMetadataImp.class);
+				MdMetadataImp mdImp = (MdMetadataImp)iMdImpEty;
+				if(mdImp != null) {
+					code = mdImp.getMdCode();
+				}
+				List<Object> children = idEntity.getChildren();//一级children
+				if(children != null) {
+					for(int j=0; j<children.size(); j++) {
+						LinkedHashMap lkhmap = (LinkedHashMap) children.get(j);
+						String subId = lkhmap.get("id").toString();
+						if(lkhmap.get("children") == null) {
+							String subCode = "";
+							IEntity subMdImpEty = gatherJobDao.findById(subId, MdMetadataImp.class);
+							MdMetadataImp subMdImp = (MdMetadataImp)subMdImpEty;
+							if(subMdImp != null) {
+								subCode = subMdImp.getMdCode();
+							}
+							List<IEntity> subMdEntitys = findByParentIdOrCode(subId, subCode);
+							for(IEntity subEntity : subMdEntitys) {
+								MdMetadataImp md = (MdMetadataImp)subEntity;
+								idStrs.add(md.getId());
+							}
+						}else {
+							List<Object> childs = (List<Object>) lkhmap.get("children");//二级children
+							if(childs != null) {
+								for(int k=0; k<childs.size(); k++) {
+									idStrs.add(childs.get(k).toString());
+								}
+							}
+						}
+						idStrs.add(subId);
+					}
+				}else if(children == null) {
+					List<IEntity> subMdEntitys = findByParentIdOrCode(id, code);
+					if(subMdEntitys != null) {
+						for(IEntity subEntity : subMdEntitys) {
+							MdMetadataImp md = (MdMetadataImp)subEntity;
+							String subId = md.getId();
+							String mdCode = md.getMdCode();
+							idStrs.add(subId);
+							List<IEntity> grandMdEntitys = findByParentIdOrCode(subId, mdCode);
+							if(grandMdEntitys != null) {
+								for(IEntity grandEntity : grandMdEntitys) {
+									MdMetadataImp gmd = (MdMetadataImp)grandEntity;
+									idStrs.add(gmd.getId());
+								}
+							}
+						}
+					}
+				}
+				IEntity iMdEty = gatherJobDao.findUniqueBy("mdCode", code, MdMetadata.class);
+				if(iMdEty == null) {
+					idStrs.add(id);
+				}
+				//构造所有需要被删除的元数据list
+				IEntity iEntity = gatherJobDao.findById(id, MdMetadataImp.class);
+				dellist.add(iEntity);
+				List<IEntity> subMdEntitys = findByParentIdOrCode(id, code);
+				if(subMdEntitys != null) {
+					for(IEntity ientity : subMdEntitys) {
+						dellist.add(ientity);
+						MdMetadataImp md = (MdMetadataImp)ientity;
+						List<IEntity> grandEntitys = findByParentIdOrCode(md.getId(), md.getMdCode());
+						if(grandEntitys != null) {
+							for(IEntity gentity : grandEntitys) {
+								dellist.add(gentity);
+							}
+						}
+					}
+				}
+				
+			}
+			List<IEntity> mdlist = findByIdList(idStrs, MdMetadataImp.class);
+			if(mdlist != null) {
+				for (IEntity iEntity : mdlist) {
+					MdMetadataImp mdi = (MdMetadataImp) iEntity;
+					MmMetamodel model = getMetamodel(mdi);
+					//dellist.add(iEntity);
+					if (model == null) {
+						MdMetadataReject mdrej = (MdMetadataReject) SpringBeansUtils
+								.copyProperties(MdMetadataReject.class, iEntity);
+						mdrej.setRejremark("没有找到对应元模型code!");
+						mdrejlist.add(mdrej);
+						// rejMdAttributeImp(mdrej.getId());
+					} else {
+						// MdMetadata md = (MdMetadata)
+						// SpringBeansUtils.copyProperties(MdMetadata.class,
+						// iEntity);
+						mdi.setMmId(model.getId());
+						mdi.setMmName(model.getMmName());
+						mdimplist.add(mdi);
+					}
+					// getAttMetamodel();
+				}
+			}
+			// 关系操作
+			for (MdMetadataImp iEntity : mdimplist) {
+				String code = iEntity.getParentcode();
+				MdMetadata md = (MdMetadata) SpringBeansUtils.copyProperties(
+						MdMetadata.class, iEntity);
+				String parentid = iEntity.getParentid();
+				if ((code == null || "".equals(code))
+						&& (parentid == null || "".equals(parentid))) {
+					mdagreelist.add(md);
+					continue;
+				}
+				
+				MdComposition mdcomp = getMdComposition(iEntity,delcodes);
+				if (mdcomp != null) {
+					if (checkInc(iEntity, mdcomp)) {
+						mdclist.add(mdcomp);
+						mdagreelist.add(md);
+						//dellist.add(iEntity);
+					}
+				} else {
+					MdMetadataReject mdrej = (MdMetadataReject) SpringBeansUtils
+							.copyProperties(MdMetadataReject.class, iEntity);
+					delids.add(iEntity.getId());
+					delcodes.add(iEntity.getMdCode());
+					mdrej.setRejremark("生成组合关系失败");
+					mdrejlist.add(mdrej);
+					//dellist.add(iEntity);
+				}
+
+			}
+			// 验证属性
+			for (MdMetadata iEntity : mdagreelist) {
+				String mdid = iEntity.getId();
+				List<MdAttributeImp> maiimplist = getMdAttributeImp(mdid);
+				for (MdAttributeImp mdAttributeImp : maiimplist) {
+					//dellist.add(mdAttributeImp);
+					MdAttribute md = (MdAttribute) SpringBeansUtils
+							.copyProperties(MdAttribute.class, mdAttributeImp);
+					MmAttribute ma = checkMdAttributeImp(mdAttributeImp);
+					//dellist.add(mdAttributeImp);
+					if (ma == null) {
+						MdAttributeReject marej = (MdAttributeReject) SpringBeansUtils
+								.copyProperties(MdAttributeReject.class,
+										mdAttributeImp);
+						mdattrejlist.add(marej);
+					} else {
+						MdAttribute maa = (MdAttribute) SpringBeansUtils
+								.copyProperties(MdAttribute.class,
+										mdAttributeImp);
+						maa.setMmAttId(ma.getId());
+						maa.setMmAttName(ma.getAttName());
+						mdattagreelist.add(maa);
+					}
+				}
+			}
+
+			// 导入
+			allimp.addAll(mdagreelist);
+			allimp.addAll(mdattagreelist);
+			allimp.addAll(mdclist);
+
+			for (IEntity iEntity : mdagreelist) {
+				MdMetadataImp mdimp = (MdMetadataImp) SpringBeansUtils
+						.copyProperties(MdMetadataImp.class, iEntity);
+				implist.add(mdimp);
+			}
+			for (IEntity iEntity : mdattagreelist) {
+				MdAttributeImp mdimp = (MdAttributeImp) SpringBeansUtils
+						.copyProperties(MdAttributeImp.class, iEntity);
+				implist.add(mdimp);
+			}
+			gatherJobDao.save(allimp); // 保存
+			// gatherJobDao.delete(implist); //删除原有记录
+
+			for (MdMetadataReject iEntity : mdrejlist) {
+				if (iEntity == null) {
+					continue;
+				}
+
+				rejMdAttributeImp(iEntity.getId());
+				gatherJobDao.save(iEntity);
+
+				// MdMetadataImp mdimp = (MdMetadataImp)
+				// SpringBeansUtils.copyProperties(MdMetadataImp.class,
+				// iEntity);
+
+			}
+
+			for (IEntity iEntity : mdattrejlist) {
+
+				gatherJobDao.save(iEntity);
+
+				/*
+				 * MdAttributeImp mdimp = (MdAttributeImp)
+				 * SpringBeansUtils.copyProperties(MdAttributeImp.class,
+				 * iEntity); gatherJobDao.delete(mdimp);
+				 */
+			}
+
+			for (IEntity iEntity : dellist) {
+				gatherJobDao.delete(iEntity);
+			}
+
+			
+			
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return context.getResponse();
+
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+			throw new RepositoryException("处理失败");
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			throw new RepositoryException("处理失败");
+		}
+
+	}
+
+	private MdGatherJob getJob(MdMetadataImp imp, MdComposition mdcomp)
+			throws DaoException {
+		try {
+
+			String logid = imp.getJobTaskId();
+			MdGatherLog log = (MdGatherLog) this.gatherJobDao.findById(logid,
+					MdGatherLog.class);
+			String jobid = log.getJobId();
+			job = getJob(jobid);
+
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return job;
+
+	}
+
+	/**
+	 * 增量规则验证
+	 * <p>
+	 * <br>
+	 * 
+	 * @param imp
+	 * @param mdcomp
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月20日 下午7:39:54
+	 * @version V1.0
+	 * @throws DaoException
+	 */
+	private boolean checkInc(MdMetadataImp imp, MdComposition mdcomp)
+			throws DaoException {
+		job = getJob(imp, mdcomp);
+		if(job == null) {
+			return false;
+		}
+		if (!job.getDbpolicy().equals(ImpModelCode.INCREMENT)) {
+			return true;
+		}
+		String formid = mdcomp.getFromMdId();
+		String tocode = imp.getMdCode();
+		List list = this.gatherJobDao.getMdComposition(formid, tocode);
+		if (list != null && list.size() > 0) {
+			return false; // 不是增量数据
+		} else {
+			return true; // 是增量数据
+		}
+	}
+
+	private MmAttribute checkMdAttributeImp(MdAttributeImp maiimp) {
+		try {
+			List<IEntity> mmas = gatherJobDao.findByProperty("attCode",
+					maiimp.getMmAttCode(), MmAttribute.class);
+			if (mmas == null || mmas.size() == 0) {
+				return null;
+			}
+			MmAttribute ma = (MmAttribute) SpringBeansUtils.copyProperties(
+					MmAttribute.class, mmas.get(0));
+
+			return ma;
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdid
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月17日 下午4:29:00
+	 * @version V1.0
+	 */
+	private List<MdAttributeImp> getMdAttributeImp(String mdid) {
+		try {
+			List<MdAttributeImp> mailist = new ArrayList<MdAttributeImp>();
+			List<IEntity> list = gatherJobDao.findByProperty("mdId", mdid,
+					MdAttributeImp.class);
+			if (list == null) {
+				return null;
+			}
+			MdAttributeImp[] mais = list
+					.toArray(new MdAttributeImp[list.size()]);
+			mailist = Arrays.asList(mais);
+			return mailist;
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	/**
+	 * 生成关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdi
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月17日 下午4:19:00
+	 * @version V1.0
+	 */
+	private MdComposition getMdComposition(MdMetadataImp mdi,List<String> delcodes) {
+		try {
+			// 先使用parentid生成关系
+			MdComposition mdc = new MdComposition();
+			String code = mdi.getParentcode();
+			String parentid = mdi.getParentid();
+			if (parentid != null && !parentid.equals("")) {
+				// this.getMetaDataByid(mdid, toid)
+				
+				MmComposition mmcomp = this.getComposition(parentid,
+						mdi.getId());
+				if (mmcomp != null) {
+					MdComposition mdcomp = new MdComposition();
+					mdcomp.setFromMdId(parentid);
+					mdcomp.setId(UUID.randomUUID().toString());
+					mdcomp.setToMdId(mdi.getId());
+					mdcomp.setToMdCode(mdi.getMdCode());
+					mdcomp.setMmCompId(mmcomp.getId());
+					return mdcomp;
+				}
+			}
+
+			// 如果parentid生成失败则使用Parentcode生成关系
+			if (code != null && !code.equals("")) {
+				if(delcodes.contains(code)){
+					return null;
+				}
+				MdMetadata md = getMetaDataByCode(code);
+				MmComposition mmcomp=null;
+				if(md!=null){
+					mmcomp=this.getMmComposition(md.getMmId(), mdi.getMmId());
+				}
+				if (md != null && mmcomp != null) {
+					MdComposition mdcomp = new MdComposition();
+					mdcomp.setFromMdId(md.getId());
+					mdcomp.setId(UUID.randomUUID().toString());
+					mdcomp.setToMdId(mdi.getId());
+					mdcomp.setToMdCode(mdi.getMdCode());
+					mdcomp.setMmCompId(mmcomp.getId());
+					return mdcomp;
+				}
+				MdMetadataImp imp= getMetaDataImpByCode(code,mdi.getJobTaskId());
+				if(imp==null){
+					return null;
+				}
+				mmcomp=this.getMmComposition(imp.getMmId(), mdi.getMmId());
+				if (imp != null && mmcomp != null) {
+					MdComposition mdcomp = new MdComposition();
+					mdcomp.setFromMdId(imp.getId());
+					mdcomp.setId(UUID.randomUUID().toString());
+					mdcomp.setToMdId(mdi.getId());
+					mdcomp.setToMdCode(mdi.getMdCode());
+					mdcomp.setMmCompId(mmcomp.getId());
+					return mdcomp;
+				}
+			}
+
+			return null;
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	/**
+	 * 获取临时表元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdid
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月17日 下午4:08:18
+	 * @version V1.0
+	 */
+	private MdMetadataImp getMetaDataImpByCode(String code, String jobid) {
+		// String mmcode = mdi.getMmcode();
+		List<MdMetadataImp> list = gatherJobDao.getMetaDataImpByCode(
+				code, jobid);
+		if(list==null){
+			return null;
+		}
+		MdMetadataImp md = list.get(0);
+		return md;
+	}
+
+	private MdMetadata getMetaDataByCode(String code) {
+		// String mmcode = mdi.getMmcode();
+		List<IEntity> list;
+		try {
+			list = gatherJobDao
+					.findByProperty("mdCode", code, MdMetadata.class);
+			if (list == null || list.size() == 0) {
+				return null;
+			}
+			MdMetadata[] mds = list.toArray(new MdMetadata[list.size()]);
+			return mds[0];
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 属性驳回
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdid
+	 * @author wzx
+	 * @date 2015年8月17日 下午4:06:54
+	 * @version V1.0
+	 */
+	private void rejMdAttributeImp(String mdid) {
+		try {
+			List<IEntity> list = gatherJobDao.findByProperty("mdId", mdid,
+					MdAttributeImp.class);
+			if (list == null || list.size() == 0) {
+				return;
+			}
+
+			List<IEntity> rejlist = SpringBeansUtils.copyPropertiesForList(
+					MdAttributeReject.class, list, null);
+			gatherJobDao.save(rejlist);
+			gatherJobDao.delete(list);
+
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * 根据元数据id获取组合model
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdid
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月20日 下午3:57:21
+	 * @version V1.0
+	 */
+	private MmComposition getComposition(String mdid, String toid) {
+		MdMetadata frommd = getMetaDataByid(mdid);
+		MdMetadataImp frommdimp = getMetaDataImpByid(mdid);
+		if (frommd == null && frommdimp == null) {
+			return null;
+		}
+		String frommmid = null;
+		if (frommd != null) {
+			frommmid = frommd.getMmId();
+		} else {
+			frommmid = frommdimp.getMmId();
+		}
+
+		MdMetadata tomd = getMetaDataByid(toid);
+		MdMetadataImp tomdimp = getMetaDataImpByid(toid);
+		if (tomd == null && tomdimp == null) {
+			return null;
+		}
+
+		String tommid = null;
+		if (tommid != null) {
+			tommid = tomd.getMmId();
+		} else {
+			tommid = tomdimp.getMmId();
+		}
+		// 获取两端模型
+		MmMetamodel frommodel = getMetamodelByid(frommmid);
+		MmMetamodel tomodel = getMetamodelByid(tommid);
+		if (frommodel == null || tomodel == null) {
+			return null;
+		}
+		frommmid = frommodel.getId();
+		tommid = tomodel.getId();
+		MmComposition mmcomp = getMmComposition(frommmid, tommid);
+
+		return mmcomp;
+	}
+
+	/**
+	 * 根据两端id查询组合元模型
+	 * <p>
+	 * <br>
+	 * 
+	 * @param fromid
+	 * @param toid
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月20日 下午4:13:31
+	 * @version V1.0
+	 */
+	private MmComposition getMmComposition(String fromid, String toid) {
+		// String
+		// hql="from "+MmComposition.class.getName()+" where fromMmId=? and toid=?";
+		List<MmComposition> list = this.gatherJobDao.getMmComposition(fromid,
+				toid);
+		if (list == null || list.size() == 0) {
+			return null;
+		}
+		return list.get(0);
+
+	}
+
+	/**
+	 * 获取元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdid
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月17日 下午4:08:18
+	 * @version V1.0
+	 */
+	private MdMetadata getMetaDataByid(String mdid) {
+		try {
+			// String mmcode = mdi.getMmcode();
+			MdMetadata md = (MdMetadata) gatherJobDao.findById(mdid,
+					MdMetadata.class);
+			return md;
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 获取临时表元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdid
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月17日 下午4:08:18
+	 * @version V1.0
+	 */
+	private MdMetadataImp getMetaDataImpByid(String mdid) {
+		try {
+			// String mmcode = mdi.getMmcode();
+			MdMetadataImp md = (MdMetadataImp) gatherJobDao.findById(mdid,
+					MdMetadataImp.class);
+			return md;
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 获取元数据模型
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdi
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月17日 下午4:08:18
+	 * @version V1.0
+	 */
+	private MmMetamodel getMetamodelByid(String mmid) {
+		try {
+			// String mmcode = mdi.getMmcode();
+			MmMetamodel mm = (MmMetamodel) gatherJobDao.findById(mmid,
+					MmMetamodel.class);
+			return mm;
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	/**
+	 * 获取元数据模型
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdi
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月17日 下午4:08:18
+	 * @version V1.0
+	 */
+	private MmMetamodel getMetamodel(MdMetadataImp mdi) {
+		try {
+			String mmcode = mdi.getMmcode();
+			List<IEntity> list = gatherJobDao.findByProperty("mmCode", mmcode,
+					MmMetamodel.class);
+			if (list == null || list.size() == 0) {
+				return null;
+			}
+			MmMetamodel model = (MmMetamodel) list.get(0);
+			return model;
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	/**
+	 * 获取属性
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdi
+	 * @return
+	 * @author wzx
+	 * @date 2015年8月17日 下午4:08:26
+	 * @version V1.0
+	 */
+	private MmAttribute getAttMetamodel(MdAttributeImp mdi) {
+		try {
+			String code = mdi.getMmAttCode();
+			List<IEntity> list = gatherJobDao.findByProperty("attCode", code,
+					MmAttribute.class);
+			if (list == null || list.size() == 0) {
+				return null;
+			}
+			MmAttribute model = (MmAttribute) list.get(0);
+			return model;
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	@Override
+	public IResponse approveReject(IContext context) throws RepositoryException {
+		try {
+			List<String> idStrs = new ArrayList<String>();
+			MetaDataBatchAuditView view = (MetaDataBatchAuditView) context
+					.getParameter("view");
+			List<Object> ids = view.getMdIdList();
+			if (ids == null) {
+				throw new RepositoryException("处理失败");
+			}
+			//循环审核三层元数据id
+			for(int i=0; i<ids.size(); i++) {
+				BatchIdEntity idEntity = (BatchIdEntity)ids.get(i);
+				String id = idEntity.getId();//一级id
+				if(id == null) {
+					continue;
+				}
+				String code = "";
+				IEntity iMdImpEty = gatherJobDao.findById(id, MdMetadataImp.class);
+				MdMetadataImp mdImp = (MdMetadataImp)iMdImpEty;
+				if(mdImp != null) {
+					code = mdImp.getMdCode();
+				}
+				List<Object> children = idEntity.getChildren();//一级children
+				if(children != null) {
+					for(int j=0; j<children.size(); j++) {
+						LinkedHashMap lkhmap = (LinkedHashMap) children.get(j);
+						String subId = lkhmap.get("id").toString();
+						if(lkhmap.get("children") == null) {
+							String subCode = "";
+							IEntity subMdImpEty = gatherJobDao.findById(subId, MdMetadataImp.class);
+							MdMetadataImp subMdImp = (MdMetadataImp)subMdImpEty;
+							if(subMdImp != null) {
+								subCode = subMdImp.getMdCode();
+							}
+							List<IEntity> subMdEntitys = findByParentIdOrCode(subId, subCode);
+							for(IEntity subEntity : subMdEntitys) {
+								MdMetadataImp md = (MdMetadataImp)subEntity;
+								idStrs.add(md.getId());
+							}
+							idStrs.add(subId);
+						}else {
+							List<Object> childs = (List<Object>) lkhmap.get("children");//二级children
+							if(childs != null) {
+								for(int k=0; k<childs.size(); k++) {
+									idStrs.add(childs.get(k).toString());
+								}
+							}
+						}
+						
+					}
+				}else if(children == null) {
+					List<IEntity> subMdEntitys = findByParentIdOrCode(id, code);
+					if(subMdEntitys != null) {
+						for(IEntity subEntity : subMdEntitys) {
+							MdMetadataImp md = (MdMetadataImp)subEntity;
+							String subId = md.getId();
+							String mdCode = md.getMdCode();
+							idStrs.add(subId);
+							List<IEntity> grandMdEntitys = findByParentIdOrCode(subId, mdCode);
+							if(grandMdEntitys != null) {
+								for(IEntity grandEntity : grandMdEntitys) {
+									MdMetadataImp gmd = (MdMetadataImp)grandEntity;
+									idStrs.add(gmd.getId());
+								}
+							}
+						}
+					}
+					idStrs.add(id);
+				}
+			}
+			List<IEntity> mdrejlist = new ArrayList<IEntity>();
+			List<IEntity> list = gatherJobDao.findByIdList(idStrs,
+					MdMetadataImp.class);
+			if (list == null) {
+				throw new RepositoryException("处理失败");
+			}
+			for (IEntity iEntity : list) {
+				MdMetadataReject mdrej = (MdMetadataReject) SpringBeansUtils
+						.copyProperties(MdMetadataReject.class, iEntity);
+				mdrej.setRejremark(view.getComment());
+				mdrejlist.add(mdrej);
+			}
+			gatherJobDao.delete(list);
+			gatherJobDao.save(mdrejlist);
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			throw new RepositoryException("处理失败");
+		}
+		context.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessResult(null));
+		return context.getResponse();
+	}
+
+	@Override
+	public List<MdGatherJobParam> getJobParam(String jobid)
+			throws RepositoryException {
+
+		List<IEntity> list;
+		try {
+			list = gatherJobDao.findByProperty("jobId", jobid,
+					MdGatherJobParam.class);
+			if (list == null) {
+				throw new RepositoryException("查询失败");
+			}
+			MdGatherJobParam[] parms = (MdGatherJobParam[]) list
+					.toArray(new MdGatherJobParam[list.size()]);
+			List<MdGatherJobParam> jobParam = Arrays.asList(parms);
+			return jobParam;
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		}
+
+		// return null;
+	}
+
+	@Override
+	public MdGatherJob getJob(String jobid) throws RepositoryException {
+		try {
+			MdGatherJob job = (MdGatherJob) gatherJobDao.findById(jobid,
+					MdGatherJob.class);
+
+			return job;
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		}
+	}
+
+	@Override
+	public MdGatherDatasource getDbs(String dbsid) throws RepositoryException {
+
+		try {
+			MdGatherDatasource dbs = (MdGatherDatasource) gatherJobDao
+					.findById(dbsid, MdGatherDatasource.class);
+			return dbs;
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		}
+	}
+
+	@Override
+	public List<MdGatherDatasourceParam> getDBSParam(String dbsid)
+			throws RepositoryException {
+
+		List<IEntity> list;
+		try {
+			list = gatherJobDao.findByProperty("dbsId", dbsid,
+					MdGatherDatasourceParam.class);
+			if (list == null) {
+				throw new RepositoryException("查询失败");
+			}
+			MdGatherDatasourceParam[] parms = (MdGatherDatasourceParam[]) list
+					.toArray(new MdGatherDatasourceParam[list.size()]);
+			List<MdGatherDatasourceParam> dbsParam = Arrays.asList(parms);
+			return dbsParam;
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		}
+
+		// return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public IResponse getGatherMetaDataById(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stubMdMetadataImp
+		try {
+			String id = (String) paramIContext
+					.getParameter(ParameterKeys.ATT_ID);
+			MdMetadataImp data = (MdMetadataImp) this.getGatherJobDao()
+					.findById(id, MdMetadataImp.class);
+			if (data != null) {
+				List attList=this.getMdAttributeImp(data.getId());
+				data.setAttList(attList);
+				paramIContext.getResponse().setResult(
+						ResultFactory.getInstance().createSuccessResult(data));
+			}
+			return paramIContext.getResponse();
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		}
+	}
+
+	@Override
+	public IResponse getJobGatherSubMetaData(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			String id = (String) paramIContext
+					.getParameter(ParameterKeys.ATT_ID);
+			MdMetadataImp data = (MdMetadataImp) this.getGatherJobDao()
+					.findById(id, MdMetadataImp.class);
+			
+			if (data != null) {
+				MdMetadataImp query1imp = new MdMetadataImp();
+				MdMetadataImp query2imp = new MdMetadataImp();
+				query1imp.setUpdateDate(null);
+				query2imp.setUpdateDate(null);
+				query1imp.setParentcode(data.getMdCode());
+				
+				query2imp.setParentid(data.getId());
+				List<IEntity> list= new ArrayList<IEntity>();
+				list.add(query1imp);
+				list.add(query2imp);
+				List<IEntity> qlist=gatherJobDao.findByOrEntity(list);
+				//List attList=this.getMdAttributeImp(data.getId());
+				//data.setAttList(attList);
+				paramIContext.getResponse().setResult(
+						ResultFactory.getInstance().createSuccessResult(qlist));
+			}
+			return paramIContext.getResponse();
+			
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		}
+	}
+
+}

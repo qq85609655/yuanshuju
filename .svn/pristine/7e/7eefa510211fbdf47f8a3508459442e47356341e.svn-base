@@ -1,0 +1,139 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.ext.model.IDepBasicModel;
+import com.gilight.dep.framework.core.ext.repository.DepBaseRepository;
+import com.gilight.dep.framework.core.model.IBasicModel;
+import com.gilight.dep.framework.core.model.entity.IDEntity;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.entity.MdViewFolder;
+import com.gilight.dep.metadata.repository.IMetaDataViewRepository;
+import com.gilight.dep.metadata.scope.MetaDateViewFolderScope;
+
+@SuppressWarnings("rawtypes")
+public class MetaDataViewRepositoryImpl extends DepBaseRepository implements
+		IMetaDataViewRepository {
+
+	public MetaDataViewRepositoryImpl() {
+	}
+
+	
+	
+	@Override
+	public IResponse getByFolderId(IContext context) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IBasicModel model = (IBasicModel) context
+					.getParameter(ParameterKeys.ATT_MODEL);
+			IDEntity entity = (IDEntity) model.getData();
+			model.setData(entity);
+			entity = (IDEntity) this.getBaseDao().findById(
+					(Serializable) entity.getId(), MdViewFolder.class);
+			if (entity == null) {
+				throw new GilightException("实体对象不存在！");
+			}
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(entity));
+			return context.getResponse();
+
+		} catch (DaoException e) {
+			throw new RepositoryException(e);
+
+		} catch (Exception e) {
+			throw new RepositoryException(e);
+		}
+	}
+
+	@Override
+	protected IResult getByScopeAfter(IContext context, IResult result)
+			throws RepositoryException {
+		return result;
+	}
+
+	@Override
+	protected IResult createAfter(IContext context, IResult result)
+			throws RepositoryException {
+		return result;
+	}
+
+	@Override
+	protected IResult updateAfter(IContext context, IResult result) {
+		return result;
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext context, IResult result)
+			throws RepositoryException {
+		try {
+			IDepBasicModel model = getModelParameter(context);
+			String id = (String) model.getKey();
+			MetaDateViewFolderScope scope = new MetaDateViewFolderScope();
+			scope.setParentId(id);
+			List<IEntity> subs = this.getBaseDao().findByScope(scope);
+			for (IEntity sub : subs) {
+				deleteViewFolder(sub);
+			}
+			return result;
+		} catch (DaoException | ModelException e) {
+			e.printStackTrace();
+			throw new RepositoryException(e);
+		}
+	}
+
+	protected void deleteViewFolder(IEntity viewFolder)
+			throws RepositoryException {
+		try {
+			IDEntity entity = (IDEntity) viewFolder;
+			String id = (String) entity.getId();
+			MetaDateViewFolderScope scope = new MetaDateViewFolderScope();
+			scope.setParentId(id);
+			List<IEntity> subs;
+			subs = this.getBaseDao().findByScope(scope);
+			for (IEntity sub : subs) {
+				deleteViewFolder(sub);
+			}
+			this.getBaseDao().delete(entity);
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException(e);
+		}
+	}
+
+	@Override
+	protected IResult getByIdAfter(IContext context, IResult result)
+			throws RepositoryException {
+		return result;
+	}
+
+	/**
+	 * 目前新增文件夹只是保存数据不返还结果
+	 */
+	@Override
+	public IResponse createFolder(IContext context) throws RepositoryException {
+		super.create(context);
+		return context.getResponse();
+	}
+
+	@Override
+	public IResponse deleteFolder(IContext context) throws RepositoryException {
+		super.delete(context);
+		return context.getResponse();
+	}
+
+	@Override
+	public IResponse updateFolder(IContext context) throws RepositoryException {
+		super.update(context);
+		return context.getResponse();
+	}
+}

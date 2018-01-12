@@ -1,0 +1,21 @@
+package com.gilight.dep.metadata.entity;
+
+import com.gilight.dep.framework.core.model.entity.IDEntity;
+
+/***
+ * 
+ * @ClassName: BaseMetaDataEntity
+ * <p>TODO<br>
+ * @author hww
+ * @date 2015年7月7日 下午3:42:13
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public abstract class BaseMetaDataEntity implements IDEntity<String> {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+
+}

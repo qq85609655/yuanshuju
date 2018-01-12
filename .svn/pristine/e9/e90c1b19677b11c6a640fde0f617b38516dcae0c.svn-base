@@ -1,0 +1,25 @@
+package com.gilight.dep.metamodel.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+
+/**
+ * 
+ * @ClassName: IMetaModelCompService
+ *             <p>
+ *             元模型组合关系<br>
+ * @author wzx
+ * @date 2015年7月9日 下午2:30:34
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaModelCompService extends IMetaModelAssoService {
+    /**
+     * 删除组合关系
+     * @param paramIContext
+     * @return
+     * @throws ServiceException
+     */
+    IResponse deleteAllComp(IContext paramIContext) throws ServiceException;
+}

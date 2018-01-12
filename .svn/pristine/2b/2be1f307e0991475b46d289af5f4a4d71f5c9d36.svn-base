@@ -1,0 +1,78 @@
+package com.gilight.dep.metadata.analyzer.offline.impl;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+//import com.gilight.dep.platform.common.spring.CustomizedPropertySpringConfigurer;
+//import com.gilight.dep.platform.constant.NodeConstant;
+
+/***
+ * 
+ * @ClassName: SpringFactory
+ *             <p>
+ *             TODO<br>
+ * @author zps
+ * @date 2015年9月10日 上午10:04:56
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class SpringFactory {
+	private static SpringFactory instance = new SpringFactory();
+	private static final String xmlPath = "spring-dispather.xml";
+	private static ApplicationContext factory;
+
+	public static SpringFactory getInstance() {
+		return instance;
+	}
+
+	static {
+		factory = new ClassPathXmlApplicationContext(xmlPath);
+	}
+
+	public static Object getBean(String name) {
+		if (factory == null) {
+			return null;
+		}
+		try {
+			return factory.getBean(name);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static ApplicationContext getFactory() {
+		return factory;
+	}
+
+	public static void setFactory(ApplicationContext factory) {
+		SpringFactory.factory = factory;
+	}
+
+/*	public static CustomizedPropertySpringConfigurer getPropertyConfiguer() {
+		Object bean = SpringFactory.getBean("propertyConfigurer");
+		return (CustomizedPropertySpringConfigurer) bean;
+	}
+*/
+	public static void main(String[] args) {
+		System.out.println("Test------");
+		Object bean = SpringFactory.getBean("propertyConfigurer");
+		System.out.println(bean == null);
+		while(1==1){
+			try {
+				Thread.sleep(1000000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		/*System.out.println(CustomizedPropertySpringConfigurer
+				.getContextPropertys());
+		String ips = (String) CustomizedPropertySpringConfigurer
+				.getContextProperty(NodeConstant.DNODE_IP);*/
+		/*String[] ipay = (ips == null ? null : ips.split(","));
+		System.out.println(ips);*/
+		//System.out.println(ipay.length);
+	}
+
+}

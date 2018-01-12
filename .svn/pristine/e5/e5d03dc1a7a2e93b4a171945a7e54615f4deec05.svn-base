@@ -1,0 +1,53 @@
+/**   
+ * @Title: IGatherAdaptorService.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月29日 下午3:50:03
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.service.IService;
+
+/***
+ * 
+ * @ClassName: IGatherAdaptorService
+ *             <p>采集适配器管理服务
+ *             TODO<br>
+ * @author zps
+ * @date 2015年7月29日 下午4:00:20
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public interface IGatherAdaptorService extends IService {
+	/***
+	 * 
+	 * <p>
+	 * 获取系统配置的所有的适配器信息 <br>
+	 * 
+	 * @param paramIContext
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年7月29日 下午3:52:06
+	 * @version V1.0
+	 */
+	public <P> IResponse getAllAdaptor(IContext<P> paramIContext)
+			throws ServiceException;
+	/**
+	 * 根据适配器Id获取配置及任务
+	* <p><br>
+	* @param paramIContext
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年7月31日 下午3:19:13
+	* @version V1.0
+	 */
+	public IResponse getDataSourceTreeById(IContext paramIContext)
+			throws ServiceException;
+}

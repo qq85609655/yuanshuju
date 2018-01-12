@@ -1,0 +1,41 @@
+/**   
+ * @Title: IMetaModelDataTypeService.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月24日 下午5:11:55
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+
+/***
+ * 
+ * @ClassName: IMetaModelDataTypeService
+ *             <p>
+ *             元模型数据类型的管理 TODO<br>
+ * @author zps
+ * @date 2015年7月24日 下午5:12:01
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaModelDataTypeService extends IMetaModelService {
+	/***
+	 * 
+	 * <p>
+	 * 根据数据类型获取其下面定义的所有选项 <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @author zps
+	 * @date 2015年7月24日 下午6:01:47
+	 * @version V1.0
+	 * @throws ServiceException
+	 */
+	public IResponse getDataTypeSelectByDId(IContext<IDParameters> context)
+			throws ServiceException;
+}

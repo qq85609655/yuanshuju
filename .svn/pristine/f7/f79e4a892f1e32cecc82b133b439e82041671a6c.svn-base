@@ -1,0 +1,107 @@
+/**   
+* @Title: MetaModelBasicServiceImplTest.java 
+* <p>TODO 
+* @author wzx 
+* @date 2015年7月15日 下午2:20:06
+* @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+* @version V1.0   
+*/
+
+package com.gilight.dep.metamodel.service.impl;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+/** 
+ * @ClassName: MetaModelBasicServiceImplTest 
+ * <p>TODO<br>
+ * @author wzx
+ * @date 2015年7月15日 下午2:20:06
+ * @version V1.0
+ * @since JDK 1.6 
+ */
+
+public class MetaModelBasicServiceImplTest {
+
+	/** 
+	 * <p><br>
+	 * @throws java.lang.Exception  
+	 * @author wzx
+	 * @date 2015年7月15日 下午2:20:06
+	 * @version V1.0  
+	 */
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+	}
+
+	/** 
+	 * <p><br>
+	 * @throws java.lang.Exception  
+	 * @author wzx
+	 * @date 2015年7月15日 下午2:20:06
+	 * @version V1.0  
+	 */
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
+
+	/** 
+	 * <p><br>
+	 * @throws java.lang.Exception  
+	 * @author wzx
+	 * @date 2015年7月15日 下午2:20:06
+	 * @version V1.0  
+	 */
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	/** 
+	 * <p><br>
+	 * @throws java.lang.Exception  
+	 * @author wzx
+	 * @date 2015年7月15日 下午2:20:06
+	 * @version V1.0  
+	 */
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	/**
+	 * Test method for {@link com.gilight.dep.metamodel.service.impl.MetaModelBasicServiceImpl#update(com.gilight.dep.framework.core.context.base.IContext)}.
+	 */
+	@Test
+	public void testUpdate() {
+		System.out.println("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link com.gilight.dep.metamodel.service.impl.MetaModelBasicServiceImpl#delete(com.gilight.dep.framework.core.context.base.IContext)}.
+	 */
+	@Test
+	public void testDelete() {
+		System.out.println("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link com.gilight.dep.metamodel.service.impl.MetaModelBasicServiceImpl#create(com.gilight.dep.framework.core.context.base.IContext)}.
+	 */
+	@Test
+	public void testCreate() {
+		System.out.println("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link com.gilight.dep.metamodel.service.impl.MetaModelBasicServiceImpl#getById(com.gilight.dep.framework.core.context.base.IContext)}.
+	 */
+	@Test
+	public void testGetById() {
+		System.out.println("Not yet implemented");
+	}
+
+}

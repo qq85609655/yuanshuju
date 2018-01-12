@@ -1,0 +1,24 @@
+/**   
+* @Title: Test.java 
+* <p>TODO 
+* @author zps  
+* @date 2015年8月10日 上午10:29:38
+* @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+* @version V1.0   
+*/
+package com.gilight.dep.metadata.spring;
+
+import java.util.Date;
+import java.util.UUID;
+
+import com.gilight.dep.framework.util.date.DateUtils;
+
+public class Test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+     System.out.println(DateUtils.fmtDateToYMDHMSS(new Date()));
+     System.out.println(UUID.randomUUID().toString());
+	}
+
+}

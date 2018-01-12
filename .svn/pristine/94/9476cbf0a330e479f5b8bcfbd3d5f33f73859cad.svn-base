@@ -1,0 +1,35 @@
+package com.gilight.dep.metadata.web.request;
+
+/**
+ * 
+ * @ClassName: VersionRequestData
+ *             <p>
+ *             TODO<br>
+ * @author Rao JunJun
+ * @date 2015-7-16 上午11:16:36
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class VersionRequestData extends BaseRequestData {
+
+	private String metadataId;
+
+	private String mdCode;
+
+	public String getMetadataId() {
+		return metadataId;
+	}
+
+	public void setMetadataId(String metadataId) {
+		this.metadataId = metadataId;
+	}
+
+	public String getMdCode() {
+		return mdCode;
+	}
+
+	public void setMdCode(String mdCode) {
+		this.mdCode = mdCode;
+	}
+
+}

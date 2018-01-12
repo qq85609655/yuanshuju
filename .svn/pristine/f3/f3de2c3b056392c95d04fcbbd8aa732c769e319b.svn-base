@@ -1,0 +1,189 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.List;
+import java.util.UUID;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.EntityParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.metadata.dao.IMetaModelInheDao;
+import com.gilight.dep.metadata.enmu.MetaModelYesOrNo;
+import com.gilight.dep.metadata.entity.MmAttribute;
+import com.gilight.dep.metadata.entity.MmInherit;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IMetaModelInheRepository;
+import com.gilight.dep.metadata.util.AutoCopyObj;
+
+public class MetaModelInheRepositoryImpl implements IMetaModelInheRepository {
+
+	private IMetaModelInheDao metaModelInheDao;
+	
+	
+	
+	public IMetaModelInheDao getMetaModelInheDao() {
+		return metaModelInheDao;
+	}
+
+	public void setMetaModelInheDao(IMetaModelInheDao metaModelInheDao) {
+		this.metaModelInheDao = metaModelInheDao;
+	}
+
+
+
+	@Override
+	public IResponse create(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			//paramIContext.getRequest()create(paramIContext)
+				EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+				IEntity mme=(IEntity)entityParameters.getEntity();
+			//metaModelBasicDao.save(paramIEntity);
+				createInheAttr(mme);
+				metaModelInheDao.save(mme);
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new RepositoryException("创建元模型失败!-dao");
+			}
+			
+		return paramIContext.getResponse();
+	}
+	/**
+	 * 复制父类的属性
+	* <p><br>
+	* @param mme
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年7月24日 上午11:28:50
+	* @version V1.0
+	 */
+	private void createInheAttr(IEntity mme) throws RepositoryException {
+		try {
+			MmInherit mih = (MmInherit)mme;
+			String mmid=mih.getMmId();
+			String pid=mih.getParentId();
+			String hql = "from "+MmAttribute.class.getName()+" where inheritFlag="+MetaModelYesOrNo.YES+" and mmId='"+pid+"'" ;
+			System.out.println(hql);
+			List<IEntity> attrlist = metaModelInheDao.findByHQL(hql);
+			if(attrlist==null){
+				return;
+			}
+			for (IEntity iEntity : attrlist) {
+				if(iEntity==null){
+					continue;
+				}
+				MmAttribute attr= (MmAttribute)iEntity;
+				MmAttribute mma=this.newAttr(attr);
+				mma.setMmId(mmid);
+				metaModelInheDao.save(mma);
+			}
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("复制元模型属性失败");
+		}
+	}
+	/**
+	 * 创建新的属性
+	* <p><br>
+	* @param attr
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年7月24日 上午11:29:21
+	* @version V1.0
+	 */
+	private MmAttribute newAttr(MmAttribute attr) throws RepositoryException {
+		MmAttribute mma = new MmAttribute();
+		try {
+			
+		
+			mma= (MmAttribute) SpringBeansUtils.copyProperties(MmAttribute.class, attr);
+			mma.setId(UUID.randomUUID().toString());
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return mma;
+		
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+			IEntity mme=(IEntity)entityParameters.getEntity();
+			//metaModelBasicDao.save(paramIEntity);
+		
+			metaModelInheDao.update(mme);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(null));
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元模型失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+				EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+				IEntity mme=(IEntity)entityParameters.getEntity();
+			//metaModelBasicDao.save(paramIEntity);
+			
+				metaModelInheDao.delete(mme);
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new RepositoryException("删除元模型失败!-dao");
+			}
+			
+		return paramIContext.getResponse();
+	}
+
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IDParameters idp = (IDParameters) paramIContext.getParameters();
+			//EntityParameters mme=(MmMetamodel)entityParameters.getEntity();
+			String id = idp.getId();
+			//metaModelBasicDao.getById(mme.getId(),MmMetamodel.class);
+			MmMetamodel mme=(MmMetamodel) metaModelInheDao.findById(id,MmMetamodel.class);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mme));
+			
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询元模型失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

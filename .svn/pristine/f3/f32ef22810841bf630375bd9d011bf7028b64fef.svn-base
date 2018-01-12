@@ -1,0 +1,25 @@
+package com.gilight.dep.metadata.enums;
+
+public class ImpModelCode {
+
+	public ImpModelCode() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public static final String Schema="DepSchema";
+	public static final String Table="DepTable";
+	public static final String Column="DepColumn";
+	public static final String View="DepView";
+	
+	public static final String COLUMN_NAME="name";
+	public static final String COLUMN_TYPE="typename";
+	public static final String COLUMN_SIZE="size";
+	public static final String COLUMN_DIGITS="digits";
+	public static final String COLUMN_ISNULL="isnull";
+	public static final String COLUMN_REMARK="remark";
+	
+	public static final String TOTALITY="TOTALITY"; //全量
+	public static final String INCREMENT="INCREMENT"; //增量
+	
+	
+}

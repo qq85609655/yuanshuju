@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+  <table-filter match-schema="METAST" match-name="MD_ANALYSE_LOG"/>
+  <table-filter match-schema="METAST" match-name="MD_ANALYSE_RESULT"/>
+  <table-filter match-schema="METAST" match-name="MD_ATTRIBUTE"/>
+  <table-filter match-schema="METAST" match-name="MD_ATTRIBUTE_ARCHIVE"/>
+  <table-filter match-schema="METAST" match-name="MD_ATTRIBUTE_IMP"/>
+  <table-filter match-schema="METAST" match-name="MD_ATTRIBUTE_REJECT"/>
+  <table-filter match-schema="METAST" match-name="MD_COMPOSITION"/>
+  <table-filter match-schema="METAST" match-name="MD_COMPOSITION_IMP"/>
+  <table-filter match-schema="METAST" match-name="MD_COMPOSITION_REJECT"/>
+  <table-filter match-schema="METAST" match-name="MD_DATAMAP_RESULT"/>
+  <table-filter match-schema="METAST" match-name="MD_DEPENDENCY"/>
+  <table-filter match-schema="METAST" match-name="MD_DEPENDENCY_IMP"/>
+  <table-filter match-schema="METAST" match-name="MD_DEPENDENCY_REJECT"/>
+  <table-filter match-schema="METAST" match-name="MD_GATHER_DATASOURCE"/>
+  <table-filter match-schema="METAST" match-name="MD_GATHER_DATASOURCE_PARAM"/>
+  <table-filter match-schema="METAST" match-name="MD_GATHER_JOB"/>
+  <table-filter match-schema="METAST" match-name="MD_GATHER_JOB_PARAM"/>
+  <table-filter match-schema="METAST" match-name="MD_GATHER_LOG"/>
+  <table-filter match-schema="METAST" match-name="MD_METADATA"/>
+  <table-filter match-schema="METAST" match-name="MD_METADATA_ARCHIVE"/>
+  <table-filter match-schema="METAST" match-name="MD_METADATA_IMP"/>
+  <table-filter match-schema="METAST" match-name="MD_METADATA_REJECT"/>
+  <table-filter match-schema="METAST" match-name="MD_VIEW"/>
+  <table-filter match-schema="METAST" match-name="MM_ATTRIBUTE"/>
+  <table-filter match-schema="METAST" match-name="MM_COMPOSITION"/>
+  <table-filter match-schema="METAST" match-name="MM_DEPENDENCY"/>
+  <table-filter match-schema="METAST" match-name="MM_ENUM"/>
+  <table-filter match-schema="METAST" match-name="MM_ENUM_VALUE"/>
+  <table-filter match-schema="METAST" match-name="MM_INHERIT"/>
+  <table-filter match-schema="METAST" match-name="MM_METAMODEL"/>
+  <table-filter match-schema="METAST" match-name="MM_VIEW_FOLDER"/>
+  <table-filter match-schema="METAST" match-name="MM_FOLDER"/>
+  <table-filter match-schema="METAST" match-name="MD_SYSTEM_BACKUP"/>
+</hibernate-reverse-engineering>

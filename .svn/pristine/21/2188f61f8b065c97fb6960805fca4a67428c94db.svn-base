@@ -1,0 +1,78 @@
+/**   
+ * @Title: IGatherAdaptorService.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月28日 下午8:08:34
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.gather.common;
+
+import com.gilight.dep.framework.core.exception.ServiceException;
+
+/***
+ * 
+ * @ClassName: IGatherAdaptorService
+ *             <p>
+ *             采集适配器工厂，所有的采集适配器注册到适配器工厂，有工厂统一管理,并统一管理采集任务执行的模型 TODO<br>
+ * @author zps
+ * @date 2015年7月28日 下午8:50:44
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public interface IGatherAdaptorService {
+	/**
+	 * 
+	 * <p>
+	 * 获取采集适配器 <br>
+	 * 
+	 * @param adaptorCode
+	 * @return
+	 * @author zps
+	 * @date 2015年7月28日 下午8:10:22
+	 * @version V1.0
+	 */
+	public IGatherJobTaskModel getGatherJobTaskModelByAdaptor(String adaptorCode)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * 注册采集适配器 <br>
+	 * 
+	 * @param jobTaskModel
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年7月28日 下午8:19:27
+	 * @version V1.0
+	 */
+	public void registerAdaptor(IGatherJobTaskModel jobTaskModel)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * 反初始化采集适配器 <br>
+	 * 
+	 * @param jobTaskModel
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年7月28日 下午8:19:43
+	 * @version V1.0
+	 */
+	public void unRegisterAdaptor(IGatherJobTaskModel jobTaskModel)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * jobTaskId <br>
+	 * 
+	 * @param gatherJobId
+	 * @return
+	 * @author zps
+	 * @date 2015年7月29日 上午11:15:11
+	 * @version V1.0
+	 */
+	public IGatherJobTaskModel getGatherJobModel(String jobTaskId);
+}

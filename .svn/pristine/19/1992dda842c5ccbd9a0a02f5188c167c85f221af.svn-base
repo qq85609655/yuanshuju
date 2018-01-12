@@ -1,0 +1,55 @@
+{
+	"plugins" : [{
+		"src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/AddDependMetadata.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.AddDependMetadata"
+	},{
+		"src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/AuditMetadata.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.AuditMetadata"	
+	},{
+		"src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/ChangeLayer.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.ChangeLayer"	
+	},{
+		"src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/ChangeToDependLayer.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.ChangeToDependLayer"		
+	},{
+		"src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/CreateSubMetadata.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.CreateSubMetadata"			
+	},{
+		"src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/DeleteDependMetadata.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.DeleteDependMetadata"
+	},{
+		"src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/DeleteMetadata.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.DeleteMetadata"	
+	},{
+		"src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/EditMetadata.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.EditMetadata"		
+	},{
+		"src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/PubMetadata.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.PubMetadata"			
+	},{
+	    "src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/QueryMapping.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.QueryMapping"
+	},{
+		"src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/ShowMenuPlugin.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.ShowMenuPlugin"		
+	},{
+		"src"	:	"Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/AnalyseMetadata.js",
+		"name"	:	"Dep.framework.editor.plugin.containers.layer.AnalyseMetadata"		
+	},{
+	 	"src": "Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/DataMapShow.js",
+		"name": "Dep.framework.editor.plugin.containers.layer.DataMapShow"
+	},{
+	 	"src": "Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/ImportSubMetadata.js",
+		"name": "Dep.framework.editor.plugin.containers.layer.ImportSubMetadata"
+	},{
+		"src": "Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/CreateMapSubMetadata.js",
+		"name": "Dep.framework.editor.plugin.containers.layer.CreateMapSubMetadata"
+	},{
+		"src": "Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/CreateMappedSubMetadata.js",
+		"name": "Dep.framework.editor.plugin.containers.layer.CreateMappedSubMetadata"
+	},{
+	 	"src": "Dep/metadata/metadatamng/extends/editor/plugin/containers/layer/ShowSubMetadataGrid.js",
+		"name": "Dep.framework.editor.plugin.containers.layer.ShowSubMetadataGrid"
+	}],
+	"details" : []
+}

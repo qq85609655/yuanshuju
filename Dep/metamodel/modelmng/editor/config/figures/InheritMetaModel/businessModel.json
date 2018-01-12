@@ -1,0 +1,32 @@
+{
+	"fields" : [{
+				"name" : "id",
+				"type" : "String"
+			}, {
+				"name" : "code",
+				"type" : "String",
+				"defaultValue" : "",
+				"required" : "true"
+			}, {
+				"name" : "name",
+				"type" : "String",
+				"defaultValue" : "",
+				"required" : "true"
+			}, {
+				"name" : "isabstract",
+				"type" : "boolean",
+				"defaultValue" : false
+			}, {
+				"name" : "remark",
+				"type" : "String",
+				"defaultValue" : ""
+			}, {
+				"name" : "packageid",
+				"type" : "String",
+				"defaultValue" : ""
+			}, {
+				"name" : "status",
+				"type" : "int",
+				"defaultValue" : "0"
+			}]
+}

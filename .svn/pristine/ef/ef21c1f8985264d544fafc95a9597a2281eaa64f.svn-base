@@ -1,0 +1,14 @@
+package com.gilight.dep.metamodel.service;
+
+/**
+ * 
+ * @ClassName: IMetaModelInheService
+ *             <p>
+ *             元模型继承关系<br>
+ * @author wzx
+ * @date 2015年7月9日 下午2:30:43
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaModelInheService extends IMetaModelAssoService {
+}

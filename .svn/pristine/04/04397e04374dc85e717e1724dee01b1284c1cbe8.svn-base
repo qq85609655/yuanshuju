@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gilight.dep.metadata.entity.Mdmetadatapubtake" table="MD_METADATA_PUBTAKE">
+        <id name="id" type="string">
+            <column name="ID" length="64" />
+            <generator class="assigned" />
+        </id>
+        <property name="sourceid" type="string">
+            <column name="SOURCEID" length="64" />
+        </property>
+        <property name="targetid" type="string">
+            <column name="TARGETID" length="64" />
+        </property>
+        <property name="publishid" type="string">
+            <column name="PUBLISHID" length="64">
+            </column>
+        </property>
+        <property name="takeid" type="string">
+            <column name="TAKEID" length="64">
+            </column>
+        </property>
+        <property name="publishname" type="string">
+            <column name="PUBLISHNAME" length="64">
+            </column>
+        </property>
+        <property name="takename" type="string">
+            <column name="TAKENAME" length="64">
+            </column>
+        </property>
+        <property name="publishsvgurl" type="string">
+            <column name="PUBLISHSVGURL" length="512">
+            </column>
+        </property>
+        <property name="takesvgurl" type="string">
+            <column name="TAKESVGURL" length="512">
+            </column>
+        </property>
+        <property name="publishuser" type="string">
+            <column name="PUBLISHUSER" length="64">
+            </column>
+        </property>
+
+        <property name="takeurl" type="string">
+            <column name="TAKEURL" length="512">
+            </column>
+        </property>
+        <property name="publishurl" type="string">
+            <column name="PUBLISHURL" length="512">
+            </column>
+        </property>
+
+        <property name="publishdb_mdid" type="string">
+            <column name="PUBLISHDB_MDID" length="64">
+            </column>
+        </property>
+        <property name="takedb_mdid" type="string">
+            <column name="TAKEDB_MDID" length="64">
+            </column>
+        </property>
+        <property name="publishtable" type="string">
+            <column name="PUBLISHTABLE" length="64">
+            </column>
+        </property>
+        <property name="taketable" type="string">
+            <column name="TAKETABLE" length="64">
+            </column>
+        </property>
+
+
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,13 @@
+package com.gilight.dep.metadata.dao;
+/**
+ * 采集日志
+* @ClassName: IGatherLogDao 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:13:31
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IGatherLogDao extends IMetaDataDao{
+
+}

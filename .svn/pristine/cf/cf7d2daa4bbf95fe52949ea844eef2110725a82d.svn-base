@@ -1,0 +1,188 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.metadata.enmu.MetaModelStatus;
+
+/**
+ * 
+ * @ClassName: MetaModelBasicView
+ *             <p>
+ *             元模型基本对象<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:10:29
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaModelBasicView extends MetaBaseView {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/***
+	 * 主键
+	 */
+	private String id;
+	/***
+	 * 元模型名称
+	 */
+	private String name;
+	/***
+	 * 元模型编码
+	 */
+	private String code;
+	/***
+	 * 是否抽象
+	 */
+	private boolean isabstract;
+	/***
+	 * 图元文件包括相对路径
+	 */
+	private String graphSvg;
+	/***
+	 * 状态
+	 */
+	private Integer status = new Integer(MetaModelStatus.SAVE);
+	/***
+	 * 系统版本
+	 */
+	private String sysver;
+	/***
+	 * 用户定义版本
+	 */
+	private String userver;
+	/***
+	 * 是否属于系统初始化数据
+	 */
+	private Integer issys;
+	/***
+	 * 描述，备注
+	 * 
+	 */
+	private String remark;
+	/***
+	 * 元模型包
+	 */
+	private String packageid;
+	/**
+	 * 是否为当前版本
+	 */
+	private Integer isuse;
+	/**
+	 * 父类id
+	 */
+	private String parentId;
+
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public boolean isIsabstract() {
+		return isabstract;
+	}
+
+	public void setIsabstract(boolean isabstract) {
+		this.isabstract = isabstract;
+	}
+
+	public String getGraphSvg() {
+		return graphSvg;
+	}
+
+	public void setGraphSvg(String graphSvg) {
+		this.graphSvg = graphSvg;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getSysver() {
+		return sysver;
+	}
+
+	public void setSysver(String sysver) {
+		this.sysver = sysver;
+	}
+
+	public String getUserver() {
+		return userver;
+	}
+
+	public void setUserver(String userver) {
+		this.userver = userver;
+	}
+
+	public Integer getIssys() {
+		return issys;
+	}
+
+	public void setIssys(Integer issys) {
+		this.issys = issys;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getPackageid() {
+		return packageid;
+	}
+
+	public void setPackageid(String packageid) {
+		this.packageid = packageid;
+	}
+
+	public Integer getIsuse() {
+		return isuse;
+	}
+
+	public void setIsuse(Integer isuse) {
+		this.isuse = isuse;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaModelBasicView [id=" + id + ", name=" + name + ", code="
+				+ code + ", isabstract=" + isabstract + ", graphSvg="
+				+ graphSvg + ", status=" + status + ", sysver=" + sysver
+				+ ", userver=" + userver + ", issys=" + issys + ", remark="
+				+ remark + ", packageid=" + packageid + ", isuse=" + isuse
+				+ "]";
+	}
+
+}

@@ -1,0 +1,38 @@
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.repository.IQueryRepository;
+
+/**
+ * 
+ * @ClassName: IMetaModelQueryRepository
+ *             <p>
+ *             TODO<br>
+ * @author wzx
+ * @date 2015年7月30日 下午6:30:51
+ * @version V1.0
+ * @since JDK 1.6
+ */
+@SuppressWarnings("rawtypes")
+public interface IMetaModelQueryRepository extends IQueryRepository {
+
+	/***
+	 * 
+	 * <p>
+	 * 根据条件获取元模型列表，包含元模型的属性信息 <br>
+	 * 
+	 * @param context
+	 *            上下文 scopeparameters
+	 * @return
+	 * @throws RepositoryException
+	 * @author zps
+	 * @date 2015年8月10日 上午11:54:22
+	 * @version V1.0
+	 */
+
+	IResponse getBaseByScope(IContext context) throws RepositoryException;
+
+}

@@ -1,0 +1,45 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+/**
+ * Created by Administrator on 2016/1/4.
+ */
+public class AllMapNode {
+    private List<MetaModelInheritView> inheList;  //继承关系
+    private List<MetaModelCompBasicView> compList;  //组合关系
+    private List<MetaModelDepeBasicView> depeList;  //依赖关系
+    private List<MetaModelBasicView> modelList;  //所有模型
+
+    public List<MetaModelInheritView> getInheList() {
+        return inheList;
+    }
+
+    public void setInheList(List<MetaModelInheritView> inheList) {
+        this.inheList = inheList;
+    }
+
+    public List<MetaModelCompBasicView> getCompList() {
+        return compList;
+    }
+
+    public void setCompList(List<MetaModelCompBasicView> compList) {
+        this.compList = compList;
+    }
+
+    public List<MetaModelDepeBasicView> getDepeList() {
+        return depeList;
+    }
+
+    public void setDepeList(List<MetaModelDepeBasicView> depeList) {
+        this.depeList = depeList;
+    }
+
+    public List<MetaModelBasicView> getModelList() {
+        return modelList;
+    }
+
+    public void setModelList(List<MetaModelBasicView> modelList) {
+        this.modelList = modelList;
+    }
+}

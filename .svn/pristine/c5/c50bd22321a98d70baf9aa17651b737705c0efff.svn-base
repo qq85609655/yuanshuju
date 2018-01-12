@@ -1,0 +1,186 @@
+package com.gilight.dep.metadata.scope;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+/**
+ * 
+* @ClassName: MetaHbiernateScope 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月16日 上午9:59:00
+* @version V1.0
+* @since JDK 1.6
+ */
+public class MetaHbiernateScope extends BaseHbiernateScope {
+
+	private IView view;
+	private IEntity entiey;
+	private List<String> queryOrd; //order 条件
+	private List<String> queryWhere; // where 条件
+	private String hql;
+	private List<String> ids;
+	
+	
+	
+	
+	public List<String> getIds() {
+		return ids;
+	}
+
+	public void setIds(List<String> ids) {
+		this.ids = ids;
+	}
+
+	public IView getView() {
+		return view;
+	}
+
+	public void setView(IView view) {
+		this.view = view;
+	}
+
+	public String getHql() {
+		return hql;
+	}
+
+	public void setHql(String hql) {
+		this.hql = hql;
+	}
+
+	public IEntity getEntiey() {
+		return entiey;
+	}
+
+	public void setEntiey(IEntity entiey) {
+		this.entiey = entiey;
+	}
+
+	public void setQueryOrd(String ordstr){
+		if(queryOrd==null){
+			queryOrd = new ArrayList<String>();
+		}
+		queryOrd.add(ordstr);
+		setOrderBy(queryOrd);
+	}
+	public String getQueryOrd(){
+		String ordstr="";
+		if(queryOrd==null||queryOrd.size()==0){
+			return ordstr;
+		}
+		for (String ord : queryOrd) {
+			ordstr=ordstr+ord+",";
+		}
+		ordstr=ordstr.substring(0,ordstr.length()-1);
+		ordstr= "order by "+ordstr;
+		return ordstr;
+		
+	}
+	
+	public void setQueryWhere(String wherestr){
+		if(queryWhere==null){
+			queryWhere= new ArrayList<String>();
+		}
+		queryWhere.add(wherestr);
+	}
+	
+	public String getQueryWhere(){
+		String wherestr="";
+		if(queryWhere==null||queryWhere.size()==0){
+			return wherestr;
+		}
+		for (String where : queryWhere) {
+			wherestr =" and  "+where;
+		}
+		wherestr=" where 1=1 "+wherestr;
+		
+		return wherestr;
+		
+	}
+	
+	public String queryHql(){
+		if(hql!=null||"".equals(hql)){
+			return hql;
+		}
+		hql="from "+entiey.getClass()+" "+getQueryWhere()+" "+getQueryOrd();
+		
+		
+		return hql;
+		
+	}
+	
+	
+	@Override
+	public <C> Class<C> getClazz() {
+		// TODO Auto-generated method stub
+		
+		return (Class<C>) entiey.getClass();
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String paramString) {
+		// TODO Auto-generated method stub
+		
+		String wherestr="";
+		StringBuffer wheresb = new StringBuffer(wherestr);
+		if(queryWhere==null||queryWhere.size()==0){
+			return wheresb;
+		}
+		//wheresb.append(" where 1=1 ");
+		for (String where : queryWhere) {
+			wheresb.append(" and ");
+			wheresb.append(paramString+".");
+			wheresb.append(where);
+			//wherestr =" and  "+where;
+		}
+		
+		//wherestr=" where 1=1 "+wherestr;
+		
+		//return wherestr;
+		return wheresb;
+	}
+
+	@Override
+	public String getDefaultOrderBy(String paramString) {
+		// TODO Auto-generated method stub
+		
+		return getQueryOrd();
+	}
+
+	/**
+	 * 根据entity实体自动生成条件
+	* <p><br>  
+	* @author wzx
+	* @date 2015年7月21日 下午5:02:09
+	* @version V1.0
+	 * @throws IllegalAccessException 
+	 * @throws IllegalArgumentException 
+	 */
+	public void autoSetWhere(Object entity) throws IllegalArgumentException, IllegalAccessException{
+		Field[] fs = entity.getClass().getDeclaredFields();
+		for (Field field : fs) {
+			field.setAccessible(true);
+			Object val=field.get(entity);
+			
+			if(val==null){
+				continue;
+			}
+			String type=field.getType().toString();
+			String name=field.getName();
+			if (type.endsWith("String")) {
+				this.setQueryWhere(name+"='"+val+"' ");
+			}else if (type.endsWith( "int" ) || type.endsWith( "Integer" )){
+				this.setQueryWhere(name+"="+val);
+			}else {
+				this.setQueryWhere(name+"='"+val+"' ");
+			}
+		}
+		
+	}
+	
+
+}

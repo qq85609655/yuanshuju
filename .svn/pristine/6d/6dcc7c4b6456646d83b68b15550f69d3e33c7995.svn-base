@@ -1,0 +1,111 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IMetaModelQueryDao;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IMetaModelQueryRepository;
+import com.gilight.dep.metadata.scope.MetaModelAttributeScope;
+
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public class MetaModelQueryRepositoryImpl implements IMetaModelQueryRepository {
+
+	private IMetaModelQueryDao metaModelQueryDao;
+
+	public IMetaModelQueryDao getMetaModelQueryDao() {
+		return metaModelQueryDao;
+	}
+
+	public void setMetaModelQueryDao(IMetaModelQueryDao metaModelQueryDao) {
+		this.metaModelQueryDao = metaModelQueryDao;
+	}
+
+	
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		try {
+			BaseHbiernateScope scope = (BaseHbiernateScope) paramIContext
+					.getParameters();
+			List<IEntity> mmelist = metaModelQueryDao.findByScope(scope);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmelist));
+		} catch (DaoException e) {
+			new RepositoryException("查询元模型失败!", e);
+		}
+		return paramIContext.getResponse();
+	}
+
+	// @Override
+	// public IResponse getChildModels(IContext paramIContext)
+	// throws RepositoryException, DaoException {
+	// IDParameters ids = (IDParameters) paramIContext.getParameters();
+	// String id = ids.getId();
+	// List<IEntity> complist = getCompByMid(id);
+	// List<String> idlist = new ArrayList<String>();
+	// for (IEntity iEntity : complist) {
+	// MmComposition comp = (MmComposition) iEntity;
+	// idlist.add(comp.getToMmId());
+	// // comp.getFromMmId();
+	// }
+	// List<IEntity> mmelist = metaModelQueryDao.findByIdList(idlist,
+	// MmMetamodel.class);
+	// paramIContext.getResponse().setResult(
+	// ResultFactory.getInstance().createSuccessResult(mmelist));
+	// // List<IEntity> mmelist=metaModelQueryDao.findByScope(scope);
+	// //
+	// paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mmelist));
+	//
+	// return paramIContext.getResponse();
+	// }
+	//
+	// private List<IEntity> getCompByMid(String mid) throws RepositoryException
+	// {
+	// // String hql="from "+MmComposition.class.getName();
+	// List<IEntity> complist = null;
+	// try {
+	// complist = metaModelQueryDao.findByProperty("fromMmId", mid,
+	// MmComposition.class);
+	//
+	// } catch (DaoException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// new RepositoryException("查询元模型失败!-dao");
+	// }
+	// return complist;
+	// }
+
+	@Override
+	public IResponse getBaseByScope(IContext context)
+			throws RepositoryException {
+		try {
+			BaseHbiernateScope scope = (BaseHbiernateScope) context
+					.getParameters();
+			List<IEntity> mmelist = metaModelQueryDao.findByScope(scope);
+			if (mmelist != null) {
+				for (int i = 0, j = mmelist.size(); i < j; i++) {
+					MmMetamodel mm = (MmMetamodel) mmelist.get(i);
+					MetaModelAttributeScope scopeAtt = new MetaModelAttributeScope();
+					scopeAtt.setMmId(mm.getId());
+					List attList = this.metaModelQueryDao.findByScope(scopeAtt);
+					mm.setAttList(attList);
+				}
+			}
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmelist));
+
+		} catch (DaoException e) {
+			e.printStackTrace();
+			new RepositoryException("查询元模型失败!-dao");
+		}
+
+		return context.getResponse();
+	}
+}

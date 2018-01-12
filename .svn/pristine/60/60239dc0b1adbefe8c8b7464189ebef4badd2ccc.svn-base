@@ -1,0 +1,55 @@
+package com.gilight.dep.metamodel.service.impl;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metamodel.service.IMetaModelFolderService;
+/**
+ * 文件夹操作
+* @ClassName: MetaModelFolderServiceImpl 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年11月30日 下午6:27:33
+* @version V1.0
+* @since JDK 1.6
+ */
+public class MetaModelFolderServiceImpl implements IMetaModelFolderService {
+
+	public MetaModelFolderServiceImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public IResponse create(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		
+		return null;
+	}
+	
+	@Override
+	public IResponse delete(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		
+		return null;
+	}
+
+	@Override
+	public IResponse getById(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		
+		return null;
+	}
+
+	@Override
+	public IResponse update(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		
+		return null;
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

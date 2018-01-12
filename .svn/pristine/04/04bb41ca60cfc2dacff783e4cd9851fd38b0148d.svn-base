@@ -1,0 +1,57 @@
+package com.gilight.dep.metadata.gather.common;
+
+public class DBConnParam {
+
+	public DBConnParam() {
+		// TODO Auto-generated constructor stub
+	}
+	private String driver;  
+	private String url;
+	private String dbtype;
+	private String user;
+	private String pwd;
+	private String schema;
+	
+	
+	
+	
+	public String getDriver() {
+		return driver;
+	}
+	public void setDriver(String driver) {
+		this.driver = driver;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public String getDbtype() {
+		return dbtype;
+	}
+	public void setDbtype(String dbtype) {
+		this.dbtype = dbtype;
+	}
+	public String getUser() {
+		return user;
+	}
+	public void setUser(String user) {
+		this.user = user;
+	}
+	public String getPwd() {
+		return pwd;
+	}
+	public void setPwd(String pwd) {
+		this.pwd = pwd;
+	}
+	public String getSchema() {
+		return schema;
+	}
+	public void setSchema(String schema) {
+		this.schema = schema;
+	}
+	
+	
+	
+}

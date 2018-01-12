@@ -1,0 +1,234 @@
+package com.gilight.dep.metadata.repository;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.DomainMessageContext;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.entity.MdAttribute;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdMetadata;
+
+/**
+ * 元数据操作
+ * 
+ * @ClassName: IMetaDataBaseRepository
+ *             <p>
+ *             TODO<br>
+ * @author wzx
+ * @date 2015年7月17日 下午3:48:03
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaDataBaseRepository extends IMetaDataRepository {
+	/**
+	 * 获取元素属性
+	 * <p>
+	 * <br>
+	 * 
+	 * @param id
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月21日 下午5:49:01
+	 * @version V1.0
+	 */
+	public List<MdAttribute> getAttrByMdId(String id)
+			throws RepositoryException;
+
+	/**
+	 * 创建属性
+	 * <p>
+	 * <br>
+	 * 
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月24日 下午4:58:07
+	 * @version V1.0
+	 */
+	public IResponse createAttr(IContext paramIContext)
+			throws RepositoryException;
+
+	/**
+	 * 删除属性
+	 * <p>
+	 * <br>
+	 * 
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月24日 下午4:58:07
+	 * @version V1.0
+	 */
+	public IResponse deleteAttr(IContext paramIContext)
+			throws RepositoryException;
+
+	/**
+	 * 更新属性
+	 * <p>
+	 * <br>
+	 * 
+	 * @param paramIContext
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月24日 下午4:58:07
+	 * @version V1.0
+	 */
+	public IResponse updateAttr(IContext paramIContext)
+			throws RepositoryException;
+
+	/**
+	 * 创建组合关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:44:44
+	 * @version V1.0
+	 */
+	public IResponse createCompMetaData(IContext context)
+			throws RepositoryException;
+
+	/**
+	 * 更新关系组合
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:44:57
+	 * @version V1.0
+	 */
+	public IResponse updateCompMetaData(IContext context)
+			throws RepositoryException;
+
+	/**
+	 * 删除组合关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:45:14
+	 * @version V1.0
+	 */
+	public IResponse deleteCompMetaData(IContext context)
+			throws RepositoryException;
+
+	/**
+	 * 创建依赖关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:45:21
+	 * @version V1.0
+	 */
+	public IResponse createDepe(IContext context) throws RepositoryException;
+
+	/**
+	 * 删除依赖关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:45:35
+	 * @version V1.0
+	 */
+	public IResponse deteleDepe(IContext context) throws RepositoryException;
+
+	/**
+	 * 根据元数据查询依赖关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月24日 下午3:45:53
+	 * @version V1.0
+	 */
+	public IResponse getAllDepeMetaData(IContext context)
+			throws RepositoryException;
+
+	/**
+	 * 元数据查询
+	 * <p>
+	 * <br>
+	 * 
+	 * @param id
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月27日 下午6:38:19
+	 * @version V1.0
+	 */
+	public MdMetadata getById(String id) throws RepositoryException;
+	public List<IEntity> getByCode(String code) throws RepositoryException;
+
+	/**
+	 * 
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdc
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月29日 下午1:42:36
+	 * @version V1.0
+	 */
+	public List<IEntity> getCompByMdId(MdComposition mdc)
+			throws RepositoryException;
+
+	/**
+	 * 查询没有被依赖的元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月31日 下午6:11:38
+	 * @version V1.0
+	 */
+	public List<MdMetadata> getNoDepeMetaData(IContext context)
+			throws RepositoryException;
+
+	/***
+	 * 
+	 * <p>
+	 * <br>
+	 * 
+	 * @param dmContext
+	 * @author zps
+	 * @date 2015年8月5日 下午12:16:22
+	 * @version V1.0
+	 * @return
+	 */
+	public IResponse publish(DomainMessageContext dmContext)
+			throws RepositoryException;
+
+}

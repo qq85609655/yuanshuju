@@ -1,0 +1,128 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.service.IBasicService;
+import com.gilight.dep.framework.core.service.IQueryService;
+
+/**
+ * 
+ * @ClassName: IMetaDataViewService
+ *             <p>
+ *             元数据视图管理服务接口<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:05:54
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaDataViewService extends IBasicService, IQueryService {
+	/**
+	 * 
+	 * <p>
+	 * 创建文件夹<br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月20日 下午6:47:15
+	 * @version V1.0
+	 */
+	@SuppressWarnings("rawtypes")
+	public IResponse createFolder(IContext context) throws ServiceException;
+
+	/**
+	 * 
+	 * <p>
+	 * 删除文件夹<br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月20日 下午6:47:19
+	 * @version V1.0
+	 */
+	@SuppressWarnings("rawtypes")
+	public IResponse deleteFolder(IContext context) throws ServiceException;
+
+	/**
+	 * 查询文件夹详情
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月21日 下午2:27:52
+	 * @version V1.0
+	 */
+	@SuppressWarnings("rawtypes")
+	public IResponse getByFolderId(IContext context) throws ServiceException;
+
+	/**
+	 * 获取全部视图
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月21日 下午2:50:12
+	 * @version V1.0
+	 * @throws GilightException
+	 */
+	@SuppressWarnings("rawtypes")
+	public IResponse getAllView(IContext context) throws ServiceException,
+			GilightException;
+
+	/**
+	 * 
+	 * <p>
+	 * 根据视图Id获取元数据<br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月21日 下午2:51:05
+	 * @version V1.0
+	 */
+	@SuppressWarnings("rawtypes")
+	public IResponse getMetaDataTree(IContext context) throws ServiceException;
+
+	// /**
+	// * 根据视图Id查询文件夹
+	// * <p>
+	// * <br>
+	// *
+	// * @param context
+	// * @return
+	// * @throws ServiceException
+	// * @author wzx
+	// * @date 2015年7月21日 下午2:52:30
+	// * @version V1.0
+	// */
+	// @SuppressWarnings("rawtypes")
+	// public IResponse getViewFolderTree(IContext context)
+	// throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * 查询某一个视图，或者文件下面的子文件夹，和元数据，只去一层子节点 <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月5日 下午6:30:54
+	 * @version V1.0
+	 */
+	public IResponse getChildContentTree(IContext context)
+			throws ServiceException;
+}

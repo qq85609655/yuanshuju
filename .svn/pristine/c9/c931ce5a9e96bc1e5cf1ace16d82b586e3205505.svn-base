@@ -1,0 +1,256 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.EntityParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.collection.CollectionUtil;
+import com.gilight.dep.metadata.dao.IMetaDataBaseDao;
+import com.gilight.dep.metadata.dao.IMetaDataQueryDao;
+import com.gilight.dep.metadata.entity.MdAnalyseResult;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IMetaDataBaseRepository;
+import com.gilight.dep.metadata.repository.IMetaDataQueryRepository;
+
+public class MetaDataQueryRepositoryImpl extends MetaDataRepositoryImpl implements IMetaDataQueryRepository{
+	
+	private IMetaDataQueryDao metaDataQueryDao;
+	
+	public IMetaDataQueryDao getMetaDataQueryDao() {
+		return metaDataQueryDao;
+	}
+
+	public void setMetaDataQueryDao(IMetaDataQueryDao metaDataQueryDao) {
+		this.metaDataQueryDao = metaDataQueryDao;
+	}
+
+	public MetaDataQueryRepositoryImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+	@Override
+	public IResponse create(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			//paramIContext.getRequest()create(paramIContext)
+				EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+				IEntity mme=(IEntity)entityParameters.getEntity();
+			//metaModelBasicDao.save(paramIEntity);
+			
+				metaDataQueryDao.save(mme);
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new RepositoryException("创建元模型失败!-dao");
+			}
+			
+			return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+			IEntity mme=(IEntity)entityParameters.getEntity();
+			//metaModelBasicDao.save(paramIEntity);
+		
+			metaDataQueryDao.update(mme);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(null));
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元模型失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+				EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+				IEntity mme=(IEntity)entityParameters.getEntity();
+			//metaModelBasicDao.save(paramIEntity);
+			
+				metaDataQueryDao.delete(mme);
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new RepositoryException("删除元模型失败!-dao");
+			}
+			
+		return paramIContext.getResponse();
+	}
+
+	 
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IDParameters idp = (IDParameters) paramIContext.getParameters();
+			//EntityParameters mme=(MmMetamodel)entityParameters.getEntity();
+			String id = idp.getId();
+			//metaModelBasicDao.getById(mme.getId(),MmMetamodel.class);
+			MmMetamodel mme=(MmMetamodel) metaDataQueryDao.findById(id,MmMetamodel.class);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mme));
+			
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询元模型失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		//by hww
+		try {
+			BaseHbiernateScope scope = (BaseHbiernateScope) paramIContext
+					.getParameters();
+			List<IEntity> mmelist = metaDataQueryDao.findByScope(scope);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmelist));
+		} catch (DaoException e) {
+			e.printStackTrace();
+			new RepositoryException("查询未审核元数据失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	
+	}
+
+	@Override
+	public List<IEntity> getStreamByMdid(List<String> noids)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			List<IEntity> list=metaDataQueryDao.findByParamList("mdid", noids, MdAnalyseResult.class);
+			return list;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据失败!-dao");
+		}
+		
+	}
+
+	@Override
+	public List<IEntity> getStreamByUpstream(List<String> noids)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			List<IEntity> list=metaDataQueryDao.findByParamList("upstream", noids, MdAnalyseResult.class);
+			return list;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据失败!-dao");
+		}
+	}
+
+	@Override
+	public List<IEntity> getStreamByMdid(String noid)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			if(noid==null){
+				throw new RepositoryException("查询元数据失败,noid==null!-dao");
+			}
+			List<IEntity> list=metaDataQueryDao.findByProperty("mdId", noid, MdAnalyseResult.class);
+			return list;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据失败!-dao");
+		}
+		
+	}
+
+	@Override
+	public List<IEntity> getStreamByUpstream(String noid)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			List<IEntity> list=metaDataQueryDao.findByProperty("upstream", noid, MdAnalyseResult.class);
+			return list;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据失败!-dao");
+		}
+	}
+
+	@Override
+	public MdDependency[] getDependencys(String id) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {			List<IEntity> list = new ArrayList<IEntity>();
+			List<IEntity> fromlist =metaDataQueryDao.findByProperty("fromMdId", id, MdDependency.class);
+			List<IEntity> tolist =metaDataQueryDao.findByProperty("toMdId", id, MdDependency.class);
+			if(fromlist!=null&&fromlist.size()!=0){
+				list.addAll(fromlist);
+			}
+			if(tolist!=null&&tolist.size()!=0){
+				list.addAll(tolist);
+			}
+			
+			MdDependency[] mds = (MdDependency[]) list.toArray(new MdDependency[list.size()]);
+			return mds;
+			
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据失败!-dao");
+		}
+		
+	}
+
+	@Override
+	public MdComposition[] getMdCompositions(String id)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			List<IEntity> list = new ArrayList<IEntity>();
+			List<IEntity> fromlist =metaDataQueryDao.findByProperty("fromMdId", id, MdComposition.class);
+			List<IEntity> tolist =metaDataQueryDao.findByProperty("toMdId", id, MdComposition.class);
+			if(fromlist!=null&&fromlist.size()!=0){
+				list.addAll(fromlist);
+			}
+			if(tolist!=null&&tolist.size()!=0){
+				list.addAll(tolist);
+			}
+			
+			MdComposition[] mds =(MdComposition[]) list.toArray(new MdComposition[list.size()]);
+			return mds;
+			
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据失败!-dao");
+		}
+	}
+
+}

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       ">
+
+	<bean id="AppContextSpring"
+		class="com.gilight.dep.metadata.gather.common.spring.AppContextSpring">
+	</bean>
+	
+	<bean id="graphEditorService" class="com.gilight.dep.metadata.web.service.GraphEditorService"></bean>
+
+
+	<bean id="viewController" class="com.gilight.dep.metadata.web.controller.ViewController">
+		<property name="metaDataViewService" ref="metaDataViewService"></property>
+	</bean>
+	<bean id="metadataController"
+		class="com.gilight.dep.metadata.web.controller.MetadataController">
+		<property name="metadataService" ref="metaDataBaseService"></property>
+		<property name="metaDataViewService" ref="metaDataViewService"></property>
+	</bean>
+	<bean id="metamodelController"
+		class="com.gilight.dep.metadata.web.controller.MetamodelController">
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+	</bean>
+	<bean id="versionController"
+		class="com.gilight.dep.metadata.web.controller.VersionController">
+		<property name="metaDataVersionService" ref="metaDataVersionService"></property>
+	</bean>
+
+	<bean id="gatherController"
+		class="com.gilight.dep.metadata.web.controller.GatherController">
+		<property name="gatherDataScourceService" ref="gatherDataScourceService"></property>
+		<property name="adaptorService" ref="gatherAdaptorService"></property>
+	</bean>
+
+
+
+
+
+</beans>

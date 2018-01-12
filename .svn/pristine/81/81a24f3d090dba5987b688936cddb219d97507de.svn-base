@@ -1,0 +1,22 @@
+package com.gilight.dep.metadata.message.consumer;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gilight.dep.framework.core.context.base.DomainMessageContext;
+import com.gilight.dep.framework.core.message.consumer.AbstractConsumer;
+import com.gilight.dep.framework.core.message.consumer.IMessageConsumer;
+import com.gilight.dep.metadata.repository.IGatherJobRepository;
+import com.jdon.annotation.Consumer;
+
+@Consumer("gatherJobEdit")
+public class GatherJobEditMsgConsumer extends AbstractConsumer implements
+		IMessageConsumer {
+	//
+	@Autowired
+	private IGatherJobRepository gatherJobRepository;
+
+	public void executeEvent(DomainMessageContext dmContext) throws Exception {
+		gatherJobRepository.update(dmContext);
+	}
+
+}

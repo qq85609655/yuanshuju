@@ -1,0 +1,94 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.ext.response.IDepView;
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+import java.util.List;
+
+/**
+ * 
+ * @ClassName: MetaModelView
+ *             <p>
+ *             元模型对象；包含基本信息和属性信息集合；<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:13:54
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaModelEnumView extends MetaBaseView implements IDepView {
+	/**
+	 * 标识
+	 */
+	private String id;
+	/**
+	 * 名称
+	 */
+	private String name;
+	/**
+	 * 描述
+	 */
+	private String remark;
+	/**
+	 * 是否系统内置
+	 */
+	private Integer issys;
+	/**
+	 * 最后更新时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+	/***
+	 * 数据选项集合
+	 */
+	private List<MetaModelEnumValueView> valueList;
+	
+
+	public List<MetaModelEnumValueView> getValueList() {
+		return valueList;
+	}
+
+	public void setValueList(List<MetaModelEnumValueView> valueList) {
+		this.valueList = valueList;
+	}
+
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getIssys() {
+		return issys;
+	}
+
+	public void setIssys(Integer issys) {
+		this.issys = issys;
+	}
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+}

@@ -1,0 +1,55 @@
+/**   
+ * @Title: MetaDataCodeCheck.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年8月11日 下午5:56:54
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.service.check;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.ext.exception.CheckException;
+import com.gilight.dep.framework.core.ext.service.check.BaseCheck;
+import com.gilight.dep.framework.core.ext.service.check.IDepCheck;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.model.MetaDataModel;
+import com.gilight.dep.metadata.scope.MetaDataScope;
+
+/***
+ * 
+ * @ClassName: MetaDataCodeCheck
+ *             <p>
+ *             校验元数据编码的唯一性 TODO<br>
+ * @author zps
+ * @date 2015年8月11日 下午5:57:01
+ * @version V1.0
+ * @since JDK 1.7
+ */
+@SuppressWarnings("rawtypes")
+public class MetaDataCodeCheck extends BaseCheck implements IDepCheck {
+	@Override
+	public boolean check(Object... params) throws CheckException {
+		try {
+			MetaDataModel model = (MetaDataModel) params[0];
+			MdMetadata md = (MdMetadata) model.getData();
+			MetaDataScope scope = new MetaDataScope();
+			scope.setMdCode(md.getMdCode());
+			IContext context = this.getScopeContext(scope);
+			this.getQueryRepository().getByScope(context);
+			List mdList = (List) context.getResponse().getBlockedResultObject();
+			if (mdList != null) {
+				throw new CheckException("元数据编码" + md.getMdCode() + "已经存在!");
+			}
+		} catch (ModelException e) {
+			throw new CheckException("元数据编码校验失败!", e);
+		} catch (GilightException e) {
+			throw new CheckException("元数据编码校验失败!", e);
+		}
+		return true;
+	}
+}

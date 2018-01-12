@@ -1,0 +1,156 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+
+/**
+ * 
+* @ClassName: MdGatherLog 
+* <p>TODO<br>
+* @author hww
+* @date 2015年7月7日 下午3:50:40
+* @version V1.0
+* @since JDK 1.7
+ */
+public class MdGatherLog extends BaseMetaDataEntity {
+
+	/**
+	 * ID
+	 */
+	private String id;
+	/**
+	 * 任务标识
+	 */
+	private String jobId;
+	/**
+	 * 开始时间
+	 */
+	private String startDate;
+	/**
+	 * 结束时间
+	 */
+	private String endDate;
+	/**
+	 * 运行状态（成功/失败）：YES/NO
+	 */
+	private Integer runStatus;
+	/**
+	 * 采集元数据数目
+	 */
+	private Integer gatherNum;
+	/**
+	 * 成功元数据数目
+	 */
+	private Integer succeedNum;
+	/**
+	 * 失败元数据数目
+	 */
+	private Integer failNum;
+	/**
+	 * 日志结果
+	 */
+	private String logResult;
+
+	public MdGatherLog() {
+	}
+
+	public MdGatherLog(String id) {
+		this.id = id;
+	}
+
+	public MdGatherLog(String id, String jobId, String startDate,
+			String endDate, Integer runStatus, Integer gatherNum,
+			Integer succeedNum, Integer failNum, String logResult) {
+		this.id = id;
+		this.jobId = jobId;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.runStatus = runStatus;
+		this.gatherNum = gatherNum;
+		this.succeedNum = succeedNum;
+		this.failNum = failNum;
+		this.logResult = logResult;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getJobId() {
+		return this.jobId;
+	}
+
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
+
+	public String getStartDate() {
+		return this.startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return this.endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+
+	public Integer getRunStatus() {
+		return this.runStatus;
+	}
+
+	public void setRunStatus(Integer runStatus) {
+		this.runStatus = runStatus;
+	}
+
+	public Integer getGatherNum() {
+		return this.gatherNum;
+	}
+
+	public void setGatherNum(Integer gatherNum) {
+		this.gatherNum = gatherNum;
+	}
+
+	public Integer getSucceedNum() {
+		return this.succeedNum;
+	}
+
+	public void setSucceedNum(Integer succeedNum) {
+		this.succeedNum = succeedNum;
+	}
+
+	public Integer getFailNum() {
+		return this.failNum;
+	}
+
+	public void setFailNum(Integer failNum) {
+		this.failNum = failNum;
+	}
+
+	public String getLogResult() {
+		return this.logResult;
+	}
+
+	public void setLogResult(String logResult) {
+		this.logResult = logResult;
+	}
+
+	@Override
+	public String toString() {
+		return "MdGatherLog [id=" + id + ", jobId=" + jobId + ", startDate="
+				+ startDate + ", endDate=" + endDate + ", runStatus="
+				+ runStatus + ", gatherNum=" + gatherNum + ", succeedNum="
+				+ succeedNum + ", failNum=" + failNum + ", logResult="
+				+ logResult + "]";
+	}
+
+}

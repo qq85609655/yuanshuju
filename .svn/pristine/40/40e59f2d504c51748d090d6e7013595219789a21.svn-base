@@ -1,0 +1,134 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.ext.repository.DepBaseRepository;
+import com.gilight.dep.metadata.dao.IMetaDataMapDao;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdView;
+import com.gilight.dep.metadata.entity.MmComposition;
+import com.gilight.dep.metadata.entity.MmDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IMetaDataMapRepository;
+import com.gilight.dep.metadata.view.MetaDataMapTopView;
+/**
+ * 映射关系
+ */
+public class MetaDataMapRepositoryImpl  extends DepBaseRepository implements IMetaDataMapRepository {
+	@Override
+	protected IResult getByScopeAfter(IContext paramIContext, IResult paramIResult) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult createAfter(IContext paramIContext, IResult paramIResult) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult updateAfter(IContext paramIContext, IResult paramIResult) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext paramIContext, IResult paramIResult) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult getByIdAfter(IContext paramIContext, IResult paramIResult) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+
+	private IMetaDataMapDao metaDataMapDao;
+	public IMetaDataMapDao getMetaDataMapDao() {
+		return metaDataMapDao;
+	}
+	public void setMetaDataMapDao(IMetaDataMapDao metaDataMapDao) {
+		this.metaDataMapDao = metaDataMapDao;
+	}
+	
+	
+	@Override
+	public List<MmDependency> findSourceByToMmIdAsSource(String toMmId) {
+		return metaDataMapDao.findSourceByToMmIdAsSource(toMmId);
+	}
+	@Override
+	public MmDependency findTargetByFromMmIdAsSource(String fromMmId) {
+		return metaDataMapDao.findTargetByFromMmIdAsSource(fromMmId);
+	}
+	@Override
+	public MmDependency findSourceByFromMmIdAsTarget(String fromMmId) {
+		return metaDataMapDao.findSourceByFromMmIdAsTarget(fromMmId);
+	}
+	@Override
+	public List<MmDependency> findTargetByToMmIdAsTarget(String toMmId) {
+		return metaDataMapDao.findTargetByToMmIdAsTarget(toMmId);
+	}
+
+	@Override
+	public List<MdMetadata> findMdListByMmId(String mmId) {
+		return metaDataMapDao.findMdListByMmId(mmId);
+	}
+
+	@Override
+	public MdComposition findCompositionByToMdId(String toMdId) {
+		return metaDataMapDao.findCompositionByToMdId(toMdId);
+	}
+	@Override
+	public MmMetamodel findMmMetamodelById(String id) {
+		return metaDataMapDao.findMmMetamodelById(id);
+	}
+	@Override
+	public MdMetadata findMdMetadataById(String id) {
+		return metaDataMapDao.findMdMetadataById(id);
+	}
+	@Override
+	public MmComposition findCompositionByToMmId(String toMmId) {
+		return metaDataMapDao.findCompositionByToMmId(toMmId);
+	}
+
+
+	@Override
+	public MdView findMdViewById(String id) {
+		return metaDataMapDao.findMdViewById(id);
+	}
+
+	@Override
+	public MmDependency findMmDepById(String id) {
+		return metaDataMapDao.findMmDepById(id);
+	}
+
+	@Override
+	public Integer findMdCountsByMmId(String mmId) {
+		return metaDataMapDao.findMdCountsByMmId(mmId);
+	}
+	@Override
+	public List<MdMetadata> findMdListPagesByMmId(String mmId, Integer startCount, Integer pageSize) {
+		return metaDataMapDao.findMdListPagesByMmId(mmId, startCount, pageSize);
+	}
+
+	@Override
+	public List<MdComposition> findCompositionByFromMdId(String fromMdId) {
+		return metaDataMapDao.findCompositionByFromMdId(fromMdId);
+	}
+
+	@Override
+	public List<MdMetadata> findMDFromTree(String mmId, String metadataId) {
+		return metaDataMapDao.findMDFromTree(mmId, metadataId);
+	}
+
+	
+
+}

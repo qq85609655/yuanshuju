@@ -1,0 +1,63 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+public class DBConnectionInfo implements IView {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+    /***
+     * 数据库类型 ，oracle，sqlsql，mysql
+     */
+	private String dbType;
+	/***
+	 * url
+	 */
+	private String url;
+	/**
+	 * 用户名
+	 */
+	private String userName;
+	/***
+	 * 密码
+	 */
+	private String password;
+	/***
+	 * 驱动
+	 */
+	private String driver;
+	public String getDbType() {
+		return dbType;
+	}
+	public void setDbType(String dbType) {
+		this.dbType = dbType;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getDriver() {
+		return driver;
+	}
+	public void setDriver(String driver) {
+		this.driver = driver;
+	}
+	
+	
+}

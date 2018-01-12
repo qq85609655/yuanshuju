@@ -1,0 +1,264 @@
+/**   
+ * @Title: MetaModelScope.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月22日 下午7:09:55
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.enmu.MetaModelYesOrNo;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+
+@SuppressWarnings("unchecked")
+public class MetaModelScope extends BaseHbiernateScope {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 元模型编码
+	 */
+	private String mmCode;
+	/**
+	 * 元模型名称
+	 */
+	private String mmName;
+	/**
+	 * 元模型包
+	 */
+	private String mmPackageid;
+	/**
+	 * 是否抽象：YES/NO
+	 */
+	private Integer isabstract = new Integer(MetaModelYesOrNo.NO);
+	/**
+	 * 图元文件包括相对路径
+	 */
+	private String graphPig;
+	/**
+	 * 状态
+	 */
+	private Integer status;
+	/**
+	 * 系统版本
+	 */
+	private String sysver;
+	/**
+	 * 用户定义版本
+	 */
+	private String userver;
+	/**
+	 * 是否为当前版本：YES/NO
+	 */
+	private Integer isuse;
+	/**
+	 * 是否属于系统初始化数据：YES/NO
+	 */
+	private Integer issys;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+
+	/***
+	 * 父模型id，根据此条件，查询此元模型的所有子类（只包含儿子不含孙子）
+	 */
+	private String parentMid;
+	/***
+	 * 依赖元模型，根据此条件，查询此元模型依赖的所有元模型
+	 */
+	private String depeMid;
+	/***
+     *查询改元模型组合的所有元模型
+     */
+	private String compMid;
+
+	public MetaModelScope() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getCompMid() {
+		return compMid;
+	}
+
+	public void setCompMid(String compMid) {
+		this.compMid = compMid;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getDepeMid() {
+		return depeMid;
+	}
+
+	public void setDepeMid(String depeMid) {
+		this.depeMid = depeMid;
+	}
+
+	public String getMmCode() {
+		return mmCode;
+	}
+
+	public void setMmCode(String mmCode) {
+		this.mmCode = mmCode;
+	}
+
+	public String getMmName() {
+		return mmName;
+	}
+
+	public void setMmName(String mmName) {
+		this.mmName = mmName;
+	}
+
+	public String getMmPackageid() {
+		return mmPackageid;
+	}
+
+	public void setMmPackageid(String mmPackageid) {
+		this.mmPackageid = mmPackageid;
+	}
+
+	public Integer getIsabstract() {
+		return isabstract;
+	}
+
+	public void setIsabstract(Integer isabstract) {
+		this.isabstract = isabstract;
+	}
+
+	public String getGraphPig() {
+		return graphPig;
+	}
+
+	public void setGraphPig(String graphPig) {
+		this.graphPig = graphPig;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getSysver() {
+		return sysver;
+	}
+
+	public void setSysver(String sysver) {
+		this.sysver = sysver;
+	}
+
+	public String getUserver() {
+		return userver;
+	}
+
+	public void setUserver(String userver) {
+		this.userver = userver;
+	}
+
+	public Integer getIsuse() {
+		return isuse;
+	}
+
+	public void setIsuse(Integer isuse) {
+		this.isuse = isuse;
+	}
+
+	public Integer getIssys() {
+		return issys;
+	}
+
+	public void setIssys(Integer issys) {
+		this.issys = issys;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getParentMid() {
+		return parentMid;
+	}
+
+	public void setParentMid(String parentMid) {
+		this.parentMid = parentMid;
+	}
+
+	@Override
+	public <C> Class<C> getClazz() {
+		return (Class<C>) MmMetamodel.class;
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+
+		StringBuffer sql = new StringBuffer();
+		if (this.status != null) {
+			sql.append(" and ").append(obj).append(".status = ? ");
+			this.paraList.add(this.status);
+		}
+		if (this.isabstract != null) {
+			sql.append(" and ").append(obj).append(".isabstract = ? ");
+			this.paraList.add(this.isabstract);
+		}
+		if (this.isuse != null) {
+			sql.append(" and ").append(obj).append(".isuse = ? ");
+			this.paraList.add(this.isuse);
+		}
+		// 查询的所有子元模型
+		if (!StringUtil.isEmpty(this.parentMid)) {
+			sql.append(" and ")
+					.append(obj)
+					.append(".id in ( select model2.mmId from MmInherit as model2 where model2.parentId = ? ");
+			this.paraList.add(parentMid);
+			sql.append(" )");
+		}
+		// 查询的所有组合的元模型
+		if (!StringUtil.isEmpty(this.compMid)) {
+			sql.append(" and ")
+					.append(obj)
+					.append(".id in ( select model2.toMmId from MmComposition as model2 where model2.fromMmId = ? ");
+			this.paraList.add(compMid);
+			sql.append(" )");
+		}
+		// 查询的所有依赖元模型
+		if (!StringUtil.isEmpty(this.depeMid)) {
+			sql.append(" and ")
+					.append(obj)
+					.append(".id in ( select model2.toMmId from MmDependency as model2 where model2.fromMmId = ? ");
+			this.paraList.add(depeMid);
+			sql.append(" )");
+		}
+		return sql;
+
+	}
+
+	@Override
+	public String getDefaultOrderBy(String paramString) {
+		return "";
+	}
+
+}

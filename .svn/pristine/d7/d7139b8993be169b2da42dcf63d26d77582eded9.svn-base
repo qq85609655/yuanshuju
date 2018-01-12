@@ -1,0 +1,38 @@
+package com.gilight.dep.metadata.web.controller;
+
+import java.io.File;
+
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+
+public abstract class ResultHandler implements IResultHandler {
+	private String folderMdCode;
+	private File folder;
+
+	public ResultHandler(String folderMdCode,File folder){
+			this.folderMdCode = folderMdCode;
+			this.folder = folder;
+	}
+
+	
+	public String getFolderMdCode() {
+		return folderMdCode;
+	}
+
+
+	public void setFolderMdCode(String folderMdCode) {
+		this.folderMdCode = folderMdCode;
+	}
+
+
+	public File getFolder() {
+		return folder;
+	}
+
+
+	public void setFolder(File folder) {
+		this.folder = folder;
+	}
+
+
+
+}

@@ -1,0 +1,89 @@
+/**   
+analyseExcuteService * @Title: KettleSpringFactory.java  
+ * @Description: TODO 
+ * @author zps   
+ * @date 2015骞�鏈�9鏃�涓嬪崍2:32:46
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.spring;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.metadata.entity.MmEnum;
+import com.gilight.dep.metadata.entity.MmEnumValue;
+import com.gilight.dep.metadata.util.AutoCopyObj;
+import com.gilight.dep.metadata.view.MetaModelEnumValueView;
+import com.gilight.dep.metadata.view.MetaModelEnumView;
+import com.gilight.dep.metamodel.service.impl.MetaModelEnumServiceImpl;
+import com.gilight.dep.metamodel.service.impl.MetaModelEnumValueServiceImpl;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class SpringFactoryModelEnumValueTest {
+
+	private static SpringFactoryModelEnumValueTest instance = new SpringFactoryModelEnumValueTest();
+	private static ApplicationContext factory;
+
+	public static SpringFactoryModelEnumValueTest getInstance() {
+		return instance;
+	}
+
+	static {
+		//String[] beans={"beans/service/beans.xml","beans/hibernate/hibernate.xml"};
+		factory = new ClassPathXmlApplicationContext("test.xml");
+	}
+
+	public static Object getBean(String name) {
+		if (factory == null) {
+			return null;
+		}
+		try {
+			return factory.getBean(name);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public static ApplicationContext getFactory() {
+		return factory;
+	}
+
+	public static void setFactory(ApplicationContext factory) {
+		SpringFactoryModelEnumValueTest.factory = factory;
+	}
+
+	public static void main(String[] args) {
+		try {
+			System.out.println("Test------");
+			
+			//ExcelGatherJobTaskModel jobmodel = new ExcelGatherJobTaskModel();
+			MetaModelEnumValueServiceImpl gs = (MetaModelEnumValueServiceImpl) SpringFactoryModelEnumValueTest.getBean("metaModelEnumValueService");
+			System.out.println("Test------");
+			MetaModelEnumValueView view = new MetaModelEnumValueView();
+			MmEnumValue me = new MmEnumValue();
+			me=AutoCopyObj.objCopy(MmEnumValue.class,view);
+			view.setId("aaa");
+			view.setEnumKey("2244111");
+			//view.setName("是");
+			IContext context=ContextFactoryImpl.getInstance().createContextWithView(view);
+			//IContext delcontext=ContextFactoryImpl.getInstance().createDifferResponseContextWithID(view.getId());
+			IContext delcontext=ContextFactoryImpl.getInstance().createContextWithID(view.getId());
+			//IContext context=ContextFactoryImpl.getInstance().createContextWithEntity(mf);
+			//gs.create(context);
+			gs.delete(delcontext);
+			//gs.update(context);
+
+			System.out.println("Test------");
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// System.out.println(s.findAll()==null);
+	}
+
+}

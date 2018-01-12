@@ -1,0 +1,13 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.exception.ServiceException;
+
+/**
+ * 初始化系统备份的更新时间接口
+ *
+ */
+public interface IInitBackupTimeService {
+
+	String getCronExpressionFromDB() throws ServiceException;
+
+}

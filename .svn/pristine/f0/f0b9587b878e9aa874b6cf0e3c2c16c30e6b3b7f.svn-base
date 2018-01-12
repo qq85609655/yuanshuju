@@ -1,0 +1,19 @@
+package com.gilight.dep.metadata.dao;
+
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+
+import java.util.List;
+
+public interface IMetaModelQueryDao extends  IMetaModelDao{
+    /**
+     *获取组合关系的root
+     * <p><br>
+     *
+     * @return
+     * @author wzx
+     * @date 2015年10月12日 上午11:02:12
+     * @version V1.0
+     */
+    public <T> List<IEntity> findCompRootModel() throws DaoException;
+}

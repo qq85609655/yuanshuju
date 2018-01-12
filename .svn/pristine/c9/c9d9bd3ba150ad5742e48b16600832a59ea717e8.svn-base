@@ -1,0 +1,125 @@
+package com.gilight.dep.metadata.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.service.impl.BasicServiceImpl;
+import com.gilight.dep.metadata.service.IGatherTempleService;
+import com.gilight.dep.metadata.view.GatherExcelTempleteView;
+
+/***
+ * 
+ * @ClassName: GatherTempleServiceImpl
+ *             <p>
+ *             excel采集模板管理 TODO<br>
+ * @author zps
+ * @date 2015年7月29日 下午4:21:29
+ * @version V1.0
+ * @param <P>
+ * @since JDK 1.7
+ */
+public class GatherTempleServiceImpl extends BasicServiceImpl<Object> implements
+		IGatherTempleService {
+	private static final Logger logger = Logger
+			.getLogger(GatherTempleServiceImpl.class);
+
+	public GatherTempleServiceImpl() {
+		super();
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IResponse update(IContext paramIContext) throws ServiceException {
+		throw new ServiceException("系统未实现");
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IResponse delete(IContext paramIContext) throws ServiceException {
+		throw new ServiceException("系统未实现");
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IResponse create(IContext paramIContext) throws ServiceException {
+		throw new ServiceException("系统未实现");
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IResponse getById(IContext paramIContext) throws ServiceException {
+		throw new ServiceException("系统未实现");
+	}
+
+	@Override
+	public <P> IResponse getDefaultTemple(IContext<P> context)
+			throws ServiceException {
+		try {
+			List<GatherExcelTempleteView> defaultTemples = this
+					.getDefaultTemple();
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"获取采集适配器成功！", defaultTemples));
+			return context.getResponse();
+		} catch (Exception e) {
+			logger.error("获取默认的采集模板失败", e);
+			throw new ServiceException("系统未实现");
+		}
+	}
+
+	private List<GatherExcelTempleteView> getDefaultTemple() {
+		String path = "templet//excel//datastandard//";
+		List<GatherExcelTempleteView> templetes = new ArrayList<GatherExcelTempleteView>();
+		GatherExcelTempleteView dataEleTemp = new GatherExcelTempleteView();
+		dataEleTemp.setId("dc5560a9-ddce-4711-9f09-18f5483e23b6");
+		dataEleTemp.setName("数据元");
+		dataEleTemp.setRemark("数据标准数据元采集模板，对应DepDataEle元模型");
+		dataEleTemp
+				.setFilepath(path + "gilight_gather_temple_dataElement.xlsx");
+		dataEleTemp.setUpdateDate("2015-07-29 16:51:04");
+		templetes.add(dataEleTemp);
+		GatherExcelTempleteView codeTemp = new GatherExcelTempleteView();
+		codeTemp.setId("bd1cc751-37c3-48a0-8611-d72e71060e65");
+		codeTemp.setName("编码");
+		codeTemp.setRemark("数据标准编码元数据采集模板，对应DepCode元模型");
+		codeTemp.setFilepath(path + "gilight_gather_temple_code.xlsx");
+		codeTemp.setUpdateDate("2015-07-29 16:51:04");
+		templetes.add(codeTemp);
+		GatherExcelTempleteView bussObjectTemp = new GatherExcelTempleteView();
+		bussObjectTemp.setId("b7ec7c60-fc83-47c5-85b5-34c40b615fe5");
+		bussObjectTemp.setName("数据元");
+		bussObjectTemp.setRemark("数据标准数据元采集模板，对应DepBussObject元模型");
+		bussObjectTemp.setFilepath(path
+				+ "gilight_gather_temple_dataObject.xlsx");
+		bussObjectTemp.setUpdateDate("2015-07-29 16:51:04");
+		templetes.add(bussObjectTemp);
+		return templetes;
+	}
+
+	public static void main(String[] arg) {
+		GatherTempleServiceImpl test = new GatherTempleServiceImpl();
+		List<GatherExcelTempleteView> a = test.getDefaultTemple();
+		System.out.println(a.size());
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IModel initModel(IContext paramIContext) throws ServiceException {
+		throw new ServiceException("系统未实现");
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Class getModelClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

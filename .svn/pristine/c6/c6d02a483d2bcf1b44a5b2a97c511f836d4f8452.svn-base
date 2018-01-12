@@ -1,0 +1,111 @@
+package com.gilight.dep.metadata.wsview;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+@XStreamAlias("metadata")
+public class CodeIetmView {
+    /**
+     *
+     * <srcCode>源编码明细元数据代码</ srcCode >
+     <srcName>源编码明细元数据名称</ srcName >
+     < srcValue >源编码明细元数据值</ srcValue >
+     <targetCode>目的编码明细元数据代码</ targetCode >
+     <targetName>目的编码明细元数据名称</ targetName >
+     < targetValue >目的编码明细元数据值</ targetValue >
+     *
+     */
+    private String srcId;
+    private String srcCode;
+    private String srcName;
+    private String srcValue;
+    private String targetId;
+    private String targetCode;
+    private String targetName;
+    private String targetValue;
+
+    @Override
+    public String toString() {
+        return "CodeIetmView{" +
+                "srcId='" + srcId + '\'' +
+                ", srcCode='" + srcCode + '\'' +
+                ", srcName='" + srcName + '\'' +
+                ", srcValue='" + srcValue + '\'' +
+                ", targetId='" + targetId + '\'' +
+                ", targetCode='" + targetCode + '\'' +
+                ", targetName='" + targetName + '\'' +
+                ", targetValue='" + targetValue + '\'' +
+                '}';
+    }
+
+    public String getSrcId() {
+        return srcId;
+    }
+
+    public void setSrcId(String srcId) {
+        this.srcId = srcId;
+    }
+
+    public String getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(String targetId) {
+        this.targetId = targetId;
+    }
+
+    public String getSrcCode() {
+        return srcCode;
+    }
+
+    public void setSrcCode(String srcCode) {
+        this.srcCode = srcCode;
+    }
+
+    public String getSrcName() {
+        return srcName;
+    }
+
+    public void setSrcName(String srcName) {
+        this.srcName = srcName;
+    }
+
+    public String getSrcValue() {
+        return srcValue;
+    }
+
+    public void setSrcValue(String srcValue) {
+        this.srcValue = srcValue;
+    }
+
+    public String getTargetCode() {
+        return targetCode;
+    }
+
+    public void setTargetCode(String targetCode) {
+        this.targetCode = targetCode;
+    }
+
+    public String getTargetName() {
+        return targetName;
+    }
+
+    public void setTargetName(String targetName) {
+        this.targetName = targetName;
+    }
+
+    public String getTargetValue() {
+        return targetValue;
+    }
+
+    public void setTargetValue(String targetValue) {
+        this.targetValue = targetValue;
+    }
+}

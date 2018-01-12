@@ -1,0 +1,228 @@
+/**   
+ * @Title: MetaModelFactory.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月21日 下午7:01:51
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.init.data;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.metadata.spring.TestSpringFactory;
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelCompView;
+import com.gilight.dep.metadata.view.MetaModelDepeView;
+import com.gilight.dep.metadata.view.MetaModelInheritView;
+import com.gilight.dep.metadata.view.MetaModelView;
+import com.gilight.dep.metamodel.init.data.buss.MetaModelBussFactory;
+import com.gilight.dep.metamodel.init.data.buss.MetaModelBussMngFactory;
+import com.gilight.dep.metamodel.init.data.common.MetaModelCommonFactory;
+import com.gilight.dep.metamodel.init.data.cwm.MetaModelCwmFactory;
+import com.gilight.dep.metamodel.init.data.phys.MetaModelPhysFactory;
+import com.gilight.dep.metamodel.service.impl.MetaModelBasicServiceImpl;
+import com.gilight.dep.metamodel.service.impl.MetaModelCompServiceImpl;
+import com.gilight.dep.metamodel.service.impl.MetaModelDepeServiceImpl;
+import com.gilight.dep.metamodel.service.impl.MetaModelInheServiceImpl;
+
+/***
+ * 
+ * @ClassName: MetaModelFactory
+ *             <p>
+ *             元模型工厂 TODO<br>
+ * @author zps
+ * @date 2015年7月21日 下午7:01:58
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetaModelFactory {
+
+	public static MetaModelBasicServiceImpl metaModelBasicService = null;
+	public static MetaModelCompServiceImpl metaModelCompService = null;
+	public static MetaModelDepeServiceImpl metaModelDepeService = null;
+	public static MetaModelInheServiceImpl metaModelInheService = null;
+	private static Map<String, MetaModelView> metaModel = new HashMap<String, MetaModelView>();
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		claer();
+		init();
+		save();
+	}
+
+	/**
+	 * 
+	 * <p>
+	 * <br>
+	 * 
+	 * @author zps
+	 * @date 2015年7月23日 下午6:53:47
+	 * @version V1.0
+	 */
+	private static void init() {
+		// TODO Auto-generated method stub
+		metaModelBasicService = (MetaModelBasicServiceImpl) TestSpringFactory
+				.getBean("metaModelBasicService");
+		System.out.println("---init----" + metaModelBasicService == null);
+		metaModelCompService = (MetaModelCompServiceImpl) TestSpringFactory
+				.getBean("metaModelCompService");
+		System.out.println("---init----" + metaModelCompService == null);
+		metaModelDepeService = (MetaModelDepeServiceImpl) TestSpringFactory
+				.getBean("metaModelDepeService");
+		System.out.println("---init----" + metaModelDepeService == null);
+		metaModelInheService = (MetaModelInheServiceImpl) TestSpringFactory
+				.getBean("metaModelInheService");
+		System.out.println("---init----" + metaModelInheService == null);
+	}
+
+	private static void claer() {
+		metaModel.clear();
+	}
+
+	private static void save() {
+		// 构造cwm元数据
+		metaModel.putAll(MetaModelCwmFactory.getCwmMetaModel());
+		// 构造公共元数据
+		metaModel.putAll(MetaModelCommonFactory.getMetaModel());
+		// 构造业务元数据
+		metaModel.putAll(MetaModelBussFactory.getMetaModel());
+		metaModel.putAll(MetaModelBussMngFactory.getMetaModel());
+		metaModel.putAll(MetaModelPhysFactory.getMetaModel());
+		try {
+			excuteSave();
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private static void excuteSave() throws GilightException {
+		excuteBasic();
+		excuteParent();
+		excuteComp();
+		excuteDepe();
+	}
+
+	private static void excuteDepe() throws GilightException {
+		Iterator<String> it = metaModel.keySet().iterator();
+		while (it.hasNext()) {
+			String code = it.next();
+			MetaModelView view = metaModel.get(code);
+			// // 保存元模型的依赖关系
+			saveDepeModel(view);
+		}
+
+	}
+
+	private static void excuteComp() throws GilightException {
+		Iterator<String> it = metaModel.keySet().iterator();
+		while (it.hasNext()) {
+			String code = it.next();
+			MetaModelView view = metaModel.get(code);
+			// // 保存元模型的组合关系
+			saveCompModel(view);
+		}
+
+	}
+
+	private static void excuteParent() throws GilightException {
+		Iterator<String> it = metaModel.keySet().iterator();
+		while (it.hasNext()) {
+			String code = it.next();
+			MetaModelView view = metaModel.get(code);
+			// // 保存元模型的父类信息
+			saveParent(view);
+			// // 保存元模型的组合关系
+			// saveCompModel(view);
+			// // 保存元模型的依赖关系
+			// saveDepeModel(view);
+		}
+	}
+
+	private static void excuteBasic() throws GilightException {
+		Iterator<String> it = metaModel.keySet().iterator();
+		while (it.hasNext()) {
+			String code = it.next();
+			MetaModelView view = metaModel.get(code);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithView(view);
+			// 保存元模型基本信息以及属性信息
+			metaModelBasicService.create(context);
+			// // 保存元模型的父类信息
+			// saveParent(view);
+			// // 保存元模型的组合关系
+			// saveCompModel(view);
+			// // 保存元模型的依赖关系
+			// saveDepeModel(view);
+		}
+	}
+
+	private static void saveDepeModel(MetaModelView viewModel)
+	// TODO Auto-generated method stub
+			throws GilightException {
+		List<MetaModelDepeView> depeList = viewModel.getDepeList();
+		// TODO Auto-generated method stub
+		if (depeList == null) {
+			return;
+		}
+		for (MetaModelDepeView view : depeList) {
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithView(view);
+			metaModelDepeService.create(context);
+
+		}
+
+	}
+
+	private static void saveCompModel(MetaModelView viewModel)
+			throws GilightException {
+		List<MetaModelCompView> compList = viewModel.getCompList();
+		// TODO Auto-generated method stub
+		if (compList == null) {
+			return;
+		}
+		for (MetaModelCompView view : compList) {
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithView(view);
+			metaModelCompService.create(context);
+
+		}
+
+	}
+
+	private static void saveParent(MetaModelView viewModel)
+			throws GilightException {
+		List<MetaModelBasicView> parentModelList = viewModel
+				.getParentModelList();
+		if (parentModelList == null) {
+			return;
+		}
+		for (MetaModelBasicView view : parentModelList) {
+			MetaModelInheritView iview = new MetaModelInheritView();
+			iview.setId(UUID.randomUUID().toString());
+			iview.setMmId(viewModel.getId());
+			iview.setParentId(view.getId());
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithView(iview);
+			metaModelInheService.create(context);
+
+		}
+		/*
+		 * List<MetaModelInheritView> parentList = viewModel.getParentList(); //
+		 * TODO Auto-generated method stub if (parentList == null) { return; }
+		 * for (MetaModelInheritView view : parentList) { IContext context =
+		 * ContextFactoryImpl.getInstance() .createContextWithView(view);
+		 * metaModelInheService.create(context);
+		 * 
+		 * }
+		 */
+	}
+}

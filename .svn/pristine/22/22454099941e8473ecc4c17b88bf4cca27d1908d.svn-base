@@ -1,0 +1,22 @@
+package com.gilight.dep.metadata.web.controller;
+
+import java.io.File;
+import java.util.List;
+
+public class MdFolder {
+	List<File> folderList;
+	List<File> fileList;
+	public List<File> getFolderList() {
+		return folderList;
+	}
+	public void setFolderList(List<File> folderList) {
+		this.folderList = folderList;
+	}
+	public List<File> getFileList() {
+		return fileList;
+	}
+	public void setFileList(List<File> fileList) {
+		this.fileList = fileList;
+	}
+	
+}

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+      version="3.0">
+      
+      	<!-- register springMVC dispatcherServlet -->
+    <servlet>
+        <servlet-name>spring-dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+           <init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring-dispather.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>spring-dispatcher</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+      
+ <!--######################################################## -->
+    <!-- log4j 配置  开始 -->
+     <!-- #######################################################-->
+     <!--  制定log配置文件路径 -->
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+		<param-value>classpath:/log4j/log4j.properties</param-value>
+    </context-param>
+    <!--  开一条watchdog线程每600秒扫描一下配置文件的变化-->
+    <context-param>
+        <param-name>log4jRefreshInterval</param-name>
+        <param-value>600000</param-value>
+    </context-param>
+    <!-- 配置应用路径方便log4j文件使用变量${webName.root }表示Web目录的绝对路径  -->  
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>metadata.root</param-value>
+    </context-param>
+    
+    <!-- 监听log4j配置文件变化-->
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+     <!-- #######################################################-->
+    <!-- log4j 配置  结束 -->
+     <!-- #######################################################-->
+    <listener>
+   		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+ 	</listener>
+     <!-- #######################################################-->
+    <!-- log4j 配置  结束 -->
+     <!-- #######################################################-->
+
+	 <!-- #######################################################-->
+    <!-- 设置servlet编码格式开始 -->
+     <!-- #######################################################-->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <async-supported>true</async-supported> 
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>utf-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+ 
+    <!-- 设置Spring配置文件  -->   
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:/applicationContext.xml</param-value>
+    </context-param>
+   <!-- 配置Spring 监听器 ，启动Web容器时，自动装配ApplicationContext的配置信息-->   
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+		 <listener-class>
+		  org.springframework.web.context.request.RequestContextListener
+		 </listener-class>
+	</listener>
+ 
+ 
+   <!-- #######################################################-->
+    <!-- 配置编辑器基本路径 -->
+     <!-- #######################################################-->
+    <context-param>
+        <param-name>editorconfig.basepath</param-name>
+        <param-value>/Dep/metadata/metadatamng</param-value>
+    </context-param>
+     <!-- 开发模式：true-开发模式； false-非开发模式 -->
+    <context-param>
+        <param-name>editor.dev</param-name>
+        <param-value>true</param-value>
+    </context-param>
+     <!-- 配置文件是否每次请求重新load：ture-每次请求重新load； false-仅load一次-->
+    <context-param>
+        <param-name>editor.reload</param-name>
+        <param-value>true</param-value>
+    </context-param>
+ 
+
+    <!-- 浏览器不支持put,delete等method,由该filter将这些请求转换为标准的http方法，使得支持GET、POST、PUT与DELETE请求 -->
+    <filter>
+        <filter-name>HiddenHttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+        <async-supported>true</async-supported> 
+    </filter>
+    <filter-mapping>
+        <filter-name>HiddenHttpMethodFilter</filter-name>
+        <servlet-name>spring-dispatcher</servlet-name>
+    </filter-mapping>
+
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+    
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+    
+</web-app>

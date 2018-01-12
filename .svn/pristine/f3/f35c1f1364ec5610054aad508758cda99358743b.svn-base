@@ -1,0 +1,7 @@
+package com.gilight.dep.metadata.dao.impl;
+
+import com.gilight.dep.metadata.dao.IMetaModelQueryDao;
+
+public class MetaModelQueryDaoImpl  extends BaseDao implements IMetaModelQueryDao{
+
+}

@@ -1,0 +1,285 @@
+package com.gilight.dep.metadata.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.service.impl.BasicServiceImpl;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdView;
+import com.gilight.dep.metadata.entity.MmDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IMetaDataBaseRepository;
+import com.gilight.dep.metadata.repository.IMetaDataMapRepository;
+import com.gilight.dep.metadata.service.IMetaDataMapService;
+import com.gilight.dep.metadata.service.IMetaDataMapTwoService;
+import com.gilight.dep.metadata.view.MetaDataMapMDView;
+import com.gilight.dep.metadata.view.MetaDataMapMMDepView;
+import com.gilight.dep.metadata.view.MetaDataMapTopView;
+/**
+ * 映射关系
+ */
+public class MetaDataMapServiceImpl extends BasicServiceImpl implements IMetaDataMapService{
+	private static final Logger logger = Logger
+			.getLogger(MetaDataMapServiceImpl.class);
+	@Override
+	public IResponse getByScope(IContext arg0) throws ServiceException {
+		return null;
+	}
+
+	@Override
+	public Class getModelClass() {
+		return null;
+	}
+
+	@Override
+	public IModel initModel(IContext arg0) throws Exception {
+		return null;
+	}
+	
+	//==============注入属性===============//
+	private IMetaDataMapTwoService me;
+	private IMetaDataMapRepository metaDataMapRepository;
+	public IMetaDataMapTwoService getMe() {
+		return me;
+	}
+	public void setMe(IMetaDataMapTwoService me) {
+		this.me = me;
+	}
+	public IMetaDataMapRepository getMetaDataMapRepository() {
+		return metaDataMapRepository;
+	}
+	public void setMetaDataMapRepository(IMetaDataMapRepository metaDataMapRepository) {
+		this.metaDataMapRepository = metaDataMapRepository;
+	}
+
+	@Override
+	public List<MetaDataMapMMDepView> findMapTargetsById(String id) {
+		List<MetaDataMapMMDepView> targetslist = new ArrayList<MetaDataMapMMDepView>();//目标集合
+		MdMetadata mdMetadata = metaDataMapRepository.findMdMetadataById(id);
+		String mmId = mdMetadata.getMmId();//元模型ID
+		//查出映射源集合
+		List<MmDependency> mmDepSourceAsSourceList = metaDataMapRepository.findSourceByToMmIdAsSource(mmId);
+		if(mmDepSourceAsSourceList!=null&&mmDepSourceAsSourceList.size()>0){
+			//遍历映射源
+			for (MmDependency mmDepSourceAsSource : mmDepSourceAsSourceList) {
+				String fromMmIdAsSource = mmDepSourceAsSource.getFromMmId();//中间映射名
+				//查出映射目标
+				MmDependency mmDepTargetAsSource = metaDataMapRepository.findTargetByFromMmIdAsSource(fromMmIdAsSource);
+				if(mmDepSourceAsSource!=null&&mmDepTargetAsSource!=null){
+					String fromMmId1 = mmDepSourceAsSource.getFromMmId();
+					String fromMmId2 = mmDepTargetAsSource.getFromMmId();
+					if(fromMmId1.equals(fromMmId2)){//一对
+						MetaDataMapMMDepView mapView = new MetaDataMapMMDepView();
+						mapView.setFromMdId(id);//作为源id
+						mapView.setId(mmDepTargetAsSource.getId());
+						mapView.setName(mmDepTargetAsSource.getName());
+						mapView.setFromMmId(mmDepTargetAsSource.getFromMmId());
+						mapView.setToMmId(mmDepTargetAsSource.getToMmId());
+						mapView.setRemark(mmDepTargetAsSource.getRemark());
+						mapView.setTrole(mmDepTargetAsSource.getTrole());
+						mapView.setIsMapp(mmDepTargetAsSource.getIsMapp());
+						mapView.setMappDire(mmDepTargetAsSource.getMappDire());
+						mapView.setMappCode(mmDepTargetAsSource.getMappCode());
+						mapView.setFromMmName(metaDataMapRepository.findMmMetamodelById(mmDepTargetAsSource.getFromMmId()).getMmName());
+						mapView.setToMmName(metaDataMapRepository.findMmMetamodelById(mmDepTargetAsSource.getToMmId()).getMmName());
+						targetslist.add(mapView);
+					}
+				}
+			}
+			return targetslist;
+		}
+		return null;
+	}
+
+	@Override
+	public List<MetaDataMapMMDepView> findMapSourcesById(String id) {
+		List<MetaDataMapMMDepView> sourceslist = new ArrayList<MetaDataMapMMDepView>();//源集合
+		MdMetadata mdMetadata = metaDataMapRepository.findMdMetadataById(id);
+		String mmId = mdMetadata.getMmId();//元模型ID
+		//查出映射目标
+		List<MmDependency> mmDepTargetAsTargetList = metaDataMapRepository.findTargetByToMmIdAsTarget(mmId);
+		if(mmDepTargetAsTargetList!=null&&mmDepTargetAsTargetList.size()>0){
+			for (MmDependency mmDepTargetAsTarget : mmDepTargetAsTargetList) {
+				String fromMmIdAsTarget = mmDepTargetAsTarget.getFromMmId();//中间映射名
+				//查出映射源
+				MmDependency mmDepSourceAsTarget = metaDataMapRepository.findSourceByFromMmIdAsTarget(fromMmIdAsTarget);
+				if(mmDepSourceAsTarget!=null&&mmDepTargetAsTarget!=null){
+					String fromMmId1 = mmDepSourceAsTarget.getFromMmId();
+					String fromMmId2 = mmDepTargetAsTarget.getFromMmId();
+					if(fromMmId1.equals(fromMmId2)){//一对
+						MetaDataMapMMDepView mapView = new MetaDataMapMMDepView();
+						mapView.setToMdId(id);//作为目标id
+						mapView.setId(mmDepSourceAsTarget.getId());
+						mapView.setName(mmDepSourceAsTarget.getName());
+						mapView.setFromMmId(mmDepSourceAsTarget.getFromMmId());
+						mapView.setToMmId(mmDepSourceAsTarget.getToMmId());
+						mapView.setRemark(mmDepSourceAsTarget.getRemark());
+						mapView.setTrole(mmDepSourceAsTarget.getTrole());
+						mapView.setIsMapp(mmDepSourceAsTarget.getIsMapp());
+						mapView.setMappDire(mmDepSourceAsTarget.getMappDire());
+						mapView.setMappCode(mmDepSourceAsTarget.getMappCode());
+						mapView.setFromMmName(metaDataMapRepository.findMmMetamodelById(mmDepSourceAsTarget.getFromMmId()).getMmName());
+						mapView.setToMmName(metaDataMapRepository.findMmMetamodelById(mmDepSourceAsTarget.getToMmId()).getMmName());
+						sourceslist.add(mapView);
+					}
+				}
+			}
+			return sourceslist;
+		}
+		return null;
+	}
+
+	@Override
+	public MmMetamodel findMmMetamodelById(String id) {
+		return metaDataMapRepository.findMmMetamodelById(id);
+	}
+	@Override
+	public MdMetadata findMdMetadataById(String id) {
+		return metaDataMapRepository.findMdMetadataById(id);
+	}
+	
+	@Override
+	public boolean hasParent(List<MetaDataMapMDView> childlist) {
+		long time = 0;
+		int count = 0;//没有父类的个数
+		for (MetaDataMapMDView childMDView : childlist){
+			//获得父类
+			long a = System.currentTimeMillis();
+			MdMetadata parentMD = me.findParentMD(childMDView.getId());
+			long b = System.currentTimeMillis();
+			time = time+(b-a);
+			if(parentMD==null){
+				count=count+1;//没有父类加一
+			}
+		}
+		System.out.println("判断hasParent一次执行"+childlist.size()+"次,用时毫秒;"+time);
+		if(count==childlist.size()){
+			//都没有父类
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public List<MetaDataMapMDView> packageToParent(List<MetaDataMapMDView> childlist) {
+		long time = 0;
+		List<MetaDataMapMDView> parentlist = new ArrayList<MetaDataMapMDView>();
+		//2.遍历子类视图
+		for (MetaDataMapMDView childMDView : childlist) {
+			long a = System.currentTimeMillis();
+			MdMetadata parentMD = me.findParentMD(childMDView.getId());//获得子视图的父类
+			
+			if(parentMD!=null){//有父类
+				String parentName = parentMD.getMdName();
+				boolean flag = false;//存在父类视图的标志
+				for (MetaDataMapMDView parentMDView : parentlist) {//遍历父类视图
+					String mdName = parentMDView.getMdName();
+					if(parentName.equals(mdName)){
+						flag=true;//存在,直接添加
+						List<MetaDataMapMDView> list = parentMDView.getList();
+						list.add(childMDView);//子类视图添加至父类视图的list中
+					}
+				}
+				if(flag==false){//不存在,新建添加
+					MetaDataMapMDView parentMDView = me.packageMDView(parentMD);
+					List<MetaDataMapMDView> list = parentMDView.getList();
+					list.add(childMDView);//子视图添加至新建的父视图中
+					parentlist.add(parentMDView);//新建的父视图添加至父视图的list中
+				}
+			}else{
+				//没有父类的,直接添加
+				parentlist.add(childMDView);
+			}
+			
+			long b = System.currentTimeMillis();
+			time = time+(b-a);
+		}
+		System.out.println("一次packageToParent执行"+childlist.size()+"次,用时毫秒;"+time);
+		return parentlist;
+	}
+	
+	@Override
+	public List<MetaDataMapTopView> packageToEndView(List<MetaDataMapMDView> oldlist){
+		//最终返回值
+		List<MetaDataMapTopView> viewList = new ArrayList<MetaDataMapTopView>();
+		//遍历原来视图
+		for (MetaDataMapMDView old : oldlist) {
+			//6.查元数据对应的顶层视图
+			String mdId = old.getId();
+			MdView oldMdView = me.findMdView(mdId);
+			if(oldMdView!=null){
+				String oldName = oldMdView.getViewName();//获取顶层视图名字
+				//7.封装
+				boolean flag=false;//视图存在的标志
+				for (MetaDataMapTopView topView : viewList) {//遍历父类视图
+					if(topView!=null){
+						String topName = topView.getViewName();//获取每个视图名字
+						if(oldName.equals(topName)){
+							flag=true;//如果视图存在,直接添加
+							List<MetaDataMapMDView> toplist = topView.getList();//获取视图中的list
+							toplist.add(old);//将原来的单个视图添加到其对应的父类视图中
+						}
+					}
+				}
+				//如果视图不存在时,要新建一个
+				if(flag==false){
+					MetaDataMapTopView topView = me.packageTopView(oldMdView);//新建视图:封装一个
+					List<MetaDataMapMDView> toplist = topView.getList();
+					toplist.add(old);//将原视图添加到新建的视图
+					viewList.add(topView);//将新建的视图添加到父类list中
+				}
+			}
+		}
+		return viewList;
+	}
+
+	//注入元数据base仓储层
+	private IMetaDataBaseRepository metaDataBaseRepository;
+	public IMetaDataBaseRepository getMetaDataBaseRepository() {
+		return metaDataBaseRepository;
+	}
+	public void setMetaDataBaseRepository(IMetaDataBaseRepository metaDataBaseRepository) {
+		this.metaDataBaseRepository = metaDataBaseRepository;
+	}
+
+	@Override
+	public void createMapping(String fromMdId, String toMdId, String mmDepeFromId) {
+		try {
+			MdMetadata sourceMetaData = metaDataMapRepository.findMdMetadataById(fromMdId);
+			MdMetadata targetMetaData = metaDataMapRepository.findMdMetadataById(toMdId);
+			metaDataBaseRepository.createMapping(sourceMetaData, targetMetaData, mmDepeFromId);
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public MmDependency findMmDepById(String id) {
+		return metaDataMapRepository.findMmDepById(id);
+	}
+
+	@Override
+	public List<MdMetadata> findChildrenMDByFromMdId(String fromMdId) {
+		List<MdMetadata> mdlist = new ArrayList<MdMetadata>();
+		List<MdComposition> list = metaDataMapRepository.findCompositionByFromMdId(fromMdId);
+		for (MdComposition mdComposition : list) {
+			String toMdId = mdComposition.getToMdId();
+			MdMetadata metadata = metaDataMapRepository.findMdMetadataById(toMdId);
+			mdlist.add(metadata);
+		}
+		return mdlist;
+	}
+
+	@Override
+	public List<MdMetadata> findMDFromTree(String mmId, String metadataId) {
+		return metaDataMapRepository.findMDFromTree(mmId,metadataId);
+	}
+}

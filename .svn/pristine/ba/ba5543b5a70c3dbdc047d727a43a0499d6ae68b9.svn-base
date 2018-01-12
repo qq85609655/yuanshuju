@@ -1,0 +1,5 @@
+{
+	"name": "Dep.framework.editor.base.Editor",
+	"loadOnPlugin": "Dep.framework.editor.plugin.LoadOnPlugin"
+}
+

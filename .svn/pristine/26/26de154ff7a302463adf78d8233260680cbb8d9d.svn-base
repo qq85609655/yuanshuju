@@ -1,0 +1,136 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+/**
+ * 
+ * @ClassName: AnalyseResultTreeNodeView
+ *             <p>
+ *             元数据分析结果视图<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:50:12
+ * @version V1.0
+ * @since JDK 1.7
+ */
+@SuppressWarnings("serial")
+public class AnalyseResultTreeNodeView implements IView {
+
+	/**
+	 * 节点id
+	 */
+	private String nodeId;
+
+	private String code;
+	private String name;
+	private String type;
+    /***
+     * 元模型id
+     */
+	private String mmId;
+	/**
+	 * 子节点视图集
+	 */
+	private List<AnalyseResultTreeNodeView> children;
+	/**
+	 * 父节点id
+	 */
+	private String parentid;
+
+
+
+	private Set<MdSubSvgView> mdSvgs;
+
+	public Set<MdSubSvgView> getMdSvgs() {
+		return mdSvgs;
+	}
+
+	public void setMdSvgs(Set<MdSubSvgView> mdSvgs) {
+		this.mdSvgs = mdSvgs;
+	}
+
+	public void addMdSvg(MdSubSvgView mdSvg){
+		if (mdSvgs==null){
+			mdSvgs=new HashSet<MdSubSvgView>();
+		}
+		mdSvgs.add(mdSvg);
+	}
+
+	public String getMmId() {
+		return mmId;
+	}
+
+	public void setMmId(String mmId) {
+		this.mmId = mmId;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getNodeId() {
+		return nodeId;
+	}
+
+	public void setNodeId(String nodeId) {
+		this.nodeId = nodeId;
+	}
+
+	public List<AnalyseResultTreeNodeView> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<AnalyseResultTreeNodeView> children) {
+		this.children = children;
+	}
+
+	public String getParentid() {
+		return parentid;
+	}
+
+	public void setParentid(String parentid) {
+		this.parentid = parentid;
+	}
+
+	public String toString() {
+		return "AnalyseResultTreeNodeView [nodeId=" + nodeId + ", children="
+				+ children + ", parentid=" + parentid + "]";
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		AnalyseResultTreeNodeView that = (AnalyseResultTreeNodeView) o;
+		return Objects.equals(nodeId, that.nodeId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(nodeId);
+	}
+}

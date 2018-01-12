@@ -1,0 +1,146 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.ext.repository.DepBaseRepository;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.ISystemBackupDao;
+import com.gilight.dep.metadata.entity.MdSystemBackup;
+import com.gilight.dep.metadata.repository.ISystemBackupRepository;
+
+/**
+ * 系统备份
+ *
+ */
+public class SystemBackupRepositoryImpl extends DepBaseRepository implements ISystemBackupRepository{
+
+	private ISystemBackupDao systemBackupDao;
+	
+	public ISystemBackupDao getSystemBackupDao() {
+		return systemBackupDao;
+	}
+
+	public void setSystemBackupDao(ISystemBackupDao systemBackupDao) {
+		this.systemBackupDao = systemBackupDao;
+	}
+
+	@Override
+	protected IResult getByScopeAfter(IContext paramIContext, IResult paramIResult) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult createAfter(IContext paramIContext, IResult paramIResult) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult updateAfter(IContext paramIContext, IResult paramIResult) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext paramIContext, IResult paramIResult) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult getByIdAfter(IContext paramIContext, IResult paramIResult) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void create(MdSystemBackup mdSystemBackup) throws RepositoryException {
+		try {
+			systemBackupDao.save(mdSystemBackup);
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("保存系统备份失败");
+		}
+	}
+
+	@Override
+	public void update(MdSystemBackup mdSystemBackup) throws RepositoryException {
+		try {
+			systemBackupDao.update(mdSystemBackup);
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("更新系统备份失败");
+		}
+	}
+
+	@Override
+	public void delete(MdSystemBackup mdSystemBackup) throws RepositoryException {
+		try {
+			systemBackupDao.delete(mdSystemBackup);
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("删除系统备份失败");
+		}
+	}
+
+	@Override
+	public MdSystemBackup getById(String id) throws RepositoryException {
+		try {
+			MdSystemBackup systemBackup = (MdSystemBackup) systemBackupDao.findById(id);
+			return systemBackup;
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("查询系统备份失败");
+		}
+	}
+
+	@Override
+	public List<MdSystemBackup> getAll() throws RepositoryException {
+		try { 
+			List<MdSystemBackup> sbkList = new ArrayList<MdSystemBackup>();
+			List<IEntity> list = systemBackupDao.findAll(MdSystemBackup.class);
+			for (IEntity iEntity : list) {
+				MdSystemBackup sbk = (MdSystemBackup)iEntity;
+				sbkList.add(sbk);
+			}
+			return sbkList;
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("查询系统备份失败");
+		}
+	}
+    /**
+     * 获得上一次的数据
+     */
+	@Override
+	public MdSystemBackup getLatestMdSystemBackup() throws RepositoryException {
+		try {
+			MdSystemBackup backup = systemBackupDao.getLatestMdSystemBackup();
+			return backup;
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("查询最新系统备份失败");
+		}
+	}
+
+	/***
+	 * 清空数据
+	 * @throws RepositoryException 
+	 */
+	@Override
+	public void empty() throws RepositoryException {
+		try {
+			systemBackupDao.empty();
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("清空系统备份数据失败");
+		}
+		
+	}
+}

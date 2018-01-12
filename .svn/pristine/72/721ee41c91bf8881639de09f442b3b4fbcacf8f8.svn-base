@@ -1,0 +1,117 @@
+package com.gilight.dep.metadata.gather.db;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.enmu.MetaDataGatherAdaptor;
+import com.gilight.dep.metadata.entity.MdGatherDatasource;
+import com.gilight.dep.metadata.entity.MdGatherDatasourceParam;
+import com.gilight.dep.metadata.entity.MdGatherJob;
+import com.gilight.dep.metadata.entity.MdGatherJobParam;
+import com.gilight.dep.metadata.gather.common.BaseGatherJobTaskModel;
+import com.gilight.dep.metadata.gather.common.DBConnParam;
+import com.gilight.dep.metadata.gather.common.IGatherJobTaskModel;
+import com.gilight.dep.metadata.repository.IGatherAdaptorRepository;
+import com.gilight.dep.metadata.repository.IGatherJobRepository;
+
+public class DBGatherJobTaskModel extends BaseGatherJobTaskModel implements
+		IGatherJobTaskModel {
+	MetaDataGatherAdaptor adaptor = MetaDataGatherAdaptor.DBSchema_TYPE;
+	IGatherJobRepository jobRepository;
+	IGatherAdaptorRepository gatherAdaptorRepository;
+	
+	
+	
+	public IGatherAdaptorRepository getGatherAdaptorRepository() {
+		return gatherAdaptorRepository;
+	}
+
+	public void setGatherAdaptorRepository(
+			IGatherAdaptorRepository gatherAdaptorRepository) {
+		this.gatherAdaptorRepository = gatherAdaptorRepository;
+	}
+
+	public IGatherJobRepository getJobRepository() {
+		return jobRepository;
+	}
+
+	public void setJobRepository(IGatherJobRepository jobRepository) {
+		this.jobRepository = jobRepository;
+	}
+
+	@Override
+	public String getName() throws ModelException {
+		return adaptor.getName() + this.getJobTaskId();
+	}
+
+	@Override
+	public String getAdaptorName() throws ModelException {
+		return adaptor.getName();
+	}
+
+	@Override
+	public String getAdaptorCode() throws ModelException {
+		return adaptor.getValue();
+	}
+
+	@Override
+	public void excute() throws ModelException {
+		// TODO Auto-generated method stub
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					getBuildMetadataService().buildMetadatas(
+							DBGatherJobTaskModel.this);
+					
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				} catch (RepositoryException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (GilightException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).run();
+	}
+	
+	public Map<String,String> getJobParam() throws RepositoryException{
+		String jobid=this.getJobId();
+		Map<String,String> map = new HashMap<String,String>();
+		List<MdGatherJobParam> list=jobRepository.getJobParam(jobid);
+		for (MdGatherJobParam mdGatherJobParam : list) {
+			String key=mdGatherJobParam.getParamKey();
+			String val=mdGatherJobParam.getParamValue();
+			map.put(key, val);
+		}
+		
+		return map;
+		
+	}
+	
+	public Map<String,String> getDBSParam() throws RepositoryException{
+		String jobid=this.getJobId();
+		
+		Map<String,String> map = new HashMap<String,String>();
+		MdGatherJob job= jobRepository.getJob(jobid);
+		String dbsid=job.getDatasource();
+		List<MdGatherDatasourceParam> jobdbslist =jobRepository.getDBSParam(dbsid);
+		
+		//List<MdGatherJobParam> list=jobRepository.getJobParam(dbsid);
+		for (MdGatherDatasourceParam dbs : jobdbslist) {
+			String key=dbs.getParamKey();
+			String val=dbs.getParamValue();
+			map.put(key, val);
+		}
+		
+		return map;
+		
+	}
+}

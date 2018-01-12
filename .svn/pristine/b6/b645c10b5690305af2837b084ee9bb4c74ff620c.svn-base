@@ -1,0 +1,62 @@
+package com.gilight.dep.metadata.gather.common.spring;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+
+/***
+ * 
+ * @ClassName: AppContextSpring
+ *             <p>拿到当前spring容器中配置的所有bean的工厂，根据需要自己获取bean
+ *             TODO<br>
+ * @author zps
+ * @date 2015年8月4日 下午4:06:30
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class AppContextSpring implements ApplicationContextAware,
+		BeanDefinitionRegistryPostProcessor, ApplicationListener {
+	/**
+	 * spring 可配置bean 工厂。
+	 */
+	private static ConfigurableListableBeanFactory factory = null;
+
+	@Override
+	public void postProcessBeanFactory(
+			ConfigurableListableBeanFactory beanFactory) throws BeansException {
+		AppContextSpring.factory = beanFactory;
+	}
+
+	@Override
+	public void onApplicationEvent(ApplicationEvent paramE) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void postProcessBeanDefinitionRegistry(
+			BeanDefinitionRegistry registry) throws BeansException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext paramApplicationContext)
+			throws BeansException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public static Object getBeanByName(String name) throws Exception {
+		if (factory != null) {
+			return factory.getBean(name);
+		}
+		return null;
+
+	}
+}

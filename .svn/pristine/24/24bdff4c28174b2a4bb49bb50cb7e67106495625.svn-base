@@ -1,0 +1,23 @@
+package com.gilight.dep.metadata.message.consumer;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gilight.dep.framework.core.context.base.DomainMessageContext;
+import com.gilight.dep.framework.core.message.consumer.AbstractConsumer;
+import com.gilight.dep.framework.core.message.consumer.IMessageConsumer;
+import com.gilight.dep.metadata.repository.IMetaDataViewRepository;
+import com.jdon.annotation.Consumer;
+
+@Consumer("folderDel")
+public class MetaFolderDelMessageConsumer extends AbstractConsumer implements
+		IMessageConsumer {
+	@Autowired
+	private IMetaDataViewRepository metaDataViewRepository;
+
+	@Override
+	public void executeEvent(DomainMessageContext paramDomainMessageContext)
+			throws Exception {
+		metaDataViewRepository.deleteFolder(paramDomainMessageContext);
+	}
+
+}

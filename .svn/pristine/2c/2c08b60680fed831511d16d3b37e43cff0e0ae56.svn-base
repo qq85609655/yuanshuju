@@ -1,0 +1,116 @@
+package com.gilight.dep.metadata.view;
+
+import java.math.BigDecimal;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.framework.core.ext.response.IDepView;
+import com.gilight.dep.metadata.enmu.MetaDataViewType;
+import com.gilight.dep.metadata.enmu.MetaModelYesOrNo;
+
+/**
+ * 
+ * @ClassName: PackageBasicView
+ *             <p>
+ *             视图基本信息<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:14:31
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class PackageBasicView implements IDepView {
+	/**
+	 * 视图ID
+	 */
+	private String id;
+	/**
+	 * 视图名称
+	 */
+	private String viewName;
+	/**
+	 * 默认显示
+	 */
+	private String defaultShow = String.valueOf(MetaModelYesOrNo.YES);
+	/**
+	 * 视图类型
+	 */
+	private String viewType = MetaDataViewType.CUSTOM;
+	/**
+	 * 显示顺序
+	 */
+	private String displayOrder;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 是否隐藏 : YES/NO
+	 */
+	private Integer ishidden = new Integer(MetaModelYesOrNo.YES);
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getViewName() {
+		return viewName;
+	}
+
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
+	}
+
+	public String getDefaultShow() {
+		return defaultShow;
+	}
+
+	public void setDefaultShow(String defaultShow) {
+		this.defaultShow = defaultShow;
+	}
+
+	public String getViewType() {
+		return viewType;
+	}
+
+	public void setViewType(String viewType) {
+		this.viewType = viewType;
+	}
+
+	public String getDisplayOrder() {
+		return displayOrder;
+	}
+
+	public void setDisplayOrder(String displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getIshidden() {
+		return ishidden;
+	}
+
+	public void setIshidden(Integer ishidden) {
+		this.ishidden = ishidden;
+	}
+
+	@Override
+	public String toString() {
+		return "PackageBasicView [id=" + id + ", viewName=" + viewName
+				+ ", defaultShow=" + defaultShow + ", viewType=" + viewType
+				+ ", displayOrder=" + displayOrder + ", remark=" + remark
+				+ ", ishidden=" + ishidden + "]";
+	}
+
+}

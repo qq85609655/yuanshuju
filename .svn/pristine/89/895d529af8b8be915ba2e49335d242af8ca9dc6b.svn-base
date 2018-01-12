@@ -1,0 +1,226 @@
+/**   
+ * @Title: MetaModelCommonFactory.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月21日 下午7:02:45
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.init.data.common;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.gilight.dep.metadata.view.MetaModelAttView;
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelCompView;
+import com.gilight.dep.metadata.view.MetaModelView;
+import com.gilight.dep.metamodel.init.data.MetaModelInitFactory;
+import com.gilight.dep.metamodel.init.data.cwm.MetaModelCwmCoreFactory;
+
+/**
+ * 
+ * @ClassName: MetaModelCommonFactory
+ *             <p>
+ *             公共元模型工厂数据类 TODO<br>
+ * @author zps
+ * @date 2015年7月21日 下午7:02:50
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetaModelCommonFactory extends MetaModelInitFactory {
+	private static Map<String, MetaModelView> metaModel = new HashMap<String, MetaModelView>();
+
+	public static void main(String[] args) {
+		init();
+		System.out.println(metaModel.size());
+	}
+
+	public static Map<String, MetaModelView> getMetaModel() {
+		metaModel.clear();
+		init();
+		return metaModel;
+	}
+
+	private static void init() {
+		// TODO Auto-generated method stub
+		MetaModelCommonFactory.setDepModelElement();
+		MetaModelCommonFactory.setDepPackage();
+		MetaModelCommonFactory.setDepPkgSubject();
+		MetaModelCommonFactory.setDepPkgCustomType();
+		MetaModelCommonFactory.setDepPkgClassi();
+		MetaModelCommonFactory.setDepPkgClassiSub();
+	}
+
+	private static void putCache(MetaModelView m) {
+		// TODO Auto-generated method stub
+		if (!metaModel.containsKey(m.getCode())) {
+			metaModel.put(m.getCode(), m);
+		} else {
+			System.out.println("---------" + (m.getCode()));
+		}
+	}
+
+	private static MetaModelView getCache(String code) {
+		// TODO Auto-generated method stub
+		if (metaModel.containsKey(code)) {
+			return metaModel.get(code);
+		}
+		return null;
+	}
+
+	// 扩展基类 DepModelElement 是 基类 ModelElement remark 描述 public 文本 文本 否
+	public static String DepModelElement = "DepModelElement";
+
+	public static MetaModelView setDepModelElement() {
+		String name = "元模型基类";
+		MetaModelView m = getCache(DepModelElement);
+		if (m == null) {
+			m = getSystemMetaModel(DepModelElement, name);
+		}
+		m.setIsabstract(true);
+		// 设置属性
+		List<MetaModelAttView> attList = new ArrayList<MetaModelAttView>();
+		MetaModelAttView attV = getMetaModelAttView(m.getId(), "remark", "描述",
+				99);
+		attList.add(attV);
+		m.setAttList(attList);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCwmCoreFactory.setCWMModelElement());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		return m;
+	}
+
+	// 包基类 DepPackage 是 主题包 Package remark 描述 public 文本 文本 否
+	public static String DepPackage = "DepPackage";
+
+	public static MetaModelView setDepPackage() {
+		String name = "元模型包基类";
+		MetaModelView m = getCache(DepPackage);
+		if (m == null) {
+			m = getSystemMetaModel(DepPackage, name);
+		}
+		m.setIsabstract(true);
+		// 设置属性
+		List<MetaModelAttView> attList = new ArrayList<MetaModelAttView>();
+		MetaModelAttView attV = getMetaModelAttView(m.getId(), "remark", "描述",
+				99);
+		attList.add(attV);
+		m.setAttList(attList);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCwmCoreFactory.setCWMPackage());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		return m;
+	}
+
+	// 主题 DepPkgSubject 否 主题包 DepPackage remark 描述 public 文本 文本 否
+	public static String DepPkgSubject = "DepPkgSubject";
+
+	public static MetaModelView setDepPkgSubject() {
+		String name = "主题";
+		MetaModelView m = getCache(DepPkgSubject);
+		if (m == null) {
+			m = getSystemMetaModel(DepPkgSubject, name);
+		}
+		m.setIsabstract(false);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepPackage());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合客户分类
+		MetaModelCompView comview = getMetaModelCompView(m,
+				setDepPkgCustomType());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 客户分类 DepPkgCustomType 否 客户分类 DepPackage remark 描述 public 文本 文本 否
+	public static String DepPkgCustomType = "DepPkgCustomType";
+
+	public static MetaModelView setDepPkgCustomType() {
+		String name = "客户分类 ";
+		MetaModelView m = getCache(DepPkgCustomType);
+		if (m == null) {
+			m = getSystemMetaModel(DepPkgCustomType, name);
+		}
+		m.setIsabstract(false);
+		/*
+		 * // 设置属性 List<MetaModelAttView> attList = new
+		 * ArrayList<MetaModelAttView>(); MetaModelAttView attV =
+		 * getMetaModelAttView(m.getId(), "remark", "描述"); attList.add(attV);
+		 * m.setAttList(attList);
+		 */
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepPackage());
+		m.setParentModelList(parentModelList);
+
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合客户大类
+		MetaModelCompView comview = getMetaModelCompView(m, setDepPkgClassi());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 客户大类 DepPkgClassi 否 客户大类 DepPackage remark 描述 public 文本 文本 否
+	public static String DepPkgClassi = "DepPkgClassi";
+
+	public static MetaModelView setDepPkgClassi() {
+		String name = "客户大类";
+		MetaModelView m = getCache(DepPkgClassi);
+		if (m == null) {
+			m = getSystemMetaModel(DepPkgClassi, name);
+		}
+		m.setIsabstract(false);
+		/*
+		 * // 设置属性 List<MetaModelAttView> attList = new
+		 * ArrayList<MetaModelAttView>(); MetaModelAttView attV =
+		 * getMetaModelAttView(m.getId(), "remark", "描述"); attList.add(attV);
+		 * m.setAttList(attList);
+		 */
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepPackage());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合客户大类
+		MetaModelCompView comview = getMetaModelCompView(m,
+				setDepPkgClassiSub());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 客户小类 DepPkgClassiSub 否 客户小类 DepPackage remark 描述 public 文本 文本 否
+	public static String DepPkgClassiSub = "DepPkgClassiSub";
+
+	public static MetaModelView setDepPkgClassiSub() {
+		String name = "客户小类";
+		MetaModelView m = getCache(DepPkgClassiSub);
+		if (m == null) {
+			m = getSystemMetaModel(DepPkgClassiSub, name);
+		}
+		m.setIsabstract(false);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepPackage());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		return m;
+	}
+}

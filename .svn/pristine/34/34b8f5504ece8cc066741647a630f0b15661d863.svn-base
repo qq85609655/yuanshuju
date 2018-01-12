@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+	<class name="com.gilight.dep.metadata.entity.MmAttribute" table="MM_ATTRIBUTE">
+		<id name="id" type="string">
+			<column name="ID" length="64" />
+			<generator class="assigned" />
+		</id>
+		<property name="attCode" type="string">
+			<column name="ATT_CODE" length="256">
+			</column>
+		</property>
+		<property name="attName" type="string">
+			<column name="ATT_NAME" length="256">
+			</column>
+		</property>
+		<property name="mmId" type="string">
+			<column name="MM_ID" length="64">
+			</column>
+		</property>
+		<property name="inheritFlag" type="integer">
+			<column name="INHERIT_FLAG" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="isread" type="integer">
+			<column name="ISREAD" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="isnull" type="integer">
+			<column name="ISNULL" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="datatypeId" type="string">
+			<column name="DATATYPE_ID" length="64">
+			</column>
+		</property>
+		<property name="displayType" type="string">
+			<column name="DISPLAY_TYPE" length="64">
+			</column>
+		</property>
+		<property name="enumId" type="string">
+			<column name="ENUM_ID" length="256">
+			</column>
+		</property>
+		<property name="attLength" type="integer">
+			<column name="ATT_LENGTH" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="attMax" type="integer">
+			<column name="ATT_MAX" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="attMin" type="integer">
+			<column name="ATT_MIN" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="isshow" type="integer">
+			<column name="ISSHOW" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="iskey" type="integer">
+			<column name="ISKEY" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="remark" type="string">
+			<column name="REMARK" length="512">
+			</column>
+		</property>
+		<property name="displayOrder" type="string">
+			<column name="DISPLAY_ORDER" length="64">
+			</column>
+		</property>
+	</class>
+</hibernate-mapping>

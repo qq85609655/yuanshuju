@@ -1,0 +1,15 @@
+{
+	"plugins": [],
+	"detail":[{
+		"title": "元数据",
+		"lType": "default",
+		"displayBussProps": [{
+				"dataIndex": "mdCode",
+				"text":"代码"	
+			},{
+				"dataIndex": "mdName",
+				"text":"名称"	
+			}
+		]
+	}
+]}

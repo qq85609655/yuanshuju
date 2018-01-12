@@ -1,0 +1,15 @@
+package com.gilight.dep.metamodel.service;
+
+/**
+ * 
+ * @ClassName: IMetaModelBasicService
+ *             <p>
+ *             元模型基本操作类<br>
+ * @author wzx
+ * @date 2015年7月9日 下午2:30:29
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaModelBasicService extends IMetaModelService {
+	
+}

@@ -1,0 +1,294 @@
+/**
+ * 元数据采集管理的弹出窗口
+ * @author hww
+ */
+Ext.define('Dep.metadata.gathermng.view.GatherMngWindow', {
+		extend : 'Ext.window.Window',
+		modal : true,
+		resizable : true,
+		maximizable : true,
+		autoDestroy : false,
+		constrainHeader  : true,
+		border : null,
+		title : '元数据采集',
+		titleAlign : 'left',
+		layout: 'border',
+		closeAction : "hide",
+		width : 1220,
+		height : 700,
+		constructor : function(conf) {
+			var me = this;
+			//采集资源的面板
+			if(conf.westPanel) {
+				me.westPanel = conf.westPanel;
+			}
+			//任务执行情况列表
+			me.taskExeInfoGrid = me.getTaskExeInfoGrid(conf.taskExecuteInfoStore);
+			//采集结果列表
+			me.gatherResultGrid = me.getGatherResultGrid(conf.gatherResultStore);
+			//元数据审核列表
+			me.auditGrid = me.getAuditGrid(conf.auditStore);
+			//采集配置基本信息列表
+			me.baseInfoGrid = me.getBaseInfoGridPanel(conf.dataSourceStore);
+			//任务列表gridpanel
+			me.taskListGrid = me.getTaskGridPanel(conf.taskListStore);
+			//采集配置面板
+			me.configPanel = me.getConfigPanel();
+			//标签页面板
+			me.centerTabPanel = me.getCenterTabPanel();
+			//弹窗的items属性
+			me.items = [me.westPanel, me.centerTabPanel];
+			//调用父类方法
+			me.callParent();
+		},
+		listeners : {
+	        resize : {
+	            fn: function(){ 
+	            	var me = this;
+	            	if(me.getConfigPanel().isVisible()&&me.configPanel.contains(me.getBaseInfoGridPanel())&&
+	            		me.configPanel.contains(me.getTaskGridPanel())&&me.configPanel.contains(me.getTaskExeInfoGrid())) {
+	            		var cHeight = me.getConfigPanel().getHeight();
+	            		var bHeight = me.getBaseInfoGridPanel().getHeight();
+	            		var tHeight = me.getTaskGridPanel().getHeight();
+	            		var eHeight = me.getTaskExeInfoGrid().getHeight();
+	            		var rHeight = cHeight-bHeight-tHeight-eHeight-30;
+		            	me.getGatherResultGrid().maxHeight = rHeight;
+		            	me.getGatherResultGrid().setSize('100%', rHeight);
+	            	}
+	            	if(me.getCheckPanel().isVisible()&&me.checkPanel.contains(me.getAuditGrid())) {
+	            		var kHeight = me.getCheckPanel().getHeight();
+	            		var aHeight = kHeight;
+	            		me.getAuditGrid().maxHeight = aHeight;
+	            		me.getAuditGrid().setSize('100%', aHeight);
+	            		var innerGrids = Ext.ComponentQuery.query('grid[cmpTag="auditinnergrid"]');
+	            		var aWidth = me.getAuditGrid().getWidth();
+	            		for(var i in innerGrids) {
+	            			innerGrids[i].setWidth(aWidth-35);
+	            		}
+	            	}
+	            }
+	        }
+	    },
+		/**
+		 * 获取弹窗中央区域的tabpanel
+		 * @return {Ext.tab.Panel} centerTabPanel
+		 */
+		getCenterTabPanel : function() {
+			var me = this;
+			if(!me.centerTabPanel) {
+				me.centerTabPanel = Ext.create('Ext.tab.Panel', {
+						xtype : 'tabpanel',
+						region : 'center',
+						items: [{
+							        title : '首页',
+							        html : '<div id="gatherhomepage" style="height: 100%;font-size: 14px;background: url(img/page/gathermng.png) no-repeat scroll center center rgba(0, 0, 0, 0);">&nbsp;</div>'
+							    }]
+					});
+			}
+			return me.centerTabPanel;
+		},
+		/**
+		 * 获取基本信息列表
+		 * @return gridpanel
+		 */
+		getBaseInfoGridPanel : function(store) {
+			var me = this;
+			if(!me.baseInfoGrid) {
+				me.baseInfoGrid = Ext.create('Dep.metadata.gathermng.view.BaseInfoGrid', {
+					store : store ? store : null
+				});
+			}
+			return me.baseInfoGrid;
+		},
+		/**
+		 * 获取任务列表
+		 * @return gridpanel
+		 */
+		getTaskGridPanel : function(store) {
+			var me = this;
+			if(!me.taskListGrid) {
+				me.taskListGrid = Ext.create('Dep.metadata.gathermng.view.TaskListGrid', {
+					store : store ? store : null
+				});
+			}
+			return me.taskListGrid;
+		},
+		/**
+		 * 获取任务执行情况列表
+		 * @return gridpanel
+		 */
+		getTaskExeInfoGrid : function(store) {
+			var me = this;
+			if(!me.taskExeInfoGrid) {
+				me.taskExeInfoGrid = Ext.create('Dep.metadata.gathermng.view.TaskExeInfoGrid', {
+					store : store ? store : null
+				});
+			}
+			return me.taskExeInfoGrid;
+		},
+		/**
+		 * 获取采集结果列表
+		 * @return gridpanel
+		 */
+		getGatherResultGrid : function (store) {
+			var me = this;
+			if(!me.gatherResultGrid) {
+				me.gatherResultGrid = Ext.create('Dep.metadata.gathermng.view.GatherResultGrid', {
+					store : store ? store : null
+				});
+			}
+			return me.gatherResultGrid;
+		},
+		/**
+		 * 获取元数据审核列表
+		 * @return gridpanel
+		 */
+		getAuditGrid : function (store) {
+			var me = this;
+			if(!me.auditGrid) {
+				me.auditGrid = Ext.create('Dep.metadata.gathermng.view.AuditExpanderGrid', {
+					store : store ? store : null,
+					selModel : Ext.create('Ext.selection.CheckboxModel')
+				});
+			}
+			return me.auditGrid;
+		},
+		/**
+		 * 获取采集配置面板
+		 * @return {}
+		 */
+		getConfigPanel : function() {
+			var me = this;
+			if(!me.configPanel) {
+				me.configPanel = Ext.create('Ext.panel.Panel', {
+						title : '采集配置',
+				        autoScroll : false,
+				        items : [],
+				        listeners : {
+				        	activate : function(obj) {
+				        		me.setSize(me.getWidth()+1, me.getHeight()+1);
+				        	}
+				        }
+				});
+			}
+			return me.configPanel;
+		},
+		/**
+		 * 获取元数据审核面板
+		 * @return {}
+		 */
+		getCheckPanel : function() {
+			var me = this;
+			if(!me.checkPanel) {
+				me.checkPanel = Ext.create('Ext.panel.Panel', {
+						title : '元数据审核',
+				        items : [me.auditGrid],
+				        listeners : {
+				        	activate : function(obj) {
+				        		me.setSize(me.getWidth()-1, me.getHeight()-1);
+				        	}
+				        }
+				});
+			}
+			return me.checkPanel;
+		},
+		/**
+		 * 获取内嵌子列表
+		 * @param {} store
+		 * @param {} renderId
+		 * @return innerGrid
+		 */
+		getInnerGrid : function(store, renderId) {
+			var me = this, innerGrid = {};
+			innerGrid = Ext.create('Dep.metadata.gathermng.view.AuditInnerGrid', {
+					store : store ? store : null,
+					width: me.getAuditGrid().getWidth()-25,
+					renderTo: renderId,
+					selModel : Ext.create('Ext.selection.CheckboxModel')
+			});  
+	  		if(innerGrid.getEl()) {
+		    	innerGrid.getEl().swallowEvent([  
+		                'mousedown', 'mouseup', 'click',  
+		                'contextmenu', 'mouseover', 'mouseout',  
+		                'dblclick', 'mousemove'  
+		        ]); 
+	  		}
+			return innerGrid;
+		},
+		/**
+		 * 获取内嵌孙列表
+		 * @param {} store
+		 * @param {} renderId
+		 * @return grandGrid
+		 */
+		getGrandGrid : function(store, renderId, grandParentId) {
+			var me = this;
+			var grandGrid = Ext.create('Dep.metadata.gathermng.view.AuditGrandGrid', {
+			        store : store ? store : null,  
+			        width: me.getAuditGrid().getWidth()-45,  
+			        renderTo: renderId,
+			        cmpTag : 'auditgrandgrid'+grandParentId,
+			        selModel : Ext.create('Ext.selection.CheckboxModel')
+			});  
+	  		if(grandGrid.getEl()) {
+		    	grandGrid.getEl().swallowEvent([  
+		                'mousedown', 'mouseup', 'click',  
+		                'contextmenu', 'mouseover', 'mouseout',  
+		                'dblclick', 'mousemove'  
+		        ]);
+	  		}
+			return grandGrid;
+		},
+		/**
+		 * 向采集配置面板里添加基本信息列表
+		 */
+		addBaseInfoGridPanel : function() {
+			var me = this;
+			if(!me.configPanel)return;
+			if(!me.configPanel.contains(me.getBaseInfoGridPanel())) {
+				me.configPanel.add(me.getBaseInfoGridPanel());
+			}else if(!me.getBaseInfoGridPanel().isVisible()) {
+				me.getBaseInfoGridPanel().show();
+			}
+		},
+		/**
+		 * 向采集配置面板里添加任务列表
+		 */
+		addTaskGridPanel : function() {
+			var me = this;
+			if(!me.configPanel)return;
+			if(!me.configPanel.contains(me.getTaskGridPanel())) {
+				me.configPanel.add(me.getTaskGridPanel());
+			}else if(!me.getTaskGridPanel().isVisible()) {
+				me.getTaskGridPanel().show();
+			}
+		},
+		/**
+		 * 向采集配置面板里添加任务执行情况列表
+		 */
+		addTaskExeInfoGrid : function() {
+			var me = this;
+			if(!me.configPanel)return;
+			if(!me.configPanel.contains(me.getTaskExeInfoGrid())) {
+				me.configPanel.add(me.getTaskExeInfoGrid());
+			}else if(!me.getTaskExeInfoGrid().isVisible()) {
+				me.getTaskExeInfoGrid().show();
+			}
+		},
+		/**
+		 * 向采集配置面板里添加采集结果列表
+		 */
+		addGatherResultGrid : function(resultGrid) {
+			var me = this;
+			if(!me.configPanel)return;
+			if(!resultGrid) {
+				resultGrid = me.getGatherResultGrid();
+			}
+			if(!me.configPanel.contains(resultGrid)) {
+				me.configPanel.add(resultGrid);
+			}else if(!resultGrid.isVisible()) {
+				resultGrid.show();
+			}
+		}
+		
+});

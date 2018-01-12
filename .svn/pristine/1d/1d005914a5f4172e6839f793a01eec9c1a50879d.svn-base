@@ -1,0 +1,17 @@
+package com.gilight.dep.metadata.enums;
+
+public class DataMapParam {
+	public static final String SYSTEM="DepSystem";
+	public static final String SYSTEMLEVEL="DepAppNode";
+	public static final String SCHEMA="DepSchema";
+	public static final String TABLE="DepTable";
+	public static final String COLUMN="DepColumn";
+	public static final String SERVICE="DepService";
+	public static final String DATANODE="DepDataNode";
+	public static final String SERVICE2SCHEMA="Dep-Service-Dep-schema";
+	
+	public DataMapParam() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

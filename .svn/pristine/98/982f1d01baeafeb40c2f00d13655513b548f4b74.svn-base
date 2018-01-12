@@ -1,0 +1,19 @@
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.entity.MdAttribute;
+/**
+ * 
+* @ClassName: IMetaModelAttrRepository 
+* <p>TODO属性操作<br>
+* @author wzx
+* @date 2015年7月22日 上午11:43:01
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IMetaModelAttrRepository extends IMetaModelRepository{
+
+	
+}

@@ -1,0 +1,71 @@
+/**
+ * 登录登出
+ */
+package com.gilight.dep.metadata.web.controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.UserEntity;
+import com.gilight.dep.metadata.web.util.SessionManager;
+
+
+@Controller
+@RequestMapping("/auth")
+public class AuthLoginController extends MetadataBaseController {
+
+	/**
+	 * 
+	 * @Description: 登入
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/admin/login", method = RequestMethod.POST)
+	public void login(@RequestParam String loginName, @RequestParam String password,
+			HttpServletRequest req, HttpServletResponse resp) throws Exception {
+
+		HttpSession session = req.getSession();
+		
+		UserEntity userEntity = new UserEntity();
+		userEntity.setLoginName(loginName);
+		userEntity.setPassword(password);
+		
+		session.setAttribute("SESSION_CURRENT_USER", userEntity);
+		String contextPath = req.getContextPath();
+	    resp.sendRedirect(contextPath + "/index.jsp");
+	    session.setAttribute("ERROR_MSG", null);
+		
+	}
+
+
+	/**
+	 * 
+	 * @Description: 登出
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/admin/logout", method = RequestMethod.GET)
+	public void logout(HttpServletRequest req, HttpServletResponse resp)
+			throws Exception {
+		
+		HttpSession session = req.getSession();
+	    
+	    UserEntity user = (UserEntity)session.getAttribute("SESSION_CURRENT_USER");
+	    
+	    session.removeAttribute("SESSION_CURRENT_USER");
+	    if ((user != null) && (StringUtil.isEmpty(user.getLoginName()))) {
+	      SessionManager.removeSession(user.getLoginName());
+	    }
+	    String contextPath = req.getContextPath();
+	    resp.sendRedirect(contextPath + "/login.jsp");
+	}
+
+}

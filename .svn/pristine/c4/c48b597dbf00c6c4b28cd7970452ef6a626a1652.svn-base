@@ -1,0 +1,76 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+/**
+ * 
+* @ClassName: MetaDataCompView 
+* <p>元数据组合关系<br>
+* @author wzx
+* @date 2015年7月9日 下午4:06:15
+* @version V1.0
+* @since JDK 1.7
+ */
+public class MetaDataCompView extends MetaDataCompBaseView  implements IView{
+	/**
+	 * 元数据组合关系的ID
+	 */
+	private String id;
+	/**
+	 * 起始元数据
+	 */
+	private MetaDataBasicView fromMetaData;
+	/**
+	 * 被组合的元数据list
+	 */
+	private List<MetaDataBasicView> toMetaDataList;
+	/**
+	 * 组合关系的名称
+	 */
+	private String name;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public MetaDataBasicView getFromMetaData() {
+		return fromMetaData;
+	}
+	public void setFromMetaData(MetaDataBasicView fromMetaData) {
+		this.fromMetaData = fromMetaData;
+	}
+	public List<MetaDataBasicView> getToMetaDataList() {
+		return toMetaDataList;
+	}
+	public void setToMetaDataList(List<MetaDataBasicView> toMetaDataList) {
+		this.toMetaDataList = toMetaDataList;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	@Override
+	public String toString() {
+		return "MetaDataCompView [id=" + id + ", fromMetaData=" + fromMetaData
+				+ ", toMetaDataList=" + toMetaDataList + ", name=" + name
+				+ ", remark=" + remark + "]";
+	}
+	
+	
+
+}

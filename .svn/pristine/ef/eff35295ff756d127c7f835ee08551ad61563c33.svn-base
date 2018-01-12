@@ -1,0 +1,691 @@
+
+package com.gilight.dep.metadata.service.impl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.core.service.impl.BasicServiceImpl;
+import com.gilight.dep.metadata.entity.MdAnalyseResult;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdDependency;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.repository.IMetaDataBaseRepository;
+import com.gilight.dep.metadata.repository.IMetaDataQueryRepository;
+import com.gilight.dep.metadata.service.IAnalyseQueryService;
+import com.gilight.dep.metadata.view.AnalyseNodeLineView;
+import com.gilight.dep.metadata.view.AnalyseResultTreeNodeView;
+import com.gilight.dep.metadata.view.DataAnalyzeView;
+
+public class AnalyseQueryServiceImpl extends BasicServiceImpl implements
+		IAnalyseQueryService {
+	private static final Logger logger = Logger
+			.getLogger(AnalyseQueryServiceImpl.class);
+	@Autowired
+	IMetaDataBaseRepository metaDataBaseRepository;
+	@Autowired
+	IMetaDataQueryRepository metaDataQueryRepository;
+	@Override
+	public IResponse getByScope(IContext arg0) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IModel initModel(IContext context) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class getModelClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private void getSubMetaData(String id){
+		
+	}
+	
+	/**
+	 * 根据formmdi获取组合关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdid
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月28日 下午3:14:01
+	 * @version V1.0
+	 */
+	private List<MdComposition> getCompByMdId(String mdid)
+			throws ServiceException {
+		try {
+			List<MdComposition> mdclist = new ArrayList<MdComposition>();
+			MdComposition mdc = new MdComposition();
+			mdc.setFromMdId(mdid);
+			List<IEntity> list = metaDataBaseRepository.getCompByMdId(mdc);
+			for (IEntity iEntity : list) {
+				MdComposition mdcentity = (MdComposition) iEntity;
+				mdclist.add(mdcentity);
+			}
+			return mdclist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询组合关系失败!", e);
+			throw new ServiceException("查询组合关系失败!!", e);
+
+		}
+	}
+	
+	@Override
+	public IResponse getImpactAnalyse(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		IDParameters ids=(IDParameters) context.getParameters();
+		String code=ids.getId();
+		DataAnalyzeView dav=getImpactAnalyse(code);
+		
+		context.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessModelAndView(
+						"查询元数据成功!", dav));
+		return context.getResponse();
+	}
+	
+	
+	
+	private DataAnalyzeView getImpactAnalyse(String code) throws ServiceException{
+		MdMetadata md = getMetaDataByCode(code);
+		AnalyseResultTreeNodeView art = md2nodeview(md);
+		art=getTreeNodeView(art); //获得本尊树
+		//查询下游数据
+		//List<String> nodeids=getTreeNodeViewNodeId(art);
+		//获取元素树列表
+		List<AnalyseResultTreeNodeView> artlist =new ArrayList<AnalyseResultTreeNodeView>();  
+		artlist.add(art);
+		List<AnalyseResultTreeNodeView> arts=getDownStreamData(art.getNodeId());
+		artlist.addAll(arts);
+		//获取线列表
+		List<String> nodeidlist= getTreeNodeViewNodeId(artlist);
+		List<MdAnalyseResult> mdrlsit= getDownStreamAsso(nodeidlist);
+		List<AnalyseNodeLineView> anlvs=result2LineView(mdrlsit);
+		DataAnalyzeView dav = new DataAnalyzeView();
+		dav.setLines(anlvs);
+		dav.setNode(artlist);
+		
+		return dav;
+	}
+	
+	/**
+	 * 查询结果转换为线数据
+	* <p><br>
+	* @param mars
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月5日 下午9:42:33
+	* @version V1.0
+	 */
+	private List<AnalyseNodeLineView> result2LineView(List<MdAnalyseResult> mars)throws ServiceException{
+		List<AnalyseNodeLineView> anlvs= new ArrayList<AnalyseNodeLineView>();
+		if(mars==null||mars.size()==0){
+			return anlvs;
+		}
+		for (MdAnalyseResult mdAnalyseResult : mars) {
+			AnalyseNodeLineView anlv=result2LineView(mdAnalyseResult);
+			anlvs.add(anlv);
+		}
+		
+		return anlvs;
+		
+	}
+	
+	
+	private AnalyseNodeLineView result2LineView(MdAnalyseResult mar)throws ServiceException{
+		AnalyseNodeLineView anlv = new AnalyseNodeLineView();
+		anlv.setStartNodeId(mar.getUpstream());
+		anlv.setEndNodeId(mar.getMdId());
+		
+		return anlv;
+		
+	}
+
+	
+	/**
+	 * 递归查询下游
+	* <p><br>
+	* @param nodeid
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月5日 下午9:08:21
+	* @version V1.0
+	 */
+	private List<AnalyseResultTreeNodeView> getDownStreamData(String nodeid) throws ServiceException{
+		List<AnalyseResultTreeNodeView> artlist =new ArrayList<AnalyseResultTreeNodeView>();
+		List<MdAnalyseResult> list = getDownStreamAsso(nodeid);
+		if(list!=null){
+			for (MdAnalyseResult mdAnalyseResult : list) {
+				String mdid=mdAnalyseResult.getMdId();
+				MdMetadata md = getMetaDataById(mdid);
+				if(md!=null){
+					AnalyseResultTreeNodeView art=md2nodeview(md);
+					art=getTreeNodeView(art);
+					List<AnalyseResultTreeNodeView> alist=getDownStreamData(art.getNodeId());
+					artlist.add(art);
+					artlist.addAll(alist);
+				}
+			}
+		}
+		return artlist;
+	}
+	/**
+	 * 查下游
+	* <p><br>
+	* @param nodeid
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月5日 下午9:43:12
+	* @version V1.0
+	 */
+	private List<MdAnalyseResult> getDownStreamAsso(String nodeid) throws ServiceException {
+		try {
+			List<IEntity> list = metaDataQueryRepository.getStreamByUpstream(nodeid);
+			if(list==null||list.size()==0){
+				return null;
+			}
+			MdAnalyseResult[] mars=(MdAnalyseResult[]) list.toArray(new MdAnalyseResult[list.size()]);
+			List<MdAnalyseResult> marlist=Arrays.asList(mars);
+			return marlist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!!", e);
+		}
+		
+	}
+	
+	/**
+	 * 查下游
+	* <p><br>
+	* @param nodeids
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月5日 下午9:43:06
+	* @version V1.0
+	 */
+	private List<MdAnalyseResult> getDownStreamAsso(List<String> nodeids) throws ServiceException {
+		try {
+			List<IEntity> list = metaDataQueryRepository.getStreamByUpstream(nodeids);
+			if(list==null||list.size()==0){
+				return null;
+			}
+			MdAnalyseResult[] mars=(MdAnalyseResult[]) list.toArray(new MdAnalyseResult[list.size()]);
+			List<MdAnalyseResult> marlist=Arrays.asList(mars);
+			return marlist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!!", e);
+		}
+		
+	}
+	
+	/**
+	 * 获取所有树的元素的nodeid
+	* <p><br>
+	* @param arts
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月5日 下午9:27:30
+	* @version V1.0
+	 */
+	private List<String> getTreeNodeViewNodeId(List<AnalyseResultTreeNodeView> arts) throws ServiceException{
+		List<String> nodeidlist= new ArrayList<String>();
+		for (AnalyseResultTreeNodeView analyseResultTreeNodeView : arts) {
+			List<String> nodeids=getTreeNodeViewNodeId(analyseResultTreeNodeView);
+			nodeidlist.addAll(nodeids);
+		}
+		
+		return nodeidlist;
+
+	}
+	/**
+	 * 获得树中所有的nodeid
+	* <p><br>
+	* @param art
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月5日 下午7:38:46
+	* @version V1.0
+	 */
+	private List<String> getTreeNodeViewNodeId(AnalyseResultTreeNodeView art) throws ServiceException{
+		List<String> nodeidlist = new ArrayList<String>();
+		List<String> nodeids = new ArrayList<String>();
+		String nodeid=art.getNodeId();
+		nodeidlist.add(nodeid);
+		List<AnalyseResultTreeNodeView> list=art.getChildren();
+		if(list==null||list.size()==0){
+			return nodeidlist;
+		}
+		for (AnalyseResultTreeNodeView analyseResultTreeNodeView : list) {
+			nodeidlist.add(analyseResultTreeNodeView.getNodeId());
+			nodeids=getTreeNodeViewNodeId(analyseResultTreeNodeView);
+			nodeidlist.addAll(nodeids);
+		}
+		//nodeidlist.addAll(nodeids);
+		return nodeidlist;
+		
+	}
+
+	
+	/**
+	 * 递归分析组合关系
+	* <p><br>
+	* @param art
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月5日 下午7:21:44
+	* @version V1.0
+	 */
+	private AnalyseResultTreeNodeView getTreeNodeView(AnalyseResultTreeNodeView art) throws ServiceException{
+		try {
+			List<MdComposition> mdclist=getCompByMdId(art.getNodeId());
+			if(mdclist==null||mdclist.size()==0){
+				return art;
+			}
+			List<AnalyseResultTreeNodeView> treelist =new ArrayList<AnalyseResultTreeNodeView>();
+			for (MdComposition mdComposition : mdclist) {			
+				String mdid=mdComposition.getToMdId();
+				MdMetadata md = getMetaDataById(mdid);
+				AnalyseResultTreeNodeView artv = md2nodeview(md);
+				artv=getTreeNodeView(artv);
+				treelist.add(artv);	
+			}
+			art.setChildren(treelist);
+			
+			return art;
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!!", e);
+		}	
+	}
+	
+	/**
+	 * 转换元数据对象为AnalyseResultTreeNodeView
+	* <p><br>
+	* @param md
+	* @return  
+	* @author wzx
+	* @date 2015年8月5日 下午7:22:28
+	* @version V1.0
+	 */
+	private AnalyseResultTreeNodeView md2nodeview(MdMetadata md){
+		AnalyseResultTreeNodeView atree = new AnalyseResultTreeNodeView();
+		atree.setName(md.getMdName());
+		atree.setNodeId(md.getId());
+		atree.setCode(md.getMdCode());
+		atree.setMmId(md.getMmId());
+		return atree;
+	}
+	
+	/**
+	 * 查询元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param id
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月27日 下午6:57:35
+	 * @version V1.0
+	 */
+	private MdMetadata getMetaDataById(String id) throws ServiceException {
+		try {
+			if(id==null){
+				throw new ServiceException("查询元数据失败!!");
+			}
+			MdMetadata md = metaDataBaseRepository.getById(id);
+			return md;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!!", e);
+		}
+	}
+	
+	/**
+	 * 查询元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param id
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月27日 下午6:57:35
+	 * @version V1.0
+	 */
+	private MdMetadata getMetaDataByCode(String code) throws ServiceException {
+		try {
+			List<IEntity> list =metaDataBaseRepository.getByCode(code);
+			if(list==null||list.size()==0){
+				throw new ServiceException("查询元数据失败!!");
+			}
+			MdMetadata[] mds = (MdMetadata[]) list.toArray(new MdMetadata[list.size()]);
+			return mds[0];
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!!", e);
+		}
+	}
+
+	
+	
+	
+	@Override
+	public IResponse getBloodAnalyse(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		IDParameters ids=(IDParameters) context.getParameters();
+		String code=ids.getId();
+		DataAnalyzeView dav=getBloodAnalyse(code);
+		
+		context.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessModelAndView(
+						"查询元数据成功!", dav));
+		return context.getResponse();
+	}
+
+
+	private DataAnalyzeView getBloodAnalyse(String code) throws ServiceException{
+		MdMetadata md = getMetaDataByCode(code);
+		AnalyseResultTreeNodeView art = md2nodeview(md);
+		art=getTreeNodeView(art); //获得本尊树
+		//查询下游数据
+		//List<String> nodeids=getTreeNodeViewNodeId(art);
+		//获取元素树列表
+		List<AnalyseResultTreeNodeView> artlist =new ArrayList<AnalyseResultTreeNodeView>();  
+		artlist.add(art);
+		List<AnalyseResultTreeNodeView> arts=getUpStreamData(art.getNodeId());
+		artlist.addAll(arts);
+		Collections.reverse(artlist);
+		//获取线列表
+		List<String> nodeidlist= getTreeNodeViewNodeId(artlist);
+		List<MdAnalyseResult> mdrlsit= getDownStreamAsso(nodeidlist);
+		List<AnalyseNodeLineView> anlvs=result2LineView(mdrlsit);
+		DataAnalyzeView dav = new DataAnalyzeView();
+		dav.setLines(anlvs);
+		dav.setNode(artlist);
+		
+		return dav;
+	}
+	
+	@Override
+	public IResponse getAllAnalyse(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		IDParameters ids=(IDParameters) context.getParameters();
+		String code=ids.getId();
+		DataAnalyzeView dav=getImpactAnalyse(code);
+		DataAnalyzeView blooddav =getBloodAnalyse(code);
+		DataAnalyzeView alldav= new DataAnalyzeView();
+		List<AnalyseResultTreeNodeView> alllist =new ArrayList<AnalyseResultTreeNodeView>();
+		List<AnalyseResultTreeNodeView> bloodlist =new ArrayList<AnalyseResultTreeNodeView>();
+		List<AnalyseResultTreeNodeView> impactlist =new ArrayList<AnalyseResultTreeNodeView>();
+		List<AnalyseNodeLineView> alllines = new ArrayList<AnalyseNodeLineView>();
+		
+		
+		bloodlist.addAll(blooddav.getNode());
+		impactlist.addAll(dav.getNode());
+		if(bloodlist!=null&&impactlist!=null&&bloodlist.size()!=0&&impactlist.size()!=0){
+			impactlist.remove(0);
+		}
+		alllist.addAll(bloodlist);
+		alllist.addAll(impactlist);
+		
+		
+		
+		alllines.addAll(blooddav.getLines());
+		alllines.addAll(dav.getLines());
+		
+		alldav.setLines(alllines);
+		alldav.setNode(alllist);
+		
+		context.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessModelAndView(
+						"查询元数据成功!", alldav));
+		return context.getResponse();
+	}
+	
+	/**
+	 * 查上游
+	* <p><br>
+	* @param nodeid
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月6日 上午10:41:15
+	* @version V1.0
+	 */
+	private List<MdAnalyseResult> getUpStreamAsso(String nodeid) throws ServiceException {
+		try {
+			List<IEntity> list = metaDataQueryRepository.getStreamByMdid(nodeid);
+			if(list==null||list.size()==0){
+				return null;
+			}
+			MdAnalyseResult[] mars=(MdAnalyseResult[]) list.toArray(new MdAnalyseResult[list.size()]);
+			List<MdAnalyseResult> marlist=Arrays.asList(mars);
+			return marlist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!!", e);
+		}
+		
+	}
+	private List<MdAnalyseResult> getUpStreamAsso(List<String> nodeids) throws ServiceException {
+		try {
+			List<IEntity> list = metaDataQueryRepository.getStreamByMdid(nodeids);
+			if(list==null||list.size()==0){
+				return null;
+			}
+			MdAnalyseResult[] mars=(MdAnalyseResult[]) list.toArray();
+			List<MdAnalyseResult> marlist=Arrays.asList(mars);
+			return marlist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!!", e);
+		}	
+	}
+	
+
+	/**
+	 * 递归查询上游
+	* <p><br>
+	* @param nodeid
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月5日 下午9:08:21
+	* @version V1.0
+	 */
+	private List<AnalyseResultTreeNodeView> getUpStreamData(String nodeid) throws ServiceException{
+		List<AnalyseResultTreeNodeView> artlist =new ArrayList<AnalyseResultTreeNodeView>();
+		List<MdAnalyseResult> list = getUpStreamAsso(nodeid);
+		if(list!=null){
+			for (MdAnalyseResult mdAnalyseResult : list) {
+				String mdid=mdAnalyseResult.getUpstream();
+				if(mdid!=null){
+					MdMetadata md = getMetaDataById(mdid);
+					if(md!=null){
+						AnalyseResultTreeNodeView art=md2nodeview(md);
+						art=getTreeNodeView(art);
+						List<AnalyseResultTreeNodeView> alist=getUpStreamData(art.getNodeId());
+						artlist.add(art);
+						artlist.addAll(alist);
+					}
+				}
+				
+			}
+		}
+		return artlist;
+	}
+
+	
+	
+	@Override
+	public IResponse getRelationData(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		IDParameters ids=(IDParameters) context.getParameters();
+		String id=ids.getId();
+		MdMetadata md = this.getMetaDataById(id);
+		List<MdMetadata> mds= new ArrayList<MdMetadata>();
+		List<AnalyseResultTreeNodeView> arts= new ArrayList<AnalyseResultTreeNodeView>();
+		List<AnalyseNodeLineView> lines= new ArrayList<AnalyseNodeLineView>();
+		
+		AnalyseResultTreeNodeView artv = this.md2nodeview(md);
+		arts.add(artv);
+		if(md!=null&&!md.getId().equals("")){
+			MdDependency[] mdDependencys=getDependencys(md);
+			for (MdDependency mdDependency : mdDependencys) {
+				AnalyseNodeLineView alv = new AnalyseNodeLineView();
+				alv.setStartNodeId(mdDependency.getFromMdId());
+				alv.setEndNodeId(mdDependency.getToMdId());
+				alv.setName("依赖关系");
+				lines.add(alv);
+			}
+			List<String> mdids = getMdIds(mdDependencys,md);
+			for (String mdid : mdids) {
+				MdMetadata tmd = getMetaDataById(mdid);
+				AnalyseResultTreeNodeView art = this.md2nodeview(tmd);
+				arts.add(art);
+				
+			}
+			MdComposition[] mdCompositions=getMdCompositions(md);
+			for (MdComposition mdComposition : mdCompositions) {
+				AnalyseNodeLineView alv = new AnalyseNodeLineView();
+				alv.setStartNodeId(mdComposition.getFromMdId());
+				alv.setEndNodeId(mdComposition.getToMdId());
+				alv.setName("组合关系");
+				lines.add(alv);
+			}
+			List<String> mdidlist = getMdIds(mdCompositions,md);
+			for (String mdid : mdidlist) {
+				MdMetadata tmd = getMetaDataById(mdid);
+				AnalyseResultTreeNodeView art = this.md2nodeview(tmd);
+				arts.add(art);
+			}
+		}
+		
+		DataAnalyzeView dav = new DataAnalyzeView();
+		dav.setLines(lines);
+		dav.setNode(arts);
+		
+		context.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessModelAndView(
+						"查询元数据成功!", dav));
+		return context.getResponse();
+	}
+	
+
+	
+	
+	private List<String> getMdIds(MdDependency[] depes,MdMetadata md){
+		List<String> mdids = new ArrayList<String>();
+		if(md!=null){
+			for (MdDependency mdDependency : depes) {
+				String fromid=mdDependency.getFromMdId();
+				String toid=mdDependency.getToMdId();
+				if(!fromid.equals(md.getId())){
+					mdids.add(fromid);
+				}
+				if(!toid.equals(md.getId())){
+					mdids.add(toid);
+				}
+				
+			}
+		}	
+		return mdids;
+	}
+	
+	private List<String> getMdIds(MdComposition[] mcs,MdMetadata md){
+		List<String> mdids = new ArrayList<String>();
+		if(md!=null){
+			for (MdComposition mdComposition : mcs) {
+				String fromid=mdComposition.getFromMdId();
+				String toid=mdComposition.getToMdId();
+				if(!fromid.equals(md.getId())){
+					mdids.add(fromid);
+				}
+				if(!toid.equals(md.getId())){
+					mdids.add(toid);
+				}
+				
+			}
+		}	
+		return mdids;
+	}
+	
+	private MdDependency[] getDependencys(MdMetadata md) throws ServiceException{
+		try {
+			MdDependency[] mdDependencys = metaDataQueryRepository.getDependencys(md.getId());
+			
+			return mdDependencys;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!!", e);
+		}
+		
+		
+	} 
+	
+	
+	
+	
+	private MdComposition[] getMdCompositions(MdMetadata md) throws ServiceException{
+		try {
+			
+			MdComposition[] mdCompositions = metaDataQueryRepository.getMdCompositions(md.getId());
+			
+			return mdCompositions;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!!", e);
+		}
+		
+		
+	} 
+	
+}

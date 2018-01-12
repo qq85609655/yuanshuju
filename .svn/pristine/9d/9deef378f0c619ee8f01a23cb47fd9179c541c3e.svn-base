@@ -1,0 +1,84 @@
+package com.gilight.dep.metamodel.model;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.ext.model.DepBaseBasicModel;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdViewFolder;
+import com.gilight.dep.metadata.entity.MmFolder;
+import com.gilight.dep.metamodel.model.procuder.ModelFolderMessageProducer;
+
+import java.util.List;
+
+
+@SuppressWarnings("rawtypes")
+public class ModelFolderModel extends DepBaseBasicModel {
+
+	/**
+	 * 子文件夹列表
+	 */
+	private List<MdViewFolder> folderList = null;
+	/***
+	 * 文件夹或者视图中的元数据列表
+	 */
+	private List<MdMetadata> metaDataList = null;
+
+	public List<MdMetadata> getMetaDataList() {
+		return metaDataList;
+	}
+
+	public void setMetaDataList(List<MdMetadata> metaDataList) {
+		this.metaDataList = metaDataList;
+	}
+
+	public List<MdViewFolder> getFolderList() throws ModelException {
+		return folderList;
+	}
+
+	public void setFolderList(List<MdViewFolder> folderList) {
+		this.folderList = folderList;
+	}
+
+	@Override
+	protected IResult createAfter(IContext iContext, IResult iResult) throws ModelException {
+		return null;
+	}
+
+	@Override
+	protected IResult updateAfter(IContext iContext, IResult iResult) throws ModelException {
+		return null;
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext iContext, IResult iResult) throws ModelException {
+		return null;
+	}
+
+	@Override
+	protected IResult getAfter(IContext iContext, IResult iResult) throws ModelException {
+		return null;
+	}
+
+	@Override
+	public String getModelName() {
+		return ModelFolderModel.class.getName();
+	}
+
+	@Override
+	public Class getModelEntityClass() {
+		return MmFolder.class;
+	}
+
+	@Override
+	public void clearCache() {
+
+	}
+
+	@Override
+	public Class getMessageProcuderClass() {
+		return ModelFolderMessageProducer.class;
+	}
+
+
+}

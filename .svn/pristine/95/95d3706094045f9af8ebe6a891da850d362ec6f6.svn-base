@@ -1,0 +1,13 @@
+package com.gilight.dep.metadata.dao;
+/**
+ * 数据采集执行
+* @ClassName: IGatherExcuteDao 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:12:58
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IGatherExcuteDao extends IMetaDataDao{
+
+}

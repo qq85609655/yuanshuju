@@ -1,0 +1,184 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.IBasicModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.impl.BaseDao;
+import com.gilight.dep.metadata.repository.IMetaDataRepository;
+import com.gilight.dep.metadata.scope.MetaHbiernateScope;
+
+public class MetaDataRepositoryImpl implements IMetaDataRepository {
+
+	BaseDao baseDao;
+
+	public BaseDao getBaseDao() {
+		return baseDao;
+	}
+
+	public void setBaseDao(BaseDao baseDao) {
+		this.baseDao = baseDao;
+	}
+
+	public MetaDataRepositoryImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public IResponse create(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			BaseHbiernateScope scope = (BaseHbiernateScope) paramIContext
+					.getParameters();
+			List<IEntity> mmelist = baseDao.findByScope(scope);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmelist));
+
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询元数据失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public <T> IResponse getByScope(IContext paramIContext, Class<T> ctype)
+			throws RepositoryException {
+
+		try {
+			BaseHbiernateScope scope = (BaseHbiernateScope) paramIContext
+					.getParameters();
+			List<IEntity> mmelist = baseDao.findByScope(scope);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmelist));
+
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询元数据失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public <T extends IEntity> IResponse getById(IContext paramIContext,
+			Class<T> ctype) throws RepositoryException {
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+
+			T md = (T) model.getData();
+			Method geidMethod = md.getClass().getMethod("getId");
+			String id = (String) geidMethod.invoke(md);
+			T mdentity = (T) baseDao.findById(id, ctype);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mdentity));
+			return paramIContext.getResponse();
+
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询失败!-dao");
+		} catch (ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询失败!-dao");
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询失败");
+		}
+
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void create(IEntity entity) throws RepositoryException {
+		try {
+			baseDao.save(entity);
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("添加数据失败--" + entity);
+		}
+	}
+
+	@Override
+	public void delete(IEntity entity) throws RepositoryException {
+		try {
+			baseDao.delete(entity);
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("添加数据失败--" + entity);
+		}
+	}
+
+	@Override
+	public int delete(String param, String val, Class type)
+			throws RepositoryException {
+		// baseDao.d
+		return baseDao.delete(param, val, type);
+	}
+}

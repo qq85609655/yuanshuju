@@ -1,0 +1,16 @@
+package com.gilight.dep.metadata.enums;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+public class DbBakResultStatus {
+    public static final int FAILED=0;  //失败
+    public static final int SUCCEED=1 ; //成功
+    public static final int RUNTIME=2 ; //运行中
+
+}

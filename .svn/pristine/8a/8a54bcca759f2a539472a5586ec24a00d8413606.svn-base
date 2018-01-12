@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       ">
+
+	<bean id="metaDataBaseDao" class="com.gilight.dep.metadata.dao.impl.MetaDataBaseDaoImpl"
+		parent="baseDao">
+	</bean>
+
+	<bean id="metaDataQueryDao" class="com.gilight.dep.metadata.dao.impl.MetaDataQueryDaoImpl"
+		parent="baseDao">
+	</bean>
+	<bean id="metaDataVersionDao"
+		class="com.gilight.dep.metadata.dao.impl.MetaDataVersionDaoImpl"
+		parent="baseDao">
+	</bean>
+	<bean id="metaDataViewDao" class="com.gilight.dep.metadata.dao.impl.MetaDataViewDaoImpl"
+		parent="baseDao">
+	</bean>
+
+	<bean id="analyseExcuteDao" class="com.gilight.dep.metadata.dao.impl.AnalyseExcuteDaoImpl"
+		parent="baseDao">
+	</bean>
+	<bean id="analyseQueryDao" class="com.gilight.dep.metadata.dao.impl.AnalyseQueryDaoImpl"
+		parent="baseDao">
+	</bean>
+	<bean id="dataMapQueryDao" class="com.gilight.dep.metadata.dao.impl.DataMapQueryDaoImpl"
+		parent="baseDao">
+	</bean>
+	
+	<bean id="systemBackupDao" class="com.gilight.dep.metadata.dao.impl.SystemBackupDaoImpl"
+		parent="baseDao">
+	</bean>
+	
+	<bean id="metaDataMapDao" class="com.gilight.dep.metadata.dao.impl.MetaDataMapDaoImpl"
+		parent="baseDao">
+	</bean>
+	
+</beans>

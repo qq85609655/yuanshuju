@@ -1,0 +1,166 @@
+package com.gilight.dep.metadata.service.impl;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+public class MetaDataBaseServiceImplTest {
+    @Before
+    public void setUp() throws Exception {
+
+    }
+
+    @After
+    public void tearDown() throws Exception {
+
+    }
+
+    @Test
+    public void getMetaModelQueryService() throws Exception {
+
+    }
+
+    @Test
+    public void setMetaModelQueryService() throws Exception {
+
+    }
+
+    @Test
+    public void getMetaDataBaseRepository() throws Exception {
+
+    }
+
+    @Test
+    public void setMetaDataBaseRepository() throws Exception {
+
+    }
+
+    @Test
+    public void initModel() throws Exception {
+
+    }
+
+    @Test
+    public void getModelClass() throws Exception {
+
+    }
+
+    @Test
+    public void create() throws Exception {
+
+    }
+
+    @Test
+    public void delete() throws Exception {
+
+    }
+
+    @Test
+    public void update() throws Exception {
+
+    }
+
+    @Test
+    public void createAttr() throws Exception {
+
+    }
+
+    @Test
+    public void updateAttr() throws Exception {
+
+    }
+
+    @Test
+    public void deleteAttr() throws Exception {
+
+    }
+
+    @Test
+    public void getByAttrId() throws Exception {
+
+    }
+
+    @Test
+    public void getByAttrScope() throws Exception {
+
+    }
+
+    @Test
+    public void getById() throws Exception {
+
+    }
+
+    @Test
+    public void createCompMetaData() throws Exception {
+
+    }
+
+    @Test
+    public void updateCompMetaData() throws Exception {
+
+    }
+
+    @Test
+    public void deleteCompMetaData() throws Exception {
+
+    }
+
+    @Test
+    public void createDepe() throws Exception {
+
+    }
+
+    @Test
+    public void deteleDepe() throws Exception {
+
+    }
+
+    @Test
+    public void getAllDepeMetaData() throws Exception {
+
+    }
+
+    @Test
+    public void getMmDepName() throws Exception {
+
+    }
+
+    @Test
+    public void getByScope() throws Exception {
+
+    }
+
+    @Test
+    public void getCompData() throws Exception {
+
+    }
+
+    @Test
+    public void getNoDepeMetaData() throws Exception {
+
+    }
+
+    @Test
+    public void createDepeBatch() throws Exception {
+
+    }
+
+    @Test
+    public void createTableMapping() throws Exception {
+
+    }
+
+    @Test
+    public void createColunmMapping() throws Exception {
+
+    }
+
+}

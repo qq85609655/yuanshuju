@@ -1,0 +1,66 @@
+/**   
+ * @Title: MetaDataViewScope.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月22日 下午7:16:31
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MdView;
+
+public class MetaDataViewScope extends BaseHbiernateScope {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+ * 
+ */
+	private String id;
+	/**
+	 * 系统视图,用户视图
+	 */
+	private String viewType;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getViewType() {
+		return viewType;
+	}
+
+	public void setViewType(String viewType) {
+		this.viewType = viewType;
+	}
+
+	@Override
+	public Class<MdView> getClazz() {
+		return MdView.class;
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+		StringBuffer sb = new StringBuffer();
+		if (!StringUtil.isEmpty(this.viewType)) {
+			sb.append(" and ").append(obj).append(".viewType = ? ");
+			this.paraList.add(this.viewType);
+		}
+		return sb;
+
+	}
+
+	@Override
+	public String getDefaultOrderBy(String obj) {
+		return "order by " + obj + ".displayOrder";
+	}
+
+}

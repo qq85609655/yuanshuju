@@ -1,0 +1,48 @@
+package com.gilight.dep.metadata.view;
+
+/**
+ * 
+* @ClassName: CompRelationLineView 
+* <p>元模型管理组合关系线的视图<br>
+* @authorhww
+* @date 2016年1月15日 下午3:48:02
+* @version V1.0
+* @since JDK 1.7
+ */
+public class CompRelationLineView extends AnalyseNodeLineView {
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 组合端的多重性
+	 */
+	private String ownerMultiplicity;
+	/**
+	 * 被组合端的多重性
+	 */
+	private String toMultiplicity;
+	
+	public String getOwnerMultiplicity() {
+		return ownerMultiplicity;
+	}
+	public void setOwnerMultiplicity(String ownerMultiplicity) {
+		this.ownerMultiplicity = ownerMultiplicity;
+	}
+	public String getToMultiplicity() {
+		return toMultiplicity;
+	}
+	public void setToMultiplicity(String toMultiplicity) {
+		this.toMultiplicity = toMultiplicity;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "CompRelationLineView [ownerMultiplicity=" + ownerMultiplicity
+				+ ", toMultiplicity=" + toMultiplicity + "]";
+	}
+	
+	
+	
+}

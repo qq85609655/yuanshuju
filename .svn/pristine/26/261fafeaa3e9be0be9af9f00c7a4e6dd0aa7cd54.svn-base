@@ -1,0 +1,206 @@
+package com.gilight.dep.metamodel.service.impl;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.ext.model.IDepBasicModel;
+import com.gilight.dep.framework.core.ext.service.DepBaseServiceImpl;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.framework.util.common.UUIDGenerator;
+import com.gilight.dep.metadata.entity.MmEnum;
+import com.gilight.dep.metadata.entity.MmEnumValue;
+import com.gilight.dep.metadata.entity.MmMapData;
+import com.gilight.dep.metadata.repository.IMetaModelCompRepository;
+import com.gilight.dep.metadata.repository.IMetaModelDataMapRepository;
+import com.gilight.dep.metadata.view.MetaModeDataTypeView;
+import com.gilight.dep.metadata.view.MetaModelDataMapView;
+import com.gilight.dep.metamodel.model.MetaModelEnumModel;
+import com.gilight.dep.metamodel.service.IMetaModelDataMapService;
+import com.gilight.dep.metamodel.service.IMetaModelEnumService;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
+/**
+ * 文件夹操作
+ *
+ * @author wzx
+ * @version V1.0
+ * @ClassName: MetaModelFolderServiceImpl
+ * <p>TODO<br>
+ * @date 2015年11月30日 下午6:27:33
+ * @since JDK 1.6
+ */
+public class MetaModelDataMapServiceImpl extends DepBaseServiceImpl implements IMetaModelDataMapService {
+    private static final Logger logger = Logger
+            .getLogger(MetaModelDataMapServiceImpl.class);
+    @Autowired
+    private IMetaModelDataMapRepository metaModelDataMapRepository;
+
+    public IMetaModelDataMapRepository getMetaModelDataMapRepository() {
+        return metaModelDataMapRepository;
+    }
+
+    public void setMetaModelDataMapRepository(IMetaModelDataMapRepository metaModelDataMapRepository) {
+        this.metaModelDataMapRepository = metaModelDataMapRepository;
+    }
+
+    public MetaModelDataMapServiceImpl() {
+        // TODO Auto-generated constructor stub
+    }
+
+    @Override
+    public IResponse delete(IContext context) throws ServiceException {
+        try {
+            MetaModelDataMapView view = (MetaModelDataMapView) context
+                    .getParameter(ParameterKeys.ATT_VIEW);
+            MmMapData mme = null;
+            mme = (MmMapData) SpringBeansUtils.copyProperties(MmMapData.class, view);
+            if (mme.getId() == null || "".equals(mme.getId())) {
+                mme.setId(UUIDGenerator.getUUID());
+            }
+
+            IContext contextRepository = ContextFactoryImpl.getInstance()
+                    .createContextWithEntity(context, mme);
+            return metaModelDataMapRepository.delete(contextRepository);
+
+        } catch (GilightException e) {
+            logger.error("保存图形失败!", e);
+            throw new ServiceException("保存图形失败!");
+        } catch (Exception e) {
+            logger.error("保存图形失败!", e);
+            throw new ServiceException("保存图形失败!");
+        }
+
+    }
+
+    @Override
+    public IResponse create(IContext context) throws ServiceException {
+        try {
+            MetaModelDataMapView view = (MetaModelDataMapView) context
+                    .getParameter(ParameterKeys.ATT_VIEW);
+            MmMapData mme = null;
+            mme = (MmMapData) SpringBeansUtils.copyProperties(MmMapData.class, view);
+            if (mme.getId() == null || "".equals(mme.getId())) {
+                mme.setId(UUIDGenerator.getUUID());
+            }
+
+            IContext contextRepository = ContextFactoryImpl.getInstance()
+                    .createContextWithEntity(context, mme);
+            return metaModelDataMapRepository.create(contextRepository);
+
+        } catch (GilightException e) {
+            logger.error("保存图形失败!", e);
+            throw new ServiceException("保存图形失败!");
+        } catch (Exception e) {
+            logger.error("保存图形失败!", e);
+            throw new ServiceException("保存图形失败!");
+        }
+    }
+
+    @Override
+    public IResponse update(IContext context) throws ServiceException {
+        try {
+            MetaModelDataMapView view = (MetaModelDataMapView) context
+                    .getParameter(ParameterKeys.ATT_VIEW);
+            MmMapData mme = null;
+            mme = (MmMapData) SpringBeansUtils.copyProperties(MmMapData.class, view);
+            if (mme.getId() == null || "".equals(mme.getId())) {
+                mme.setId(UUIDGenerator.getUUID());
+            }
+
+            IContext contextRepository = ContextFactoryImpl.getInstance()
+                    .createContextWithEntity(context, mme);
+            return metaModelDataMapRepository.update(contextRepository);
+
+        } catch (GilightException e) {
+            logger.error("保存图形失败!", e);
+            throw new ServiceException("保存图形失败!");
+        } catch (Exception e) {
+            logger.error("保存图形失败!", e);
+            throw new ServiceException("保存图形失败!");
+        }
+    }
+
+    @Override
+    public IResponse getById(IContext context) throws ServiceException {
+        return null;
+    }
+
+    @Override
+    public Class<? extends IModel> getModelClass() {
+        // TODO Auto-generated method stub
+        return MetaModelEnumModel.class;
+    }
+
+    protected void initModel(IContext context, IModel model)
+            throws ServiceException {
+        try {
+            IEntity data = (IEntity) SpringBeansUtils.copyProperties(
+                    MmEnum.class, this.getViewParameter(context));
+            if (model instanceof IDepBasicModel) {
+                ((IDepBasicModel) model).setData(data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e);
+            throw new ServiceException("初始化模型失败!");
+        }
+
+    }
+
+
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected IResult getByScopeAfter(IContext paramIContext,
+                                      IResult paramIResult) throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult updateAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult deleteAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult createAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected IResult getByIdAfter(IContext paramIContext, IResult paramIResult)
+            throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected Class getDefaultModelClass() throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+}

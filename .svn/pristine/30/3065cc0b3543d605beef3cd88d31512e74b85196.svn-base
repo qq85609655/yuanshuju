@@ -1,0 +1,152 @@
+package com.gilight.dep.metadata.message.procuder;
+
+import com.gilight.dep.framework.core.context.base.DomainMessageContext;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.MessageProducerException;
+import com.gilight.dep.framework.core.message.producer.IBasicMessageProducer;
+import com.gilight.dep.framework.core.message.producer.impl.BaseMessageProducer;
+import com.jdon.annotation.Introduce;
+import com.jdon.annotation.model.Send;
+
+@Introduce("message")
+public class MetaDataBaseMessageProducer extends BaseMessageProducer implements
+		IBasicMessageProducer {
+
+	public MetaDataBaseMessageProducer() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	@Send("MetaDataEdit")
+	public DomainMessageContext update(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("更新元数据失败");
+		}
+	}
+
+	@Override
+	@Send("MetaDataDel")
+	public DomainMessageContext delete(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("删除元数据失败");
+		}
+	}
+
+	@Override
+	@Send("MetaDataGet")
+	public DomainMessageContext get(IContext paramIContext)
+			throws MessageProducerException {
+		// TODO Auto-generated method stub
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new MessageProducerException("查询元数据失败");
+		}
+	}
+
+	@Send("createCompMetaData")
+	public DomainMessageContext createCompMetaData(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("创建元数据失败");
+		}
+
+	}
+
+	@Send("updateCompMetaData")
+	public DomainMessageContext updateCompMetaData(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("创建元数据失败");
+		}
+
+	}
+
+	@Send("deleteCompMetaData")
+	public DomainMessageContext deleteCompMetaData(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("删除元数据关系失败");
+		}
+
+	}
+
+	@Send("createDepe")
+	public DomainMessageContext createDepe(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("创建元数据失败");
+		}
+
+	}
+
+	@Send("deleteDepe")
+	public DomainMessageContext deleteDepe(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("创建元数据失败");
+		}
+
+	}
+
+	@Send("getAllDepeMetaData")
+	public DomainMessageContext getAllDepeMetaData(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("创建元数据失败");
+		}
+
+	}
+
+	@Send("MetaDataCreate")
+	public DomainMessageContext create(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("创建元数据失败");
+		}
+
+	}
+	@Send("MetaDataPublish")
+	public DomainMessageContext publish(IContext context)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(context);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("创建元数据失败");
+		}
+	}
+}

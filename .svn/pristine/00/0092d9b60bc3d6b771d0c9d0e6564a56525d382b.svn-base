@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="gilightframework-util">
+    <CLASSES>
+      <root url="file://D:/gilightframework-all/gilightframework-util" />
+      <root url="jar://D:/gilightframework-all/gilightframework-util/target/gilightframework-util-2.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://D:/gilightframework-all/gilightframework-util/src/main/java" />
+      <root url="file://D:/gilightframework-all/gilightframework-util/src/test/java" />
+    </SOURCES>
+  </library>
+</component>

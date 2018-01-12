@@ -1,0 +1,30 @@
+package com.gilight.dep.metadata.gather.common;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+public class GatherMetaDataAttView implements IView {
+	/**
+	 * 元数据属性ID
+	 */
+	private String id;
+	/**
+	 * 元模型属性id
+	 */
+	private String mmAttId;
+	/**
+	 * 元模型属性名称
+	 */
+	private String mmAttName;
+	/**
+	 * 元数据id
+	 */
+	private String mdId;
+	/**
+	 * 属性值
+	 */
+	private String valUe;
+	public GatherMetaDataAttView() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

@@ -1,0 +1,36 @@
+package com.gilight.dep.metadata.entity;
+
+import java.util.List;
+
+public class BatchIdEntity extends BaseMetaDataEntity {
+
+	/**
+     * @Fields serialVersionUID : TODO
+     */
+    private static final long serialVersionUID = 1L;
+    /**
+     * id
+     */
+    private String id;
+    /**
+     * children
+     */
+    private List<Object> children;
+	  
+	  
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public List<Object> getChildren() {
+		return children;
+	}
+	public void setChildren(List<Object> children) {
+		this.children = children;
+	}
+	
+	  
+
+}

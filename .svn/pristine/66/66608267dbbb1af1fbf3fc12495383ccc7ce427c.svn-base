@@ -1,0 +1,13 @@
+{
+    "fields": [
+        {
+            "name": "id",
+            "type": "String"
+        }
+    ],
+    "validations" : [],
+    "api":{
+	    "read"    : "",
+	    "update"  : "",
+	}
+}

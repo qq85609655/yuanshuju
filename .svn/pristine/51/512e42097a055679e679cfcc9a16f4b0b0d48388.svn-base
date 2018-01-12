@@ -1,0 +1,128 @@
+/**   
+ * @Title: MetaModelCwmCoreFactory.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月21日 下午7:07:56
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.init.data.cwm;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelView;
+import com.gilight.dep.metamodel.init.data.MetaModelInitFactory;
+
+public class MetaModelCwmCoreFactory extends MetaModelInitFactory {
+
+	private static Map<String, MetaModelView> metaModel = new HashMap<String, MetaModelView>();
+
+	public static void main(String[] args) {
+		metaModel.clear();
+		init();
+		System.out.println("");
+		System.out.println(metaModel);
+	}
+
+	public static Map<String, MetaModelView> getCwmMetaModel() {
+		metaModel.clear();
+		init();
+		return metaModel;
+	}
+
+	private static void init() {
+		setCWMElement();
+		setCWMModelElement();
+		setCWMNamespace();
+		setCWMPackage();
+	}
+
+	private static void putCache(MetaModelView m) {
+		// TODO Auto-generated method stub
+		if (!metaModel.containsKey(m.getCode())) {
+			metaModel.put(m.getCode(), m);
+		} else {
+			System.out.println("---------" + (m.getCode()));
+		}
+	}
+
+	private static MetaModelView getCache(String code) {
+		// TODO Auto-generated method stub
+		if (metaModel.containsKey(code)) {
+			return metaModel.get(code);
+		}
+		return null;
+	}
+
+	// Element 元模型
+	public static String CWMElement = "CWMElement";
+
+	public static MetaModelView setCWMElement() {
+		String name = "CWMElement";
+		MetaModelView m = getCache(CWMElement);
+		if (m == null) {
+			m = getSystemMetaModel(CWMElement, name);
+		}
+		m.setIsabstract(true);
+		putCache(m);
+		return m;
+	}
+
+	// modelelement 元模型
+	public static String CWMModelElement = "CWMModelElement";
+
+	public static MetaModelView setCWMModelElement() {
+		String name = "CWMModelElement";
+		MetaModelView m = getCache(CWMModelElement);
+		if (m == null) {
+			m = getSystemMetaModel(CWMModelElement, name);
+		}
+		m.setIsabstract(true);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setCWMElement());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		return m;
+	}
+
+	// Namespace 元模型
+	public static String CWMNamespace = "CWMNamespace";
+
+	public static MetaModelView setCWMNamespace() {
+		String name = "CWMNamespace";
+		MetaModelView m = getCache(CWMNamespace);
+		if (m == null) {
+			m = getSystemMetaModel(CWMNamespace, name);
+		}
+		m.setIsabstract(true);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setCWMModelElement());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		return m;
+	}
+
+	// package 元模型
+	public static String CWMPackage = "CWMPackage";
+
+	public static MetaModelView setCWMPackage() {
+		String name = "CWMPackage";
+		MetaModelView m = getCache(CWMPackage);
+		if (m == null) {
+			m = getSystemMetaModel(CWMPackage, name);
+		}
+		m.setIsabstract(true);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setCWMNamespace());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		return m;
+	}
+}

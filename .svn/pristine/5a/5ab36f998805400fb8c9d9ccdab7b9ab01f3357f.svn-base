@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="dep-metamodel-core-webapp:war">
+    <output-path>$PROJECT_DIR$/../metamodel/demp-metamode-core-webapp/target</output-path>
+    <root id="archive" name="dep-metamodel-core-webapp-2.0.0.war">
+      <element id="artifact" artifact-name="dep-metamodel-core-webapp:war exploded" />
+    </root>
+  </artifact>
+</component>

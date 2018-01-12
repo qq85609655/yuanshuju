@@ -1,0 +1,60 @@
+package com.gilight.dep.metadata.repository;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.core.repository.IBasicRepository;
+import com.gilight.dep.framework.core.repository.IQueryRepository;
+import com.gilight.dep.metadata.entity.MdComposition;
+/**
+ * 元数据接口
+* @ClassName: IMetaDataRepository 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:48:22
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IMetaDataRepository extends IBasicRepository,IQueryRepository {
+
+	public <T> IResponse getByScope(IContext paramIContext, Class<T> ctype)
+			throws RepositoryException;
+
+	public <T extends IEntity> IResponse getById(IContext paramIContext, Class<T> ctype)
+			throws RepositoryException;
+
+	/**
+	 * 创建
+	* <p><br>
+	* @param entity
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年7月31日 下午1:58:31
+	* @version V1.0
+	 */
+	public void create(IEntity entity)
+			throws RepositoryException;
+
+	public void delete(IEntity entity) throws RepositoryException;
+	/**
+	 * 添加删除
+	* <p><br>
+	* @param param
+	* @param val
+	* @param type
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年7月31日 下午1:58:20
+	* @version V1.0
+	 */
+	public int delete(String param, String val, Class type) throws RepositoryException;
+
+	
+	
+	
+}

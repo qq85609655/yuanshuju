@@ -1,0 +1,26 @@
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.repository.IQueryRepository;
+import com.gilight.dep.metadata.entity.MdVersionFlowLog;
+
+/***
+ * 
+ * @ClassName: IMetaDataVersionFlowLogRepository
+ *             <p>
+ *             TODO<br>
+ * @author zps
+ * @date 2015年8月5日 上午11:59:09
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaDataVersionFlowLogRepository extends IQueryRepository {
+
+//	public void approve(MdMetadata meta, String message)
+//			throws RepositoryException;
+//
+//	public void reject(MdMetadata meta, String message)
+//			throws RepositoryException;
+
+	public void addLog(MdVersionFlowLog log) throws RepositoryException;
+}

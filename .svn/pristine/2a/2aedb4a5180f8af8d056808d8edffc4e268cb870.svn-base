@@ -1,0 +1,114 @@
+package com.gilight.dep.metadata.entity;
+// default package
+
+import java.math.BigDecimal;
+
+
+/**
+ * MmFolder entity. @author MyEclipse Persistence Tools
+ */
+
+public class MmFolder  implements java.io.Serializable {
+
+
+    // Fields    
+
+     private String id;
+     private String name;
+     private String parentId;
+     private String namespace;
+     private String folderLevel;
+     private String displayOrder;
+     private BigDecimal ishidden;
+
+
+    // Constructors
+
+    /** default constructor */
+    public MmFolder() {
+    }
+
+	/** minimal constructor */
+    public MmFolder(String id) {
+        this.id = id;
+    }
+    
+    /** full constructor */
+    public MmFolder(String id, String name, String parentId, String namespace, String folderLevel, String displayOrder, BigDecimal ishidden) {
+        this.id = id;
+        this.name = name;
+        this.parentId = parentId;
+        this.namespace = namespace;
+        this.folderLevel = folderLevel;
+        this.displayOrder = displayOrder;
+        this.ishidden = ishidden;
+    }
+
+   
+    // Property accessors
+
+    public String getId() {
+        return this.id;
+    }
+    
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getParentId() {
+        return this.parentId;
+    }
+    
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getNamespace() {
+        return this.namespace;
+    }
+    
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public String getFolderLevel() {
+        return this.folderLevel;
+    }
+    
+    public void setFolderLevel(String folderLevel) {
+        this.folderLevel = folderLevel;
+    }
+
+    public String getDisplayOrder() {
+        return this.displayOrder;
+    }
+    
+    public void setDisplayOrder(String displayOrder) {
+        this.displayOrder = displayOrder;
+    }
+
+    public BigDecimal getIshidden() {
+        return this.ishidden;
+    }
+    
+    public void setIshidden(BigDecimal ishidden) {
+        this.ishidden = ishidden;
+    }
+   
+
+
+
+
+
+
+
+
+}

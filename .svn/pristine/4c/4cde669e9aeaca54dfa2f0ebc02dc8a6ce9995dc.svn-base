@@ -1,0 +1,50 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+public class MetaDataBizFlowView implements IView {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/***
+	 * 审批元数据
+	 */
+	private String mdId;
+	/***
+	 * 审批意见
+	 */
+	private String comment;
+    /***
+     * 批量元数据ID
+     */
+	private List<String> mdIdList;
+
+	public String getMdId() {
+		return mdId;
+	}
+
+	public void setMdId(String mdId) {
+		this.mdId = mdId;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public List<String> getMdIdList() {
+		return mdIdList;
+	}
+
+	public void setMdIdList(List<String> mdIdList) {
+		this.mdIdList = mdIdList;
+	}
+
+}

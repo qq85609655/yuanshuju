@@ -1,0 +1,81 @@
+package com.gilight.dep.metadata.repository;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+
+/**
+ * 视图相关操作
+ * 
+ * @ClassName: IMetaDataViewRepository
+ *             <p>
+ *             TODO<br>
+ * @author wzx
+ * @date 2015年7月17日 下午3:48:39
+ * @version V1.0
+ * @since JDK 1.6
+ */
+@SuppressWarnings("rawtypes")
+public interface IMetaDataViewRepository extends IMDBaseRepository {
+	/**
+	 * 查询文件夹
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年7月28日 下午4:54:32
+	 * @version V1.0
+	 */
+	
+	public IResponse getByFolderId(IContext context) throws RepositoryException;
+
+	/***
+	 * 
+	 * <p>新增文件夹
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+	 * @author zps
+	 * @date 2015年8月5日 下午1:07:08
+	 * @version V1.0
+	 */
+
+	public IResponse createFolder(IContext context) throws RepositoryException;
+
+	/***
+	 * 
+	 * <p>删除文件夹
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+	 * @author zps
+	 * @date 2015年8月5日 下午1:07:13
+	 * @version V1.0
+	 */
+	public IResponse deleteFolder(IContext context) throws RepositoryException;
+
+	/***
+	 * 
+	 * <p>修改文件夹
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+	 * @author zps
+	 * @date 2015年8月5日 下午1:07:17
+	 * @version V1.0
+	 */
+	public IResponse updateFolder(IContext context) throws RepositoryException;
+
+}

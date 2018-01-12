@@ -1,0 +1,33 @@
+package com.gilight.dep.metamodel.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+
+/**
+ * 文件夹操作类
+* @ClassName: IMetaModelFolderService 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年11月30日 下午6:12:23
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IMetaModelFolderService extends IMetaModelService {
+    /**
+     * 获取文件夹树
+     * @param paramIContext
+     * @return
+     * @throws ServiceException
+     */
+    public IResponse getTree(IContext paramIContext) throws ServiceException;
+
+    /**
+     *
+     * @param paramIContext
+     * @return
+     * @throws ServiceException
+     */
+    public IResponse addModel(IContext paramIContext) throws ServiceException;
+}

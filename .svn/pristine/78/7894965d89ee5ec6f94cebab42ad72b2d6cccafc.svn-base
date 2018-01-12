@@ -1,0 +1,86 @@
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MdGatherDatasourceParam;
+
+@SuppressWarnings("unchecked")
+public class GatherDatasourceParamScope extends BaseHbiernateScope {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 主键
+	 */
+	private String id;
+
+	private String dbsId;
+	/**
+	 * 参数值
+	 */
+	private String paramKey;
+	/**
+	 * 参数名称
+	 */
+	private String paramValue;
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Class getClazz() {
+		// TODO Auto-generated method stub
+		return MdGatherDatasourceParam.class;
+	}
+
+	@Override
+	public String getDefaultOrderBy(String obj) {
+		return " order by " + obj + ".id";
+
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getDbsId() {
+		return dbsId;
+	}
+
+	public void setDbsId(String dbsId) {
+		this.dbsId = dbsId;
+	}
+
+	public String getParamKey() {
+		return paramKey;
+	}
+
+	public void setParamKey(String paramKey) {
+		this.paramKey = paramKey;
+	}
+
+	public String getParamValue() {
+		return paramValue;
+	}
+
+	public void setParamValue(String paramValue) {
+		this.paramValue = paramValue;
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+		StringBuffer sql = new StringBuffer();
+		if (!StringUtil.isEmpty(this.dbsId)) {
+			sql.append(" and ").append(obj).append(".dbsId = ? ");
+			this.paraList.add(this.dbsId);
+		}
+		return sql;
+
+	}
+
+}

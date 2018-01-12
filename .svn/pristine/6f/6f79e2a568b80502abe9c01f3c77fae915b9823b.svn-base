@@ -1,0 +1,97 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+
+/**
+* 
+* @ClassName: MdAnalyseLog 
+* <p>TODO<br>
+* @author hww
+* @date 2015年7月7日 下午3:45:30
+* @version V1.0
+* @since JDK 1.7
+ */
+ 
+public class MdAnalyseLog extends BaseMetaDataEntity {
+
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+	/**
+	 * ID
+	 */
+	private String id;
+	/**
+	 * 启动时间
+	 */
+	private String startDate;
+	/**
+	 * 结束时间
+	 */
+	private String endDate;
+	/**
+	 * 运行状态（成功/失败）:YES/NO
+	 */
+	private Integer runStatus;
+
+	public MdAnalyseLog() {
+	}
+
+	public MdAnalyseLog(String id) {
+		this.id = id;
+	}
+
+	public MdAnalyseLog(String id, String startDate, String endDate,
+			Integer runStatus) {
+		this.id = id;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.runStatus = runStatus;
+	}
+	
+	public String getId() {
+		return this.id;
+	}
+	@Override
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getStartDate() {
+		return this.startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return this.endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+
+	public Integer getRunStatus() {
+		return this.runStatus;
+	}
+
+	public void setRunStatus(Integer runStatus) {
+		this.runStatus = runStatus;
+	}
+
+	@Override
+	public String toString() {
+		return "MdAnalyseLog [id=" + id + ", startDate=" + startDate
+				+ ", endDate=" + endDate + ", runStatus=" + runStatus + "]";
+	}
+
+
+
+	
+	
+
+}

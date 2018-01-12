@@ -1,0 +1,16 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.service.IQueryService;
+import com.gilight.dep.metadata.entity.MdSystemBackup;
+import com.gilight.dep.metadata.view.MetaDataBackupTimeView;
+/**
+ * 系统备份接口
+ */
+public interface ISystemBackupService extends IMetaDataService, IQueryService {
+
+	void saveBackupTime(String backupTime, String period) throws ServiceException;
+
+	MetaDataBackupTimeView findCurrent() throws ServiceException;
+
+}

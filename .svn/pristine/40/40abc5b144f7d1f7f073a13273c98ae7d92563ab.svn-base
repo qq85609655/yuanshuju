@@ -1,0 +1,93 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IGatherAdaptorDao;
+import com.gilight.dep.metadata.dao.IGatherDataScourceDao;
+import com.gilight.dep.metadata.entity.MdGatherJob;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IGatherAdaptorRepository;
+import com.gilight.dep.metadata.util.AutoCopyObj;
+import com.gilight.dep.metadata.view.GatherJobBasicView;
+
+public class GatherAdaptorRepositoryImpl extends MetaDataRepositoryImpl implements IGatherAdaptorRepository {
+	private IGatherAdaptorDao gatherAdaptorDao;
+	
+	
+	
+	public IGatherAdaptorDao getGatherAdaptorDao() {
+		return gatherAdaptorDao;
+	}
+
+
+
+	public void setGatherAdaptorDao(IGatherAdaptorDao gatherAdaptorDao) {
+		this.gatherAdaptorDao = gatherAdaptorDao;
+	}
+
+	
+
+	public GatherAdaptorRepositoryImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+	@Override
+	public IResponse getDataSourceTreeById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		
+		try {
+			IDParameters idp = (IDParameters) paramIContext.getParameters();
+			String id= idp.getId();
+			MdGatherJob mdjob = new MdGatherJob();
+			List<GatherJobBasicView> gjoblist= new ArrayList<GatherJobBasicView>();
+			
+			List<IEntity> list;
+			list = gatherAdaptorDao.findByProperty("datasource", id, MdGatherJob.class);
+			for (IEntity iEntity : list) {
+				GatherJobBasicView gjob=AutoCopyObj.objCopy( GatherJobBasicView.class,iEntity);
+				gjoblist.add(gjob);
+			}
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"查询数据成功！", gjoblist));
+			return paramIContext.getResponse();
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询适配器失败");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询适配器失败");
+		}
+		
+	}
+	@Override
+	public MmMetamodel getModelByCode(String code) throws RepositoryException {
+		try {
+			List<IEntity> list =gatherAdaptorDao.findByProperty("mmCode", code, MmMetamodel.class);
+			if(list==null||list.size()==0){
+				return null;
+			}
+			return (MmMetamodel) list.get(0);
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+		
+		
+	}
+
+}

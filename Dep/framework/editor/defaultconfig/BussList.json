@@ -1,0 +1,15 @@
+{
+	"plugins": [],
+	"detail":[{
+		"title": "业务列表",
+		"lType": "default",
+		"displayBussProps": [{
+				"dataIndex": "name",
+				"text":"名称"	
+			},{
+				"dataIndex": "figureType",
+				"text":"图元类型"	
+			},
+		]
+	}
+]}

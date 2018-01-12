@@ -1,0 +1,36 @@
+/**   
+ * @Title: IExcelMetaDataParse.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月29日 上午9:10:45
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.gather.excel;
+
+import com.gilight.dep.framework.core.exception.GilightException;
+
+/***
+ * 
+ * @ClassName: IExcelMetaDataParse
+ *             <p>
+ *             元数据excel采集解析excel TODO<br>
+ * @author zps
+ * @date 2015年7月29日 上午9:11:09
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IExcelMetaDataParse {
+	/***
+	 * 
+	 * <p>获取excel采集的适配器，即根据采集文件，获取是数据元采集、数据实体采集、编码采集亦或是默认的采集
+	 * <br>
+	 * 
+	 * @return
+	 * @throws GilightException
+	 * @author zps
+	 * @date 2015年7月29日 上午9:13:04
+	 * @version V1.0
+	 */
+	public String getExcelAdaptor() throws GilightException;
+}

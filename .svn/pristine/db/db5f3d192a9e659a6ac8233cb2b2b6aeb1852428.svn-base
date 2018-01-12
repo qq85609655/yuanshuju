@@ -1,0 +1,199 @@
+package com.gilight.dep.metamodel.service.impl;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.EntityParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.ViewParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.entity.MmComposition;
+import com.gilight.dep.metadata.repository.IMetaModelCompRepository;
+import com.gilight.dep.metadata.util.AutoSetCode;
+import com.gilight.dep.metadata.view.MetaModelCompBasicView;
+import com.gilight.dep.metamodel.service.IMetaModelCompService;
+import org.apache.log4j.Logger;
+
+public class MetaModelCompServiceImpl implements IMetaModelCompService {
+    private static final Logger logger = Logger
+            .getLogger(MetaModelCompServiceImpl.class);
+    private IMetaModelCompRepository metaModelCompRepository;
+
+    public IMetaModelCompRepository getMetaModelCompRepository() {
+        return metaModelCompRepository;
+    }
+
+    public void setMetaModelCompRepository(
+            IMetaModelCompRepository metaModelCompRepository) {
+        this.metaModelCompRepository = metaModelCompRepository;
+    }
+
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+        // AutoSetCode.autoCode( MmMetamodel.class,
+        // "mme",MetaModelBasicView.class,"mmv");
+
+        AutoSetCode.autoCode(MetaModelCompBasicView.class, "mmv",
+                MmComposition.class, "mme");
+
+		/*
+         * MmComposition mme=(MmComposition)
+		 * paramIContext.getResponse().getResult();
+		 * 
+		 * MetaModelCompBasicView mmv =new MetaModelCompBasicView();
+		 */
+    }
+
+    private MmComposition view2Entity(MmComposition mce,
+                                      MetaModelCompBasicView mmv) {
+        mce.setId(mmv.getId());
+        mce.setName(mmv.getName());
+        mce.setFromMmId(mmv.getFromMID());
+        mce.setToMmId(mmv.getToMID());
+        mce.setOwnerMultiplicity(mmv.getOwnerMultiplicity());
+        mce.setToMultiplicity(mmv.getToMultiplicity());
+        mce.setRemark(mmv.getRemark());
+        mce.setUpdateDate(mmv.getUpdateDate());
+
+        return mce;
+
+    }
+
+    @Override
+    public IResponse create(IContext paramIContext) throws ServiceException {
+        // TODO Auto-generated method stub
+        try {
+            // TODO Auto-generated method stub
+            ViewParameters vp = (ViewParameters) paramIContext.getParameters();
+            EntityParameters<IEntity> ep = new EntityParameters();
+            MetaModelCompBasicView mmv = (MetaModelCompBasicView) vp.getView();
+            MmComposition mce = new MmComposition();
+            mce = view2Entity(mce, mmv);
+            ep.setEntity(mce);
+            paramIContext.setParameters(ep);
+            IContext context = ContextFactoryImpl.getInstance()
+                    .createContextWithEntity(paramIContext, mce);
+            return metaModelCompRepository.create(paramIContext);
+        } catch (GilightException e) {
+            throw new ServiceException(e);
+        } catch (Exception e) {
+            throw new ServiceException(e);
+
+        }
+    }
+    @Override
+    public IResponse deleteAllComp(IContext paramIContext) throws ServiceException {
+        // TODO Auto-generated method stub
+        try {
+            // TODO Auto-generated method stub
+
+            return metaModelCompRepository.deleteAllComp(paramIContext);
+        } catch (GilightException e) {
+            e.printStackTrace();
+            throw new ServiceException(e);
+
+        }
+    }
+    @Override
+    public IResponse delete(IContext paramIContext) throws ServiceException {
+        // TODO Auto-generated method stub
+        try {
+            // TODO Auto-generated method stub
+
+            return metaModelCompRepository.delete(paramIContext);
+        } catch (GilightException e) {
+            e.printStackTrace();
+            throw new ServiceException(e);
+
+        }
+    }
+
+    @Override
+    public IResponse getById(IContext paramIContext) throws ServiceException {
+        // TODO Auto-generated method stub
+        try {
+            // TODO Auto-generated method stub
+            IContext context;
+            IDParameters ids = (IDParameters) paramIContext.getParameters();
+
+            context = ContextFactoryImpl.getInstance().createContextWithParams(
+                    paramIContext, ids);
+            // context.getResponse().regiestResultHandler(new ResultHandler());
+            // 设置回调
+            context.getResponse().regiestResultHandler(
+                    new IResultHandler<String>() {
+                        @Override
+                        public IResult<Object> handle(IContext context,
+                                                      IResult<String> result) throws Exception {
+
+                            IContext paramIContext = (IContext) metaModelCompRepository
+                                    .getById(context);
+                            MmComposition mme = (MmComposition) paramIContext
+                                    .getResponse().getResult();
+
+                            MetaModelCompBasicView mmv = new MetaModelCompBasicView();
+
+                            mmv.setId(mme.getId());
+                            mmv.setName(mme.getName());
+                            // mmv.setMultiplicityid();
+                            mmv.setFromMID(mme.getFromMmId());
+                            // mmv.setFromMName();
+                            mmv.setToMID(mme.getToMmId());
+                            // mmv.setToMName();
+                            mmv.setRemark(mme.getRemark());
+                            mmv.setUpdateDate(mme.getUpdateDate());
+                            mmv.setOwnerMultiplicity(mme.getOwnerMultiplicity());
+                            mmv.setToMultiplicity(mme.getToMultiplicity());
+
+                            // mmv.setAttList(attList);
+
+                            return ResultFactory.getInstance()
+                                    .createSuccessResult(mmv);
+                        }
+                    });
+            // return context.getResponse();
+            return metaModelCompRepository.getById(context);
+        } catch (GilightException e) {
+            e.printStackTrace();
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public IResponse update(IContext paramIContext) throws ServiceException {
+        // TODO Auto-generated method stub
+        try {
+            // TODO Auto-generated method stub
+            // IServiceParameter isp = (IServiceParameter)
+            // paramIContext.getParameters();
+            ViewParameters vp = (ViewParameters) paramIContext.getParameters();
+            EntityParameters<IEntity> ep = new EntityParameters();
+            MetaModelCompBasicView mmv = (MetaModelCompBasicView) vp.getView();
+            MmComposition mce = new MmComposition();
+            mce = view2Entity(mce, mmv);
+            // mme.setIsuse();
+			/*
+			 * if(null==mmv.getIssys()){ mme.setIssys(0); }
+			 */
+
+            ep.setEntity(mce);
+            paramIContext.setParameters(ep);
+
+            // mme.setGraphPig(graphPig);
+
+            IContext context = ContextFactoryImpl.getInstance()
+                    .createContextWithEntity(paramIContext, mce);
+            return metaModelCompRepository.update(paramIContext);
+        } catch (GilightException e) {
+            e.printStackTrace();
+            throw new ServiceException(e);
+
+        }
+    }
+
+}

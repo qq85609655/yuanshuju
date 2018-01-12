@@ -1,0 +1,15 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.service.IQueryService;
+/**
+ * 
+* @ClassName: IAnalyseExcuteService 
+* <p>元数据离线分析接口<br>
+* @author wzx
+* @date 2015年7月9日 下午3:00:54
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IAnalyseExcuteService  extends IMetaDataService,IQueryService{
+
+}

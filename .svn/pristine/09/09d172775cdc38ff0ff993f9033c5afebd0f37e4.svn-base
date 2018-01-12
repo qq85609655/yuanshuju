@@ -1,0 +1,172 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+<groupId>gilight.dep.metadata</groupId>
+<artifactId>dep-metadata-wsservice</artifactId>
+<version>2.0.0</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <packagingExcludes>WEB-INF/lib/guava-10.0.1.jar</packagingExcludes>
+                    <warName>ws</warName>
+                    <!-- <overlays> <overlay> <groupId>gilight.dep.framework</groupId> <artifactId>gilightframework-web-common</artifactId>
+                        <excludes> <exclude>META-INF/*</exclude> <exclude>WEB-INF/*</exclude> <exclude>*/*.jsp</exclude>
+                        </excludes> </overlay> <overlay> <groupId>gilight.dep.framework</groupId>
+                        <artifactId>gilightframework-web-editor</artifactId> <excludes> <exclude>META-INF/*</exclude>
+                        <exclude>WEB-INF/*</exclude> <exclude>*/*.jsp</exclude> </excludes> </overlay>
+                        </overlays> -->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+<packaging>war</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>gilight.dep.metadata</groupId>
+            <artifactId>dep-metadata-core</artifactId>
+            <version>2.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>gilightframework-dao-db</artifactId>
+                    <groupId>gilight.dep.framework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>7.0.42</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>gilight.dep.metadata</groupId>
+            <artifactId>dep-metadata-core</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>gilight.dep.metadata</groupId>
+            <artifactId>dep-metadata-gather-excel</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>gilight.dep.metadata</groupId>
+            <artifactId>dep-metadata-gather-dbsource</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>gilight.dep.framework</groupId>
+            <artifactId>gilightframework-web-editor</artifactId>
+            <version>2.0.0</version>
+            <classifier>war</classifier>
+            <type>war</type>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+       <!-- <dependency>
+            <groupId>gilight.dep.framework</groupId>
+            <artifactId>gilightframework-web-editor-jar</artifactId>
+            <version>2.0.0</version>
+            <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>gilight.dep.framework</groupId>
+            <artifactId>gilightframework-web-editor</artifactId>
+            <version>2.0.0</version>
+            <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>-->
+
+
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>3.1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>3.1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>3.1.11</version>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>gilight.dep.framework</groupId>
+            <artifactId>gilightframework-web-common</artifactId>
+            <version>2.0.0</version>
+            <type>war</type>
+        </dependency>-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>14.0.1</version>
+            <type>jar</type>
+        </dependency>
+        <!--<dependency>
+            <groupId>net.sourceforge.javacsv</groupId>
+            <artifactId>javacsv</artifactId>
+            <version>2.1</version>
+        </dependency>-->
+    </dependencies>
+</project>

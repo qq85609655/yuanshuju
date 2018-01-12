@@ -1,0 +1,204 @@
+package com.gilight.dep.metadata.web.request;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+/**
+ * 
+* @ClassName: GatherRequestData 
+* <p>TODO<br>
+* @author hww
+* @date 2015年7月29日 下午7:18:41
+* @version V1.0
+* @since JDK 1.7
+ */
+public class GatherRequestData extends BaseRequestData implements IView{
+
+	/**
+	 * 参数id
+	 */
+	private String id;
+	/**
+	 * 元数据code
+	 */
+	private String code;
+	/**
+	 * 根据名称查询元数据时的名称参数
+	 */
+	private String mdNameLike;
+	/**
+	 * 元模型id
+	 */
+	private String mmId;
+	/***
+	 * 数据源id
+	 */
+	private String dataSource;
+	/***
+	 * 任务id
+	 */
+	private String jobId;
+	/**
+	 * 批量操作时的参数id数组  ids
+	 */
+	private List<Object> ids;
+	/**
+	 * 说明、备注
+	 */
+	private String remark;
+	/**
+	 * 被审核的元数据id
+	 */
+	private String metadataId;
+	/**
+	 * 通过true，拒绝false
+	 */
+	private boolean flag;
+	/**
+	 * 分页后每页显示条数
+	 */
+	private Integer limit;
+	/**
+	 * 显示第几页，从1开始数，1为第一页
+	 */
+	private Integer page;
+	/**
+	 * 从第几条记录开始显示
+	 */
+	private Integer start;
+	/**
+	 * 元数据悬挂点
+	 */
+	private String dataPath;
+	/**
+	 * 批量审核时传递的参数对象
+	 */
+	private BatchAuditData batchAuditData;
+	
+	
+	
+	public String getDataPath() {
+		return dataPath;
+	}
+
+	public void setDataPath(String dataPath) {
+		this.dataPath = dataPath;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMdNameLike() {
+		return mdNameLike;
+	}
+
+	public void setMdNameLike(String mdNameLike) {
+		this.mdNameLike = mdNameLike;
+	}
+
+	public String getMmId() {
+		return mmId;
+	}
+
+	public void setMmId(String mmId) {
+		this.mmId = mmId;
+	}
+
+	public String getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	public String getJobId() {
+		return jobId;
+	}
+
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
+
+	public List<Object> getIds() {
+		return ids;
+	}
+
+	public void setIds(List<Object> ids) {
+		this.ids = ids;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getMetadataId() {
+		return metadataId;
+	}
+
+	public void setMetadataId(String metadataId) {
+		this.metadataId = metadataId;
+	}
+
+	public boolean isFlag() {
+		return flag;
+	}
+
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+
+	public Integer getPage() {
+		return page;
+	}
+
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+
+	public Integer getStart() {
+		return start;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public BatchAuditData getBatchAuditData() {
+		return batchAuditData;
+	}
+
+	public void setBatchAuditData(BatchAuditData batchAuditData) {
+		this.batchAuditData = batchAuditData;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+	
+	
+	
+	
+}

@@ -1,0 +1,103 @@
+package com.gilight.dep.metadata.entity;
+
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+/**
+ * 
+ * @ClassName: MmInherit
+ *             <p>
+ *             TODO<br>
+ * @author hww
+ * @date 2015年7月7日 下午3:52:46
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MmInherit extends BaseMetaDataEntity {
+
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 元模型id
+	 */
+	private String mmId;
+	/**
+	 * 元模型的父类id
+	 */
+	private String parentId;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+
+	public MmInherit() {
+	}
+
+	public MmInherit(String id) {
+		this.id = id;
+	}
+
+	public MmInherit(String id, String mmId, String parentId, String remark,
+			String updateDate) {
+		this.id = id;
+		this.mmId = mmId;
+		this.parentId = parentId;
+		this.remark = remark;
+		this.updateDate = updateDate;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMmId() {
+		return this.mmId;
+	}
+
+	public void setMmId(String mmId) {
+		this.mmId = mmId;
+	}
+
+	public String getParentId() {
+		return this.parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
+	public String getRemark() {
+		return this.remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	@Override
+	public String toString() {
+		return "MmInherit [id=" + id + ", mmId=" + mmId + ", parentId="
+				+ parentId + ", remark=" + remark + ", updateDate="
+				+ updateDate + "]";
+	}
+
+}

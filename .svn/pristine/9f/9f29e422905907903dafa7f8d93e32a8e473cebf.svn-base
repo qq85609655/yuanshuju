@@ -1,0 +1,168 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.EntityParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IMetaModelDepeDao;
+import com.gilight.dep.metadata.entity.MmDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.enums.MetaModelStatus;
+import com.gilight.dep.metadata.repository.IMetaModelDepeRepository;
+
+public class MetaModelDepeRepositoryImpl implements IMetaModelDepeRepository {
+
+	private IMetaModelDepeDao metaModelDepeDao;
+	
+	
+	
+	public IMetaModelDepeDao getMetaModelDepeDao() {
+		return metaModelDepeDao;
+	}
+
+	public void setMetaModelDepeDao(IMetaModelDepeDao metaModelDepeDao) {
+		this.metaModelDepeDao = metaModelDepeDao;
+	}
+
+	
+
+	@Override
+	public IResponse create(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			//paramIContext.getRequest()create(paramIContext)
+				EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+				IEntity mme=(IEntity)entityParameters.getEntity();
+			//metaModelBasicDao.save(paramIEntity);
+				if (!checkPublishVer(((MmDependency)mme).getFromMmId())){//依赖
+					throw new RepositoryException("未发布的元模型不能创建关系");
+				}
+				if (!checkPublishVer(((MmDependency)mme).getToMmId())){//被依赖
+					throw new RepositoryException("未发布的元模型不能创建关系");
+				}
+				metaModelDepeDao.save(mme);
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new RepositoryException("创建元模型失败!-dao");
+			}
+			
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+			IEntity mme=(IEntity)entityParameters.getEntity();
+			//metaModelBasicDao.save(paramIEntity);
+		
+			metaModelDepeDao.update(mme);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(null));
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元模型失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		try {
+			// TODO Auto-generated method stub
+				String id = (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+				if(id == "" || id.equals(null)) {
+					throw new RepositoryException("传递的参数不能为空");
+				}
+				IEntity mme = metaModelDepeDao.findById(id, MmDependency.class);
+				metaModelDepeDao.delete(mme);
+	
+				paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult("组合关系删除成功"));
+				return paramIContext.getResponse();
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new RepositoryException("依赖关系删除失败!-dao");
+			}
+		
+	}
+
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IDParameters idp = (IDParameters) paramIContext.getParameters();
+			//EntityParameters mme=(MmMetamodel)entityParameters.getEntity();
+			String id = idp.getId();
+			//metaModelBasicDao.getById(mme.getId(),MmMetamodel.class);
+			MmMetamodel mme=(MmMetamodel) metaModelDepeDao.findById(id,MmMetamodel.class);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mme));
+			
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询元模型失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean checkPublishVer(String id) throws RepositoryException, DaoException {
+		//String id= (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+		MmMetamodel mmMetamodel= (MmMetamodel) metaModelDepeDao.findById(id,MmMetamodel.class);
+		if(mmMetamodel.getStatus() != null) {
+			if(mmMetamodel.getStatus()== MetaModelStatus.publishVer){
+				return true;
+			}else{
+				return false;
+			}
+		}else {
+			return false;
+		}
+	}
+
+
+	@Override
+	public IResponse deleteAllDepe(IContext paramIContext) throws RepositoryException {
+		try {
+			// TODO Auto-generated method stub
+
+			String mmid = (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+			MmDependency comp=new MmDependency();
+			comp.setFromMmId(mmid);
+			//comp.setUpdateDate(null);
+			if (comp.getFromMmId()!=null){
+				List<IEntity> complist=metaModelDepeDao.findByEntity(comp);
+				metaModelDepeDao.delete(complist);
+			}
+
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult("组合依赖删除成功"));
+			return paramIContext.getResponse();
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("删除元模型组合关系失败!-dao");
+		}
+	}
+}

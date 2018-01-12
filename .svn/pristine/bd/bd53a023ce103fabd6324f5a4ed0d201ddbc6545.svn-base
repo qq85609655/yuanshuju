@@ -1,0 +1,1330 @@
+package com.gilight.dep.metamodel.service.impl;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.framework.util.collection.CollectionUtil;
+import com.gilight.dep.metadata.enmu.MetaModelYesOrNo;
+import com.gilight.dep.metadata.entity.*;
+import com.gilight.dep.metadata.repository.IMetaModelFolderRepository;
+import com.gilight.dep.metadata.repository.IMetaModelQueryRepository;
+import com.gilight.dep.metadata.scope.MetaModelAttributeScope;
+import com.gilight.dep.metadata.scope.MetaModelScope;
+import com.gilight.dep.metadata.scope.MmDependencyScope;
+import com.gilight.dep.metadata.util.AutoCopyObj;
+import com.gilight.dep.metadata.util.AutoFieldTypeMapp;
+import com.gilight.dep.metadata.view.*;
+import com.gilight.dep.metamodel.convert.MateModelConvertUtil;
+import com.gilight.dep.metamodel.service.IMetaModelQueryService;
+
+import org.apache.log4j.Logger;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 
+ * @ClassName: MetaModelQueryServiceImpl
+ *             <p>
+ *             TODO<br>
+ * @author wzx
+ * @date 2015年7月16日 上午11:25:50
+ * @version V1.0
+ * @since JDK 1.6
+ */
+@SuppressWarnings("rawtypes")
+public class MetaModelQueryServiceImpl implements IMetaModelQueryService {
+	private static final Logger logger = Logger
+			.getLogger(MetaModelQueryServiceImpl.class);
+
+	private IMetaModelFolderRepository metaModelFolderRepository;
+
+	public IMetaModelFolderRepository getMetaModelFolderRepository() {
+		return metaModelFolderRepository;
+	}
+
+
+	public void setMetaModelFolderRepository(IMetaModelFolderRepository metaModelFolderRepository) {
+		this.metaModelFolderRepository = metaModelFolderRepository;
+	}
+
+	private Map<String, MetaModelDepeBasicView> mmDepeCache = new HashMap<String, MetaModelDepeBasicView>();
+	IMetaModelQueryRepository metaModelQueryRepository;
+
+	public IMetaModelQueryRepository getMetaModelQueryRepository() {
+		return metaModelQueryRepository;
+	}
+
+	public void setMetaModelQueryRepository(
+			IMetaModelQueryRepository metaModelQueryRepository) {
+		this.metaModelQueryRepository = metaModelQueryRepository;
+	}
+
+	private MetaModelBasicView entity2View(MmMetamodel mme,
+			MetaModelBasicView mmv) {
+		if(mme == null || mmv == null) {
+			return null;
+		}
+		mmv.setId(mme.getId());
+		mmv.setName(mme.getMmName());
+		mmv.setCode(mme.getMmCode());
+		if (null == mme.getIsabstract()) {
+			mmv.setIsabstract(false);
+		} else if ("true".equals(mme.getIsabstract())
+				|| mme.getIsabstract()==1) {
+			mmv.setIsabstract(true);
+		} else {
+			mmv.setIsabstract(false);
+		}
+		mmv.setGraphSvg(mme.getGraphPig());
+		mmv.setStatus(mme.getStatus());
+		mmv.setSysver(mme.getSysver());
+		mmv.setUserver(mme.getUserver());
+		mmv.setIssys(mme.getIssys());
+		mmv.setRemark(mme.getRemark());
+		mmv.setPackageid(mme.getMmPackageid());
+		mmv.setIsuse(mme.getIsuse());
+		return mmv;
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description:按scope查询 </p>
+	 * 
+	 * @param paramIContext
+	 * 
+	 * @return
+	 * 
+	 * @throws ServiceException
+	 * 
+	 * @see
+	 * com.gilight.dep.framework.core.service.IQueryService#getByScope(com.gilight
+	 * .dep.framework.core.context.base.IContext)
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IResponse getByScope(IContext context) throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelBasicView> views = new ArrayList<MetaModelBasicView>();
+					if (list != null) {
+						for (IEntity iEntity : list) {
+							MmMetamodel entity = (MmMetamodel) iEntity;
+							MetaModelBasicView view = new MetaModelBasicView();
+							view = entity2View(entity, view);
+							views.add(view);
+						}
+					}
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型成功", views);
+
+				}
+			});
+			metaModelQueryRepository.getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元模型出现错误!", e);
+			throw new ServiceException("查询元模型出现错误!");
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IResponse getModelAttrsByMid(IContext paramIContext)
+			throws ServiceException {
+		try {
+			IDParameters ids = (IDParameters) paramIContext.getParameters();
+			String id = ids.getId();
+			MetaModelAttributeScope scope = new MetaModelAttributeScope();
+			scope.setMmId(id);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelAttView> mmvlist = new ArrayList<MetaModelAttView>();
+					if (list != null) {
+						for (IEntity iEntity : list) {
+							MmAttribute mme = (MmAttribute) iEntity;
+							MetaModelAttView mmv = new MetaModelAttView();
+							mmv.setId(mme.getId());
+							mmv.setModelId(mme.getMmId());
+							mmv.setName(mme.getAttName());
+							mmv.setLength(mme.getAttLength());
+							mmv.setMax(mme.getAttMax());
+							mmv.setMin(mme.getAttMin());
+							mmv.setIsread(AutoFieldTypeMapp.autoTypeMapp(mme
+									.getIsread()));
+							mmv.setIsnull(AutoFieldTypeMapp.autoTypeMapp(mme
+									.getIsnull()));
+							mmv.setIsinherit(AutoFieldTypeMapp.autoTypeMapp(mme
+									.getInheritFlag()));
+							mmv.setIsshow(AutoFieldTypeMapp.autoTypeMapp(mme
+									.getIsshow()));
+							mmv.setIskey(AutoFieldTypeMapp.autoTypeMapp(mme
+									.getIskey()));
+							mmv.setRemark(mme.getRemark());
+							mmv.setDisplayorder(mme.getDisplayOrder());
+							mmv.setDisplayType(mme.getDisplayType());
+							mmv.setCode(mme.getAttCode());
+							mmv.setDatatypeId(mme.getDatatypeId());
+							mmv.setEnumId(mme.getEnumId());
+							mmvlist.add(mmv);
+						}
+					}
+
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型属性成功！", mmvlist);
+				}
+			});
+			metaModelQueryRepository.getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元模型属性出现错误!", e);
+			throw new ServiceException("查询元模型属性出现错误!", e);
+		}
+	}
+
+	@Override
+	public IResponse getChildModels(IContext paramIContext)
+			throws ServiceException {
+		try {
+			IDParameters ids = (IDParameters) paramIContext.getParameters();
+			String id = ids.getId();
+			MetaModelScope scope = new MetaModelScope();
+			scope.setCompMid(id);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelBasicView> mmvlist = new ArrayList<MetaModelBasicView>();
+					if (list != null) {
+						for (IEntity iEntity : list) {
+							MmMetamodel mme = (MmMetamodel) iEntity;
+							MetaModelBasicView mmv = new MetaModelBasicView();
+							mmv = entity2View(mme, mmv);
+							mmvlist.add(mmv);
+						}
+					}
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型属性成功！", mmvlist);
+				}
+			});
+			metaModelQueryRepository.getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元模型失败!", e);
+			throw new ServiceException("查询元模型失败!", e);
+		}
+
+	}
+
+	@Override
+	public IResponse getAllModels(IContext paramIContext)
+			throws ServiceException {
+		try {
+			MetaModelScope scope = new MetaModelScope();
+			scope.setIsabstract(new Integer(MetaModelYesOrNo.NO));
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws IllegalAccessException,
+						InvocationTargetException {
+					List entitys = (List) result.getResult();
+					List metaModelBaseViews = MateModelConvertUtil
+							.convertToBaseView(entitys);
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型属性成功！",
+									metaModelBaseViews);
+				}
+			});
+			metaModelQueryRepository.getBaseByScope(context);
+			return context.getResponse();
+		} catch (Exception e) {
+			logger.error(e);
+			throw new ServiceException(e);
+		}
+	}
+	@Override
+	public IResponse getAllMetaModels(IContext paramIContext)
+			throws ServiceException {
+		try {
+			MetaModelScope scope = new MetaModelScope();
+			scope.setIsabstract(null);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws IllegalAccessException,
+						InvocationTargetException {
+					List entitys = (List) result.getResult();
+					List metaModelBaseViews = MateModelConvertUtil
+							.convertToBaseView(entitys);
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("获取所有元模型成功！",
+									metaModelBaseViews);
+				}
+			});
+			metaModelQueryRepository.getBaseByScope(context);
+			return context.getResponse();
+		} catch (Exception e) {
+			logger.error(e);
+			throw new ServiceException(e);
+		}
+	}
+
+	@Override
+	public IResponse getDepeAsso(IContext paramIContext)
+			throws ServiceException {
+		try {
+			IDParameters ids = (IDParameters) paramIContext.getParameters();
+			String id = ids.getId();
+			MmDependencyScope scope = new MmDependencyScope();
+			scope.setFromMmId(id);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			return this.getDepeAssoByScope(context);
+		} catch (GilightException e) {
+			logger.error("查询元模型关系出现错误!", e);
+			throw new ServiceException("查询元模型关系出现错误!");
+		}
+	}
+
+	@Override
+	public IResponse getAllChildModels(IContext paramIContext)
+			throws ServiceException {
+		String mid = (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+		List<MmMetamodel> childs = this.getAllChildModels(mid);
+		List<MetaModelBasicView> views = new ArrayList<MetaModelBasicView>();
+		if (childs != null) {
+			for (MmMetamodel entity : childs) {
+				MetaModelBasicView view = new MetaModelBasicView();
+				view = entity2View(entity, view);
+				views.add(view);
+			}
+		}
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessModelAndView(
+						"查询元模型成功", views));
+		return paramIContext.getResponse();
+	}
+
+	public List<MmMetamodel> getAllChildModels(String id)
+			throws ServiceException {
+		List<MmMetamodel> mmList = new ArrayList<MmMetamodel>();
+		this.getAllChildModels(id, mmList);
+		return mmList;
+	}
+
+	private IContext createContext(String id) throws ServiceException {
+		MetaModelScope scope = new MetaModelScope();
+		scope.setParentMid(id);
+		scope.setIsabstract(null);
+		try {
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(scope);
+			return context;
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new ServiceException(e);
+		}
+
+	}
+
+	public List<MmMetamodel> getAllChildModels(String id,
+			List<MmMetamodel> mmList) throws ServiceException {
+		try {
+			IContext context = createContext(id);
+			IResponse response = this.getMetaModelQueryRepository()
+					.getBaseByScope(context);
+			List<MmMetamodel> result = (List<MmMetamodel>) response
+					.getBlockedResultObject();
+			mmList.addAll(result);
+			if (result != null) {
+				for (MmMetamodel mm : result) {
+					this.getAllChildModels(mm.getId(), mmList);
+				}
+			}
+		} catch (RepositoryException e) {
+			logger.error("查询元模型失败", e);
+			throw new ServiceException("查询元模型失败", e);
+		} catch (GilightException e) {
+			logger.error("查询元模型失败", e);
+			throw new ServiceException("查询元模型失败", e);
+		}
+		return mmList;
+	}
+
+	@Override
+	public IResponse getAllChildModelIds(IContext paramIContext)
+			throws ServiceException {
+		String mid = (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+		List<MmMetamodel> childs = this.getAllChildModels(mid);
+		List<String> ids = new ArrayList<String>();
+		if (childs != null) {
+			for (MmMetamodel entity : childs) {
+				ids.add(entity.getId());
+			}
+		}
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessModelAndView(
+						"查询元模型成功", ids));
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getDepeAssoById(IContext paramIContext)
+			throws ServiceException {
+		try {
+			MetaModelDepeBasicView view = null;
+			String depeId = (String) paramIContext
+					.getParameter(ParameterKeys.ATT_ID);
+			if (mmDepeCache.containsKey(depeId)) {
+				view = mmDepeCache.get(depeId);
+			}
+			if (view == null) {
+				MmDependencyScope scope = new MmDependencyScope();
+				scope.setId(depeId);
+				IContext context = ContextFactoryImpl.getInstance()
+						.createContextWithParams(scope);
+				this.getDepeAssoByScope(context);
+				List depeList = (List) context.getResponse()
+						.getBlockedResultObject();
+				view = (MetaModelDepeBasicView) CollectionUtil
+						.getFirstObj(depeList);
+			}
+			if (view != null) {
+				mmDepeCache.put(depeId, view);
+			}
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"查询元模型关系成功", view));
+			return paramIContext.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元模型关系出现错误!", e);
+			throw new ServiceException("查询元模型关系出现错误!");
+		}
+	}
+
+	@Override
+	public IResponse findByName(IContext paramIContext) throws ServiceException {
+
+		//findByName
+		return null;
+	}
+
+	@Override
+	public IResponse findRootModel(IContext paramIContext) throws ServiceException {
+		try {
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelBasicView> mmvlist= new ArrayList<MetaModelBasicView>();
+					if(list!=null){
+						for (IEntity entity:list) {
+							MmMetamodel mentity=(MmMetamodel)entity;
+							MetaModelBasicView mmv= new MetaModelBasicView();
+							mmv=entity2View(mentity,mmv);
+							mmvlist.add(mmv);
+						}
+					}
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);--
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元元模型成功！", mmvlist);
+				}
+			});
+			//return metaModelQueryRepository.findRootModel(paramIContext);
+			IResponse iResponse=metaModelQueryRepository.findRootModel(paramIContext);
+
+			return iResponse;
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询元元模型失败");
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询元元模型失败");
+		}
+
+	}
+
+	@Override
+	public IResponse findNodeModel(IContext paramIContext) throws ServiceException {
+		try {
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					String id = (String)context.getParameter(ParameterKeys.ATT_ID);
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelBasicView> mmvlist= new ArrayList<MetaModelBasicView>();
+					if(list!=null){
+						for (IEntity entity:list) {
+							MmMetamodel mentity=(MmMetamodel)entity;
+							MetaModelBasicView mmv= new MetaModelBasicView();
+							mmv=entity2View(mentity,mmv);
+							mmv.setParentId(id);
+							mmvlist.add(mmv);
+						}
+					}
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);--
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型成功！", mmvlist);
+				}
+			});
+
+			//return metaModelQueryRepository.findRootModel(paramIContext);
+			IResponse iResponse=metaModelQueryRepository.findNodeModel(paramIContext);
+
+			return iResponse;
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询元模型失败");
+		}
+	}
+
+	@Override
+	public IResponse findCompRootModel(IContext paramIContext) throws ServiceException {
+		try {
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelBasicView> mmvlist= new ArrayList<MetaModelBasicView>();
+					if(list!=null){
+						for (IEntity entity:list) {
+							MmMetamodel mentity=(MmMetamodel)entity;
+							MetaModelBasicView mmv = new MetaModelBasicView();
+							mmv=MetaModelQueryServiceImpl.this.entity2View(mentity,mmv);
+							mmvlist.add(mmv);
+						}
+					}
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);--
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询组合关系成功！", mmvlist);
+				}
+			});
+
+			IResponse iResponse=metaModelQueryRepository.findCompRootModel(paramIContext);
+
+			return iResponse;
+			//return metaModelQueryRepository.findCompRootModel(paramIContext);
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询元模型失败");
+
+		}
+
+	}
+
+	@Override
+	public IResponse findCompNodeModel(IContext paramIContext) throws ServiceException {
+		try {
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelBasicView> mmvlist= new ArrayList<MetaModelBasicView>();
+					if(list!=null){
+						for (IEntity entity:list) {
+							MmMetamodel mentity=(MmMetamodel)entity;
+							MetaModelBasicView mmv = new MetaModelBasicView();
+							mmv=MetaModelQueryServiceImpl.this.entity2View(mentity,mmv);
+							mmvlist.add(mmv);
+						}
+					}
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);--
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询组合关系成功！", mmvlist);
+				}
+			});
+
+			IResponse iResponse=metaModelQueryRepository.findCompNodeModel(paramIContext);
+
+			return iResponse;
+
+			//return metaModelQueryRepository.findCompNodeModel(paramIContext);
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询元模型失败");
+
+		}
+	}
+
+	@Override
+	public IResponse findEnumList(IContext paramIContext) throws ServiceException {
+		try {
+
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelEnumView> mmvlist= new ArrayList<MetaModelEnumView>();
+					if(list!=null){
+						for (IEntity entity:list) {
+							MmEnum mentity=(MmEnum)entity;
+							MetaModelEnumView mmv = AutoCopyObj.objCopy(MetaModelEnumView.class,mentity);
+							//mmv=MetaModelQueryServiceImpl.this.entity2View(mentity,mmv);
+							mmvlist.add(mmv);
+						}
+					}
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);--
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询组合关系成功！", mmvlist);
+				}
+			});
+
+
+			IResponse iResponse=metaModelQueryRepository.findEnumList(paramIContext);
+
+			return iResponse;
+
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询枚举类型失败");
+
+		}
+	}
+
+    @Override
+    public IResponse findEnumById(IContext paramIContext) throws ServiceException {
+        try {
+
+            paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+                @Override
+                public IResult handle(IContext context, IResult result)
+                        throws Exception {
+                    @SuppressWarnings("unchecked")
+                    MmEnum mmEnum =(MmEnum) result.getResult();
+                    MetaModelEnumView mmev = new MetaModelEnumView();
+
+                    mmev = (MetaModelEnumView) SpringBeansUtils.copyProperties(MetaModelEnumView.class,mmEnum);
+
+                    List<IEntity> list = (List<IEntity>) result.getResult();
+                    List<MetaModelEnumValueView> mmvvlist= new ArrayList<MetaModelEnumValueView>();
+                    if(list!=null){
+                        for (IEntity entity:list) {
+                            MmEnum mentity=(MmEnum)entity;
+                            MetaModelEnumValueView mmv = AutoCopyObj.objCopy(MetaModelEnumValueView.class,mentity);
+                            //mmv=MetaModelQueryServiceImpl.this.entity2View(mentity,mmv);
+                            mmvvlist.add(mmv);
+                        }
+                    }
+
+                    mmev.setValueList(mmvvlist);
+                    //List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);--
+                    return ResultFactory.getInstance()
+                            .createSuccessModelAndView("查询枚举成功！", mmvvlist);
+                }
+            });
+
+
+            //return metaModelQueryRepository.findEnumList(paramIContext);
+            IResponse iResponse=metaModelQueryRepository.findEnumList(paramIContext);
+
+            return iResponse;
+
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            throw new ServiceException("查询枚举类型失败");
+
+        }
+    }
+
+
+	@Override
+	public IResponse findEnumValueList(IContext paramIContext) throws ServiceException {
+		try {
+
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelEnumValueView> mmvlist= new ArrayList<MetaModelEnumValueView>();
+					mmvlist=SpringBeansUtils.copyPropertiesForList(MetaModelEnumValueView.class,list,null);
+
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询枚举值列表成功！", mmvlist);
+				}
+			});
+
+
+
+			//return metaModelQueryRepository.findEnumValueList(paramIContext);
+			IResponse iResponse=metaModelQueryRepository.findEnumValueList(paramIContext);
+
+			return iResponse;
+
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询枚举值失败");
+
+		}
+	}
+
+	@Override
+	public IResponse findInheList(IContext paramIContext) throws ServiceException {
+		try {
+
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelInheritView> mmvlist= new ArrayList<MetaModelInheritView>();
+					if(list!=null){
+						for (IEntity entity:list) {
+							MmInherit mentity=(MmInherit)entity;
+							//MetaModelInheritView mmv=MetaModelQueryServiceImpl.this.compEntity2View(mentity);
+							MetaModelInheritView mmv = new MetaModelInheritView();
+							mmv.setId(mentity.getId());
+							mmv.setMmId(mentity.getMmId());
+							mmv.setUpdateDate(mentity.getUpdateDate());
+							mmv.setParentId(mentity.getParentId());
+							mmv.setRemark(mentity.getRemark());
+
+							mmvlist.add(mmv);
+						}
+					}
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);--
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询继承关系成功！", mmvlist);
+				}
+			});
+
+			IResponse iResponse=metaModelQueryRepository.findInheList(paramIContext);
+
+			return iResponse;
+			//return metaModelQueryRepository.findCompList(paramIContext);
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询继承关系失败");
+
+		}
+	}
+
+    private MetaModelCompBasicView compEntity2View(MmComposition mme ){
+		//MetaDataCompView mmv =new MetaDataCompView();
+		MetaModelCompBasicView mmv = new MetaModelCompBasicView();
+
+		mmv.setId(mme.getId());
+		mmv.setName(mme.getName());
+		// mmv.setMultiplicityid();
+		mmv.setFromMID(mme.getFromMmId());
+		// mmv.setFromMName();
+		mmv.setToMID(mme.getToMmId());
+		// mmv.setToMName();
+		mmv.setRemark(mme.getRemark());
+		mmv.setUpdateDate(mme.getUpdateDate());
+		mmv.setOwnerMultiplicity(mme.getOwnerMultiplicity());
+		mmv.setToMultiplicity(mme.getToMultiplicity());
+
+		return mmv;
+	}
+
+
+	@Override
+	public IResponse findCompList(IContext paramIContext) throws ServiceException {
+
+		try {
+
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelCompBasicView> mmvlist= new ArrayList<MetaModelCompBasicView>();
+					if(list!=null){
+						for (IEntity entity:list) {
+							MmComposition mentity=(MmComposition)entity;
+							MetaModelCompBasicView mmv=MetaModelQueryServiceImpl.this.compEntity2View(mentity);
+							mmvlist.add(mmv);
+						}
+					}
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);--
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询组合关系成功！", mmvlist);
+				}
+			});
+
+			IResponse iResponse=metaModelQueryRepository.findCompList(paramIContext);
+
+			return iResponse;
+			//return metaModelQueryRepository.findCompList(paramIContext);
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询组合关系失败");
+
+		}
+	}
+
+	@Override
+	public IResponse findDepeList(IContext paramIContext) throws ServiceException {
+		try {
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelDepeBasicView> mmvlist= new ArrayList<MetaModelDepeBasicView>();
+					if(list!=null){
+						for (IEntity entity:list) {
+							MmDependency mme=(MmDependency)entity;
+							//MetaModelCompBasicView mmv=MetaModelQueryServiceImpl.this.compEntity2View(mentity);
+							MetaModelDepeBasicView mmv = new MetaModelDepeBasicView();
+
+							mmv.setId(mme.getId());
+							mmv.setName(mme.getName());
+							mmv.setFromMid(mme.getFromMmId());
+							// mmv.setFromMName();
+							mmv.setToMid(mme.getToMmId());
+							// mmv.setToMName();
+							mmv.setRemark(mme.getRemark());
+
+							mmvlist.add(mmv);
+						}
+					}
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);--
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询组合关系成功！", mmvlist);
+				}
+			});
+
+			IResponse iResponse=metaModelQueryRepository.findDepeList(paramIContext);
+
+			return iResponse;
+			//return metaModelQueryRepository.findCompList(paramIContext);
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询组合关系失败");
+
+		}
+	}
+
+	@Override
+	public IResponse findAllModel(IContext paramIContext) throws ServiceException, RepositoryException {
+		IResponse iResponse= null;
+		try {
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelBasicView> mmvlist= new ArrayList<MetaModelBasicView>();
+					if(list!=null){
+						for (IEntity entity:list) {
+							MmMetamodel mentity=(MmMetamodel)entity;
+							MetaModelBasicView mmv= new MetaModelBaseView();
+							mmv=MetaModelQueryServiceImpl.this.entity2View(mentity,mmv);
+							mmvlist.add(mmv);
+						}
+					}
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);--
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询组合关系成功！", mmvlist);
+				}
+			});
+			iResponse = metaModelQueryRepository.findAllModel(paramIContext);
+			return iResponse;
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new RepositoryException("查询元模型失败");
+		}
+
+
+	}
+
+	@Override
+	public IResponse findModelById(IContext paramIContext) throws ServiceException {
+		return null;
+	}
+
+	@Override
+	public MmMetamodel findModelById(String id) throws ServiceException {
+		try {
+			MmMetamodel mdMetadata=metaModelQueryRepository.findModelById(id);
+			return mdMetadata;
+		} catch (RepositoryException e) {
+			logger.error("查询元模型失败",e);
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+/*	@Override
+	public MmMetamodel findModelById(String id) throws ServiceException {
+		try {
+			MmMetamodel mdMetadata=metaModelQueryRepository.findModelById(id);
+			return mdMetadata;
+		} catch (RepositoryException e) {
+			logger.error("查询元模型失败",e);
+			e.printStackTrace();
+		}
+		return null;
+	}*/
+
+	@Override
+	public IResponse findAllMmInheritById(IContext paramIContext) throws ServiceException {
+
+
+		IResponse iResponse= null;
+		try {
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<MmInherit> list = (List<MmInherit>) result.getResult();//元模型信息
+					String id= (String) context.getParameter(ParameterKeys.ATT_ID);
+					List<MmMetamodel> mmMetamodelList=new ArrayList<MmMetamodel>();
+					List<MetaModelBasicView> mmvlist = new ArrayList<MetaModelBasicView>();
+					List<AnalyseNodeLineView> anvlist  = new ArrayList<AnalyseNodeLineView>();
+					if(list!=null){
+						for (MmInherit imhe: list) {
+							String parentid= imhe.getParentId();
+							String mmid=imhe.getMmId();
+							if(!parentid.equals(id)){
+								MmMetamodel mmodel=metaModelQueryRepository.findModelById(parentid);
+								if (mmodel==null){
+									continue;
+								}
+								String graphPig=mmodel.getGraphPig();
+								if(graphPig!=null){
+									String temp[] = graphPig.split("\\\\");
+									if (temp.length > 1) {
+										graphPig = temp[temp.length - 1];
+										mmodel.setGraphPig(graphPig);
+									}
+								}
+								mmMetamodelList.add(mmodel);
+								MetaModelBasicView mmv= new MetaModelBasicView();
+								mmv=entity2View(mmodel,mmv);
+								mmvlist.add(mmv);
+							}
+							if(!mmid.equals(id)){
+								MmMetamodel mmodel=metaModelQueryRepository.findModelById(mmid);
+								if (mmodel==null){
+									continue;
+								}
+								if(mmodel!=null){
+									String graphPig=mmodel.getGraphPig();
+									if(graphPig!=null){
+										String temp[] = graphPig.split("\\\\");
+										if (temp.length > 1) {
+											graphPig = temp[temp.length - 1];
+											mmodel.setGraphPig(graphPig);
+										}
+									}
+									mmMetamodelList.add(mmodel);
+									MetaModelBasicView mmv= new MetaModelBasicView();
+									mmv=entity2View(mmodel,mmv);
+									mmv.setParentId(parentid);
+									mmvlist.add(mmv);
+								}
+
+
+							}
+							AnalyseNodeLineView anv = new AnalyseNodeLineView();
+							anv.setType("inherit");
+							anv.setEndNodeId(imhe.getMmId());
+							anv.setStartNodeId(imhe.getParentId());
+							anvlist.add(anv);
+						}
+
+					}
+					MapResultView mrv = new MapResultView();
+					mrv.setAnvList(anvlist);
+					mrv.setModelList(mmvlist);
+
+					//AutoCopyList.getObjList();
+
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询继承关系成功！", mrv);
+				}
+			});
+
+			iResponse = metaModelQueryRepository.findAllMmInheritById(paramIContext);
+			return iResponse;
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("获取继承关系失败");
+		}
+
+
+	}
+
+	@Override
+	public IResponse findAllMmCompositionById(IContext paramIContext) throws ServiceException {
+
+		IResponse iResponse= null;
+		try {
+			String id= (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<MmComposition> list = (List<MmComposition>) result.getResult();
+					String id= (String) context.getParameter(ParameterKeys.ATT_ID);
+					List<MmMetamodel> mmMetamodelList=new ArrayList<MmMetamodel>();
+					List<MetaModelBasicView> mmvlist = new ArrayList<MetaModelBasicView>();
+					List<AnalyseNodeLineView> anvlist  = new ArrayList<AnalyseNodeLineView>();
+					if(list!=null){
+						for (MmComposition comp: list) {
+							String fromid= comp.getFromMmId();
+							String toid=comp.getToMmId();
+							if(!fromid.equals(id)){
+								MmMetamodel mmodel=metaModelQueryRepository.findModelById(fromid);
+								if (mmodel==null){
+									continue;
+								}
+								mmMetamodelList.add(mmodel);
+								MetaModelBasicView mmv= new MetaModelBasicView();
+								mmv=entity2View(mmodel,mmv);
+								if(mmv != null) {
+									mmvlist.add(mmv);
+								}
+							}
+							if(!toid.equals(id)){
+								MmMetamodel mmodel=metaModelQueryRepository.findModelById(toid);
+								if (mmodel==null){
+									continue;
+								}
+								mmMetamodelList.add(mmodel);
+								MetaModelBasicView mmv= new MetaModelBasicView();
+								mmv=entity2View(mmodel,mmv);
+								if(mmv != null) {
+									mmvlist.add(mmv);
+								}
+							}
+							CompRelationLineView anv = new CompRelationLineView();
+							anv.setRemark(comp.getRemark());
+							anv.setId(comp.getId());
+							anv.setName(comp.getName());
+							anv.setType("composition");
+							anv.setStartNodeId(fromid);
+							anv.setEndNodeId(toid);
+							anv.setOwnerMultiplicity(comp.getOwnerMultiplicity());
+							anv.setToMultiplicity(comp.getToMultiplicity());
+							
+							MmMetamodel mmodel=metaModelQueryRepository.findModelById(toid);
+							if(mmodel != null) {
+								anvlist.add(anv);
+							}
+						}
+
+					}
+					MapResultView mrv = new MapResultView();
+					mrv.setAnvList(anvlist);
+					mrv.setModelList(mmvlist);
+
+					//AutoCopyList.getObjList();
+
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询组合关系成功！", mrv);
+				}
+			});
+
+			iResponse = metaModelQueryRepository.findAllMmCompositionById(paramIContext);
+			return iResponse;
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("获取组合关系失败");
+		}
+	}
+
+	@Override
+	public IResponse findAllMmDependencyById(IContext paramIContext) throws ServiceException {
+		IResponse iResponse= null;
+		try {
+			String id= (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+
+			paramIContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					List<MmDependency> list = (List<MmDependency>) result.getResult();
+					String id= (String) context.getParameter(ParameterKeys.ATT_ID);
+					List<MmMetamodel> mmMetamodelList=new ArrayList<MmMetamodel>();
+					List<MetaModelBasicView> mmvlist = new ArrayList<MetaModelBasicView>();
+					List<AnalyseNodeLineView> anvlist  = new ArrayList<AnalyseNodeLineView>();
+					if(list!=null){
+						for (MmDependency depe: list) {
+							String fromid= depe.getFromMmId();
+							String toid=depe.getToMmId();
+							if(!fromid.equals(id)){
+								MmMetamodel mmodel=metaModelQueryRepository.findModelById(fromid);
+								if (mmodel==null){
+									continue;
+								}
+								mmMetamodelList.add(mmodel);
+								MetaModelBasicView mmv= new MetaModelBasicView();
+								mmv=entity2View(mmodel,mmv);
+								mmvlist.add(mmv);
+							}
+							if(!toid.equals(id)){
+								MmMetamodel mmodel=metaModelQueryRepository.findModelById(toid);
+								if (mmodel==null){
+									continue;
+								}
+								mmMetamodelList.add(mmodel);
+								MetaModelBasicView mmv= new MetaModelBasicView();
+								mmv=entity2View(mmodel,mmv);
+								mmvlist.add(mmv);
+							}
+							AnalyseNodeLineView anv = new AnalyseNodeLineView();
+							anv.setRemark(depe.getRemark());
+							anv.setId(depe.getId());
+							anv.setName(depe.getName());
+							anv.setType("dependency");
+							anv.setEndNodeId(toid);
+							anv.setStartNodeId(fromid);
+							anvlist.add(anv);
+						}
+					}
+					MapResultView mrv = new MapResultView();
+					mrv.setAnvList(anvlist);
+					mrv.setModelList(mmvlist);
+
+					//AutoCopyList.getObjList();
+
+					//List<MetaModelFolderView> folderlist= SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询依赖关系成功！", mrv);
+				}
+			});
+
+			iResponse = metaModelQueryRepository.findAllMmDependencyById(paramIContext);
+			return iResponse;
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("获取依赖关系失败");
+		}
+	}
+
+
+
+	public IResponse getDepeAssoByScope(IContext context)
+			throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws IllegalAccessException,
+						InvocationTargetException {
+					@SuppressWarnings("unchecked")
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelDepeBasicView> mmvlist = new ArrayList<MetaModelDepeBasicView>();
+					if (list != null) {
+						for (IEntity iEntity : list) {
+							MmDependency mme = (MmDependency) iEntity;
+							MetaModelDepeBasicView mmv = new MetaModelDepeBasicView();
+							mmv.setFromMid(mme.getFromMmId());
+							mmv.setId(mme.getId());
+							mmv.setName(mme.getName());
+							mmv.setRemark(mme.getRemark());
+							mmv.setToMid(mme.getToMmId());
+							mmvlist.add(mmv);
+						}
+					}
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型关系成功！", mmvlist);
+				}
+			});
+			metaModelQueryRepository.getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元模型关系出现错误!", e);
+			throw new ServiceException("查询元模型关系出现错误!");
+		}
+	}
+
+
+
+
+	@Override
+	public IResponse findByParentid(IContext<IDParameters> context) throws ServiceException{
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					@SuppressWarnings("unchecked")
+					MetaModelFolderView folderView = (MetaModelFolderView) result.getResult();
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询文件夹及其包含元模型成功！", folderView);
+				}
+			});
+
+			IResponse iResponse=metaModelFolderRepository.findTree(context);
+
+			return iResponse;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ServiceException("查询文件夹失败");
+		}
+		//return iResponse;
+	}
+	
+	@Override
+	public List<MetaModelFolderView> findSubFolder(
+			IContext<IDParameters> context) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse getModelByFolderid(IContext paramIContext)
+			throws ServiceException {
+		try {
+			String folderid= (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+			MetaModelScope scope = new MetaModelScope();
+			scope.setMmPackageid(folderid);
+		
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelBasicView> mmvlist = new ArrayList<MetaModelBasicView>();
+					if (list != null) {
+						for (IEntity iEntity : list) {
+							MmMetamodel mme = (MmMetamodel) iEntity;
+							MetaModelBasicView mmv = new MetaModelBasicView();
+							mmv = entity2View(mme, mmv);
+							mmvlist.add(mmv);
+						}
+					}
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询文件夹里包含的元模型成功！", mmvlist);
+				}
+			});
+			metaModelQueryRepository.getByScope(context);
+			return context.getResponse();
+			
+			
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+
+	@Override
+	public IResponse findCompLeftModel(IContext context) throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelBasicView> views = new ArrayList<MetaModelBasicView>();
+					if (list != null) {
+						for (IEntity iEntity : list) {
+							MmMetamodel entity = (MmMetamodel) iEntity;
+							MetaModelBasicView view = new MetaModelBasicView();
+							view = entity2View(entity, view);
+							views.add(view);
+						}
+					}
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型成功", views);
+
+				}
+			});
+			metaModelQueryRepository.getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元模型出现错误!", e);
+			throw new ServiceException("查询元模型出现错误!");
+		}
+	}
+
+	@Override
+	public IResponse findDepeLeftModel(IContext paramIContext) throws ServiceException {
+		return null;
+	}
+
+	@Override
+	public IResponse findAllMapNodeModel(IContext paramIContext) throws ServiceException {
+		try {
+			IResponse modelres=this.findAllModel(paramIContext);
+			IResponse inheres=this.findInheList(paramIContext);
+			IResponse compres=this.findCompList(paramIContext);
+			IResponse deperes=this.findDepeList(paramIContext);
+			List<MetaModelBasicView> modellist=(List<MetaModelBasicView>)modelres.getResult();
+			List<MetaModelInheritView> inhelist=(List<MetaModelInheritView>)inheres.getResult();
+			List<MetaModelDepeBasicView> depellist=(List<MetaModelDepeBasicView>)compres.getResult();
+			List<MetaModelCompBasicView> complist=(List<MetaModelCompBasicView>)deperes.getResult();
+			AllMapNode mapNode = new AllMapNode();
+			mapNode.setModelList(modellist);
+			mapNode.setCompList(complist);
+			mapNode.setDepeList(depellist);
+			mapNode.setInheList(inhelist);
+			ResultFactory.getInstance()
+					.createSuccessModelAndView("获取元模型关系成功！", mapNode);
+			return paramIContext.getResponse();
+
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询主图失败");
+		}
+		//return null;
+	}
+
+
+
+}

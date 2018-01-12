@@ -1,0 +1,32 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+
+/**
+ * 
+ * @ClassName: IGatherTempleService
+ *             <p>
+ *             元数据采集模板管理<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:07:20
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IGatherTempleService extends IMetaDataService {
+	/***
+	 * 
+	 * <p>获取默认的模板信息列表
+	 * <br>
+	 * 
+	 * @param param
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年7月29日 下午4:19:53
+	 * @version V1.0
+	 */
+	public <P> IResponse getDefaultTemple(IContext<P> param)
+			throws ServiceException;
+}

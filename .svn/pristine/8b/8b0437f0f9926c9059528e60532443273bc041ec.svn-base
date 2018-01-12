@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       ">
+	<bean id="metaDataBaseRepository"
+		class="com.gilight.dep.metadata.repository.impl.MetaDataBaseRepositoryImpl">
+		<property name="metaDataBaseDao" ref="metaDataBaseDao">
+
+		</property>
+		<property name="baseDao" ref="baseDao">
+
+		</property>
+	</bean>
+	<bean id="metaDataQueryRepository"
+		class="com.gilight.dep.metadata.repository.impl.MetaDataQueryRepositoryImpl">
+		<property name="metaDataQueryDao" ref="metaDataQueryDao">
+
+		</property>
+		<property name="baseDao" ref="baseDao">
+
+		</property>
+	</bean>
+	<bean id="metaDataVersionRepository"
+		class="com.gilight.dep.metadata.repository.impl.MetaDataVersionRepositoryImpl">
+		<property name="metaDataVersionDao" ref="metaDataVersionDao">
+
+		</property>
+		<property name="baseDao" ref="baseDao">
+
+		</property>
+	</bean>
+	<bean id="metaDataViewRepository"
+		class="com.gilight.dep.metadata.repository.impl.MetaDataViewRepositoryImpl">
+		<property name="baseDao" ref="metaDataViewDao">
+
+		</property>
+	</bean>
+	<bean id="metaDataRepository"
+		class="com.gilight.dep.metadata.repository.impl.MetaDataRepositoryImpl">
+		<property name="baseDao" ref="baseDao">
+
+		</property>
+	</bean>
+	<!--元数据分析查询 -->
+	<bean id="analyseExcuteRepository"
+		class="com.gilight.dep.metadata.repository.impl.AnalyseExcuteRepositoryImpl">
+		<property name="analyseExcuteDao" ref="analyseExcuteDao">
+
+		</property>
+		<property name="baseDao" ref="baseDao">
+
+		</property>
+	</bean>
+	<bean id="analyseQueryRepository"
+		class="com.gilight.dep.metadata.repository.impl.AnalyseQueryRepositoryImpl">
+		<property name="analyseQueryDao" ref="analyseQueryDao">
+
+		</property>
+		<property name="baseDao" ref="baseDao">
+
+		</property>
+	</bean>
+	<bean id="dataMapQueryRepository"
+		class="com.gilight.dep.metadata.repository.impl.DataMapQueryRepositoryImpl">
+		<property name="dataMapQueryDao" ref="dataMapQueryDao">
+
+		</property>
+		<property name="baseDao" ref="baseDao">
+
+		</property>
+	</bean>
+	
+	<bean id="systemBackupRepository"
+		class="com.gilight.dep.metadata.repository.impl.SystemBackupRepositoryImpl">
+		<property name="systemBackupDao" ref="systemBackupDao">
+
+		</property>
+		<property name="baseDao" ref="baseDao">
+
+		</property>
+	</bean>
+	
+	<bean id="metaDataMapRepository"
+		class="com.gilight.dep.metadata.repository.impl.MetaDataMapRepositoryImpl">
+		<property name="metaDataMapDao" ref="metaDataMapDao">
+
+		</property>
+		<property name="baseDao" ref="baseDao">
+
+		</property>
+	</bean>
+</beans>

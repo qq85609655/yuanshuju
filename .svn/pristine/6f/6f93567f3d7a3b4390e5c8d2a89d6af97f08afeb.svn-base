@@ -1,0 +1,23 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.service.IQueryService;
+/**
+ * 
+* @ClassName: IGatherExcuteService 
+* <p>元数据采集执行的接口<br>
+* @author wzx
+* @date 2015年7月9日 下午3:09:04
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IGatherExcuteService  extends IMetaDataService,IQueryService{
+    /**
+     * 批量导入元数据组合关系
+     * @param mdid 元数据id
+     * @param compMmId 组合关系元模型id
+     * @param pathFile  文件路径
+     * @throws Exception
+     */
+    public void getherCsv(String mdid,String compMmId,String pathFile) throws Exception ;
+
+}

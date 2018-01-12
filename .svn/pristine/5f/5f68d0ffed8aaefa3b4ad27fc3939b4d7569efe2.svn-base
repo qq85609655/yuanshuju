@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <resourceExtensions />
+    <wildcardResourcePatterns>
+      <entry name="!?*.java" />
+      <entry name="!?*.form" />
+      <entry name="!?*.class" />
+      <entry name="!?*.groovy" />
+      <entry name="!?*.scala" />
+      <entry name="!?*.flex" />
+      <entry name="!?*.kt" />
+      <entry name="!?*.clj" />
+      <entry name="!?*.aj" />
+      <entry name="!?*.xml" />
+      <entry name="?*.xml" />
+      <entry name="?*.js" />
+      <entry name="?*.json" />
+    </wildcardResourcePatterns>
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="dep-metadata-analyzer" />
+        <module name="dep-metadata-common" />
+        <module name="dep-metadata-core" />
+        <module name="dep-metadata-core-webapp" />
+        <module name="dep-metadata-entity" />
+        <module name="dep-metadata-gather-common" />
+        <module name="dep-metadata-gather-dbsource" />
+        <module name="dep-metadata-gather-excel" />
+        <module name="dep-metadata-gather-oa" />
+        <module name="dep-metadata-gather-oaSchema" />
+        <module name="dep-metadata-repository" />
+        <module name="dep-metadata-util" />
+        <module name="dep-metadata-wsservice" />
+        <module name="dep-metamodel-common" />
+        <module name="dep-metamodel-core" />
+        <module name="dep-metamodel-core-webapp" />
+        <module name="dep-metamodel-init" />
+        <module name="gilightframework-common" />
+        <module name="gilightframework-context" />
+        <module name="gilightframework-core" />
+        <module name="gilightframework-dao-db" />
+        <module name="gilightframework-dao-ds" />
+        <module name="gilightframework-dao-netty" />
+        <module name="gilightframework-dao-ws" />
+        <module name="gilightframework-exception" />
+        <module name="gilightframework-web-common" />
+        <module name="gilightframework-web-editor" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="dep-metadata" target="1.7" />
+      <module name="dep-metadata-analyzer" target="1.7" />
+      <module name="dep-metadata-common" target="1.7" />
+      <module name="dep-metadata-core" target="1.7" />
+      <module name="dep-metadata-core-webapp" target="1.7" />
+      <module name="dep-metadata-entity" target="1.7" />
+      <module name="dep-metadata-gather-common" target="1.7" />
+      <module name="dep-metadata-gather-dbsource" target="1.7" />
+      <module name="dep-metadata-gather-excel" target="1.7" />
+      <module name="dep-metadata-gather-oa" target="1.7" />
+      <module name="dep-metadata-gather-oaSchema" target="1.7" />
+      <module name="dep-metadata-repository" target="1.7" />
+      <module name="dep-metadata-util" target="1.7" />
+      <module name="dep-metadata-wsservice" target="1.7" />
+      <module name="dep-metamodel" target="1.7" />
+      <module name="dep-metamodel-common" target="1.7" />
+      <module name="dep-metamodel-core" target="1.7" />
+      <module name="dep-metamodel-core-webapp" target="1.7" />
+      <module name="dep-metamodel-init" target="1.7" />
+      <module name="gilightframework-all" target="1.7" />
+      <module name="gilightframework-common" target="1.7" />
+      <module name="gilightframework-context" target="1.7" />
+      <module name="gilightframework-core" target="1.7" />
+      <module name="gilightframework-dao-db" target="1.7" />
+      <module name="gilightframework-dao-ds" target="1.7" />
+      <module name="gilightframework-dao-netty" target="1.7" />
+      <module name="gilightframework-dao-ws" target="1.7" />
+      <module name="gilightframework-exception" target="1.7" />
+      <module name="gilightframework-parent" target="1.7" />
+      <module name="gilightframework-util" target="1.7" />
+      <module name="gilightframework-web-common" target="1.7" />
+      <module name="gilightframework-web-editor" target="1.7" />
+      <module name="metadata" target="1.7" />
+      <module name="platform-dbschema" target="1.6" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

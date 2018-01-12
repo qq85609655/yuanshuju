@@ -1,0 +1,29 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.service.IQueryService;
+
+/**
+ * 
+ * @ClassName: IMetaDataQueryService
+ *             <p>
+ *             元数据查询，包括元数据树，视图树的查询，元数据的检索等接口<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:07:09
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaDataQueryService extends IQueryService {
+	/**
+	 * 
+	 * 根据条件查询符合实体
+	 * 
+	 * @param context
+	 *            包含查询条件的上下文对象
+	 * @return 包含查询集合的返回对象
+	 * @throws ServiceException
+	 */
+	public IResponse getByScopeImp(IContext context) throws ServiceException;
+}

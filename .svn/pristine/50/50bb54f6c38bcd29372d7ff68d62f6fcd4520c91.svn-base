@@ -1,0 +1,29 @@
+package com.gilight.dep.metadata.dao.impl;
+
+import java.util.List;
+
+import org.hibernate.Query;
+
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IDataMapQueryDao;
+import com.gilight.dep.metadata.entity.MdDependency;
+
+public class DataMapQueryDaoImpl extends BaseDao implements IDataMapQueryDao{
+
+	public DataMapQueryDaoImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public List<IEntity> getMdDependencyByIdlist(List<String> ids)
+			throws DaoException {
+		// TODO Auto-generated method stub
+		String hql="from "+MdDependency.class.getName()+" where fromMdId in (:fromids) and toMdId in (:toids)";
+		Query query = getSession().createQuery(hql);  
+		query.setParameterList("fromids", ids);
+		query.setParameterList("toids", ids);
+		return query.list();
+	}
+
+}

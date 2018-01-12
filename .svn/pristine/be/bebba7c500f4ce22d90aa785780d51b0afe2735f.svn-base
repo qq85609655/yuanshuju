@@ -1,0 +1,88 @@
+package com.gilight.dep.metadata.model;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.ext.model.DepBaseBasicModel;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdView;
+import com.gilight.dep.metadata.entity.MdViewFolder;
+import com.gilight.dep.metadata.message.procuder.MetaViewMessageProducer;
+
+@SuppressWarnings("rawtypes")
+public class MetaViewModel extends DepBaseBasicModel {
+
+	/**
+	 * 子文件夹列表
+	 */
+	private List<MdViewFolder> folderList = null;
+	/***
+     * 文件夹或者视图中的元数据列表
+     */
+	private List<MdMetadata> metaDataList = null;
+
+	public List<MdMetadata> getMetaDataList() {
+		return metaDataList;
+	}
+
+	public void setMetaDataList(List<MdMetadata> metaDataList) {
+		this.metaDataList = metaDataList;
+	}
+
+	public List<MdViewFolder> getFolderList() throws ModelException {
+		return folderList;
+	}
+
+	public void setFolderList(List<MdViewFolder> folderList) {
+		this.folderList = folderList;
+	}
+
+	@Override
+	public String getModelName() {
+		return MetaViewModel.class.getName();
+	}
+
+	@Override
+	public Class getMessageProcuderClass() {
+		return MetaViewMessageProducer.class;
+	}
+
+	@Override
+	public void clearCache() {
+		folderList = null;
+	}
+
+	@Override
+	protected IResult createAfter(IContext context, IResult result)
+			throws ModelException {
+		clearCache();
+		return this.getKeyResult();
+	}
+
+	@Override
+	protected IResult updateAfter(IContext context, IResult result)
+			throws ModelException {
+		this.clearCache();
+		return this.getKeyResult();
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext context, IResult result)
+			throws ModelException {
+		return this.getKeyResult();
+	}
+
+	@Override
+	protected IResult getAfter(IContext context, IResult result)
+			throws ModelException {
+		return result;
+	}
+
+	@Override
+	public Class<MdView> getModelEntityClass() {
+		return MdView.class;
+	}
+
+}

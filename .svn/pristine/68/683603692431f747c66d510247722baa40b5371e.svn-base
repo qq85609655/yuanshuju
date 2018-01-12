@@ -1,0 +1,19 @@
+package com.gilight.dep.metadata.dao.impl;
+
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IMetaModelQueryDao;
+import com.gilight.dep.metadata.entity.MmComposition;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+
+import java.util.List;
+
+public class MetaModelQueryDaoImpl  extends BaseDao implements IMetaModelQueryDao{
+
+    @Override
+    public <T> List<IEntity> findCompRootModel() throws DaoException {
+        String hql="from "+ MmMetamodel.class.getName()+ " where id not in (select toMmId from "+ MmComposition.class.getName()+" ) ";
+
+        return this.findByHQL(hql);
+    }
+}

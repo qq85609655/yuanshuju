@@ -1,0 +1,67 @@
+/**
+ * 
+* @ClassName: ViewRequestData 
+* <p>TODO<br>
+* @author Rao JunJun
+* @date 2015-7-16 上午11:16:36
+* @version V1.0
+* @since JDK 1.6
+ */
+package com.gilight.dep.metadata.web.request;
+
+public class ViewRequestData extends BaseRequestData {
+
+	/**
+	 * 参数id
+	 */
+	private String id;
+	/**
+	 * 视图类型（"SYSTEM" or "CUSTOM"）
+	 */
+	private String viewType;
+	/**
+	 * 视图id
+	 */
+	private String viewId;
+	/**
+	 * 文件夹的父id(视图id或父文件夹id)
+	 */
+	private String parentId;
+	
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getViewType() {
+		return viewType;
+	}
+
+	public void setViewType(String viewType) {
+		this.viewType = viewType;
+	}
+
+	public String getViewId() {
+		return viewId;
+	}
+
+	public void setViewId(String viewId) {
+		this.viewId = viewId;
+	}
+
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
+	
+	
+	
+}

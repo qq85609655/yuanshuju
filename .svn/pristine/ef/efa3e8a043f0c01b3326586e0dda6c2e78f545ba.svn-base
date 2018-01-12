@@ -1,0 +1,75 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.service.IQueryService;
+
+/**
+ * 
+ * @ClassName: IAnalyseQueryService
+ *             <p>
+ *             元数据分析结果查询，包括查询影响，血缘，全连分析等服务<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:10:51
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IAnalyseQueryService extends IMetaDataService, IQueryService {
+	/**
+	 * 影响分析
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年8月5日 下午5:04:42
+	 * @version V1.0
+	 */
+	public IResponse getImpactAnalyse(IContext context) throws ServiceException;
+
+	/**
+	 * 查询血统分析
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年8月5日 下午5:04:50
+	 * @version V1.0
+	 */
+	public IResponse getBloodAnalyse(IContext context) throws ServiceException;
+
+	/**
+	 * 全链分析
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年8月5日 下午5:05:10
+	 * @version V1.0
+	 */
+	public IResponse getAllAnalyse(IContext context) throws ServiceException;
+
+	/**
+	 * 查询关联度分析
+	 * <p>
+	 * <br>
+	 * 
+	 * @param context
+	 *            上下文，参数是idparameters，id是一个元数据
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年8月6日 下午2:50:56
+	 * @version V1.0
+	 */
+	public IResponse getRelationData(IContext context) throws ServiceException;
+}

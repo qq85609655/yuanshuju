@@ -1,0 +1,61 @@
+package com.gilight.dep.metadata.dao.impl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.hibernate.Query;
+
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IGatherJobDao;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdMetadataImp;
+import com.gilight.dep.metadata.entity.MmComposition;
+import com.gilight.dep.metadata.util.AutoCopyList;
+
+public class GatherJobDaoImpl extends BaseDao implements IGatherJobDao{
+
+	public GatherJobDaoImpl() {
+		// TODO Auto-generated constructor stub
+	}
+	@Override
+	public List<MmComposition> getMmComposition(String mmid,String tommid) {
+		MmComposition mmcomp = new MmComposition();
+		mmcomp.setFromMmId(mmid);
+		mmcomp.setToMmId(tommid);
+		mmcomp.setUpdateDate(null);
+		List<IEntity> list=this.findByEntity(mmcomp);
+		//String hql="from "+MmComposition.class.getName()+" where fromMmId=? and toMmId=?";
+		//Query query=this.getSession().createQuery(hql);
+		//query.setString(0, mmid);
+		//query.setString(1, tommid);
+		//List<IEntity> list=query.list();
+		
+		//MmComposition[] mcs= list.toArray(new MmComposition[list.size()]);
+		return AutoCopyList.getObjList(list, MmComposition.class);
+	}
+	@Override
+	public List<MdMetadataImp> getMetaDataImpByCode(String code, String jobid) {
+		// TODO Auto-generated method stub
+		String hql="from "+MdMetadataImp.class.getName()+" where mdCode=? and jobTaskId=?";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, code);
+		query.setString(1, jobid);
+		List<IEntity> list=query.list();
+		MdMetadataImp[] mdimp = list.toArray(new MdMetadataImp[list.size()]);
+		
+		return  Arrays.asList(mdimp);
+	}
+	@Override
+	public List<IEntity> getMdComposition(String fromid, String tocode) {
+		// TODO Auto-generated method stub
+		String hql="from "+MdComposition.class.getName()+" where fromMdId=? and toMdCode=?";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, fromid);
+		query.setString(1, tocode);
+		List<IEntity> list=query.list();
+		
+		
+		return  list;
+	}
+}

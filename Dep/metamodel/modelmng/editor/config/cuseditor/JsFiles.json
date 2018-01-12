@@ -1,0 +1,54 @@
+{
+	"files" : [
+			"Dep/framework/editor/i18n/wording_zh_CN.js",
+			"Dep/framework/editor/util/Msg.js",
+			
+			"Dep/framework/editor/figure/BaseNode.js",
+			"Dep/framework/editor/figure/BaseConnection.js",
+			"Dep/framework/editor/figure/TestFigureStatus.js",
+			"Dep/framework/editor/figure/NoBussConnection.js",
+			
+			"Dep/framework/editor/Event.js",
+			"Dep/framework/editor/command/Command.js",
+	   		"Dep/framework/editor/base/EventSource.js",
+	   		"Dep/framework/editor/base/BasePluginContainer.js",
+			"Dep/framework/editor/base/Editor.js",
+			"Dep/framework/editor/base/Clipboard.js",
+			"Dep/framework/editor/base/CanvasOutline.js",
+			"Dep/framework/editor/base/Layer.js",
+			
+			"Dep/framework/editor/model/BaseModel.js",
+			"Dep/framework/editor/model/BaseFigureModel.js",
+			"Dep/framework/editor/model/ModelData.js",
+			"Dep/framework/editor/model/ModelView.js",
+			"Dep/framework/editor/model/proxy/BaseAjaxProxy.js",
+			"Dep/framework/editor/model/proxy/FigureAjaxProxy.js",
+			
+			"Dep/framework/editor/model/CommonStoreModel.js",
+			"Dep/framework/editor/model/store/FigureStore.js",
+			
+			"Dep/framework/editor/manager/BaseManager.js",
+			"Dep/framework/editor/manager/ContainerManager.js",
+			"Dep/framework/editor/manager/DataManager.js",
+			"Dep/framework/editor/manager/ModelManager.js",
+			"Dep/framework/editor/manager/PluginManager.js",
+			"Dep/framework/editor/manager/DataChangeManager.js",
+			
+			"Dep/framework/editor/view/plugin/GridDragDrop.js",	
+			"Dep/framework/editor/view/BussListGrid.js",
+			"Dep/framework/editor/view/BussPanel.js",
+			"Dep/framework/editor/view/EditorView.js",
+			"Dep/framework/editor/view/ToolBox.js",
+			"Dep/framework/editor/view/ToolBoxGrid.js",
+			"Dep/framework/editor/view/Img.js",
+					
+			"Dep/framework/editor/view/LayerListGrid.js",
+			"Dep/framework/editor/view/LayerPanel.js",
+			
+			"Dep/framework/editor/view/properties/CellActionsPlugin.js",
+			
+			"Dep/framework/editor/view/PropertiesGrid.js",		
+			"Dep/framework/editor/view/CanvasViewPort.js",
+			
+			]
+}

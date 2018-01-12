@@ -1,0 +1,36 @@
+package com.gilight.dep.metadata.web.util;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+public class SessionManager {
+	private static Map<String, HttpSession> sessionMap = new HashMap();
+	  
+	public static void updateSession(String key, HttpSession session)
+	{
+	  HttpSession httpSession = getSession(key);
+	  if ((httpSession != null) && 
+	    (!session.getId().equalsIgnoreCase(httpSession.getId())))
+	  {
+	    httpSession.removeAttribute("SESSION_CURRENT_USER");
+	    httpSession.setAttribute("FORCE_LOGOUT", Boolean.valueOf(true));
+	  }
+	    sessionMap.put(key, session);
+	}
+	  
+	public static HttpSession getSession(String key)
+	{
+	  return (HttpSession)sessionMap.get(key);
+	}
+	  
+	public static void removeSession(String key)
+	{
+	  HttpSession httpSession = getSession(key);
+	  if (httpSession == null) {
+	    return;
+	  }
+	  sessionMap.remove(key);
+	}
+}

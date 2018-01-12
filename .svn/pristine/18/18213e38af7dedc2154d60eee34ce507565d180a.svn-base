@@ -1,0 +1,122 @@
+package com.gilight.dep.metadata.scope;
+
+import java.math.BigDecimal;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MdGatherJob;
+
+@SuppressWarnings("unchecked")
+public class GatherJobScope extends BaseHbiernateScope {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 任务类型
+	 */
+	private String jobType;
+	/**
+	 * 任务名称
+	 */
+	private String jobName;
+	/**
+	 * 数据源
+	 */
+	private String datasource;
+	/**
+	 * 数据策略
+	 */
+	private String dbpolicy;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 状态
+	 */
+	private BigDecimal status;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate;
+
+	public String getJobType() {
+		return jobType;
+	}
+
+	public void setJobType(String jobType) {
+		this.jobType = jobType;
+	}
+
+	public String getJobName() {
+		return jobName;
+	}
+
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
+	}
+
+	public String getDatasource() {
+		return datasource;
+	}
+
+	public void setDatasource(String datasource) {
+		this.datasource = datasource;
+	}
+
+	public String getDbpolicy() {
+		return dbpolicy;
+	}
+
+	public void setDbpolicy(String dbpolicy) {
+		this.dbpolicy = dbpolicy;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public BigDecimal getStatus() {
+		return status;
+	}
+
+	public void setStatus(BigDecimal status) {
+		this.status = status;
+	}
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	@Override
+	public Class getClazz() {
+		// TODO Auto-generated method stub
+		return MdGatherJob.class;
+	}
+
+	@Override
+	public String getDefaultOrderBy(String obj) {
+		return " order by " + obj + ".id";
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+
+		StringBuffer sql = new StringBuffer();
+		if (!StringUtil.isEmpty(this.datasource)) {
+			sql.append(" and ").append(obj).append(".datasource = ? ");
+			this.paraList.add(this.datasource);
+		}
+		return sql;
+	}
+
+}

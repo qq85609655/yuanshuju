@@ -1,0 +1,578 @@
+package com.gilight.dep.metamodel.service.impl;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.EntityParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.ViewParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.ext.service.DepBaseServiceImpl;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.common.UUIDGenerator;
+import com.gilight.dep.metadata.entity.MmAttribute;
+import com.gilight.dep.metadata.entity.MmInherit;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.enums.MetaModelStatus;
+import com.gilight.dep.metadata.repository.IMetaModelAttrRepository;
+import com.gilight.dep.metadata.repository.IMetaModelBasicRepository;
+import com.gilight.dep.metadata.repository.IMetaModelInheRepository;
+import com.gilight.dep.metadata.util.AutoFieldTypeMapp;
+import com.gilight.dep.metadata.util.AutoSetCode;
+import com.gilight.dep.metadata.util.CustomizedPropertySpringConfigurer;
+import com.gilight.dep.metadata.view.GatherJobFileView;
+import com.gilight.dep.metadata.view.MetaModelAttView;
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelView;
+import com.gilight.dep.metamodel.service.IMetaModelBasicService;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * 元模型基本操作
+ * 
+ * @ClassName: MetaModelBasicServiceImpl
+ *             <p>
+ *             TODO<br>
+ * @author wzx
+ * @date 2015年7月13日 下午4:32:07
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetaModelBasicServiceImpl extends DepBaseServiceImpl implements IMetaModelBasicService {
+	private static final Logger logger = Logger
+			.getLogger(MetaModelBasicServiceImpl.class);
+
+	@Autowired
+	private IMetaModelInheRepository metaModelInheRepository;
+
+	private IMetaModelBasicRepository metaModelBasicRepository;
+
+	private IMetaModelAttrRepository metaModelAttrRepository;
+
+	public IMetaModelBasicRepository getMetaModelBasicRepository() {
+		return metaModelBasicRepository;
+	}
+
+	public void setMetaModelBasicRepository(
+			IMetaModelBasicRepository metaModelBasicRepository) {
+		this.metaModelBasicRepository = metaModelBasicRepository;
+	}
+
+	public IMetaModelAttrRepository getMetaModelAttrRepository() {
+		return metaModelAttrRepository;
+	}
+
+	public void setMetaModelAttrRepository(
+			IMetaModelAttrRepository metaModelAttrRepository) {
+		this.metaModelAttrRepository = metaModelAttrRepository;
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		// AutoSetCode.autoCode( MmMetamodel.class,
+		// "mme",MetaModelBasicView.class,"mmv");
+
+		AutoSetCode.autoCode(MmAttribute.class, "matt", MetaModelAttView.class,
+				"metaModelAttView");
+	}
+
+	
+	
+	/*
+	 * (非 Javadoc) <p>Description: </p>
+	 * 
+	 * @param paramIContext
+	 * 
+	 * @return
+	 * 
+	 * @throws ServiceException
+	 * 
+	 * @see
+	 * com.gilight.dep.framework.core.service.IBasicService#update(com.gilight
+	 * .dep.framework.core.context.base.IContext)
+	 */
+	@Override
+	public IResponse update(IContext paramIContext) throws ServiceException {
+		try {
+			/*// TODO Auto-generated method stub
+			ViewParameters vp = (ViewParameters) paramIContext.getParameters();
+			MetaModelView mmv = (MetaModelView) vp.getView();
+
+			// IContext context=this.getDefaultContext(paramIContext);
+			MmMetamodel mme = new MmMetamodel();
+			mme.setId(mmv.getId());
+			mme.setMmCode(mmv.getCode());
+			mme.setMmName(mmv.getName());
+			mme.setMmPackageid(mmv.getPackageid());
+			mme.setIsabstract(AutoFieldTypeMapp.autoTypeMapp(mmv.isIsabstract()));
+			mme.setGraphPig(mmv.getGraphSvg());
+			// mme.setStatus(mmv.getStatus());
+			mme.setSysver(mmv.getSysver());
+			mme.setUserver(mmv.getUserver());
+			mme.setStatus(MetaModelStatus.neworedit);
+			mme.setIssys(0);
+			if ("1".equals(mmv.getIssys()) || "true".equals(mmv.getIssys())) {
+				mme.setIssys(1);
+			}
+			mme.setRemark(mmv.getRemark());
+
+			List<MetaModelAttView> attrList = mmv.getAttList();
+			//删除现有属性
+			MmAttribute oldmatt = new MmAttribute();
+			oldmatt.setMmId(mme.getId());
+
+
+			//添加新属性
+			if (attrList != null) {
+				for (MetaModelAttView metaModelAttView : attrList) {
+					MmAttribute matt = new MmAttribute();
+					matt.setId(metaModelAttView.getId());
+					matt.setAttCode(metaModelAttView.getCode());
+					matt.setAttName(metaModelAttView.getName());
+					matt.setMmId(mme.getId());
+					matt.setInheritFlag(AutoFieldTypeMapp
+							.autoTypeMapp(metaModelAttView.isIsinherit()));
+					matt.setIsread(AutoFieldTypeMapp.autoTypeMapp(metaModelAttView
+							.isIsread()));
+					matt.setIsnull(AutoFieldTypeMapp.autoTypeMapp(metaModelAttView
+							.isIsnull()));
+					// matt.setDatatypeId();
+					// matt.setDisplayType();
+					// matt.setEnumId();
+					matt.setAttLength(metaModelAttView.getLength());
+					matt.setAttMax(metaModelAttView.getMax());
+					matt.setAttMin(metaModelAttView.getLength());
+					matt.setIsshow(AutoFieldTypeMapp.autoTypeMapp(metaModelAttView
+							.isIsshow()));
+					matt.setIskey(AutoFieldTypeMapp.autoTypeMapp(metaModelAttView
+							.isIskey()));
+					matt.setRemark(metaModelAttView.getRemark());
+					matt.setDisplayOrder(metaModelAttView.getDisplayorder() + "");
+					IContext context = ContextFactoryImpl.getInstance()
+							.createContextWithEntity(paramIContext, matt);
+					metaModelAttrRepository.create(context);
+				}
+			}*/
+			/*IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithEntity(paramIContext, mme);*/
+			return metaModelBasicRepository.update(paramIContext);
+		} catch (GilightException e) {
+			throw new ServiceException(e);
+		} catch (Exception e) {
+			throw new ServiceException(e);
+
+		}
+	}
+
+	@Override
+	protected IResult updateAfter(IContext iContext, IResult iResult) throws ServiceException {
+		return null;
+	}
+
+	@Override
+	protected void initModel(IContext iContext, IModel iModel) throws ServiceException {
+
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description: </p>
+	 *
+	 * @param paramIContext
+	 *
+	 * @return
+	 *
+	 * @throws ServiceException
+	 *
+	 * @see
+	 * com.gilight.dep.framework.core.service.IBasicService#delete(com.gilight
+	 * .dep.framework.core.context.base.IContext)
+	 */
+	@Override
+	public IResponse delete(IContext paramIContext) throws ServiceException {
+		try {
+			// TODO Auto-generated method stub
+			//IDParameters isp = (IDParameters) paramIContext.getParameters();
+			//String id = isp.getId();
+
+			//MmMetamodel mme= (MmMetamodel) metaModelBasicRepository.getById(id);
+			//ContextFactoryImpl.getInstance().createContextWithEntity(mme);
+			//IContext context=ContextFactoryImpl.getInstance().createDifferResponseContextWithEntity(mme);
+
+
+			return metaModelBasicRepository.delete(paramIContext);
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ServiceException(e);
+
+		}
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext iContext, IResult iResult) throws ServiceException {
+		return null;
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description: </p>
+	 * 
+	 * @param paramIContext
+	 * 
+	 * @return
+	 * 
+	 * @throws ServiceException
+	 * 
+	 * @see
+	 * com.gilight.dep.framework.core.service.IBasicService#create(com.gilight
+	 * .dep.framework.core.context.base.IContext)
+	 */
+	@Override
+	public IResponse create(IContext paramIContext) throws ServiceException {
+		try {
+			// TODO Auto-generated method stub
+			// IServiceParameter isp = (IServiceParameter)
+			// paramIContext.getParameters();
+			ViewParameters vp = (ViewParameters) paramIContext.getParameters();
+			EntityParameters<IEntity> ep = new EntityParameters<IEntity>();
+			MetaModelView mmv = (MetaModelView) vp.getView();
+			//add by hww 2015年12月18日 17:36
+			if (mmv.getId() == null || mmv.getId().equals("")) {
+				mmv.setId(UUID.randomUUID().toString());
+			}
+
+			MmMetamodel mme = new MmMetamodel();
+			mme.setId(mmv.getId());
+			mme.setMmCode(mmv.getCode());
+			mme.setMmName(mmv.getName());
+			mme.setMmPackageid(mmv.getPackageid());
+			mme.setIsabstract(AutoFieldTypeMapp.autoTypeMapp(mmv.isIsabstract()));
+			mme.setGraphPig(mmv.getGraphSvg());
+			// mme.setStatus(mmv.getStatus());
+			mme.setSysver(mmv.getSysver());
+			mme.setUserver(mmv.getUserver());
+			mme.setStatus(MetaModelStatus.neworedit);
+
+			// mme.setIsuse();
+			/*
+			 * if(null==mmv.getIssys()){ mme.setIssys(0); }
+			 */
+			mme.setIssys(0);
+			if ("1".equals(mmv.getIssys()) || "true".equals(mmv.getIssys())) {
+				mme.setIssys(1);
+			}
+			mme.setRemark(mmv.getRemark());
+
+			ep.setEntity(mme);
+			paramIContext.setParameters(ep);
+
+			List<MetaModelAttView> attrList = mmv.getAttList();
+			if (attrList != null) {
+				for (MetaModelAttView metaModelAttView : attrList) {
+					MmAttribute matt = new MmAttribute();
+					matt.setId(metaModelAttView.getId());
+					matt.setAttCode(metaModelAttView.getCode());
+					matt.setAttName(metaModelAttView.getName());
+					matt.setMmId(mme.getId());
+					matt.setInheritFlag(AutoFieldTypeMapp
+							.autoTypeMapp(metaModelAttView.isIsinherit()));
+					matt.setIsread(AutoFieldTypeMapp
+							.autoTypeMapp(metaModelAttView.isIsread()));
+					matt.setIsnull(AutoFieldTypeMapp
+							.autoTypeMapp(metaModelAttView.isIsnull()));
+					matt.setDatatypeId(metaModelAttView.getDatatypeId());
+					matt.setDisplayType(metaModelAttView.getDisplayType());
+					matt.setEnumId(metaModelAttView.getEnumId());
+					matt.setAttLength(metaModelAttView.getLength());
+					matt.setAttMax(metaModelAttView.getMax());
+					matt.setAttMin(metaModelAttView.getMin());
+					matt.setIsshow(AutoFieldTypeMapp
+							.autoTypeMapp(metaModelAttView.isIsshow()));
+					matt.setIskey(AutoFieldTypeMapp
+							.autoTypeMapp(metaModelAttView.isIskey()));
+					matt.setRemark(metaModelAttView.getRemark());
+					matt.setDisplayOrder(metaModelAttView.getDisplayorder()
+							+ "");
+					IContext context = ContextFactoryImpl.getInstance()
+							.createContextWithEntity(paramIContext, matt);
+					metaModelAttrRepository.create(context);
+				}
+			}
+
+			//插入继承来的属性
+			String parentid=mmv.getParentId();
+			if(parentid!=null){
+				List<IEntity> attriblist=metaModelBasicRepository.findAttribByMmid(parentid);
+				if (attriblist!=null){
+					for (IEntity entity:attriblist) {
+						String code=((MmAttribute)entity).getAttCode();
+						String name=((MmAttribute)entity).getAttName();
+						boolean isrepetition=false;
+						if(attrList!=null){
+							for (MetaModelAttView metaModelAttView : attrList)  {
+								if(code!=null&&code.equals(metaModelAttView.getCode())){
+									isrepetition=true;
+									break;
+								}
+								if(name!=null&&name.equals(metaModelAttView.getName())){
+									isrepetition=true;
+									break;
+								}
+							}
+						}
+
+						if (isrepetition){
+							continue;
+						}
+						((MmAttribute)entity).setMmId(mme.getId());
+						((MmAttribute)entity).setId(UUIDGenerator.getUUID());
+
+						IContext context = ContextFactoryImpl.getInstance()
+								.createContextWithEntity(paramIContext, entity);
+						metaModelAttrRepository.create(context);
+					}
+				}
+			}
+
+
+			//插入继承关系
+			if(parentid!=null){
+				MmInherit mmein = new MmInherit();
+				mmein.setId(UUIDGenerator.getUUID());
+				mmein.setParentId(parentid);
+				mmein.setMmId(mme.getId());
+				IContext context = ContextFactoryImpl.getInstance()
+						.createContextWithEntity(paramIContext, mmein);
+				metaModelInheRepository.create(context);
+			}
+
+
+
+			// mme.setGraphPig(graphPig);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithEntity(paramIContext, mme);
+			return metaModelBasicRepository.create(context);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new ServiceException(e);
+
+		}
+	}
+
+	@Override
+	protected IResult createAfter(IContext iContext, IResult iResult) throws ServiceException {
+		return null;
+	}
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws ServiceException {
+		try {
+			// TODO Auto-generated method stub
+			/*IContext context;
+			IDParameters ids = (IDParameters) paramIContext.getParameters();
+
+			context = ContextFactoryImpl.getInstance().createContextWithParams(
+					paramIContext, ids);*/
+			// 设置回调
+			paramIContext.getResponse().regiestResultHandler(
+					new IResultHandler<MmMetamodel>() {
+						@Override
+						public IResult<Object> handle(IContext context,
+								IResult<MmMetamodel> result) throws Exception {
+
+							/*IContext paramIContext = (IContext) metaModelBasicRepository
+									.getById(context);*/
+							/*MmMetamodel mme = (MmMetamodel) context
+									.getResponse().getResult();*/
+							MmMetamodel mme =(MmMetamodel)result.getResult();
+							MetaModelBasicView mmv = new MetaModelBasicView();
+							mmv.setId(mme.getId());
+							mmv.setName(mme.getMmName());
+							mmv.setCode(mme.getMmCode());
+							if (null == mme.getIsabstract()) {
+								mmv.setIsabstract(false);
+							} else if ("true".equals(mme.getIsabstract())
+									|| "1".equals(mme.getIsabstract())) {
+								mmv.setIsabstract(true);
+							} else {
+								mmv.setIsabstract(false);
+							}
+
+							mmv.setGraphSvg(mme.getGraphPig());
+							mmv.setStatus(mme.getStatus());
+							mmv.setSysver(mme.getSysver());
+							mmv.setUserver(mme.getUserver());
+							mmv.setIssys(mme.getIssys());
+							mmv.setRemark(mme.getRemark());
+							mmv.setPackageid(mme.getMmPackageid());
+							// mmv.setAttList(attList);
+							return ResultFactory.getInstance()
+									.createSuccessResult(mmv);
+						}
+					});
+			// return context.getResponse();
+			return metaModelBasicRepository.getById(paramIContext);
+		} catch (GilightException e) {
+			logger.error(e);
+			e.printStackTrace();
+			throw new ServiceException("查询元模型失败!");
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+			throw new ServiceException("查询元模型失败!");
+		}
+
+	}
+
+	@Override
+	protected IResult getByIdAfter(IContext iContext, IResult iResult) throws ServiceException {
+		return null;
+	}
+
+	@Override
+	protected Class getDefaultModelClass() throws ServiceException {
+		return null;
+	}
+
+
+	@Override
+	public IResponse publishVer(IContext paramIContext) throws ServiceException {
+		try {
+			metaModelBasicRepository.publishVer(paramIContext);
+			return paramIContext.getResponse();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new  ServiceException("元模型发布失败!");
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new  ServiceException("元模型发布失败!");
+		}
+	}
+	
+	@Override
+	public IResponse repealPublish(IContext paramIContext) throws ServiceException {
+		try {
+			metaModelBasicRepository.repealPublish(paramIContext);
+			return paramIContext.getResponse();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new  ServiceException("元模型撤销失败!");
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new  ServiceException("元模型撤销失败!");
+		}
+	}
+
+	@Override
+	protected IResult getByScopeAfter(IContext iContext, IResult iResult) throws ServiceException {
+		return null;
+	}
+	@Override
+	public IResponse createAttrib(IContext paramIContext) throws ServiceException{
+
+		try {
+			return metaModelAttrRepository.create(paramIContext);
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("创建属性失败");
+		}
+	}
+	@Override
+	public IResponse delAttrib(IContext paramIContext) throws ServiceException{
+		try {
+			return metaModelAttrRepository.delete(paramIContext);
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("创建属性失败");
+		}
+	}
+	@Override
+	public IResponse upLoad(IContext context) throws ServiceException {
+		try {
+			String jdFilePath = "";
+			String webappImgPath = "/Dep/metamodel/modelmng/editor/img/";
+			GatherJobFileView view = (GatherJobFileView) this.getViewParameter(context);
+			MultipartFile file = view.getFile();
+			
+			String prefix = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));//文件前缀名
+			String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));//后缀名
+			// 判断文件是否存在
+			if (!file.isEmpty()) {
+				String savepath = (String) CustomizedPropertySpringConfigurer.getContextProperty("file.uploadpath");
+				if (savepath == null || "".equals(savepath.trim())) {
+					savepath = "C:/";
+				}
+				/*
+				 * 获取Java类编译后的class文件实际部署绝对路径
+				 * imgFilePath = MetaModelBasicServiceImpl.class.getResource("/").getFile().toString();
+				 */
+				/*
+				 * 获取tomcat的bin目录的绝对路径的方法是：
+				 * String abspath = new File("").getAbsolutePath();
+				 */
+				
+				String rootPath = MetaModelBasicServiceImpl.class.getResource("/").getFile().toString();
+				for(int i=0; i<3; i++) {
+					int a = 0;
+					if(i==0) {
+						a = 1;
+					}else {
+						a = 0;
+					}
+					rootPath = rootPath.substring(a, rootPath.lastIndexOf("/"));
+				}
+				System.out.println("实际项目部署成功后的绝对根路径rootPath = "+rootPath);
+				jdFilePath = rootPath + webappImgPath;
+				System.out.println("图标文件上传到服务器上存储的完整路径如下:");
+				System.out.println(jdFilePath);
+				
+				String newFileName = jdFilePath + prefix + suffix;
+				createAndWrite(jdFilePath, newFileName, file); // 创建新文件
+				
+				context.getResponse().setResult(
+						ResultFactory.getInstance().createSuccessModelAndView(
+								"上传成功", null));
+				return context.getResponse();
+			} else {
+				throw new ServiceException("导入图标文件失败!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ServiceException("导入图标文件失败!", e);
+		}
+	}
+
+	private void createAndWrite(String jdFilePath, String newFileName,
+			MultipartFile file) throws ServiceException {
+		try {
+			File logoSaveFile = new File(jdFilePath);
+			if (!logoSaveFile.exists()) {
+				logoSaveFile.mkdirs();
+			}
+			File saveFile = new File(newFileName);
+			file.transferTo(saveFile);
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+			throw new ServiceException("导入图标文件失败!", e);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ServiceException("导入图标文件失败!", e);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ServiceException("导入图标文件失败!", e);
+		}
+	}
+}

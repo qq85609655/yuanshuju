@@ -1,0 +1,11 @@
+package com.gilight.dep.metadata.dao.impl;
+
+import com.gilight.dep.metadata.dao.IMetaDataViewDao;
+
+public class MetaDataViewDaoImpl extends BaseDao implements IMetaDataViewDao{
+
+	public MetaDataViewDaoImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

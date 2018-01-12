@@ -1,0 +1,113 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+public class MappDepeView  implements IView {
+    String sourceId;
+    String targetId;
+    String sourceCode;
+    String targetCode;
+    String sourceName;
+    String targetName;
+    String mappId;
+    String mappCode;
+    String mappName;
+    String mappTypeName;
+    String mappTypeId;
+
+    public String getMappTypeId() {
+        return mappTypeId;
+    }
+
+    public void setMappTypeId(String mappTypeId) {
+        this.mappTypeId = mappTypeId;
+    }
+
+    public String getMappTypeName() {
+        return mappTypeName;
+    }
+
+    public void setMappTypeName(String mappTypeName) {
+        this.mappTypeName = mappTypeName;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public String getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(String targetId) {
+        this.targetId = targetId;
+    }
+
+    public String getSourceCode() {
+        return sourceCode;
+    }
+
+    public void setSourceCode(String sourceCode) {
+        this.sourceCode = sourceCode;
+    }
+
+    public String getTargetCode() {
+        return targetCode;
+    }
+
+    public void setTargetCode(String targetCode) {
+        this.targetCode = targetCode;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+
+    public String getTargetName() {
+        return targetName;
+    }
+
+    public void setTargetName(String targetName) {
+        this.targetName = targetName;
+    }
+
+    public String getMappId() {
+        return mappId;
+    }
+
+    public void setMappId(String mappId) {
+        this.mappId = mappId;
+    }
+
+    public String getMappCode() {
+        return mappCode;
+    }
+
+    public void setMappCode(String mappCode) {
+        this.mappCode = mappCode;
+    }
+
+    public String getMappName() {
+        return mappName;
+    }
+
+    public void setMappName(String mappName) {
+        this.mappName = mappName;
+    }
+}

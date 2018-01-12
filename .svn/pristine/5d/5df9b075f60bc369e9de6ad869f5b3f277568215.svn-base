@@ -1,0 +1,64 @@
+package com.gilight.dep.metadata.web.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.gilight.dep.framework.core.context.response.result.ModelAndViewResult;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.service.ISystemBackupService;
+import com.gilight.dep.metadata.view.MetaDataBackupTimeView;
+import com.gilight.dep.metadata.web.response.ResultCode;
+
+
+/**
+ * 系统备份控制类
+ *
+ */
+@RequestMapping("/systemBackup")
+public class SystemBackupController extends MetadataBaseController{
+	
+	private ISystemBackupService systemBackupService;
+	public ISystemBackupService getSystemBackupService() {
+		return systemBackupService;
+	}
+	public void setSystemBackupService(ISystemBackupService systemBackupService) {
+		this.systemBackupService = systemBackupService;
+	}
+	/**
+	 * 接收前台系统备份时间
+	 * @param json
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/start", method = RequestMethod.POST)
+	public @ResponseBody
+	Object start(@RequestParam String backupTime,@RequestParam String period) throws Exception {
+		if(!StringUtil.isEmpty(backupTime) && !StringUtil.isEmpty(period)){
+			System.out.println("更新时间的表达式每"+period+" : " + backupTime);
+			//保存更新时间
+			systemBackupService.saveBackupTime(backupTime,period);
+		}
+		return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS, "修改当前系统备份时间成功",null);
+	}
+	
+	/**
+	 * 返回给前台当前系统备份时间
+	 * @throws Exception 
+	 */
+	@RequestMapping(value = "/current", method = RequestMethod.GET)
+	public @ResponseBody
+	Object current() throws Exception{
+		MetaDataBackupTimeView bkView = systemBackupService.findCurrent();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("period", bkView.getPeriod());
+		map.put("backupTime", bkView.getCronExpression());
+		return new ModelAndViewResult(
+	               ResultCode.RESULT_CODE_SUCCESS, "获取当前系统备份时间成功",map);
+	}
+
+}

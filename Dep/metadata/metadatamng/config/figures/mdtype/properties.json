@@ -1,0 +1,15 @@
+{
+    "details": [
+        {
+            "name": "代码",
+            "propertiesName": "mdCode",
+            "xtype": "textField"
+        },
+        {
+            "name": "分类模型",
+            "propertiesName": "mdName",
+            "description": "分类名称",
+            "xtype": "textField"
+        }
+    ]
+}

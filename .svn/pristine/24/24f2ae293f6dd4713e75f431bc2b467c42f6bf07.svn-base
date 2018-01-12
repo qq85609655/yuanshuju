@@ -1,0 +1,261 @@
+/**   
+ * @Title: AppContextJdonTest.java  
+ * @Description: TODO 
+ * @author zps   
+ * @date 2014年4月21日 下午2:32:00
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.test.jdon;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.WebApplicationContext;
+
+import com.jdon.container.ContainerWrapper;
+import com.jdon.container.RegistryDirectory;
+import com.jdon.container.finder.ContainerFinder;
+import com.jdon.container.finder.ContainerFinderImp;
+import com.jdon.controller.context.AppContextWrapper;
+import com.jdon.controller.context.web.ServletContextWrapper;
+import com.jdon.util.ClassUtil;
+/**
+ * <bean id="appContextJdon" class="com.jdon.spring.AppContextJdon"></bean>
+ * 
+ * @author banq
+ * 
+ */
+public class AppContextJdonTest implements ApplicationContextAware,
+		BeanDefinitionRegistryPostProcessor, ApplicationListener {
+	/**
+	 * 记录日志
+	 */
+	private final static Logger logger = Logger.getLogger(AppContextJdonTest.class);
+	/**
+	 * Servlet 上下文。
+	 */
+	private ServletContext servletContext = null;
+	/**
+	 * 程序上下文.
+	 */
+	private ApplicationContext applicationContext = null;
+	/**
+	 * spring 可配置bean 工厂。
+	 */
+	private ConfigurableListableBeanFactory factory = null;
+	/**
+	 * 需要注入到JDON 中的组件。
+	 */
+	private Map<String, Object> neededJdonComponents = new HashMap<String, Object>();
+	/**
+	 * jdon 容器。
+	 */
+	private static ContainerWrapper containerWrapper = null;
+
+	/**
+	 * ApplicationContextAware's method
+	 * 
+	 * at first run, startup Jdon Framework *
+	 */
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		System.out.println(this.getClass().getName() + "====1");
+		if (containerWrapper != null)
+			return;
+		this.applicationContext = applicationContext;
+
+		if (servletContext == null) {
+			if (applicationContext instanceof WebApplicationContext) {
+				servletContext = ((WebApplicationContext) applicationContext)
+						.getServletContext();
+				if (servletContext == null) {
+					System.err
+							.print("this class only fit for Spring Web Application");
+					return;
+				}
+				// } else if (applicationContext instanceof
+				// GenericApplicationContext) {
+			}
+		}
+
+		// start up jdon
+		servletContext = new MockServletContext();
+		AppContextWrapper acw = new ServletContextWrapper(servletContext);
+		ContainerFinder containerFinder = new ContainerFinderImp();
+		containerWrapper = containerFinder.findContainer(acw);
+	}
+
+	/**
+	 * BeanDefinitionRegistryPostProcessor's method
+	 * 
+	 * second run: check which spring bean that need injected from Jdon.
+	 * 
+	 */
+	public void postProcessBeanDefinitionRegistry(
+			BeanDefinitionRegistry registry) throws BeansException {
+		System.out.println(this.getClass().getName() + "====2");
+		// 注册完bean之后，检查需要从jdon注入的bean
+		String[] names = registry.getBeanDefinitionNames();
+		for (String beanName : names) {
+			BeanDefinition beanDefinition = registry
+					.getBeanDefinition(beanName);
+			String beanClassName = beanDefinition.getBeanClassName();
+			try {
+				Class beanClass = Class.forName(beanClassName);
+				 System.out.println("---spring beans--------------"
+				 + beanClassName);
+				// large project need using Google Collection's lookup
+				Field[] fields = ClassUtil.getAllDecaredFields(beanClass);
+				for (final Field field : fields) {
+					if (field.isAnnotationPresent(Autowired.class)) {
+						// inject jdon components into spring components with
+						// Inject;
+						Object o = findBeanClassInJdon(field.getType());
+						if (o != null) {
+							neededJdonComponents.put(field.getName(), o);
+						}
+					}
+				}
+			} catch (ClassNotFoundException ex) {
+				ex.printStackTrace();
+			}
+			// System.out.println("--injected from jdon-----------"
+			// + neededJdonComponents);
+		}
+	}
+
+	/**
+	 * BeanDefinitionRegistryPostProcessor's method
+	 * 
+	 * third run: injecting the jdon component into Spring bean;
+	 * 
+	 */
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory factory)
+			throws BeansException {
+		System.out.println(this.getClass().getName() + "====3");
+		this.factory = factory;
+		injectJdonToSpring();
+	}
+
+	/**
+	 * ApplicationListener's method
+	 * 
+	 * fouth run: after Spring all bean created and ApplicatioConext is ready .
+	 * 
+	 * injecting Spring bean instances into jdon component.
+	 */
+	public void onApplicationEvent(ApplicationEvent ae) {
+		System.out.println(this.getClass().getName() + "====4=="
+				+ (ae.getClass().getName()));
+		// org.springframework.context.event.ContextRefreshedEvent
+		if (ae instanceof ContextRefreshedEvent) {
+			injectSpringToJdon();
+		}
+	}
+
+	public void injectJdonToSpring() {
+		for (String name : neededJdonComponents.keySet()) {
+			Object o = neededJdonComponents.get(name);
+			if (!factory.containsBean(name)) {
+				factory.registerSingleton(name, o);
+				// System.out
+				// .println("-----------injectJdonToSpring--------------------"
+				// + name);
+			}
+		}
+	}
+
+	private Object findBeanClassInJdon(Class fClass) {
+		List<Object> objects = containerWrapper
+				.getComponentInstancesOfType(fClass);
+		Object o = null;
+		// List should be have only one.
+		for (Object instance : objects) {
+			o = instance;
+			break;
+		}
+		return o;
+	}
+
+	/**
+	 * 
+	 * @Description: 将spring 中的单例注入jdon容器
+	 */
+	public void injectSpringToJdon() {
+		System.out.println("----------injectSpringToJdon-----------------");
+		AutowireCapableBeanFactory beanFactory = applicationContext
+				.getAutowireCapableBeanFactory();
+		RegistryDirectory registryDirectory = (RegistryDirectory) containerWrapper
+				.getRegistryDirectory();
+		List<String> names = new ArrayList(
+				registryDirectory.getComponentNames());
+		for (String name : names) {
+			Object o = containerWrapper.lookupOriginal(name);
+			beanFactory.autowireBean(o);
+			containerWrapper.register(name, o);
+			 System.out.println("---injectSpringToJdon-----" + name + "----"
+			 + o.getClass().getName());
+		}
+	}
+
+	/**
+	 * 
+	 * @Description: 从jdon容器中获取bean，仅获取第一个.
+	 * @param classType
+	 * @return
+	 */
+	public static Object getBeanByType(Class classType) {
+		if (containerWrapper != null) {
+			if (containerWrapper.getComponentInstancesOfType(classType) != null) {
+				return containerWrapper.getComponentInstancesOfType(classType)
+						.get(0);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * @Description: 从jdon容器中获取bean list.
+	 * @param classType
+	 * @return
+	 */
+	public static <T> T getBeansByType(Class<T> classType) {
+		if (containerWrapper != null) {
+
+			if (containerWrapper.getComponentInstancesOfType(classType) != null) {
+				return (T) containerWrapper
+						.getComponentInstancesOfType(classType);
+			}
+		}
+		return null;
+	}
+
+	public static Object getJdonBeanByName(String name) {
+		Object o = null;
+		if (containerWrapper != null) {
+			o = containerWrapper.lookupOriginal(name);
+		}
+		return o;
+	}
+}

@@ -1,0 +1,47 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+/**
+ * 
+ * @ClassName: MetaModelCompView
+ *             <p>
+ *             组合关系详情，包括组合端元模型，被组合端元模型<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:12:30
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaModelCompView extends MetaModelCompBasicView {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/***
+	 * 组合端元模型
+	 */
+	private MetaModelBasicView fromModel;
+	/**
+	 * 被组合元模型列表
+	 */
+	private List<MetaModelBasicView> toModelList;
+	
+	public MetaModelBasicView getFromModel() {
+		return fromModel;
+	}
+	public void setFromModel(MetaModelBasicView fromModel) {
+		this.fromModel = fromModel;
+	}
+	public List<MetaModelBasicView> getToModelList() {
+		return toModelList;
+	}
+	public void setToModelList(List<MetaModelBasicView> toModelList) {
+		this.toModelList = toModelList;
+	}
+	@Override
+	public String toString() {
+		return "MetaModelCompView [fromModel=" + fromModel + ", toModelList="
+				+ toModelList + "]";
+	}
+
+}

@@ -1,0 +1,124 @@
+package com.gilight.dep.metadata.model;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.message.producer.IBasicMessageProducer;
+import com.gilight.dep.framework.core.model.IBasicModel;
+import com.gilight.dep.framework.core.model.impl.BaseBasicModel;
+import com.gilight.dep.metadata.message.procuder.MetaDataBaseMessageProducer;
+
+public class MetaDataModel extends BaseBasicModel<String> {
+
+	@Override
+	public String getModelName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class getMessageProcuderClass() {
+		// TODO Auto-generated method stub
+		return MetaDataBaseMessageProducer.class;
+	}
+
+	public IResponse createCompMetaData(IContext context) throws ModelException {
+		try {
+			MetaDataBaseMessageProducer producer = (MetaDataBaseMessageProducer) getMessageProcuder();
+			producer.createCompMetaData(getDefaultContext(context));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			throw new ModelException(exception);
+		} catch (GilightException exception) {
+			throw new ModelException(exception);
+		} catch (Exception exception) {
+			throw new ModelException(exception);
+		}
+	}
+
+	public IResponse updateCompMetaData(IContext context) throws ModelException {
+		try {
+			MetaDataBaseMessageProducer producer = (MetaDataBaseMessageProducer) getMessageProcuder();
+			producer.updateCompMetaData(getDefaultContext(context));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			throw new ModelException(exception);
+		} catch (GilightException exception) {
+			throw new ModelException(exception);
+		} catch (Exception exception) {
+			throw new ModelException(exception);
+		}
+	}
+
+	public IResponse deleteCompMetaData(IContext context) throws ModelException {
+		try {
+			MetaDataBaseMessageProducer producer = (MetaDataBaseMessageProducer) getMessageProcuder();
+			producer.deleteCompMetaData(getDefaultContext(context));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			throw new ModelException(exception);
+		} catch (GilightException exception) {
+			throw new ModelException(exception);
+		} catch (Exception exception) {
+			throw new ModelException(exception);
+		}
+	}
+
+	public IResponse createDepe(IContext context) throws ModelException {
+		try {
+			MetaDataBaseMessageProducer producer = (MetaDataBaseMessageProducer) getMessageProcuder();
+			producer.createDepe(getDefaultContext(context));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			throw new ModelException(exception);
+		} catch (GilightException exception) {
+			throw new ModelException(exception);
+		} catch (Exception exception) {
+			throw new ModelException(exception);
+		}
+	}
+
+	public IResponse deteleDepe(IContext context) throws ModelException {
+		try {
+			MetaDataBaseMessageProducer producer = (MetaDataBaseMessageProducer) getMessageProcuder();
+			producer.deleteDepe(getDefaultContext(context));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			throw new ModelException(exception);
+		} catch (GilightException exception) {
+			throw new ModelException(exception);
+		} catch (Exception exception) {
+			throw new ModelException(exception);
+		}
+	}
+
+	public IResponse getAllDepeMetaData(IContext context) throws ModelException {
+		try {
+			MetaDataBaseMessageProducer producer = (MetaDataBaseMessageProducer) getMessageProcuder();
+			producer.getAllDepeMetaData(getDefaultContext(context));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			throw new ModelException(exception);
+		} catch (GilightException exception) {
+			throw new ModelException(exception);
+		} catch (Exception exception) {
+			throw new ModelException(exception);
+		}
+	}
+
+	public IResponse publish(IContext context) throws ModelException {
+		try {
+			MetaDataBaseMessageProducer producer = (MetaDataBaseMessageProducer) getMessageProcuder();
+			producer.publish(getDefaultContext(context));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			throw new ModelException(exception);
+		} catch (GilightException exception) {
+			throw new ModelException(exception);
+		} catch (Exception exception) {
+			throw new ModelException(exception);
+		}
+	}
+}

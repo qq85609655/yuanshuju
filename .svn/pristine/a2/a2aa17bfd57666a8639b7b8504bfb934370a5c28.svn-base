@@ -1,0 +1,23 @@
+package com.gilight.dep.metamodel.model.consumer;
+
+import com.gilight.dep.framework.core.context.base.DomainMessageContext;
+import com.gilight.dep.framework.core.message.consumer.AbstractConsumer;
+import com.gilight.dep.framework.core.message.consumer.IMessageConsumer;
+import com.gilight.dep.metadata.repository.IMetaModelEnumRepository;
+import com.gilight.dep.metadata.repository.IMetaModelFolderRepository;
+import com.jdon.annotation.Consumer;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Consumer("modelenumCreate")
+public class ModelEnumCreateMessageConsumer extends AbstractConsumer implements
+		IMessageConsumer {
+	@Autowired
+	private IMetaModelEnumRepository metaModelEnumRepository;
+
+	@Override
+	public void executeEvent(DomainMessageContext paramDomainMessageContext)
+			throws Exception {
+		metaModelEnumRepository.create(paramDomainMessageContext);
+	}
+
+}

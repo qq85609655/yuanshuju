@@ -1,0 +1,474 @@
+package com.gilight.dep.metadata.gather.db;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.entity.MdGatherDatasource;
+import com.gilight.dep.metadata.entity.MdGatherJob;
+import com.gilight.dep.metadata.entity.MdGatherLog;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdMetadataImp;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.enums.DBSParam;
+import com.gilight.dep.metadata.enums.ImpModelCode;
+import com.gilight.dep.metadata.gather.common.DBConnParam;
+import com.gilight.dep.metadata.gather.common.IBuildMetadataService;
+import com.gilight.dep.metadata.gather.common.IGatherJobTaskModel;
+import com.gilight.dep.metadata.gather.common.util.DBGatherUtils;
+import com.gilight.dep.metadata.gather.common.util.DBUtils;
+import com.gilight.dep.metadata.repository.IGatherAdaptorRepository;
+import com.gilight.dep.metadata.repository.IGatherJobRepository;
+import com.gilight.dep.metadata.util.AutoObj2Xml;
+import com.gilight.dep.metadata.util.MetaDateUtils;
+import com.gilight.dep.metadata.view.ColumnView;
+import com.gilight.dep.metadata.view.DepErrordatas;
+import com.gilight.dep.metadata.view.DepImpErrordatas;
+import com.gilight.dep.metadata.view.DepImpSucceeddata;
+import com.gilight.dep.metadata.view.DepLog;
+import com.gilight.dep.metadata.view.DepSucceeds;
+
+/***
+ * 
+ * @ClassName: DBGatherServiceImpl
+ *             <p> 数据库schema采集
+ *             TODO<br>
+ * @author zps
+ * @date 2015年8月4日 下午5:28:19
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class DBGatherServiceImpl implements IBuildMetadataService {
+	@Autowired
+	IGatherAdaptorRepository gatherAdaptorRepository;
+	@Autowired
+	IGatherJobRepository jobRepository;
+	
+	DatabaseMetaData databaseMetaData;
+	
+	MdGatherDatasource dbs;
+	
+	
+	
+	public MdGatherDatasource getDbs() {
+		return dbs;
+	}
+
+	public void setDbs(MdGatherDatasource dbs) {
+		this.dbs = dbs;
+	}
+
+	public DatabaseMetaData getDatabaseMetaData() {
+		return databaseMetaData;
+	}
+
+	public void setDatabaseMetaData(DatabaseMetaData databaseMetaData) {
+		this.databaseMetaData = databaseMetaData;
+	}
+	private MmMetamodel getModelByCode(String code){
+		MmMetamodel model=null;
+		try {
+			model = gatherAdaptorRepository.getModelByCode(code);
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return model;
+	}
+	@Override
+	public void buildMetadatas(IGatherJobTaskModel jobTaskModel)
+			throws GilightException {
+		
+		DepLog deplog = new DepLog();
+		DepSucceeds secceeds = new DepSucceeds();
+		DepErrordatas errors = new DepErrordatas();
+		List<DepImpSucceeddata> succeedlist = new ArrayList<DepImpSucceeddata>();	
+		List<DepImpErrordatas> errorlist = new ArrayList<DepImpErrordatas>();
+		
+		List<MdMetadataImp> alldata=new ArrayList<MdMetadataImp>();
+		MdGatherLog logentity = new MdGatherLog();
+		logentity.setId(UUID.randomUUID().toString());
+		//StringBuffer sb = new StringBuffer();
+		try {
+			logentity.setJobId(jobTaskModel.getJobId());
+			((DBGatherJobTaskModel)jobTaskModel).setGatherAdaptorRepository(gatherAdaptorRepository);
+			((DBGatherJobTaskModel)jobTaskModel).setJobRepository(jobRepository);
+			
+			dbs = getDbs(jobTaskModel.getJobId());
+			if(dbs==null){
+				throw new GilightException("挂载点异常");
+			}
+			Map<String,String> map=((DBGatherJobTaskModel)jobTaskModel).getDBSParam();
+			//dbs.getDataPath()
+			
+			String driver=map.get(DBSParam.DRIVER);
+			String pwd=map.get(DBSParam.PWD);
+			String user=map.get(DBSParam.USERNAME);
+			String schema=map.get(DBSParam.SCHEMA);
+			String url=map.get(DBSParam.URL);
+			
+			DBConnParam dbcp = new DBConnParam();
+			dbcp.setDriver(driver);
+			dbcp.setPwd(pwd);
+			dbcp.setSchema(schema);
+			dbcp.setUrl(url);
+			dbcp.setUser(user);
+			
+			databaseMetaData=DBUtils.getDatabaseMetaData(dbcp);
+			
+			//List<MdMetadataImp> listschema= getSchema();
+			//alldata.addAll(listschema);
+			/*if(listschema==null||listschema.size()==0){
+				return;
+			}*/
+			List<MdMetadataImp> listview= getView(dbcp.getSchema());
+			List<MdMetadataImp> listtable= getTable(dbcp.getSchema());
+			alldata.addAll(listview);
+			alldata.addAll(listtable);
+			
+			for (MdMetadataImp mdMetadataImp : listtable) {
+				//System.out.println("循环--------------第"+j+"次");
+				List<MdMetadataImp> listcolumn = getColumns(dbcp.getSchema(), mdMetadataImp);
+				alldata.addAll(listcolumn);
+			}
+			
+			for (MdMetadataImp mdMetadataImp : alldata) {
+				MmMetamodel model=this.getModelByCode(mdMetadataImp.getMmcode());
+				if(model==null){
+					/*sb.append("导入对象:");
+					sb.append(mdMetadataImp.toString());
+					sb.append("没有找到对应元模型，导入失败!");
+					sb.append("\r\n");
+					*/
+					DepImpErrordatas error = new DepImpErrordatas();
+					error.setMdcode(mdMetadataImp.getMdCode());
+					error.setMdname(mdMetadataImp.getMdName());
+					error.setMmcode(mdMetadataImp.getMmcode());
+					error.setData2str(mdMetadataImp.toString());
+					error.setOperation("不执行导入");
+					error.setErrormsg("没有找到对应模型代码");
+					//error.setData2str(data2str);
+					errorlist.add(error);
+					
+				}else{
+					/*sb.append("导入对象:");
+					sb.append(mdMetadataImp.toString());
+					sb.append("\r\n");*/
+					
+					DepImpSucceeddata succeed = new DepImpSucceeddata();
+					succeed.setData2str(mdMetadataImp.toString());
+					succeed.setMmcode(mdMetadataImp.getMmcode());
+					succeed.setName(mdMetadataImp.getMdName());
+					succeed.setUuid(mdMetadataImp.getId());
+					succeed.setOperation("插入成功");
+					succeedlist.add(succeed);
+					
+					mdMetadataImp.setJobTaskId(logentity.getId());
+					mdMetadataImp.setMmId(model.getId());
+					mdMetadataImp.setMmName(model.getMmName());
+					gatherAdaptorRepository.create(mdMetadataImp);
+				}
+				
+				
+			}
+
+			logentity.setRunStatus(1);
+			logentity.setEndDate(MetaDateUtils.getDefaultUpdateDate());
+			
+			deplog.setErrors(errors);
+			deplog.setSucceeds(secceeds);
+			String xmllog=AutoObj2Xml.toXml(deplog);
+			
+			logentity.setLogResult(xmllog);
+			logentity.setGatherNum(alldata.size());
+			logentity.setSucceedNum(alldata.size());
+			logentity.setFailNum(0);
+			gatherAdaptorRepository.create(logentity);
+			DBUtils.close(databaseMetaData);
+			//gatherAdaptorRepository.create(null);
+		} catch (RepositoryException | SQLException e) {
+			// TODO Auto-generated catch block
+			for (MdMetadataImp mdMetadataImp : alldata) {
+			
+				
+				DepImpErrordatas error = new DepImpErrordatas();
+				error.setMdcode(mdMetadataImp.getMdCode());
+				error.setMdname(mdMetadataImp.getMdName());
+				error.setMmcode(mdMetadataImp.getMmcode());
+				error.setData2str(mdMetadataImp.toString());
+				error.setOperation("导入失败，删除对象");
+				//error.setErrormsg("没有找到对应模型代码");
+				error.setMsg(e.toString());
+				
+				gatherAdaptorRepository.delete(mdMetadataImp);
+			}
+			logentity.setRunStatus(0);
+			logentity.setEndDate(MetaDateUtils.getDefaultUpdateDate());
+			
+			deplog.setErrors(errors);
+			deplog.setSucceeds(secceeds);
+			String xmllog=AutoObj2Xml.toXml(deplog);
+			
+			logentity.setLogResult(xmllog);
+			logentity.setGatherNum(0);
+			logentity.setSucceedNum(0);
+			logentity.setFailNum(alldata.size());
+			
+			gatherAdaptorRepository.create(logentity);
+			DBUtils.close(databaseMetaData);
+			e.printStackTrace();
+		} catch (ModelException e) {
+			for (MdMetadataImp mdMetadataImp : alldata) {
+				
+				
+				DepImpErrordatas error = new DepImpErrordatas();
+				error.setMdcode(mdMetadataImp.getMdCode());
+				error.setMdname(mdMetadataImp.getMdName());
+				error.setMmcode(mdMetadataImp.getMmcode());
+				error.setData2str(mdMetadataImp.toString());
+				error.setOperation("导入失败，删除对象");
+				//error.setErrormsg("没有找到对应模型代码");
+				error.setMsg(e.toString());
+				
+				gatherAdaptorRepository.delete(mdMetadataImp);
+			}
+			logentity.setRunStatus(0);
+			logentity.setEndDate(MetaDateUtils.getDefaultUpdateDate());
+			
+			deplog.setErrors(errors);
+			deplog.setSucceeds(secceeds);
+			String xmllog=AutoObj2Xml.toXml(deplog);
+			
+			logentity.setLogResult(xmllog);
+			logentity.setGatherNum(0);
+			logentity.setSucceedNum(0);
+			logentity.setFailNum(alldata.size());
+			gatherAdaptorRepository.create(logentity);
+			// TODO Auto-generated catch block
+			DBUtils.close(databaseMetaData);
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 增量数据
+	* <p><br>
+	* @param jobid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月20日 下午7:30:37
+	* @version V1.0
+	 */
+/*	private List<MdMetadataImp> incData(List<MdMetadataImp> list,String jobid) throws RepositoryException{
+		List<MdMetadataImp> listinc = new ArrayList<MdMetadataImp>();
+		MdGatherJob job = jobRepository.getJob(jobid);
+		if(job==null){
+			return null;
+		}
+		if(ImpModelCode.INCREMENT.equals(job.getDbpolicy())){
+			for (MdMetadataImp mdMetadataImp : list) {
+				mdMetadataImp.get
+			}
+		}
+		
+		return mgds;
+	}*/
+	/**
+	 * 获取dbs
+	* <p><br>
+	* @param dbsid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月20日 下午3:27:12
+	* @version V1.0
+	 */
+	private MdGatherDatasource getDbs(String jobid) throws RepositoryException{
+		MdGatherJob job = jobRepository.getJob(jobid);
+		MdGatherDatasource mgds=jobRepository.getDbs(job.getDatasource());
+		return mgds;
+	}
+	
+/*	private List<String> getSchema() throws SQLException{
+		List<String> list = new ArrayList<String>();
+		ResultSet rs = databaseMetaData.getSchemas();
+		while(rs.next()) {
+			list.add(rs.getString(1));
+		}
+		return list;
+	} */
+	/**
+	 * 获取数据库名称列表
+	* <p><br>
+	* @return
+	* @throws SQLException  
+	* @author wzx
+	* @date 2015年8月13日 下午5:38:19
+	* @version V1.0
+	 */
+	private List<MdMetadataImp> getSchema() throws SQLException{
+		List<MdMetadataImp> list = new ArrayList<MdMetadataImp>();
+		//ResultSet rs = databaseMetaData.getSchemas();
+		List<String> names= DBGatherUtils.getSchemaNames(databaseMetaData); 		
+		for (String name : names) {
+			MdMetadataImp md = new MdMetadataImp();
+			md.setId(UUID.randomUUID().toString());
+			md.setMdCode(name);
+			md.setMdName(name);
+			md.setMdCode(ImpModelCode.Schema);
+			list.add(md);
+		}
+		
+		return list;
+	} 
+	
+
+	/**
+	 * 获取表
+	* <p><br>
+	* @param tablename
+	* @return
+	* @throws SQLException  
+	* @author wzx
+	* @date 2015年8月13日 下午6:27:21
+	* @version V1.0
+	 */
+	private List<MdMetadataImp> getTable(String schemaname) throws SQLException{
+		//String[] types={"TABLE"};
+		List<MdMetadataImp> list = new ArrayList<MdMetadataImp>();
+		//ResultSet rs = databaseMetaData.getTables(null, schemaname, null, types);
+		List<String> names= DBGatherUtils.getTableNames(databaseMetaData, schemaname); 	
+		for (String name : names) {
+			MdMetadataImp md = new MdMetadataImp();
+			md.setId(UUID.randomUUID().toString());
+			md.setMdCode(schemaname+"_"+ImpModelCode.Table+"_"+name);
+			md.setMdName(name);
+			md.setMmcode(ImpModelCode.Table);
+			md.setParentid(dbs.getDataPath());
+			list.add(md);
+		}
+
+		return list;
+	} 
+	
+	/**
+	 * 获取视图
+	* <p><br>
+	* @param tablename
+	* @return
+	* @throws SQLException  
+	* @author wzx
+	* @date 2015年8月13日 下午6:27:21
+	* @version V1.0
+	 */
+	private List<MdMetadataImp> getView(String schemaname) throws SQLException{
+		List<MdMetadataImp> list = new ArrayList<MdMetadataImp>();
+		//ResultSet rs = databaseMetaData.getTables(null, schemaname, null, types);
+		List<String> names= DBGatherUtils.getViewNames(databaseMetaData, schemaname); 	
+		for (String name : names) {
+			MdMetadataImp md = new MdMetadataImp();
+			md.setId(UUID.randomUUID().toString());
+			md.setMdCode(schemaname+"_"+ImpModelCode.View+"_"+name);
+			md.setMdName(name);
+			md.setMmcode(ImpModelCode.View);
+			md.setParentid(dbs.getDataPath());
+			list.add(md);
+		}
+
+		return list;
+	} 
+	/**
+	 * 获取列信息
+	* <p><br>
+	* @param schemaname
+	* @param tablename
+	* @return
+	* @throws SQLException  
+	* @author wzx
+	* @date 2015年8月13日 下午7:00:00
+	* @version V1.0
+	 */
+	private List<MdMetadataImp> getColumns(String schemaname,MdMetadataImp table) throws SQLException{
+		//String[] types={"VIEW"};
+		List<MdMetadataImp> list = new ArrayList<MdMetadataImp>();
+		Map<String,ColumnView> map=DBGatherUtils.getColumns(databaseMetaData, schemaname, table.getMdName());
+		Iterator iter = map.entrySet().iterator();
+		while (iter.hasNext()) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			String key = (String)entry.getKey();
+			ColumnView val = (ColumnView)entry.getValue();
+			MdMetadataImp md = new MdMetadataImp();
+			md.setId(UUID.randomUUID().toString());
+			md.setMdCode(schemaname+"_"+table.getMdName()+"_"+key);
+			md.setMdName(key);
+			md.setMmcode(ImpModelCode.Column);
+			md.setParentid(table.getId());
+			list.add(md);
+		}
+		
+		return list;
+	} 
+	
+	
+	
+	private void metadatas() throws SQLException, GilightException{
+		String driver="oracle.jdbc.driver.OracleDriver";
+		String pwd="metadata";
+		String user="metadata";
+		String schema="";
+		String url="jdbc:oracle:thin:@192.168.200.76:1521:orcl";
+		String[] types={"TABLE"};
+		DBConnParam dbcp = new DBConnParam();
+		dbcp.setDriver(driver);
+		dbcp.setPwd(pwd);
+		dbcp.setSchema(schema);
+		dbcp.setUrl(url);
+		dbcp.setUser(user);
+		
+		databaseMetaData=DBUtils.getDatabaseMetaData(dbcp);
+		//ResultSet rs = databaseMetaData.getTables(null, "METADATA", null, types);
+		ResultSet rs = databaseMetaData.getColumns(null, "METADATA", "MD_ANALYSE_LOG",null);
+		while(rs.next()) {
+			//System.out.println(rs.getString(0));
+			System.out.println(rs.getString(1));
+			System.out.println(rs.getString(2));
+			System.out.println(rs.getString(3));
+			System.out.println(rs.getString(4));
+			System.out.println(rs.getString(5));
+			System.out.println(rs.getString(6));
+			//System.out.println(rs.getString(3));
+		    //System.out.println(rs.getString("TABLE_NAME"));
+		}
+	}
+	
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		DBGatherServiceImpl dbs = new DBGatherServiceImpl();
+		try {
+			dbs.metadatas();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

@@ -1,0 +1,28 @@
+package com.gilight.dep.metadata.dao;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+
+/**
+ * 数据地图查询
+* @ClassName: IDataMapQueryDao 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:12:35
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IDataMapQueryDao extends IMetaDataDao{
+	/**
+	 * 
+	* <p><br>
+	* @return
+	* @throws DaoException  
+	* @author wzx
+	* @date 2015年8月7日 下午2:43:43
+	* @version V1.0
+	 */
+	public List<IEntity> getMdDependencyByIdlist(List<String> ids) throws DaoException;
+}

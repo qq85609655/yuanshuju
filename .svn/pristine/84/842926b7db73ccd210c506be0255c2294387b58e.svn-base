@@ -1,0 +1,46 @@
+package com.gilight.dep.metadata.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.service.IQueryService;
+import com.gilight.dep.metadata.repository.IMetaDataBaseRepository;
+import com.gilight.dep.metadata.repository.IMetaDataQueryRepository;
+/**
+ * 
+* @ClassName: IDataMapQueryService 
+* <p>元数据数据地图查询<br>
+* @author wzx
+* @date 2015年7月9日 下午3:10:22
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IDataMapQueryService  extends IMetaDataService,IQueryService{
+	
+	/**
+	 * 数据地图前三层
+	* <p><br>
+	* @param context
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月21日 下午6:45:04
+	* @version V1.0
+	 */
+	public IResponse getDataMapQuery(IContext context) throws ServiceException;
+	/**
+	 * 数据地图第四层
+	* <p><br>
+	* @param context
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年8月21日 下午6:45:16
+	* @version V1.0
+	 */
+	public IResponse getDataMapQuerySchema(IContext context) throws ServiceException;
+	
+	
+}

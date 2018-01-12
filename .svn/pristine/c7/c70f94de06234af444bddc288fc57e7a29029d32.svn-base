@@ -1,0 +1,25 @@
+/**   
+ * @Title: IMDRepository.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年8月3日 上午10:31:06
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.ext.repository.IDepBaseRepository;
+
+/***
+ * 
+ * @ClassName: IMDRepository
+ *             <p>
+ *             元数据仓库的基类 TODO<br>
+ * @author zps
+ * @date 2015年8月3日 上午10:31:11
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public interface IMDBaseRepository extends IDepBaseRepository {
+
+}

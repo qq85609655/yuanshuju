@@ -1,0 +1,81 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+/***
+ * 分页展示
+ */
+public class MetaDataMapMDPageView implements IView{
+	private static final long serialVersionUID = 1L;
+	
+	//数据展示
+	private List<MetaDataMapTopView> pagelist;
+	//传入值;注意顺序
+	private Integer totalCounts;//总条数
+	private Integer pageSize ;//每页条数,默认值100
+	private Integer currentPage;//当前页
+	//计算后的值
+	private Integer totalPages;//总页数
+	private Integer startCount;//起始数
+	private Integer endCount;//结束数
+	public List<MetaDataMapTopView> getPagelist() {
+		return pagelist;
+	}
+	public void setPagelist(List<MetaDataMapTopView> pagelist) {
+		this.pagelist = pagelist;
+	}
+	public Integer getCurrentPage() {
+		return currentPage;
+	}
+	public void setTotalCounts(Integer totalCounts) {
+		//计算总页数
+		this.totalPages = (int) Math.ceil( (double)totalCounts / (double)this.pageSize);
+		this.totalCounts = totalCounts;
+	}
+	public void setCurrentPage(Integer currentPage) {
+		this.startCount = (currentPage-1) * this.pageSize;//计算每页的起始条数(不包含此条数)
+		if(currentPage==totalPages){
+			this.endCount = totalCounts;
+		}else{
+			this.endCount = currentPage * this.pageSize;//计算每页的结束条数
+		}
+		this.currentPage = currentPage;
+	}
+	public Integer getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
+	}
+	public Integer getTotalPages() {
+		return totalPages;
+	}
+	public void setTotalPages(Integer totalPages) {
+		this.totalPages = totalPages;
+	}
+	public Integer getTotalCounts() {
+		return totalCounts;
+	}
+	
+	public Integer getStartCount() {
+		return startCount;
+	}
+	public void setStartCount(Integer startCount) {
+		this.startCount = startCount;
+	}
+	public Integer getEndCount() {
+		return endCount;
+	}
+	public void setEndCount(Integer endCount) {
+		this.endCount = endCount;
+	}
+	@Override
+	public String toString() {
+		return "MetaDataMapMDPageView [pagelist=" + pagelist + ", currentPage=" + currentPage + ", pageSize=" + pageSize
+				+ ", totalPages=" + totalPages + ", totalCounts=" + totalCounts + ", startCount=" + startCount
+				+ ", endCount=" + endCount + "]";
+	}
+	
+}

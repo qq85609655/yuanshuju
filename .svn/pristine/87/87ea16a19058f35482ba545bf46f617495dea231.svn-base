@@ -1,0 +1,144 @@
+package com.gilight.dep.metadata.entity;
+
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+/**
+ * 
+ * @ClassName: MmComposition
+ *             <p>
+ *             TODO<br>
+ * @author hww
+ * @date 2015年7月7日 下午3:51:59
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MmComposition extends BaseMetaDataEntity {
+
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 起始元模型id,父元模型
+	 */
+	private String fromMmId;
+	/**
+	 * 目标元模型id，子元模型，被组合元模型
+	 */
+	private String toMmId;
+	/**
+	 * 
+	 */
+	private String ownerMultiplicity;
+	/**
+	 * 
+	 */
+	private String toMultiplicity;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+	/**
+	 * 组合关系名称
+	 */
+	private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public MmComposition() {
+	}
+
+	public MmComposition(String id) {
+		this.id = id;
+	}
+
+	public MmComposition(String id, String fromMmId, String toMmId,
+			String ownerMultiplicity, String toMultiplicity, String remark,
+			String updateDate) {
+		this.id = id;
+		this.fromMmId = fromMmId;
+		this.toMmId = toMmId;
+		this.ownerMultiplicity = ownerMultiplicity;
+		this.toMultiplicity = toMultiplicity;
+		this.remark = remark;
+		this.updateDate = updateDate;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getFromMmId() {
+		return this.fromMmId;
+	}
+
+	public void setFromMmId(String fromMmId) {
+		this.fromMmId = fromMmId;
+	}
+
+	public String getToMmId() {
+		return this.toMmId;
+	}
+
+	public void setToMmId(String toMmId) {
+		this.toMmId = toMmId;
+	}
+
+	public String getOwnerMultiplicity() {
+		return this.ownerMultiplicity;
+	}
+
+	public void setOwnerMultiplicity(String ownerMultiplicity) {
+		this.ownerMultiplicity = ownerMultiplicity;
+	}
+
+	public String getToMultiplicity() {
+		return this.toMultiplicity;
+	}
+
+	public void setToMultiplicity(String toMultiplicity) {
+		this.toMultiplicity = toMultiplicity;
+	}
+
+	public String getRemark() {
+		return this.remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	@Override
+	public String toString() {
+		return "MmComposition [id=" + id + ", fromMmId=" + fromMmId
+				+ ", toMmId=" + toMmId + ", ownerMultiplicity="
+				+ ownerMultiplicity + ", toMultiplicity=" + toMultiplicity
+				+ ", remark=" + remark + ", updateDate=" + updateDate
+				+ ", name=" + name + "]";
+	}
+
+}

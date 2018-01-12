@@ -1,0 +1,172 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+/**
+ * 
+ * @ClassName: MetaDataVerBasicView
+ *             <p>
+ *             元数据版本基本信息<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:08:25
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaDataVerBasicView implements IView {
+	/**
+	 * 版本信息的ID
+	 */
+	private String id;
+	/**
+	 * 元数据数据模型
+	 */
+	private MetaModelBasicView model;
+	/**
+	 * 版本编号
+	 */
+	private String code;
+	/**
+	 * 版本名称
+	 */
+	private String name;
+	/**
+	 * 版本所属的包id
+	 */
+	private String packageid;
+	/**
+	 * 是否属于系统初始化数据
+	 */
+	private boolean issys;
+	/**
+	 * 状态
+	 */
+	private int status;
+	/**
+	 * 用户定义版本
+	 */
+	private String userver;
+	/**
+	 * 系统版本
+	 */
+	private String sysver;
+	/**
+	 * 版本描述
+	 */
+	private String verremark;
+	/**
+	 * 版本，描述
+	 */
+	private String remark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public MetaModelBasicView getModel() {
+		return model;
+	}
+
+	public void setModel(MetaModelBasicView model) {
+		this.model = model;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getPackageid() {
+		return packageid;
+	}
+
+	public void setPackageid(String packageid) {
+		this.packageid = packageid;
+	}
+
+	public boolean isIssys() {
+		return issys;
+	}
+
+	public void setIssys(boolean issys) {
+		this.issys = issys;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public String getUserver() {
+		return userver;
+	}
+
+	public void setUserver(String userver) {
+		this.userver = userver;
+	}
+
+	public String getSysver() {
+		return sysver;
+	}
+
+	public void setSysver(String sysver) {
+		this.sysver = sysver;
+	}
+
+	public String getVerremark() {
+		return verremark;
+	}
+
+	public void setVerremark(String verremark) {
+		this.verremark = verremark;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaDataVerBasicView [id=" + id + ", model=" + model
+				+ ", code=" + code + ", name=" + name + ", packageid="
+				+ packageid + ", issys=" + issys + ", status=" + status
+				+ ", userver=" + userver + ", sysver=" + sysver
+				+ ", verremark=" + verremark + ", remark=" + remark
+				+ ", updateDate=" + updateDate + "]";
+	}
+
+}

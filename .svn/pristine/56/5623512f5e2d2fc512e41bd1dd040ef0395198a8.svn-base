@@ -1,0 +1,56 @@
+/**
+ * 创建编辑器
+ */
+function initEditor(contentPanel) {
+	var me = this;
+	Ext.Ajax.request({
+		url : Dep.metadata.url.initEditor,
+		success : function(response) {
+			var res = Ext.JSON.decode(response.responseText);
+			if (res && (res.resultCode == 1)) {
+				if (typeof (res.resultObject) != "undefined") {
+					result = res.resultObject;
+				} else {
+					result = res.root;
+				}
+				// 创建显示编辑器
+				buildEditor(Ext.JSON.decode(result),contentPanel);
+			}
+		},
+		failure : function(response) {
+//			JHE.Msg.warning("错误","界面数据请求失败！");
+			Dep.framework.editor.util.Msg.warning("错误","界面数据请求失败！");
+		}
+	});
+};
+/**
+ * 显示编辑器
+ * 
+ * @param store
+ */
+function buildEditor(config,contentPanel) {
+	var me = this ,coreJsFile = config.jsFiles.files;
+	
+	if (!config.jsFiles) {
+		return;
+	}
+	for ( var file in coreJsFile) {
+		Ext.Loader.loadScriptFile(coreJsFile[file], Ext.emptyFn, null, me,
+				true);
+	}
+	// 初始化图形编辑器
+	var editorName = config.name;
+	var className = eval(editorName);
+	try {
+		 editor = new className(contentPanel, config);
+		 var view = editor.getEditorView();
+		 //去掉顶部和底部的部分
+		 view.remove(view.northPanel);
+		 view.remove(view.southPanel);
+		 editor.executeActionSpanContainer("Dep.framework.editor.plugin.containers.Layer","toShowDataMapLayer");
+	} catch (e) {
+		console.log(e);
+	} finally{
+		return editor;
+	}
+};

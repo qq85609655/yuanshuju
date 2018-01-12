@@ -1,0 +1,42 @@
+{
+	"containers": [
+        {
+            "name": "Dep.framework.editor.plugin.containers.toolbox",
+             "src": "Dep/framework/editor/plugin/containers/ToolBox.js",
+             "config": "ToolBox.json"
+        },
+        {
+            "name": "Dep.framework.editor.plugin.containers.ViewToolBar",
+             "src": "Dep/framework/editor/plugin/containers/ViewToolBar.js",
+             "config": "ViewToolBar.json"
+        }],
+
+	"plugins": [{
+		"src": "Dep/framework/editor/plugin/containers/canvas/ClipboardPlugin.js",
+		"name": "Dep.framework.editor.plugin.containers.canvas.ClipboardPlugin"
+	},{
+	 	"src": "Dep/framework/editor/plugin/containers/canvas/ExportToImg.js",
+		"name": "Dep.framework.editor.plugin.containers.canvas.ExportToImg"
+	},{
+	 	"src": "Dep/framework/editor/plugin/containers/canvas/FigureAlign.js",
+		"name": "Dep.framework.editor.plugin.containers.canvas.FigureAlign"
+	},{
+	 	"src": "Dep/framework/editor/plugin/containers/canvas/FigureGroups.js",
+		"name": "Dep.framework.editor.plugin.containers.canvas.FigureGroups"
+	},{
+	 	"src": "Dep/framework/editor/plugin/containers/canvas/FigureOverlay.js",
+		"name": "Dep.framework.editor.plugin.containers.canvas.FigureOverlay"
+	},{
+	 	"src": "Dep/framework/editor/plugin/containers/canvas/FigureZoom.js",
+		"name": "Dep.framework.editor.plugin.containers.canvas.FigureZoom"
+	},{
+	 	"src": "Dep/framework/editor/plugin/containers/canvas/ShowMenuPlugin.js",
+		"name": "Dep.framework.editor.plugin.containers.canvas.ShowMenuPlugin" 
+	},{
+	 	"src": "Dep/framework/editor/plugin/containers/canvas/OutlinePlugin.js",
+		"name": "Dep.framework.editor.plugin.containers.canvas.OutlinePlugin"
+		},{
+	 	"src": "Dep/framework/editor/plugin/containers/canvas/CanvasLayoutPlugin.js",
+		"name": "Dep.framework.editor.plugin.containers.canvas.CanvasLayoutPlugin"
+	}] 
+}

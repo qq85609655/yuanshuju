@@ -1,0 +1,39 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.service.IQueryService;
+
+/**
+ * 
+ * @ClassName: IGatherDataScourceService
+ *             <p>
+ *             元数据采集数据源配置<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:09:27
+ * @version V1.0
+ * @since JDK 1.6
+ */
+@SuppressWarnings("rawtypes")
+public interface IGatherDataScourceService extends IMetaDataService,
+		IQueryService {
+
+	public abstract IResponse getGatherDBByAdaptor(IContext paramIContext)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>获取DBschema的信息
+	 * <br>
+	 * 
+	 * @param paramIContext
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月14日 上午9:42:33
+	 * @version V1.0
+	 */
+	public abstract IResponse getDBSchames(IContext paramIContext)
+			throws ServiceException;
+}

@@ -1,0 +1,5 @@
+package com.gilight.dep.metadata.dao;
+
+public interface IMetaModelQueryDao extends  IMetaModelDao{
+
+}

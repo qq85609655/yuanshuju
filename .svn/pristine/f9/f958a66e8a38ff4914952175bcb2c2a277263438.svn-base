@@ -1,0 +1,186 @@
+package com.gilight.dep.metadata.service.impl;
+
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.service.impl.BasicServiceImpl;
+import com.gilight.dep.framework.util.common.UUIDGenerator;
+import com.gilight.dep.metadata.entity.MdSystemBackup;
+import com.gilight.dep.metadata.repository.ISystemBackupRepository;
+import com.gilight.dep.metadata.service.IMetaDataDbBackupService;
+import com.gilight.dep.metadata.service.ISystemBackupService;
+import com.gilight.dep.metadata.util.MetaDateUtils;
+import com.gilight.dep.metadata.view.MetaDataBackupTimeView;
+/**
+ * 系统备份实现类
+ * 修改定时任务
+ */
+public class SystemBackupServiceImpl extends BasicServiceImpl implements ISystemBackupService{
+	private static final Logger logger = Logger
+			.getLogger(SystemBackupServiceImpl.class);
+	@Override
+	public IResponse getByScope(IContext paramIContext) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IModel initModel(IContext paramIContext) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class getModelClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	//==============注入属性===============//
+	private ISystemBackupRepository systemBackupRepository;//系统备份仓储层
+	private IMetaDataDbBackupService metaDataDbBackupService;//系统备份业务接口
+	private Scheduler mySchedulerFactoryBean;//注入调度工厂,类型Scheduler
+	private CustomCronTrigger customCronTrigger;//注入自定义触发器
+	private JobDetail myJobDetail;//注入任务详情
+	
+	public ISystemBackupRepository getSystemBackupRepository() {
+		return systemBackupRepository;
+	}
+	public void setSystemBackupRepository(ISystemBackupRepository systemBackupRepository) {
+		this.systemBackupRepository = systemBackupRepository;
+	}
+	public JobDetail getMyJobDetail() {
+		return myJobDetail;
+	}
+	public void setMyJobDetail(JobDetail myJobDetail) {
+		this.myJobDetail = myJobDetail;
+	}
+	public IMetaDataDbBackupService getMetaDataDbBackupService() {
+		return metaDataDbBackupService;
+	}
+	public void setMetaDataDbBackupService(IMetaDataDbBackupService metaDataDbBackupService) {
+		this.metaDataDbBackupService = metaDataDbBackupService;
+	}
+	public CustomCronTrigger getCustomCronTrigger() {
+		return customCronTrigger;
+	}
+	public void setCustomCronTrigger(CustomCronTrigger customCronTrigger) {
+		this.customCronTrigger = customCronTrigger;
+	}
+	public Scheduler getMySchedulerFactoryBean() {
+		return mySchedulerFactoryBean;
+	}
+	public void setMySchedulerFactoryBean(Scheduler mySchedulerFactoryBean) {
+		this.mySchedulerFactoryBean = mySchedulerFactoryBean;
+	}
+	
+	/**
+	 * 改变定时任务
+	 * @param backupTime
+	 * @throws ParseException
+	 * @throws SchedulerException
+	 */
+	public void changeJobDetail(String backupTime) throws ParseException, SchedulerException {
+		logger.info("-------改变定时任务-------");
+		logger.info("原触发器: "+customCronTrigger.toString());
+        //更新触发器执行的时间
+		customCronTrigger.setCronExpression(backupTime);
+		
+		//关闭原任务
+		boolean deleteJob = mySchedulerFactoryBean.deleteJob("myJobDetail", Scheduler.DEFAULT_GROUP);
+		if(deleteJob){
+			//添加新任务;返回值Date是触发器下次执行的时间
+			Date scheduleJob = mySchedulerFactoryBean.scheduleJob(myJobDetail, customCronTrigger);
+			logger.info("新触发器下次执行的时间: "+scheduleJob);
+			logger.info("新触发器: "+customCronTrigger.toString());
+			//开启新任务
+			mySchedulerFactoryBean.start();
+		}
+	}
+	
+
+	@Override
+	public void saveBackupTime(String backupTime,String period) throws ServiceException {
+		logger.info("----------开始保存系统更新时间--------------");
+		
+		try {
+			MdSystemBackup mdSystemBackup = new MdSystemBackup();
+			String saveTime = MetaDateUtils.getDefaultUpdateDate();//当前时间
+			String status = "1";//初始状态
+			String userid = null;//用户id
+			mdSystemBackup.setId(UUIDGenerator.getUUID());
+			mdSystemBackup.setCronExpression(backupTime);
+			mdSystemBackup.setPeriod(period);
+			mdSystemBackup.setSaveTime(saveTime);
+			mdSystemBackup.setStatus(status);
+			mdSystemBackup.setUserid(userid);
+			//先清空表数据
+			this.getSystemBackupRepository().empty();
+			//再保存新数据
+			this.getSystemBackupRepository().create(mdSystemBackup);
+		} catch (RepositoryException e1) {
+			e1.printStackTrace();
+		}
+		logger.info("----------保存系统更新时间完毕--------------");
+				
+		
+		try {// 原触发器的时间
+			String cronExpression = customCronTrigger.getCronExpression();
+			if (!cronExpression.equals(backupTime)) {
+				// 前台时间与原触发器时间不同时,执行改变任务
+				changeJobDetail(backupTime);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 备份job操作
+	 */
+	public void backupSystem() {
+		logger.info("--------开始执行备份任务--------");
+		//调用开始备份的方法
+		metaDataDbBackupService.startDbbak();
+		logger.info("--------备份任务执行完毕--------");
+	}
+
+	/**
+	 * @throws RepositoryException 
+	 * 
+	 */
+	@Override
+	public MetaDataBackupTimeView findCurrent() throws ServiceException {
+		try {
+			List<MdSystemBackup> list = this.getSystemBackupRepository().getAll();
+			if(list!=null && list.size()>0){
+				MetaDataBackupTimeView bkView = new MetaDataBackupTimeView();
+				MdSystemBackup bk = list.get(0);
+				bkView.setId(bk.getId());
+				bkView.setSaveTime(bk.getSaveTime());
+				bkView.setPeriod(bk.getPeriod());
+				bkView.setCronExpression(bk.getCronExpression());
+				return bkView;
+			}
+			return null;
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new ServiceException("查询当前备份表达式异常");
+		}
+	}
+
+}

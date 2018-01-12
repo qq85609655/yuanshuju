@@ -1,0 +1,130 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+/**
+ * 
+ * @ClassName: MetaDataDepeView
+ *             <p>
+ *             元数据依赖关系<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:07:29
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaDataDepeBaseView implements IView {
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 元模型定义依赖关系
+	 */
+	private String mmDepId;
+	/***
+	 * 元模型定义依赖关系名称
+	 */
+	private String mmDepName;
+	/**
+	 * 起始元数据id
+	 */
+	private String fromMdId;
+	/**
+	 * 起始元数据编码
+	 */
+	private String fromMdCode;
+	/**
+	 * 目标元数据id
+	 */
+	private String toMdId;
+	/**
+	 * 目标元数据代码
+	 */
+	private String toMdCode;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMmDepName() {
+		return mmDepName;
+	}
+
+	public void setMmDepName(String mmDepName) {
+		this.mmDepName = mmDepName;
+	}
+
+	public String getMmDepId() {
+		return mmDepId;
+	}
+
+	public void setMmDepId(String mmDepId) {
+		this.mmDepId = mmDepId;
+	}
+
+	public String getFromMdId() {
+		return fromMdId;
+	}
+
+	public void setFromMdId(String fromMdId) {
+		this.fromMdId = fromMdId;
+	}
+
+	public String getFromMdCode() {
+		return fromMdCode;
+	}
+
+	public void setFromMdCode(String fromMdCode) {
+		this.fromMdCode = fromMdCode;
+	}
+
+	public String getToMdId() {
+		return toMdId;
+	}
+
+	public void setToMdId(String toMdId) {
+		this.toMdId = toMdId;
+	}
+
+	public String getToMdCode() {
+		return toMdCode;
+	}
+
+	public void setToMdCode(String toMdCode) {
+		this.toMdCode = toMdCode;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+}

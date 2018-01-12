@@ -1,0 +1,32 @@
+/**   
+ * @Title: IBuildMetadataService.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月29日 下午1:08:25
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.gather.common;
+
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+
+public interface IBuildMetadataService {
+	/***
+	 * 
+	 * <p>
+	 * 采集元数据 <br>
+	 * 
+	 * @param gatherMetaDataModel
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年7月29日 下午1:09:16
+	 * @version V1.0
+	 * @throws RepositoryException 
+	 * @throws GilightException 
+	 */
+	public abstract void buildMetadatas(IGatherJobTaskModel jobTaskModel)
+			throws ServiceException, RepositoryException, GilightException;
+	
+}

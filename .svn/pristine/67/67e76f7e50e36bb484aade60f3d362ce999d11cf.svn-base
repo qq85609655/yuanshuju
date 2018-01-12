@@ -1,0 +1,14 @@
+/**   
+* @Title: ResultCode.java  
+* @Description: TODO 
+* @author yuan hongyan   
+* @date 2015年3月31日 下午2:01:39
+* @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+* @version V1.0   
+*/
+package com.gilight.dep.metadata.web.response;
+
+public class ResultCode {
+	public static final int RESULT_CODE_SUCCESS = 1;
+	public static final int RESULT_CODE_FAILED = 0;
+}

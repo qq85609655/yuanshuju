@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="dep-metadata-wsservice:war">
+    <output-path>$PROJECT_DIR$/dep-metadata-wsservice/target</output-path>
+    <root id="archive" name="dep-metadata-wsservice-2.0.0.war">
+      <element id="artifact" artifact-name="dep-metadata-wsservice:war exploded" />
+    </root>
+  </artifact>
+</component>

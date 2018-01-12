@@ -1,0 +1,106 @@
+package com.gilight.dep.metadata.entity;
+
+import java.util.List;
+
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+/**
+ * 
+ * @ClassName: MmEnum
+ *             <p>
+ *             TODO<br>
+ * @author hww
+ * @date 2015年7月7日 下午3:52:24
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MmEnum extends BaseMetaDataEntity {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 标识
+	 */
+	private String id;
+	/**
+	 * 名称
+	 */
+	private String name;
+	/**
+	 * 描述
+	 */
+	private String remark;
+	/**
+	 * 最后更新时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+	/***
+	 * 数据选项集合
+	 */
+	private List<MmEnumValue> valueList = null;
+
+	public List<MmEnumValue> getValueList() {
+		return valueList;
+	}
+
+	public void setValueList(List<MmEnumValue> valueList) {
+		this.valueList = valueList;
+	}
+
+	public MmEnum() {
+	}
+
+	public MmEnum(String id) {
+		this.id = id;
+	}
+
+	public MmEnum(String id, String name, String remark, String updateDate) {
+		this.id = id;
+		this.name = name;
+		this.remark = remark;
+		this.updateDate = updateDate;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getRemark() {
+		return this.remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	@Override
+	public String toString() {
+		return "MmEnum [id=" + id + ", name=" + name + ", remark=" + remark
+				+ ", updateDate=" + updateDate + "]";
+	}
+
+}

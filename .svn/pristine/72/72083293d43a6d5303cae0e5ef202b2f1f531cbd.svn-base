@@ -1,0 +1,32 @@
+/**   
+ * @Title: IMetaModelDataTypeRepository.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月24日 下午5:18:37
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+
+public interface IMetaModelDataTypeRepository extends IMetaModelRepository {
+	/***
+	 * 
+	 * <p>
+	 * 根据数据类型，获取数据类型的选择值<br>
+	 * 
+	 * @param context
+	 * @return
+	 * @throws RepositoryException
+	 * @author zps
+	 * @date 2015年7月28日 上午10:01:09
+	 * @version V1.0
+	 */
+	public IResponse getDataTypeSelectByDId(IContext<IDParameters> context)
+			throws RepositoryException;
+
+}

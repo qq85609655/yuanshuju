@@ -1,0 +1,13 @@
+package com.gilight.dep.metadata.repository;
+/**
+ * 分析结果查询
+* @ClassName: IAnalyseQueryRepository 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:46:45
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IAnalyseQueryRepository extends IMetaDataRepository {
+
+}

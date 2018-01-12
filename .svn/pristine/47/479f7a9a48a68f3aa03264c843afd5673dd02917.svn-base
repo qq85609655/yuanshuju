@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+	<class name="com.gilight.dep.metadata.entity.MdVersionFlowLog"
+		table="MD_VERSION_LOG">
+		<id name="id" type="string">
+			<column name="ID" length="64" />
+			<generator class="assigned" />
+		</id>
+		<property name="mdId" type="string">
+			<column name="MID" length="64">
+			</column>
+		</property>
+
+		<property name="mdCode" type="string">
+			<column name="MCODE" length="256">
+			</column>
+		</property>
+		<property name="mdName" type="string">
+			<column name="MNAME" length="256">
+			</column>
+		</property>
+		<property name="operation" type="integer">
+			<column name="OPERATION" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="message" type="string">
+			<column name="OPERATIONMSG" length="64">
+			</column>
+		</property>
+		<property name="updateDate" type="string">
+			<column name="UPDATE_DATE" length="64" />
+		</property>
+	</class>
+</hibernate-mapping>

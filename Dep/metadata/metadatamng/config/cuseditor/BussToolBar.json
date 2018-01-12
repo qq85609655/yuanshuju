@@ -1,0 +1,57 @@
+{
+	"padding" : "5 10 5 10",
+    "details": [
+        {
+            "lType": "metadata",
+             "items" : [{
+                  "xtype": "radiogroup",
+                  "uniqueID" : "mdshowType1",
+                  "name": "mdshowType",
+                  "fieldLabel" : "显示类型",
+                  "labelWidth":70,
+                  "columns":2,
+                  "items":[{
+                  	"boxLabel" : "组合",
+                  	"name":"showType",
+                  	"inputValue":"1",
+                  	"width":60,       	
+                  	"checked":true
+                  },{
+                  	"boxLabel" : "依赖",
+                  	"name":"showType",
+                  	"width":60,
+                  	"inputValue":"2"                  
+                  }],
+                  "eventListeners":[{"eventName":"change","action":"mdshowTypeChange"}]	
+        	}]
+        },{
+            "lType": "queryLayer",
+             "items" : [{
+                  "xtype": "checkboxgroup",
+                  "uniqueID" : "queryMdshowType",
+                  "name": "queryMdshowType",
+                  "fieldLabel" : "显示类型",
+                  "labelWidth":70,
+                  "flag":"queryLayer",
+                  "columns":2,
+                  "items":[{
+                  	"boxLabel" : "组合",
+                  	"name":"showType",
+                  	"inputValue":"1",
+                  	"width":60,       	
+                  	"checked":true      
+                  },{
+                  	"boxLabel" : "依赖",
+                  	"name":"showType",
+                  	"width":60,
+                  	"inputValue":"2" ,       	
+                  	"checked":true              
+                  }],
+                  "eventListeners":[{"eventName":"change","action":"queryMdshowTypeChange"}]	
+        	}]        
+        }],
+    "plugins": [{
+		"src": "Dep/metadata/metadatamng/extends/editor/plugin/busstoolbar/MDOptPlugin.js",
+		"name": "JHE.plugin.busstoolbar.MDOptPlugin"
+	}]
+}

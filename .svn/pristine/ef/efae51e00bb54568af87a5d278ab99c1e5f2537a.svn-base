@@ -1,0 +1,56 @@
+package com.gilight.dep.metadata.enums;
+
+import com.gilight.dep.framework.util.enmu.StringEnum;
+
+/**
+ * 元数据状态枚举
+* @ClassName: MetaDataStatus 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月22日 下午3:33:18
+* @version V1.0
+* @since JDK 1.6
+ */
+public class DBSParam extends StringEnum{
+	
+
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+	public static final String DRIVER="driver";
+	public static final String URL="url";
+	public static final String USERNAME="username";
+	public static final String PWD="pwd";
+	public static final String SCHEMA="schema";
+	public static final String HOST="host";
+	public static final String PORT="port";
+	public static final String SID="sid";
+	public static final DBSParam DRIVER_TYPE = new DBSParam(
+			"驱动", DRIVER);
+	public static final DBSParam URL_TYPE = new DBSParam(
+			"URL", URL);
+	public static final DBSParam USERNAME_TYPE = new DBSParam(
+			"用户名", USERNAME);
+	public static final DBSParam PWD_TYPE = new DBSParam(
+			"密码", PWD);
+	public static final DBSParam SCHEMA_TYPE = new DBSParam(
+			"shcema", SCHEMA);
+
+	public static final DBSParam HOST_ = new DBSParam(
+			"host", HOST);
+
+	public static final DBSParam PORT_ = new DBSParam(
+			"port", PORT);
+
+	public static final DBSParam SID_ = new DBSParam(
+			"sid", SID);
+	
+	public static final String[] params={DRIVER,URL,USERNAME,PWD,SCHEMA,HOST,PORT,SID};  //新增或修改
+	
+	protected DBSParam(String iName, String iValue) {
+		super(iName, iValue);
+	}
+	 
+	
+}

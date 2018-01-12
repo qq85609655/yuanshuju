@@ -1,0 +1,101 @@
+/**   
+ * @Title: MetaModelBaseFactory.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月22日 下午12:03:03
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.init.data;
+
+import java.util.List;
+import java.util.UUID;
+
+import com.gilight.dep.metadata.enmu.MetaModelDisplayType;
+import com.gilight.dep.metadata.enmu.MetaModelStatus;
+import com.gilight.dep.metadata.enmu.MetaModelYesOrNo;
+import com.gilight.dep.metadata.view.MetaModelAttView;
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelCompView;
+import com.gilight.dep.metadata.view.MetaModelDepeView;
+import com.gilight.dep.metadata.view.MetaModelView;
+
+public class MetaModelInitFactory {
+
+	public static void main(String[] args) {
+		System.out.println("test");
+	}
+
+	public static MetaModelView getSystemMetaModel() {
+		MetaModelView m = new MetaModelView();
+		m.setId(UUID.randomUUID().toString());
+		return m;
+	}
+
+	public static MetaModelView getSystemMetaModel(String code, String name) {
+		MetaModelView m = getSystemMetaModel();
+		m.setCode(code);
+		m.setName(name);
+		m.setIssys(new Integer(MetaModelYesOrNo.YES));
+		m.setIsuse(new Integer(MetaModelYesOrNo.YES));
+		m.setStatus(new Integer(MetaModelStatus.APPROVE));
+		return m;
+	}
+
+	public static MetaModelView getSystemMetaModel(String code, String name,
+			List<MetaModelBasicView> parent, List<MetaModelAttView> attList) {
+		MetaModelView m = getSystemMetaModel(code, name);
+		m.setParentModelList(parent);
+		m.setAttList(attList);
+		return m;
+	}
+
+	public static MetaModelAttView getMetaModelAttView(String modelId,
+			String code, String name, int order) {
+		MetaModelAttView att = new MetaModelAttView();
+		att.setId(UUID.randomUUID().toString());
+		att.setModelId(modelId);
+		att.setCode(code);
+		att.setName(name);
+		att.setDispalyType(MetaModelDisplayType.TEXT);
+		att.setDisplayorder(order + "");
+		return att;
+	}
+
+	public static MetaModelAttView getMetaModelAttViewTEXTAREA(String modelId,
+			String code, String name, int order) {
+		MetaModelAttView att = getMetaModelAttView(modelId, code, name, order);
+		att.setDispalyType(MetaModelDisplayType.TEXTAREA);
+		return att;
+	}
+
+	public static MetaModelAttView getMetaModelAttViewCOMBOX(String modelId,
+			String code, String name, String dispalyId, int order) {
+		MetaModelAttView att = getMetaModelAttView(modelId, code, name, order);
+		att.setDispalyType(MetaModelDisplayType.COMBOX);
+		att.setDispalyId(dispalyId);
+		return att;
+	}
+
+	public static MetaModelCompView getMetaModelCompView(MetaModelView frModel,
+			MetaModelView toModel) {
+		MetaModelCompView view = new MetaModelCompView();
+		view.setId(UUID.randomUUID().toString());
+		view.setName(frModel.getName() + "---" + toModel.getName());
+		view.setFromMID(frModel.getId());
+		view.setToMID(toModel.getId());
+		view.setOwnerMultiplicity("1");
+		view.setToMultiplicity("N");
+		return view;
+	}
+
+	public static MetaModelDepeView getMetaModelDepeView(MetaModelView frModel,
+			MetaModelView toModel) {
+		MetaModelDepeView view = new MetaModelDepeView();
+		view.setId(UUID.randomUUID().toString());
+		view.setName(frModel.getName() + "-->" + toModel.getName()+"依赖关系");
+		view.setFromMid(frModel.getId());
+		view.setToMid(toModel.getId());
+		return view;
+	}
+}

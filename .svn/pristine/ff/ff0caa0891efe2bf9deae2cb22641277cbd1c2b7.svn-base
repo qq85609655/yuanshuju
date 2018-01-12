@@ -1,0 +1,105 @@
+package com.gilight.dep.metadata.dao;
+
+import com.gilight.dep.framework.core.dao.db.IHibernateDao;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+
+import java.io.Serializable;
+import java.util.List;
+/**
+ * 
+* @ClassName: IMetaModelDao 
+* <p>dao层接口<br>
+* @author wzx
+* @date 2015年7月17日 上午10:09:10
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IMetaModelDao extends IHibernateDao {
+	public void flush() throws DaoException;
+	/*
+	 * (非 Javadoc) 
+	* <p>Description:查询详情 </p> 
+	* @param id
+	* @param entityClass
+	* @return
+	* @throws DaoException 
+	* @see com.gilight.dep.framework.core.dao.db.IHibernateDao#findById(java.io.Serializable, java.lang.Class)
+	 */
+	public <C> IEntity findById(Serializable id, Class<C> entityClass) throws DaoException; 
+
+
+
+	/**
+	 *
+	 * <p>直接执行sql<br>
+	 * @param sql
+	 * @throws DaoException
+	 * @author wzx
+	 * @date 2015年7月23日 下午5:19:49
+	 * @version V1.0
+	 * @return
+	 */
+	public int executeSql(String sql) throws DaoException;
+	/**
+	 * 执行sql查询
+	 * <p><br>
+	 * @param sql
+	 * @param type
+	 * @return
+	 * @throws DaoException
+	 * @author wzx
+	 * @date 2015年7月31日 下午6:20:10
+	 * @version V1.0
+	 */
+	public <T> List<T> createSQLQuery(String sql, Class<T> type) throws DaoException;
+
+	/**
+	 *
+	 * <p>按idlist查询<br>
+	 * @param idlist
+	 * @param type
+	 * @return
+	 * @throws DaoException
+	 * @author wzx
+	 * @date 2015年7月17日 上午10:10:13
+	 * @version V1.0
+	 */
+	public <T> List<IEntity> findByIdList(List<String> idlist,Class<T> type) throws DaoException;
+	/**
+	 * 执行hql
+	 * <p><br>
+	 * @param hql
+	 * @return
+	 * @throws DaoException
+	 * @author wzx
+	 * @date 2015年8月5日 下午3:50:04
+	 * @version V1.0
+	 */
+	public int executehql(String hql) throws DaoException;
+
+	public <T> List<IEntity> findByParamList(String param,List<String> idlist, Class<T> type)
+			throws DaoException;
+	/**
+	 * 根据entity条件查询
+	 * <p><br>
+	 * @param entity
+	 * @return
+	 * @author wzx
+	 * @date 2015年9月11日 上午11:34:00
+	 * @version V1.0
+	 */
+	public <T> List<IEntity> findByEntity(IEntity entity);
+	/**
+	 * 根据entity 进行或查询
+	 * <p><br>
+	 * @param entitys
+	 * @return
+	 * @author wzx
+	 * @date 2015年10月12日 上午11:02:12
+	 * @version V1.0
+	 */
+	public <T> List<IEntity> findByOrEntity(List<IEntity> entitys) ;
+
+
+}

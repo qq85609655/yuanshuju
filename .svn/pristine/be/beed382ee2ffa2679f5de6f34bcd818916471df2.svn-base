@@ -1,0 +1,80 @@
+package com.gilight.dep.metadata.wsview;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+@XStreamAlias("table")
+public class TableView {
+    /**
+     * <displayName>业务元数据名称</displayName>
+     <name>技术元数据表名称</name>
+     <type>类型表【table】或者视图【view】</type>
+
+     *
+     */
+
+    private String displayName;
+
+    private String name;
+    private String type;
+
+    private List<FieldView> fields;
+
+    public List<FieldView> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<FieldView> fields) {
+        this.fields = fields;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void addField(FieldView fieldView){
+        if (fields==null){
+            fields=new ArrayList<FieldView>();
+        }
+        fields.add(fieldView);
+    }
+    @Override
+    public String toString() {
+        return "TableView{" +
+                "displayName='" + displayName + '\'' +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", fields=" + fields +
+                '}';
+    }
+}

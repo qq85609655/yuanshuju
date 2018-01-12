@@ -1,0 +1,167 @@
+package com.gilight.dep.metamodel.service;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.service.IQueryService;
+import com.gilight.dep.metadata.view.MetaModelFolderView;
+
+/**
+ * 
+ * @ClassName: IMetaModelQueryService
+ *             <p>
+ *             元模型查询方法<br>
+ * @author wzx
+ * @date 2015年7月9日 下午2:30:49
+ * @version V1.0
+ * @since JDK 1.6
+ */
+@SuppressWarnings("rawtypes")
+
+public interface IMetaModelQueryService extends IQueryService {
+	
+	/**
+	 * 根据父文件夹id查询
+	* <p><br>
+	* @param context
+	* @return  
+	* @author wzx
+	* @date 2015年11月30日 下午6:12:58
+	* @version V1.0
+	 */
+	public List<MetaModelFolderView> findByParentid(IContext<IDParameters> context);
+	/**
+	 * 获取子文件夹
+	* <p><br>
+	* @param context
+	* @return  
+	* @author wzx
+	* @date 2015年11月30日 下午6:14:52
+	* @version V1.0
+	 */
+	public List<MetaModelFolderView> findSubFolder(IContext<IDParameters> context);
+	
+	
+	/**
+	 * 根据文件夹id查询元模型
+	* <p><br>
+	* @param paramIContext
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年11月30日 下午6:20:57
+	* @version V1.0
+	 */
+	public IResponse getModelByFolderid(IContext paramIContext)
+			throws ServiceException;
+	/**
+	 * 
+	 * <p>
+	 * 根据模型Id获取属性列表<br>
+	 * 
+	 * @param paramIContext
+	 *            上下文，参数是IDParameters，id是模型的id
+	 * @return
+	 * @author wzx
+	 * @date 2015年7月16日 下午5:36:02
+	 * @version V1.0
+	 */
+	public IResponse getModelAttrsByMid(IContext paramIContext)
+			throws ServiceException;
+
+	/**
+	 * 
+	 * <p>
+	 * 根据元模型Id获取关系类别（分类）组合关系,只获取直接元模型<br>
+	 * 
+	 * @param paramIContext
+	 *            上下文 ,参数是IDParameters，id是模型的id
+	 * @return
+	 * @author wzx
+	 * @date 2015年7月16日 下午5:39:12
+	 * @version V1.0
+	 * @throws ServiceException
+	 */
+	public IResponse getChildModels(IContext paramIContext)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * 获取系统中所有已经发布的元模型，包含其属性列表 <br>
+	 * 
+	 * @param paramIContext
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年7月30日 上午10:57:14
+	 * @version V1.0
+	 */
+	public IResponse getAllModels(IContext paramIContext)
+			throws ServiceException;
+
+	/**
+	 * 获取某一元模型的依赖关系列表
+	 * <p>
+	 * <br>
+	 * 
+	 * @param paramIContext
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月30日 下午6:23:56
+	 * @version V1.0
+	 */
+	public IResponse getDepeAsso(IContext paramIContext)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * 获取某一个元模型所有的子元模型，包含孙子 <br>
+	 * 
+	 * @param paramIContext
+	 *            上下文，IDParameters，元模型id
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月10日 下午1:14:03
+	 * @version V1.0
+	 */
+	public IResponse getAllChildModels(IContext paramIContext)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * 获取某一个元模型所有的子元模型的id，包含孙子 <br>
+	 * 
+	 * @param paramIContext
+	 *            上下文，IDParameters，元模型id
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月10日 下午1:14:08
+	 * @version V1.0
+	 */
+	public IResponse getAllChildModelIds(IContext paramIContext)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p> 根据ID查询木一个依赖关系对象
+	 * <br>
+	 * 
+	 * @param paramIContext 上下文，IDParameters，参数id是依赖关系的id
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月13日 上午11:12:44
+	 * @version V1.0
+	 */
+	public IResponse getDepeAssoById(IContext paramIContext)
+			throws ServiceException;
+}

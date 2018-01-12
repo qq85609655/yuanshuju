@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       ">
+
+	<bean id="graphMultiEditorController" class="com.gilight.dep.editor.controller.GraphMultiEditorController">
+		<property name="graphEditorService" ref="multiGraphEditorService"></property>
+	</bean>
+	<bean id="multiGraphEditorService" class="com.gilight.dep.editor.service.MultiGraphEditorService"></bean>
+
+	<bean id="viewController" class="com.gilight.dep.metadata.web.controller.ViewController">
+		<property name="metaDataViewService" ref="metaDataViewService"></property>
+	</bean>
+
+	<bean id="metadataController"
+		class="com.gilight.dep.metadata.web.controller.MetadataController">
+		<property name="metadataService" ref="metaDataBaseService"></property>
+		<property name="metaDataViewService" ref="metaDataViewService"></property>
+		<property name="metaDataVersionService" ref="metaDataVersionService"></property>
+		<property name="dataMapQueryService" ref="dataMapQueryService"></property>
+	</bean>
+	<bean id="metamodelController"
+		class="com.gilight.dep.metadata.web.controller.MetamodelController">
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+		<property name="metaModelBasicService" ref="metaModelBasicService"></property>
+	</bean>
+	<bean id="versionController" class="com.gilight.dep.metadata.web.controller.VersionController">
+		<property name="metaDataVersionService" ref="metaDataVersionService"></property>
+	</bean>
+	
+	<bean id="gatherController" class="com.gilight.dep.metadata.web.controller.GatherController">
+		<property name="gatherDataScourceService" ref="gatherDataScourceService"></property>
+		<property name="adaptorService" ref="gatherAdaptorService"></property>
+		<property name="gatherJobService" ref="gatherJobService"></property>
+		<property name="gatherTempleService" ref="gatherTempleService"></property>
+		<property name="metaDataQueryService" ref="metaDataQueryService"></property>
+	</bean>
+
+	<bean id="analyseController" class="com.gilight.dep.metadata.web.controller.AnalyseController">
+		<property name="analyseQueryService" ref="analyseQueryService"></property>
+	</bean>
+
+	<bean id="authLoginController" class="com.gilight.dep.metadata.web.controller.AuthLoginController">
+	</bean>
+	
+	<bean id="metamodelCompController" class="com.gilight.dep.metadata.web.controller.MetamodelCompController">
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+		<property name="metaModelCompService" ref="metaModelCompService"></property>
+	</bean>
+
+	<bean id="metamodelDepeController" class="com.gilight.dep.metadata.web.controller.MetamodelDepeController">
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+		<property name="metaModelDepeService" ref="metaModelDepeService"></property>
+	</bean>
+	<bean id="metamodelEnumController" class="com.gilight.dep.metadata.web.controller.MetamodelEnumController">
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+		<property name="metaModelEnumService" ref="metaModelEnumService"></property>
+		<property name="metaModelEnumValueService" ref="metaModelEnumValueService"></property>
+	</bean>
+	<bean id="metamodelFolderController" class="com.gilight.dep.metadata.web.controller.MetamodelFolderController">
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+		<property name="metaModelFolderService" ref="metaModelFolderService"></property>
+	</bean>
+	<bean id="metamodelQueryController" class="com.gilight.dep.metadata.web.controller.MetamodelQueryController">
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+	</bean>
+	<!-- 系统备份 -->
+	<bean id="backupController" class="com.gilight.dep.metadata.web.controller.BackupController">
+		<property name="metaDataDbBackupService" ref="metaDataDbBackupService"></property>
+	</bean>
+	<!--我的系统备份控制bean  -->
+	<bean id="systemBackupController" class="com.gilight.dep.metadata.web.controller.SystemBackupController">
+		<property name="systemBackupService" ref="systemBackupService"></property>
+	</bean>
+	<!-- 映射关系管理 -->
+	<bean id="metaDataMapController" class="com.gilight.dep.metadata.web.controller.MetaDataMapController">
+		<property name="metaDataMapService" ref="metaDataMapService"></property>
+		<property name="me" ref="me" ></property>
+	</bean>
+	
+</beans>

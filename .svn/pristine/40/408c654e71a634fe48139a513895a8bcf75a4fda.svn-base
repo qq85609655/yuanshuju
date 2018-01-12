@@ -1,0 +1,61 @@
+/**   
+ * @Title: DepeMetaDataView.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年8月13日 上午10:28:50
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.ext.response.IDepView;
+
+public class DepeMetaDataView implements IDepView {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/***
+	 * 元数据的标示
+	 */
+	private String id;
+	/***
+	 * 依赖关系
+	 */
+	private List<MetaDataDepeBaseView> depeList = null;
+	/***
+	 * 依赖元数据
+	 */
+	private List<MetaDataBasicView> metadata = null;
+
+	public List<MetaDataDepeBaseView> getDepeList() {
+		return depeList;
+	}
+
+	public void setDepeList(List<MetaDataDepeBaseView> depeList) {
+		this.depeList = depeList;
+	}
+
+	public List<MetaDataBasicView> getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(List<MetaDataBasicView> metadata) {
+		this.metadata = metadata;
+	}
+
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
+	}
+
+}

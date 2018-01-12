@@ -1,0 +1,18 @@
+package com.gilight.dep.metadata.enmu;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+public class EnumRelation {
+    public static final String MAPPDIRESOURCE="0";
+    public static final String MAPPDIRETARGET="1";
+
+    public final static Integer TYPE_MAPPING=1;
+    public final static Integer TYPE_TRANSFORM=2;
+    public final static Integer TYPE_DEPLOY=3;
+}

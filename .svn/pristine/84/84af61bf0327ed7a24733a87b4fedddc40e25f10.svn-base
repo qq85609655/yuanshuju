@@ -1,0 +1,175 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.service.IQueryService;
+
+/**
+ * 
+ * @ClassName: IGatherJobService
+ *             <p>
+ *             元数据采集任务配置，任务的执行调度等服务层接口<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:08:35
+ * @version V1.0
+ * @since JDK 1.6
+ */
+@SuppressWarnings("rawtypes")
+public interface IGatherJobService extends IMetaDataService, IQueryService {
+
+	/****
+	 * 
+	 * <p>
+	 * 执行采集任务 <br>
+	 * 
+	 * @param paramIContext
+	 *            上下文
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月5日 下午3:40:56
+	 * @version V1.0
+	 */
+	public abstract IResponse excute(IContext paramIContext)
+			throws ServiceException;
+
+	/****
+	 * 
+	 * <p>
+	 * 获取采集任务的执行情况 <br>
+	 * 
+	 * @param paramIContext
+	 *            上下文 参数是IDParameters 采集任务的ID
+	 * @return 参照GatherLogBasicView集合
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月7日 上午10:05:52
+	 * @version V1.0
+	 */
+	public abstract IResponse getJobExcuteDetail(IContext paramIContext)
+			throws ServiceException;
+
+	/**
+	 * 
+	 * <p>
+	 * 获取某一次采集任务执行采集到的元数据集合 <br>
+	 * 
+	 * @param paramIContext
+	 *            上下文， 参数是Scope 采集任务执行批次的ID
+	 * @return 参照MetaDataBasicView
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月7日 上午10:07:16
+	 * @version V1.0
+	 */
+	public abstract IResponse getJobGatherMetaData(IContext paramIContext)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * 获取待审批的采集元数据 <br>
+	 * 
+	 * @param paramIContext
+	 *            上下文 参数是scope，GatherMetaDataScope
+	 * @return 参照MetaDataBasicView
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月7日 上午10:08:51
+	 * @version V1.0
+	 */
+	public abstract IResponse getAuditingGatherMetaData(IContext paramIContext)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * 批量审批采集元数据 <br>
+	 * 
+	 * @param paramIContext
+	 *            上下文，参数是viewparameters，参照MetaDataBizFlowView对象
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月7日 上午10:09:55
+	 * @version V1.0
+	 */
+	public abstract IResponse approveAgree(IContext paramIContext)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * 批量审批元数据 <br>
+	 * 
+	 * @param paramIContext
+	 *            上下文，参数是viewparameters，参照MetaDataBizFlowView对象
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月7日 上午10:17:01
+	 * @version V1.0
+	 */
+	public abstract IResponse approveReject(IContext paramIContext)
+			throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * 上传采集excel文件 <br>
+	 * 
+	 * @param paramIContext
+	 *            上下文 参数是viewparameters，具体参照GatherJobFileView 对象
+	 * @return
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月11日 上午11:32:57
+	 * @version V1.0
+	 */
+	public abstract IResponse upLoad(IContext paramIContext)
+			throws ServiceException;
+
+
+    /**
+     * 根据元模型生成并下载csv导入模板
+     * @param mmId
+     * @return
+     */
+    String downLoadMmModelCsv(String mmId);
+
+    /**
+	 * 上传并导入csv
+	 * @param context
+	 * @return
+	 * @throws ServiceException
+	 */
+	IResponse upLoadImpCsv(IContext context) throws ServiceException;
+
+	/***
+	 * 
+	 * <p>
+	 * 查询采集的一个元数据的详细信息，包括属性列表信息； <br>
+	 * 
+	 * @param paramIContext
+	 *            上下文，IDParameters，参数是采集的元数据id标识
+	 * @return 参照MetaDataBaseView
+	 * @throws ServiceException
+	 * @author zps
+	 * @date 2015年8月26日 下午1:00:10
+	 * @version V1.0
+	 */
+	public abstract IResponse getGatherMetaDataById(IContext paramIContext)
+			throws ServiceException;
+	/**
+	 * 
+	* <p><br>
+	* @param context
+	* @return
+	* @throws ServiceException  
+	* @author wzx
+	* @date 2015年10月12日 下午3:15:30
+	* @version V1.0
+	 */
+	public abstract IResponse getJobGatherSubMetaData(IContext context) throws ServiceException;
+}

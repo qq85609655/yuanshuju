@@ -1,0 +1,46 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+public class MetaDataSubBaseView extends MetaDataCompBaseView   implements IView {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/***
+	 * 组合端元数据id；
+	 */
+	private String parentMdId = null;
+	
+	private MetaDataBaseView subMetaData=null;
+
+	public MetaDataSubBaseView() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public MetaDataSubBaseView(String parentMdId, MetaDataBaseView subMetaData) {
+		super();
+		this.parentMdId = parentMdId;
+		this.subMetaData = subMetaData;
+	}
+
+	public String getParentMdId() {
+		return parentMdId;
+	}
+
+	public void setParentMdId(String parentMdId) {
+		this.parentMdId = parentMdId;
+	}
+
+	public MetaDataBaseView getSubMetaData() {
+		return subMetaData;
+	}
+
+	public void setSubMetaData(MetaDataBaseView subMetaData) {
+		this.subMetaData = subMetaData;
+	}
+	
+	
+}

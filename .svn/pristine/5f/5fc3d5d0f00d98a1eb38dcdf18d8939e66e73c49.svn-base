@@ -1,0 +1,15 @@
+package com.gilight.dep.metadata.enums;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+public class MappDireStatus {
+    public static final int MAPPDIRESOURCE=0;
+    public static final int MAPPDIRETARGET=1;
+
+}

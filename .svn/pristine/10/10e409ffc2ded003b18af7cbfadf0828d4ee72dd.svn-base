@@ -1,0 +1,102 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+import java.util.Objects;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+public class MdSubSvgView implements IView {
+    private String id;
+    private String mdid;
+    private String svg;
+    private int svgtype;
+
+    private int status;
+    private String tarnsformid;
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getMdid() {
+        return mdid;
+    }
+
+    public void setMdid(String mdid) {
+        this.mdid = mdid;
+    }
+
+    public String getSvg() {
+        return svg;
+    }
+
+    public void setSvg(String svg) {
+        this.svg = svg;
+    }
+
+    public int getSvgtype() {
+        return svgtype;
+    }
+
+    public void setSvgtype(int svgtype) {
+        this.svgtype = svgtype;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getTarnsformid() {
+        return tarnsformid;
+    }
+
+    public void setTarnsformid(String tarnsformid) {
+        this.tarnsformid = tarnsformid;
+    }
+
+    @Override
+    public String toString() {
+        return "MdSubSvgView{" +
+                "id='" + id + '\'' +
+                ", mdid='" + mdid + '\'' +
+                ", svg='" + svg + '\'' +
+                ", svgtype=" + svgtype +
+                ", status=" + status +
+                ", tarnsformid='" + tarnsformid + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MdSubSvgView that = (MdSubSvgView) o;
+        return svgtype == that.svgtype &&
+                status == that.status &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(mdid, that.mdid) &&
+                Objects.equals(svg, that.svg) &&
+                Objects.equals(tarnsformid, that.tarnsformid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, mdid, svg, svgtype, status, tarnsformid);
+    }
+}

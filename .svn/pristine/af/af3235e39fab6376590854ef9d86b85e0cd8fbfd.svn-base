@@ -1,0 +1,40 @@
+/**   
+ * @Title: MetaDateUtils.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月22日 上午10:27:44
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.util;
+
+import java.util.Date;
+
+import com.gilight.dep.framework.util.date.DateUtils;
+
+/***
+ * 
+ * @ClassName: MetaDateUtils
+ *             <p>元数据关于时间处理的工具类
+ *             TODO<br>
+ * @author zps
+ * @date 2015年7月22日 上午10:28:07
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetaDateUtils {
+
+	/***
+	 * 
+	 * <p>
+	 * 更新时间默认为系统服务器当前时间，yyyy-MM-dd HH:mm:ss:sss <br>
+	 * 
+	 * @return
+	 * @author zps
+	 * @date 2015年7月22日 上午10:24:23
+	 * @version V1.0
+	 */
+	public static String getDefaultUpdateDate() {
+		return DateUtils.fmtDateToYMDHMSS(new Date());
+	}
+}

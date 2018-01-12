@@ -1,0 +1,28 @@
+/**   
+ * @Title: IMetaDataBasicRepository.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年8月7日 下午4:33:58
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.ext.repository.IDepBaseRepository;
+import com.gilight.dep.framework.core.repository.IBasicRepository;
+import com.gilight.dep.framework.core.repository.IQueryRepository;
+
+/***
+ * 
+ * @ClassName: IMetaDataBasicRepository
+ *             <p>
+ *             元数据操作的仓储 TODO<br>
+ * @author zps
+ * @date 2015年8月7日 下午4:34:14
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public interface IMetaDataBasicRepository extends IBasicRepository,
+		IQueryRepository, IDepBaseRepository {
+
+}

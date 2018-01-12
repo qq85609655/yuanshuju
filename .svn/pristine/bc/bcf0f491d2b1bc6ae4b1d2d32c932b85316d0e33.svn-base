@@ -1,0 +1,22 @@
+package com.gilight.dep.metadata.enums;
+/**
+ * 元数据状态枚举
+* @ClassName: MetaDataStatus 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月22日 下午3:33:18
+* @version V1.0
+* @since JDK 1.6
+ */
+public class MetaModelStatus {
+
+	public static final int neworedit=0;  //新增或修改
+	public static final int publishVer=11; // 发布
+	//public static final int approveAgree=22; //审核通过
+	//public static final int approveReject=33; //审核驳回
+
+	public MetaModelStatus() {
+		// TODO Auto-generated constructor stub
+	}
+	
+}

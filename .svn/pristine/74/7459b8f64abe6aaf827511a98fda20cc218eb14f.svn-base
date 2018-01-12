@@ -1,0 +1,48 @@
+/**   
+ * @Title: IGatherResult.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月29日 上午9:23:17
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.gather.common.log;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public interface IGatherResult extends Serializable {
+	public String getLogText();
+
+	public void setLogText(String logText);
+
+	public String getStatus();
+
+	public void setStatus(String status);
+
+	public int getSumCount();
+
+	public void setSumCount(int sumCount);
+
+	public int getSumSuccess();
+
+	public void setSumSuccess(int sumSuccess);
+
+	public int getSumFail();
+
+	public void setSumFail(int sumFail);
+
+	public Date getStartDate();
+
+	public void setStartDate(Date startDate);
+
+	public Date getEndDate();
+
+	public void setEndDate(Date endDate);
+
+	public void addLogResult(String message, Throwable e);
+
+	public void addLogResult(String message);
+
+	public void addLogResult(Throwable e);
+}

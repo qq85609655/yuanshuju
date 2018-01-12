@@ -1,0 +1,18 @@
+package com.gilight.dep.metadata.repository;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.view.GatherJobBasicView;
+
+public interface IGatherAdaptorRepository extends IMetaDataRepository{
+	
+
+	public IResponse getDataSourceTreeById(IContext paramIContext)
+			throws RepositoryException;
+
+	public MmMetamodel getModelByCode(String code) throws RepositoryException;
+}

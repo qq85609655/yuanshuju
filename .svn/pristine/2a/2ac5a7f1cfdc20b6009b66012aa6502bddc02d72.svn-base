@@ -1,0 +1,61 @@
+/**   
+ * @Title: CustomizedPropertySpringConfigurer.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年8月11日 上午11:41:20
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.util;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+
+/***
+ * 
+ * @ClassName: CustomizedPropertySpringConfigurer
+ *             <p>
+ *             spring中配置文件的属性信息，需要配置到spring的bean中；configurer.xml中的bean
+ *             com.gilight.dep.metadata.util.CustomizedPropertySpringConfigurer
+ *             TODO<br>
+ * @author zps
+ * @date 2015年8月11日 下午7:39:45
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class CustomizedPropertySpringConfigurer extends
+		PropertyPlaceholderConfigurer {
+
+	private static Map<String, Object> ctxPropertiesMap;
+
+	@Override
+	protected void processProperties(
+			ConfigurableListableBeanFactory beanFactoryToProcess,
+			Properties props) throws BeansException {
+		super.processProperties(beanFactoryToProcess, props);
+		ctxPropertiesMap = new HashMap<String, Object>();
+		for (Object key : props.keySet()) {
+			String keyStr = key.toString();
+			String value = props.getProperty(keyStr);
+			ctxPropertiesMap.put(keyStr, value);
+		}
+	}
+
+	public static Object getContextProperty(String name) {
+		if (ctxPropertiesMap != null) {
+			return ctxPropertiesMap.get(name);
+		}
+		return null;
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

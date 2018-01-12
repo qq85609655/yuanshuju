@@ -1,0 +1,11 @@
+delete from mm_attribute;
+delete from mm_composition;
+
+delete from mm_dependency;
+
+delete from mm_inherit;
+delete from mm_metamodel;
+
+delete from mm_enum;
+delete from mm_enum_value;
+commit;

@@ -1,0 +1,94 @@
+/**   
+ * @Title: MateModelConvertUtil.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月30日 下午12:44:54
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.convert;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.gilight.dep.metadata.entity.MmAttribute;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.util.AutoFieldTypeMapp;
+import com.gilight.dep.metadata.view.MetaModelAttView;
+import com.gilight.dep.metadata.view.MetaModelBaseView;
+
+public class MateModelConvertUtil {
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static List convertToBaseView(List entityList) {
+		List views = new ArrayList();
+		if (entityList == null) {
+			return views;
+		}
+		for (int i = 0, j = entityList.size(); i < j; i++) {
+			MmMetamodel entity = (MmMetamodel) entityList.get(i);
+			MetaModelBaseView view = convertToBaseView(entity);
+			views.add(view);
+		}
+		return views;
+	}
+
+	public static MetaModelBaseView convertToBaseView(MmMetamodel entity) {
+		MetaModelBaseView view = new MetaModelBaseView();
+		view.setId(entity.getId());
+		view.setName(entity.getMmName());
+		view.setCode(entity.getMmCode());
+		if (null == entity.getIsabstract()) {
+			view.setIsabstract(false);
+		} else if ("true".equals(entity.getIsabstract())
+				|| "1".equals(entity.getIsabstract())) {
+			view.setIsabstract(true);
+		} else {
+			view.setIsabstract(false);
+		}
+		view.setGraphSvg(entity.getGraphPig());
+		view.setStatus(entity.getStatus());
+		view.setSysver(entity.getSysver());
+		view.setUserver(entity.getUserver());
+		view.setIssys(entity.getIssys());
+		view.setRemark(entity.getRemark());
+		view.setPackageid(entity.getMmPackageid());
+		List<MetaModelAttView> attList = convertToMMAttView(entity.getAttList());
+		view.setAttList(attList);
+		return view;
+	}
+
+	public static List<MetaModelAttView> convertToMMAttView(
+			List<MmAttribute> attList) {
+		List<MetaModelAttView> attViews = new ArrayList<MetaModelAttView>();
+		if (attList == null) {
+			return attViews;
+		}
+		for (int i = 0, j = attList.size(); i < j; i++) {
+			MmAttribute entity = (MmAttribute) attList.get(i);
+			MetaModelAttView view = convertToMMAttView(entity);
+			attViews.add(view);
+		}
+		return attViews;
+	}
+
+	public static MetaModelAttView convertToMMAttView(MmAttribute entity) {
+		MetaModelAttView mmv = new MetaModelAttView();
+		mmv.setId(entity.getId());
+		mmv.setModelId(entity.getMmId());
+		mmv.setName(entity.getAttName());
+		mmv.setLength(entity.getAttLength());
+		mmv.setMax(entity.getAttMax());
+		mmv.setMin(entity.getAttMin());
+		mmv.setIsread(AutoFieldTypeMapp.autoTypeMapp(entity.getIsread()));
+		mmv.setIsnull(AutoFieldTypeMapp.autoTypeMapp(entity.getIsnull()));
+		mmv.setIsinherit(AutoFieldTypeMapp.autoTypeMapp(entity.getInheritFlag()));
+		mmv.setIsshow(AutoFieldTypeMapp.autoTypeMapp(entity.getIsshow()));
+		mmv.setIskey(AutoFieldTypeMapp.autoTypeMapp(entity.getIskey()));
+		mmv.setRemark(entity.getRemark());
+		mmv.setDisplayorder(entity.getDisplayOrder());
+		mmv.setCode(entity.getAttCode());
+		return mmv;
+	}
+
+}

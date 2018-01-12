@@ -1,0 +1,135 @@
+/**   
+ * @Title: GatherAdaptorServiceImpl.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月28日 下午8:11:04
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.gather.common.impl;
+
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.gather.common.IGatherAdaptorService;
+import com.gilight.dep.metadata.gather.common.IGatherJobTaskModel;
+import com.gilight.dep.metadata.gather.common.spring.AppContextSpring;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/***
+ * 
+ * @ClassName: GatherAdaptorServiceImpl
+ *             <p>
+ *             单例，所有任务执行的情况的汇总 TODO<br>
+ * @author zps
+ * @date 2015年7月29日 上午11:52:13
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class GatherAdaptorServiceImpl implements IGatherAdaptorService {
+	private static final Logger logger = Logger
+			.getLogger(GatherAdaptorServiceImpl.class);
+
+	/***
+	 * 任务的执行组合
+	 */
+	private Map<String, List<IGatherJobTaskModel>> adaptorModels = new HashMap<String, List<IGatherJobTaskModel>>();
+	/***
+	 * 采集任务执行计划
+	 */
+	private Map<String, IGatherJobTaskModel> adaptorJobModels = new HashMap<String, IGatherJobTaskModel>();
+	/***
+	 * IGatherJobTaskModel 配置的的bean名称，code是采集适配器的code
+	 */
+	private Map<String, String> adaptorClazz = new HashMap<String, String>();
+
+	/***
+	 * 
+	 * <p>
+	 * <br>
+	 * 
+	 * @return
+	 * @author zps
+	 * @date 2015年7月29日 下午12:59:52
+	 * @version V1.0
+	 */
+	public Map<String, String> getAdaptorClazz() {
+		return adaptorClazz;
+	}
+
+	public void setAdaptorClazz(Map<String, String> adaptorClazz) {
+		this.adaptorClazz = adaptorClazz;
+	}
+
+	@Override
+	public IGatherJobTaskModel getGatherJobTaskModelByAdaptor(String adaptorCode)
+			throws ServiceException {
+		if (adaptorCode == null) {
+
+			throw new ServiceException("请指定适配器类型");
+		}
+		/*String jobModelName = getAdaptorClazz().get(adaptorCode);
+		if (jobModelName == null) {
+			throw new ServiceException("请联系管理员,配置" + adaptorCode + "的采集服务");
+		}*/
+
+		try {
+			IGatherJobTaskModel model = (IGatherJobTaskModel) AppContextSpring
+					.getBeanByName(adaptorCode);
+			return model;
+		} catch (Exception e) {
+			throw new ServiceException("请联系管理员,配置" + adaptorCode + "的采集服务", e);
+		}
+	}
+
+	@Override
+	public void registerAdaptor(IGatherJobTaskModel jobTaskModel)
+			throws ServiceException {
+		try {
+			adaptorJobModels.put(jobTaskModel.getJobId(), jobTaskModel);
+			List<IGatherJobTaskModel> adpList = adaptorModels.get(jobTaskModel
+					.getJobId());
+			if (adpList == null) {
+				adpList = new ArrayList<IGatherJobTaskModel>();
+			}
+			adpList.add(jobTaskModel);
+			adaptorModels.put(jobTaskModel.getJobId(), adpList);
+		} catch (GilightException e) {
+			logger.error("注册适配器失败",e);
+			throw new ServiceException(e);
+		} catch (Exception e) {
+			logger.error("注册适配器失败",e);
+			throw new ServiceException(e);
+		}
+	}
+
+	@Override
+	public void unRegisterAdaptor(IGatherJobTaskModel jobTaskModel)
+			throws ServiceException {
+		try {
+			adaptorJobModels.remove(jobTaskModel.getJobId());
+			List<IGatherJobTaskModel> adpList = adaptorModels.get(jobTaskModel
+					.getJobId());
+			if (adpList != null) {
+				adpList.remove(jobTaskModel);
+				adaptorModels.put(jobTaskModel.getJobId(), adpList);
+			}
+		} catch (GilightException e) {
+			logger.error("更新适配器失败",e);
+			throw new ServiceException(e);
+		} catch (Exception e) {
+			logger.error("更新适配器失败",e);
+			throw new ServiceException(e);
+		}
+	}
+
+	@Override
+	public IGatherJobTaskModel getGatherJobModel(String jobTaskId) {
+		return adaptorJobModels.get(jobTaskId);
+	}
+
+}

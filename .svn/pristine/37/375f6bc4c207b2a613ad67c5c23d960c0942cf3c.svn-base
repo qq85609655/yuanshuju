@@ -1,0 +1,88 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+public class MdVersionFlowLog extends BaseMetaDataEntity {
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 元数据
+	 */
+	private String mdId;
+	/**
+	 * 元数据
+	 */
+	private String mdCode;
+	/**
+	 * 操作类型 1 通过，0驳回
+	 */
+	private String mdName;
+	/**
+	 * 操作类型 1 通过，0驳回'
+	 */
+	private Integer operation;
+	/**
+	 * 原因
+	 */
+	private String message;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate;
+	
+	public MdVersionFlowLog() {
+		super();
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getMdId() {
+		return mdId;
+	}
+	public void setMdId(String mdId) {
+		this.mdId = mdId;
+	}
+	public String getMdCode() {
+		return mdCode;
+	}
+	public void setMdCode(String mdCode) {
+		this.mdCode = mdCode;
+	}
+	public String getMdName() {
+		return mdName;
+	}
+	public void setMdName(String mdName) {
+		this.mdName = mdName;
+	}
+	public Integer getOperation() {
+		return operation;
+	}
+	public void setOperation(Integer operation) {
+		this.operation = operation;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	public String getUpdateDate() {
+		return updateDate;
+	}
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+	@Override
+	public String toString() {
+		return "MdVersionFlowLog [id=" + id + ", mdId=" + mdId + ", mdCode="
+				+ mdCode + ", mdName=" + mdName + ", operation=" + operation
+				+ ", message=" + message + ", updateDate=" + updateDate + "]";
+	}
+	
+	 
+}

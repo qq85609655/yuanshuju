@@ -1,0 +1,19 @@
+/**   
+ * @Title: UUIDTest.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年8月12日 上午11:47:52
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.init.data;
+
+import java.util.UUID;
+
+public class UUIDTest {
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		for (int i = 0; i < 10; i++)
+			System.out.println(UUID.randomUUID().toString());
+	}
+}

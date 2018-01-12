@@ -1,0 +1,205 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.metadata.enmu.MetaModelBooleanYesOrNo;
+import com.gilight.dep.metadata.enmu.MetaModelDisplayType;
+
+/**
+ * 
+ * @ClassName: MetaModelAttView
+ *             <p>
+ *             元数据属性信息<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:10:08
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaModelAttView extends MetaBaseView {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 元模型属性id
+	 */
+	private String id;
+	/***
+	 * 属性代码
+	 */
+	private String code;
+	/**
+	 * 属性名称
+	 */
+	private String name;
+	/**
+	 * 元模型的ID
+	 */
+	private String modelId;
+	/**
+	 * 属性长度
+	 */
+	private Integer length;
+	/**
+	 * 属性最大值
+	 */
+	private Integer max;
+	/**
+	 * 属性最小值
+	 */
+	private Integer min;
+	/**
+	 * 是否只读
+	 */
+	private boolean isread = MetaModelBooleanYesOrNo.NO;
+	/**
+	 * 是否可为null
+	 */
+	private boolean isnull = MetaModelBooleanYesOrNo.YES;
+	/**
+	 * 是否可继承
+	 */
+	private boolean isinherit = MetaModelBooleanYesOrNo.YES;
+	/**
+	 * 是否可见
+	 */
+	private boolean isshow = MetaModelBooleanYesOrNo.YES;
+	/**
+	 * 是否逻辑主键
+	 */
+	private boolean iskey = MetaModelBooleanYesOrNo.NO;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 显示顺序
+	 */
+	private String displayorder;
+	/**
+	 * 控件类型1：文本框；2：文本域；3：下拉框 枚举值，下拉框的选项
+	 */
+	private String displayType = MetaModelDisplayType.TEXT;
+	/**
+	 * 控件类型是下拉框的时候，下拉框的枚举值对象
+	 */
+	private String enumId;
+	/**
+	 * 数据类型id
+	 */
+	private String datatypeId;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getModelId() {
+		return modelId;
+	}
+	public void setModelId(String modelId) {
+		this.modelId = modelId;
+	}
+	public Integer getLength() {
+		return length;
+	}
+	public void setLength(Integer length) {
+		this.length = length;
+	}
+	public Integer getMax() {
+		return max;
+	}
+	public void setMax(Integer max) {
+		this.max = max;
+	}
+	public Integer getMin() {
+		return min;
+	}
+	public void setMin(Integer min) {
+		this.min = min;
+	}
+	public boolean isIsread() {
+		return isread;
+	}
+	public void setIsread(boolean isread) {
+		this.isread = isread;
+	}
+	public boolean isIsnull() {
+		return isnull;
+	}
+	public void setIsnull(boolean isnull) {
+		this.isnull = isnull;
+	}
+	public boolean isIsinherit() {
+		return isinherit;
+	}
+	public void setIsinherit(boolean isinherit) {
+		this.isinherit = isinherit;
+	}
+	public boolean isIsshow() {
+		return isshow;
+	}
+	public void setIsshow(boolean isshow) {
+		this.isshow = isshow;
+	}
+	public boolean isIskey() {
+		return iskey;
+	}
+	public void setIskey(boolean iskey) {
+		this.iskey = iskey;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getDisplayorder() {
+		return displayorder;
+	}
+	public void setDisplayorder(String displayorder) {
+		this.displayorder = displayorder;
+	}
+	public String getDisplayType() {
+		return displayType;
+	}
+	public void setDisplayType(String displayType) {
+		this.displayType = displayType;
+	}
+	public String getDatatypeId() {
+		return datatypeId;
+	}
+	public void setDatatypeId(String datatypeId) {
+		this.datatypeId = datatypeId;
+	}
+	public String getEnumId() {
+		return enumId;
+	}
+	public void setEnumId(String enumId) {
+		this.enumId = enumId;
+	}
+	@Override
+	public String toString() {
+		return "MetaModelAttView [id=" + id + ", code=" + code + ", name="
+				+ name + ", modelId=" + modelId + ", length=" + length
+				+ ", max=" + max + ", min=" + min + ", isread=" + isread
+				+ ", isnull=" + isnull + ", isinherit=" + isinherit
+				+ ", isshow=" + isshow + ", iskey=" + iskey + ", remark="
+				+ remark + ", displayorder=" + displayorder + ", displayType="
+				+ displayType + ", enumId=" + enumId + ", datatypeId="
+				+ datatypeId + "]";
+	}
+	
+
+}

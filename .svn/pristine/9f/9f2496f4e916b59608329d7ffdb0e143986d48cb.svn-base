@@ -1,0 +1,35 @@
+package com.gilight.dep.metadata.wsview;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+@XStreamAlias("schema")
+public class SchemaDetailsView {
+    private List<TableView> tables;
+
+    public List<TableView> getTables() {
+        return tables;
+    }
+
+    public void setTables(List<TableView> tables) {
+        this.tables = tables;
+    }
+
+    public void addTable(TableView tableView){
+        if (tables==null){
+            tables=new ArrayList<TableView>();
+        }
+        tables.add(tableView);
+
+    }
+}

@@ -1,0 +1,35 @@
+package com.gilight.dep.metadata.message.consumer;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.ContextImpl;
+import com.gilight.dep.framework.core.context.base.DomainMessageContext;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.message.consumer.AbstractConsumer;
+import com.gilight.dep.framework.core.message.consumer.IMessageConsumer;
+import com.gilight.dep.metadata.repository.IMetaDataBaseRepository;
+import com.gilight.dep.metadata.repository.IMetaDataVersionRepository;
+import com.gilight.dep.metadata.repository.IMetaDataViewRepository;
+import com.jdon.annotation.Consumer;
+import com.jdon.async.disruptor.EventDisruptor;
+import com.jdon.domain.message.DomainEventHandler;
+@Consumer("MetaDataPublish")
+public class MetaDataPublishMessageConsumer extends AbstractConsumer implements
+IMessageConsumer{
+	@Autowired
+	private IMetaDataBaseRepository repository;
+	
+ 
+
+	public void executeEvent(DomainMessageContext dmContext) throws Exception {
+		//System.out.println("111111111111");
+		//IContext context = ContextFactoryImpl.getInstance().createContext(ContextImpl.class, dmContext);
+		//System.out.println("2222");
+		repository.publish(dmContext);
+		
+	}
+
+}

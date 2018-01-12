@@ -1,0 +1,35 @@
+package com.gilight.dep.metadata.service.impl;
+
+import org.apache.log4j.Logger;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.service.impl.BasicServiceImpl;
+import com.gilight.dep.metadata.service.IGatherExcuteService;
+
+public class GatherExcuteServiceImpl extends BasicServiceImpl implements
+		IGatherExcuteService {
+	private static final Logger logger = Logger
+			.getLogger(GatherExcuteServiceImpl.class);
+
+	@Override
+	public IResponse getByScope(IContext arg0) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IModel initModel(IContext context) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class getModelClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

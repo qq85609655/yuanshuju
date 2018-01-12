@@ -1,0 +1,30 @@
+/**   
+ * @Title: MetaBaseView.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月22日 上午9:40:25
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.BaseView;
+
+/***
+ * 
+ * @ClassName: MetaBaseView
+ *             <p>
+ *             TODO<br>
+ * @author zps
+ * @date 2015年7月22日 上午10:23:41
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaBaseView extends BaseView {
+
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+
+}

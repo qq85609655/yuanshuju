@@ -1,0 +1,115 @@
+/**   
+ * @Title: MetaDateViewFolderScope.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年8月5日 下午12:44:43
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MdViewFolder;
+
+public class MetaDateViewFolderScope extends BaseHbiernateScope {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 父文件夹id
+	 */
+	private String parentId;
+	/**
+	 * 文件夹名称
+	 */
+	private String name;
+	/**
+	 * 命名空间
+	 */
+	private String namespace;
+	/**
+	 * 文件夹等级
+	 */
+	private String folderLevel;
+	/**
+	 * 显示顺序
+	 */
+	private String displayOrder;
+	/**
+	 * 是否隐藏：YES/NO
+	 */
+	private Integer ishidden;
+
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getNamespace() {
+		return namespace;
+	}
+
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
+	}
+
+	public String getFolderLevel() {
+		return folderLevel;
+	}
+
+	public void setFolderLevel(String folderLevel) {
+		this.folderLevel = folderLevel;
+	}
+
+	public String getDisplayOrder() {
+		return displayOrder;
+	}
+
+	public void setDisplayOrder(String displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+
+	public Integer getIshidden() {
+		return ishidden;
+	}
+
+	public void setIshidden(Integer ishidden) {
+		this.ishidden = ishidden;
+	}
+
+	@Override
+	public Class getClazz() {
+		return MdViewFolder.class;
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+		StringBuffer sb = new StringBuffer();
+		if (!StringUtil.isEmpty(this.parentId)) {
+			sb.append(" and ").append(obj).append(".parentId = ? ");
+			this.paraList.add(this.parentId);
+		}
+		return sb;
+	}
+
+	@Override
+	public String getDefaultOrderBy(String obj) {
+		// TODO Auto-generated method stub
+		return "order by " + obj + ".displayOrder";
+	}
+
+}

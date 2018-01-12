@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>dep-metadata</artifactId>
+	<packaging>pom</packaging>
+	<modules>
+		<module>metadata/dep-meta-util</module>
+		<module>metadata/dep-metadata-entity</module>
+		<module>metadata/dep-metadata-common</module>
+		<module>metamodel/demp-metamode-common</module>
+		<module>metamodel/demp-metamode-core</module>
+		<module>metadata/dep-metadata-repository</module>
+		<module>metadata/dep-metadata-core</module>
+		<module>metadata/dep-metadata-gather-common</module>
+		<module>metadata/dep-metadata-gather-dbsource</module>
+		<module>metadata/dep-metadata-gather-excel</module>
+		<module>metadata/dep-metadata-gather-oa</module>
+		<module>metadata/dep-metadata-gather-oaSchema</module>
+		<module>metadata/dep-metadata-wsservice</module>
+		<module>metadata/dep-metadata-analyzer</module>
+		<module>metamodel/demp-metamode-core-webapp</module>
+		<module>metadata/dep-metadata-core-webapp</module>
+		<!--<module>metamodel/demp-metamodel-init</module>-->
+	</modules>
+	<build>
+		<plugins>
+			<!-- <plugin> <groupId>org.apache.felix</groupId> <artifactId>maven-bundle-plugin</artifactId> 
+				<version>2.5.3</version> <extensions>true</extensions> <configuration> <instructions> 
+				<Import-Package> org.eclipse.*;resolution:=optional, * </Import-Package> 
+				</instructions> </configuration> </plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+				</configuration>
+			</plugin>
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> 
+				<version>2.9.1</version> <configuration> <aggregate>true</aggregate> <charset>UTF-8</charset> 
+				<encoding>UTF-8</encoding> <decencoding>UTF-8</decencoding> </configuration> 
+				</plugin> -->
+		</plugins>
+	</build>
+	<groupId>gilight.dep.metadata</groupId>
+	<version>2.0.0</version>
+</project>

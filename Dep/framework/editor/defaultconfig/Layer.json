@@ -1,0 +1,18 @@
+{
+	"plugins" : [{
+		"src": "Dep/framework/editor/plugin/containers/layer/ChangeLayer.js",
+		"name": "Dep.framework.editor.plugin.containers.layer.ChangeLayer"
+	},{
+		"src": "Dep/framework/editor/plugin/containers/layer/LayoutPlugin.js",
+		"name": "Dep.framework.editor.plugin.containers.layer.LayoutPlugin"
+	}],
+	"details" : [
+
+	{
+				"type" : "default",
+				"fGroups" : "default",
+				"name" : "默认图层",
+				"desc" : "默认图层",
+				"layout" : "suduku"
+			}]
+}

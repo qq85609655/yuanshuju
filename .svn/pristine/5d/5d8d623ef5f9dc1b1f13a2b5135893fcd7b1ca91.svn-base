@@ -1,0 +1,83 @@
+package com.gilight.dep.metadata.model;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.ext.model.DepBaseBasicModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.entity.MdGatherJob;
+import com.gilight.dep.metadata.message.procuder.GatherJobProducer;
+
+@SuppressWarnings("rawtypes")
+public class MetaDataGatherJobModel extends DepBaseBasicModel {
+
+	private List<IEntity> logList = null;
+
+	private List<IEntity> gatherMetaDataList = null;
+
+	public List<IEntity> getLogList() {
+		return logList;
+	}
+
+	public void setLogList(List<IEntity> logList) {
+		this.logList = logList;
+	}
+
+	public List<IEntity> getGatherMetaDataList() {
+		return gatherMetaDataList;
+	}
+
+	public void setGatherMetaDataList(List<IEntity> gatherMetaDataList) {
+		this.gatherMetaDataList = gatherMetaDataList;
+	}
+
+	@Override
+	public void clearCache() {
+		this.logList = null;
+		this.gatherMetaDataList = null;
+	}
+
+	@Override
+	protected IResult createAfter(IContext context, IResult result)
+			throws ModelException {
+		clearCache();
+		return this.getKeyResult();
+	}
+
+	@Override
+	protected IResult updateAfter(IContext context, IResult result)
+			throws ModelException {
+		this.clearCache();
+		return this.getKeyResult();
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext context, IResult result)
+			throws ModelException {
+		return this.getKeyResult();
+	}
+
+	@Override
+	protected IResult getAfter(IContext context, IResult result)
+			throws ModelException {
+		return result;
+	}
+
+	@Override
+	public Class<MdGatherJob> getModelEntityClass() {
+		return MdGatherJob.class;
+	}
+
+	@Override
+	public Class getMessageProcuderClass() {
+		return GatherJobProducer.class;
+	}
+
+	public IResponse excute(IContext paramIContext) throws ModelException {
+		return null;
+	}
+
+}

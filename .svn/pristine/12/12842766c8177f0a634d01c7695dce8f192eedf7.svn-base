@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gilight.dep.metadata.entity.MdDbsParam" table="MD_DBS_PARAM" >
+    <cache usage="read-write" />
+        <id name="id" type="string">
+            <column name="ID" length="64" />
+            <generator class="assigned" />
+        </id>
+        <property name="mdid" type="string">
+            <column name="MD_ID" length="64">
+            </column>
+        </property>
+        <property name="host" type="string">
+            <column name="HOST" length="64">
+            </column>
+        </property>
+        <property name="port" type="string">
+            <column name="PORT" length="256">
+            </column>
+        </property>
+        <property name="sid" type="string">
+            <column name="SID" length="64">
+            </column>
+        </property>
+
+        <property name="url" type="string">
+            <column name="URL" length="512">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

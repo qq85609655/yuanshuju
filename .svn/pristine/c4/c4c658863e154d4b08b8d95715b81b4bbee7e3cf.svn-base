@@ -1,0 +1,113 @@
+/**   
+analyseExcuteService * @Title: KettleSpringFactory.java  
+ * @Description: TODO 
+ * @author zps   
+ * @date 2015骞�鏈�9鏃�涓嬪崍2:32:46
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.spring;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import com.gilight.dep.metadata.entity.MmFolder;
+import com.gilight.dep.metadata.util.AutoCopyObj;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.gather.excel.ExcelGatherJobTaskModel;
+import com.gilight.dep.metadata.gather.excel.ExcelGatherServiceImpl;
+import com.gilight.dep.metadata.scope.MetaHbiernateScope;
+import com.gilight.dep.metadata.service.IMetaDataBaseService;
+import com.gilight.dep.metadata.service.IMetaDataVersionService;
+import com.gilight.dep.metadata.service.IMetaDataViewService;
+import com.gilight.dep.metadata.view.MetaDataAttView;
+import com.gilight.dep.metadata.view.MetaDataBaseView;
+import com.gilight.dep.metadata.view.MetaDataCompBaseView;
+import com.gilight.dep.metadata.view.MetaDataDepeBaseView;
+import com.gilight.dep.metadata.view.MetaDataSubBaseView;
+import com.gilight.dep.metadata.view.MetaDataView;
+import com.gilight.dep.metadata.view.MetaModelFolderView;
+import com.gilight.dep.metadata.view.MetaModelInheritView;
+import com.gilight.dep.metadata.view.PackageBasicView;
+import com.gilight.dep.metadata.view.PackageFolderBasicView;
+import com.gilight.dep.metamodel.service.IMetaModelBasicService;
+import com.gilight.dep.metamodel.service.IMetaModelCompService;
+import com.gilight.dep.metamodel.service.IMetaModelDepeService;
+import com.gilight.dep.metamodel.service.IMetaModelInheService;
+import com.gilight.dep.metamodel.service.IMetaModelQueryService;
+import com.gilight.dep.metamodel.service.impl.MetaModelFolderServiceImpl;
+
+public class SpringFactoryModelFolderTest {
+
+	private static SpringFactoryModelFolderTest instance = new SpringFactoryModelFolderTest();
+	private static ApplicationContext factory;
+
+	public static SpringFactoryModelFolderTest getInstance() {
+		return instance;
+	}
+
+	static {
+		//String[] beans={"beans/service/beans.xml","beans/hibernate/hibernate.xml"};
+		factory = new ClassPathXmlApplicationContext("test.xml");
+	}
+
+	public static Object getBean(String name) {
+		if (factory == null) {
+			return null;
+		}
+		try {
+			return factory.getBean(name);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public static ApplicationContext getFactory() {
+		return factory;
+	}
+
+	public static void setFactory(ApplicationContext factory) {
+		SpringFactoryModelFolderTest.factory = factory;
+	}
+
+	public static void main(String[] args) {
+		try {
+			System.out.println("Test------");
+			
+			//ExcelGatherJobTaskModel jobmodel = new ExcelGatherJobTaskModel();
+			MetaModelFolderServiceImpl gs = (MetaModelFolderServiceImpl) SpringFactoryModelFolderTest.getBean("metaModelFolderService");
+			System.out.println("Test------");
+			MetaModelFolderView view = new MetaModelFolderView();
+			MmFolder mf = new MmFolder();
+			mf=AutoCopyObj.objCopy(MmFolder.class,view);
+			view.setId("aaa");
+			view.setName("是打发第三方");
+			IContext context=ContextFactoryImpl.getInstance().createContextWithView(view);
+			//IContext delcontext=ContextFactoryImpl.getInstance().createDifferResponseContextWithID(view.getId());
+			IContext delcontext=ContextFactoryImpl.getInstance().createContextWithID(view.getId());
+			//IContext context=ContextFactoryImpl.getInstance().createContextWithEntity(mf);
+			//gs.create(context);
+			gs.delete(delcontext);
+			//gs.update(context);
+			System.out.println("Test------");
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// System.out.println(s.findAll()==null);
+	}
+
+}

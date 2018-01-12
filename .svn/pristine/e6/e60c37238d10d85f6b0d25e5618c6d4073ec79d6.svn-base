@@ -1,0 +1,79 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+/**
+ * 
+ * @ClassName: MdDependencyImp
+ *             <p>
+ *             TODO<br>
+ * @author hww
+ * @date 2015年7月7日 下午3:49:29
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MdDbBackup extends BaseMetaDataEntity {
+
+	/**
+	 * 主键
+	 */
+	private String id;
+	private String startTime;
+    private String endTime;
+    private String result;
+
+    private String fileName;
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+
+    public String getId() {
+        return id;
+    }
+
+
+    public void setId(String id) {
+        this.id=id;
+    }
+
+    @Override
+    public String toString() {
+        return "MdDbBackup{" +
+                "id='" + id + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", result='" + result + '\'' +
+                ", fileName='" + fileName + '\'' +
+                '}';
+    }
+}

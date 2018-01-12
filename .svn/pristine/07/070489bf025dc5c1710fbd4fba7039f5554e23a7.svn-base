@@ -1,0 +1,13 @@
+package com.gilight.dep.metadata.dao;
+/**
+ * 元数据查询
+* @ClassName: IMetaDataQueryDao 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:13:59
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IMetaDataQueryDao extends IMetaDataDao{
+
+}

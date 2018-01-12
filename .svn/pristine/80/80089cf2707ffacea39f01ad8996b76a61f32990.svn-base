@@ -1,0 +1,85 @@
+/**   
+ * @Title: BaseGatherJobTaskModel.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月29日 上午10:44:43
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.gather.common;
+
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.metadata.gather.common.log.GatherResult;
+import com.gilight.dep.metadata.gather.common.log.IGatherResult;
+
+public abstract class BaseGatherJobTaskModel implements IGatherJobTaskModel {
+
+	private String jobId = null;
+	private String taskId = null;
+
+	private IGatherResult result = null;
+	private IBuildMetadataService buildMetadataService = null;
+
+	public BaseGatherJobTaskModel() {
+		super();
+		result = new GatherResult();
+	}
+
+	public IBuildMetadataService getBuildMetadataService() {
+		return buildMetadataService;
+	}
+
+	public void setBuildMetadataService(
+			IBuildMetadataService buildMetadataService) {
+		this.buildMetadataService = buildMetadataService;
+	}
+
+	public BaseGatherJobTaskModel(String jobId, String taskId,
+			IGatherResult result) {
+		super();
+		this.jobId = jobId;
+		this.taskId = taskId;
+		this.result = result;
+	}
+
+	public void setResult(IGatherResult result) {
+		this.result = result;
+	}
+
+	public String getJobId() {
+		return jobId;
+	}
+
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
+
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
+
+	@Override
+	public String getJobTaskId() {
+		return this.getTaskId();
+	}
+
+	@Override
+	public String getStatus() throws ModelException {
+		return result.getStatus();
+	}
+
+	@Override
+	public IGatherResult getResult() throws ModelException {
+		return result;
+	}
+
+	@Override
+	public String getLogResult() throws ModelException {
+		return result.getLogText();
+	}
+
+}

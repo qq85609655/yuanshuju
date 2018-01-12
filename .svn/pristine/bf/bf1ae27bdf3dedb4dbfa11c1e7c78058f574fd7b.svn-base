@@ -1,0 +1,157 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+public class MetaDataMapMMDepView implements IView{
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 名字;单个依赖名字
+	 */
+	private String name;
+	/**
+	 * 起始元模型id，依赖端
+	 */
+	private String fromMmId;
+	
+	/**
+	 * 新增字段:右键的元数据id;可以成为源/目标mdid
+	 */
+	private String fromMdId;
+	private String toMdId;
+	
+
+	/**
+	 * 映射名字
+	 */
+	private String fromMmName;
+	/**
+	 * 目标元模型id，被依赖端
+	 */
+	private String toMmId;
+	private String toMmName;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+
+	private String trole;
+
+	private String isMapp;
+
+	private String mappDire;
+
+	private String mappCode;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getFromMmId() {
+		return fromMmId;
+	}
+
+	public void setFromMmId(String fromMmId) {
+		this.fromMmId = fromMmId;
+	}
+
+	public String getToMmId() {
+		return toMmId;
+	}
+
+	public void setToMmId(String toMmId) {
+		this.toMmId = toMmId;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
+	public String getFromMdId() {
+		return fromMdId;
+	}
+	public void setFromMdId(String fromMdId) {
+		this.fromMdId = fromMdId;
+	}
+	public String getToMdId() {
+		return toMdId;
+	}
+	public void setToMdId(String toMdId) {
+		this.toMdId = toMdId;
+	}
+
+	public String getTrole() {
+		return trole;
+	}
+
+	public void setTrole(String trole) {
+		this.trole = trole;
+	}
+
+	public String getIsMapp() {
+		return isMapp;
+	}
+
+	public void setIsMapp(String isMapp) {
+		this.isMapp = isMapp;
+	}
+
+	public String getMappDire() {
+		return mappDire;
+	}
+
+	public void setMappDire(String mappDire) {
+		this.mappDire = mappDire;
+	}
+
+	public String getMappCode() {
+		return mappCode;
+	}
+
+	public void setMappCode(String mappCode) {
+		this.mappCode = mappCode;
+	}
+
+	public String getFromMmName() {
+		return fromMmName;
+	}
+
+	public void setFromMmName(String fromMmName) {
+		this.fromMmName = fromMmName;
+	}
+
+	public String getToMmName() {
+		return toMmName;
+	}
+
+	public void setToMmName(String toMmName) {
+		this.toMmName = toMmName;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaDataMapMMDepView [id=" + id + ", name=" + name + ", fromMmId=" + fromMmId + ", fromMmName="
+				+ fromMmName + ", toMmId=" + toMmId + ", toMmName=" + toMmName + ", remark=" + remark + ", trole="
+				+ trole + ", isMapp=" + isMapp + ", mappDire=" + mappDire + ", mappCode=" + mappCode + "]";
+	}
+
+}

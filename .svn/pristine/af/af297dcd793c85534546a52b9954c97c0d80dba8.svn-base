@@ -1,0 +1,163 @@
+@charset "utf-8";
+/* CSS Document */
+body {
+	background: url(../img/login/bg.jpg) center 0 no-repeat
+}
+
+.login-container {
+	position: absolute;
+	width: 296px;
+	height: 320px;
+	top: 40%;
+	left: 50%;
+	margin-left: -148px;
+	margin-top: -160px;
+}
+
+.login-content {
+	position: relative;
+	color: #4d4d4d;
+	font-weight: bold;
+	font-size: 14px;
+	width: 296px;
+	height: 320px;
+}
+
+.login-first {
+	position: absolute;
+	top: 0px;
+	left: 0;
+	width: 290px;
+	height: 46px;
+	background: url(../img/login/logo.png) center 0 no-repeat;
+}
+
+.login-second {
+	position: absolute;
+	top: 100px;
+	left: 0;
+	width: 290px;
+	height: 46px;
+	background: url(../img/login/ku.png) center 0 no-repeat;
+}
+
+.login-third {
+	position: absolute;
+	top: 160px;
+	left: 0;
+	width: 290px;
+	height: 40px;
+	background: url(../img/login/user.png) center 0 no-repeat;
+}
+
+.login-input {
+	font-family: "microsoft yahei";
+	font-size: 16px;
+	width: 155px;
+	height: 26px;
+	border: 0;
+	background: transparent;
+	padding-left: 3px;
+	color: #fff;
+}
+
+.login-select {
+	font-family: "microsoft yahei";
+	color: #fff;
+	font-size: 16px;
+	margin-bottom: 5px;
+	padding: 3px 0px 3px 0px;
+	width: 190px;
+	height: 30px;
+	border: 0;
+	background: transparent;
+}
+
+.login-select option {
+	background: #a9b5bd;
+	border: 1px solid #fff;
+}
+
+.login-fourth {
+	position: absolute;
+	top: 220px;
+	left: 0;
+	width: 290px;
+	height: 40px;
+	background: url(../img/login/login.png) 0 0 no-repeat;
+}
+
+.login-fifth {
+	position: absolute;
+	top: 285px;
+	left: 0;
+	width: 290px;
+	height: 40px;
+}
+
+.login-button {
+	width: 290px;
+	height: 40px;
+	background: url(../img/login/login-f.png) 0 0 no-repeat;
+	border: 0;
+}
+
+.login-button:hover {
+	width: 290px;
+	height: 40px;
+	background: url(../img/login/login-fhover.png) 0 0 no-repeat;
+	border: 0;
+}
+
+.login-author {
+	bottom: 60px;
+	left: 50%;
+	margin-left: -97px;
+	position: absolute;
+	font-size: 12px;
+	color: #4d4d4d;
+	text-align: center;
+}
+
+.login-message {
+    font-family: sans-serif;
+    font-weight: bold;
+    left: 0;
+    margin-top: 200px;
+    position: absolute;
+    text-align: center;
+    top: 140px;
+}
+#loading-mask{
+		background-color: #68838B;
+		height: 100%;
+		left: 0;
+		opacity: 0.5;
+		position: absolute;
+		top: 0;
+		width: 100%;
+		z-index: 20000;
+		display: none;
+    }
+#loading{
+    background: url("../img/login/login_bg.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    height: 47px;
+    left: 45%;
+    padding: 2px;
+    position: absolute;
+    top: 40%;
+    width: 198px;
+    z-index: 20001;
+ }
+#loading .loading-indicator{
+    color: #4E4E4E;
+    font: bold 18px tahoma,arial,helvetica;
+    height: auto;
+    margin: 0;
+    width: 200px;
+    padding: 10px 10px 10px 5px;
+}
+#loading-msg {
+    font: bold 16px arial,tahoma,sans-serif;
+    margin-top: 5px;
+}	

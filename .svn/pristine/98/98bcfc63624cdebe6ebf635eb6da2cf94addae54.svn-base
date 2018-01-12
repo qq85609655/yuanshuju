@@ -1,0 +1,58 @@
+package com.gilight.dep.metadata.dao.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.Query;
+
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IAnalyseExcuteDao;
+import com.gilight.dep.metadata.entity.MdDependency;
+import com.gilight.dep.metadata.entity.MdMetadata;
+
+public class AnalyseExcuteDaoImpl extends BaseDao implements IAnalyseExcuteDao{
+
+	public AnalyseExcuteDaoImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+	@Override
+	public List<IEntity> findMetaDataByIdList(List<String> idlist, String mmid)
+			throws DaoException {
+		List<IEntity> list = new ArrayList<IEntity>();
+		if (idlist == null || idlist.size() == 0) {
+			return list;
+		}
+		
+		String hql = "from " + MdMetadata.class.getName()
+				+ " as model where model.id in (:idlist) and model.mmId=(:mmid)";
+		Query queryObject = getSession().createQuery(hql);
+		// queryObject.setParameter(0, idlist);
+		queryObject.setParameterList("idlist", idlist);
+		queryObject.setString("mmid", mmid);
+		return queryObject.list();
+		// return null;
+	}
+	@Override
+	public List<IEntity> findMetaDataDepeByIdList(List<String> idlist, List<String> toidlist)
+			throws DaoException {
+		List<IEntity> list = new ArrayList<IEntity>();
+		if (idlist == null || idlist.size() == 0) {
+			return list;
+		}
+		
+		String hql = "from " + MdDependency.class.getName()
+				+ " as model where model.fromMdId in (:idlist) and model.toMdId in (:toidlist)";
+		Query queryObject = getSession().createQuery(hql);
+		// queryObject.setParameter(0, idlist);
+		queryObject.setParameterList("idlist", idlist);
+		queryObject.setParameterList("toidlist", toidlist);
+		return queryObject.list();
+		// return null;
+	}
+}

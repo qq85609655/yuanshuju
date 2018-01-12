@@ -1,0 +1,27 @@
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+
+public interface IMetaModelFolderRepository extends IMetaModelRepository {
+    /**
+     * 查询文件夹树
+     * @param iContext
+     * @return
+     * @throws RepositoryException
+     */
+    public IResponse findTree(IContext<IDParameters> iContext) throws RepositoryException;
+
+    /**
+     * 添加元模型到文件夹
+     * @param iContext
+     * @return
+     * @throws RepositoryException
+     */
+    public IResponse addModel(IContext<IView> iContext) throws RepositoryException;
+
+
+}

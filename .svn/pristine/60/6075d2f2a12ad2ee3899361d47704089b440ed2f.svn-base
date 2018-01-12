@@ -1,0 +1,31 @@
+/**   
+ * @Title: MetaModelCompMultiplicity.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月23日 下午8:16:30
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.enmu;
+
+import com.gilight.dep.framework.util.enmu.StringEnum;
+
+public class MetaModelCompMultiplicity extends StringEnum {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	public static String ONE_ONE = "1:1";
+	public static String ONE_MANY = "1:N";
+	public static final MetaModelCompMultiplicity ONE_ONE_TYPE = new MetaModelCompMultiplicity(
+			"1:1", ONE_ONE);
+	public static final MetaModelCompMultiplicity ONE_MANY_TYPE = new MetaModelCompMultiplicity(
+			"1:N", ONE_MANY);
+
+	protected MetaModelCompMultiplicity(String iName, String iValue) {
+		super(iName, iValue);
+		// TODO Auto-generated constructor stub
+	}
+
+}

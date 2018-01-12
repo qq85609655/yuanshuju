@@ -1,0 +1,23 @@
+package com.gilight.dep.metadata.dao.impl;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IMetaModelAttrDao;
+
+public class MetaModelAttrDaoImpl extends BaseDao implements IMetaModelAttrDao {
+
+	public MetaModelAttrDaoImpl() {
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

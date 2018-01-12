@@ -1,0 +1,123 @@
+package com.gilight.dep.metadata.util;
+
+import org.apache.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+/**
+ * Oracle数据库备份
+ *
+ * @author GaoHuanjie
+ */
+public class OracleDatabaseBackup {
+    private static final Logger logger = Logger
+            .getLogger(OracleDatabaseBackup.class);
+    /**
+     * Java代码实现Oracle数据库导出
+     *
+     * @author wzx
+     * @param userName 进入数据库所需要的用户名
+     * @param password 进入数据库所需要的密码
+     * @param SID 用户所在的SID
+     * @param savePath 数据库导出文件保存路径
+     * @param fileName 数据库导出文件文件名
+     * @return 返回true表示导出成功，否则返回false。
+     */
+    public static boolean exportDatabaseTool(String userName, String password, String SID, String savePath, String fileName) throws InterruptedException {
+        File saveFile = new File(savePath);
+        if (!saveFile.exists()) {// 如果目录不存在
+            saveFile.mkdirs();// 创建文件夹
+        }
+        try {
+            String expOracle="exp " + userName + "/" + password + "@" + SID + " file=" + savePath + "/" + fileName + ".dmp owner="+userName;
+            logger.info("执行数据库备份命令:"+expOracle);
+            //return runCommand(expOracle);
+            int runResult=runCommand(expOracle);
+            if (runResult==0||runResult==3){
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            logger.error("数据库备份失败",e);
+            e.printStackTrace();
+            return false;
+        }
+        //return false;
+
+        //imp metadata/metadata@orcl252 file=e:\oraclebak\94.dmp fromuser=metadata ignore=y
+    }
+
+    /**
+     *
+     * @param userName
+     * @param password
+     * @param SID
+     * @param savePath
+     * @param fileName
+     * @return
+     * @throws InterruptedException
+     */
+    public static boolean importDatabaseTool(String userName, String password, String SID, String savePath, String fileName) throws InterruptedException {
+        try {
+            String filepath=savePath+"/"+fileName;
+            String impOracle="imp "+userName+"/"+password+"@"+SID+" file="+filepath+" fromuser="+userName+" ignore=y";
+            int runResult=runCommand(impOracle);
+            if (runResult==0||runResult==3){
+                return true;
+            }
+            return false;
+
+        } catch (IOException e) {
+            logger.error("数据库恢复失败",e);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static int  runCommand(String command) throws IOException,InterruptedException{
+
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+
+            String line = null;
+            BufferedReader br =
+                    new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            //读取ErrorStream很关键，这个解决了挂起的问题。
+            while ((line = br.readLine()) != null){
+                System.out.println(line);
+                logger.info(line);
+            }
+            br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            while ((line = br.readLine()) != null){
+                System.out.println(line);
+                logger.info(line);
+            }
+
+            logger.info("命令执行结果:"+process.waitFor());
+            return process.waitFor();
+            /*if(process.waitFor() == 0||process.waitFor()==3){//0 表示线程正常终止。
+                return true;
+            }else {
+                return false;
+            }*/
+        } catch (IOException e) {
+            e.printStackTrace();
+            //return false;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            //return false;
+        }
+        return 1;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        if (exportDatabaseTool("metadata", "metadata", "orcl", "d:/BackupDatabase", "oracledb")) {
+            System.out.println("数据库成功备份！！！");
+        } else {
+            System.out.println("数据库备份失败！！！");
+        }
+    }
+}

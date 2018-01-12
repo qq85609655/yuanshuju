@@ -1,0 +1,44 @@
+/**   
+ * @Title: MetaDataGatherJobStatus.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月29日 上午9:33:11
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.enmu;
+
+import com.gilight.dep.framework.util.enmu.StringEnum;
+
+/***
+ * 
+ * @ClassName: MetaDataGatherJobStatus
+ *             <p>此状态为运行时状态，系统默认已经完成，内存中正在运行未运行时状态
+ *             TODO<br>
+ * @author zps
+ * @date 2015年7月29日 上午9:34:20
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaDataGatherJobStatus extends StringEnum {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	public static String UNKNOW = "0";
+	public static String RUNNING = "1";
+	public static String FINISH = "2";
+	public static final MetaDataGatherJobStatus UNKNOW_TYPE = new MetaDataGatherJobStatus(
+			"未知", UNKNOW);
+	public static final MetaDataGatherJobStatus RUNNING_TYPE = new MetaDataGatherJobStatus(
+			"运行中", RUNNING);
+	public static final MetaDataGatherJobStatus FINISH_TYPE = new MetaDataGatherJobStatus(
+			"已完成", FINISH);
+	
+	protected MetaDataGatherJobStatus(String iName, String iValue) {
+		super(iName, iValue);
+		// TODO Auto-generated constructor stub
+	}
+
+}

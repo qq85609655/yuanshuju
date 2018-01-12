@@ -1,0 +1,43 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+import java.util.List;
+
+/**
+ * 
+ * @ClassName: AnalyseResultTreeNodeView
+ *             <p>
+ *             元数据分析结果视图<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:50:12
+ * @version V1.0
+ * @since JDK 1.7
+ */
+@SuppressWarnings("serial")
+public class MapResultView implements IView {
+	/**
+	 *线段list
+	 */
+	private List<AnalyseNodeLineView> anvList = null;
+	/**
+	 *模型list
+	 */
+	private List<MetaModelBasicView> modelList=null;
+
+	public List<AnalyseNodeLineView> getAnvList() {
+		return anvList;
+	}
+
+	public void setAnvList(List<AnalyseNodeLineView> anvList) {
+		this.anvList = anvList;
+	}
+
+	public List<MetaModelBasicView> getModelList() {
+		return modelList;
+	}
+
+	public void setModelList(List<MetaModelBasicView> modelList) {
+		this.modelList = modelList;
+	}
+}

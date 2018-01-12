@@ -1,0 +1,91 @@
+package com.gilight.dep.metadata.service;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.service.IQueryService;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdView;
+import com.gilight.dep.metadata.entity.MmDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.view.MetaDataMapMDView;
+import com.gilight.dep.metadata.view.MetaDataMapMMDepView;
+import com.gilight.dep.metadata.view.MetaDataMapTopView;
+
+/**
+ * 元数据映射业务类
+ */
+public interface IMetaDataMapService extends IMetaDataService,IQueryService {
+	/**
+	 * 查元数据
+	 * @param id
+	 * @return
+	 */
+	MdMetadata findMdMetadataById(String id);
+	/**
+	 * 查元模型
+	 * @param id
+	 * @return
+	 */
+	MmMetamodel findMmMetamodelById(String id);
+	/**
+	 * 查元数据id可以映射的目标视图集合
+	 * 通过元数据id查询可以创建目标映射的元模型集合(作为源)
+	 * @param id
+	 * @return
+	 */
+	List<MetaDataMapMMDepView> findMapTargetsById(String id);
+	/**
+	 * 查元数据可以映射的源视图集合
+	 * 通过元数据id查询可以被哪些元模型集合创建映射(作为目标)
+	 * @param id
+	 * @return
+	 */
+	List<MetaDataMapMMDepView> findMapSourcesById(String id);
+
+	/**
+	 * 子集合封装到父集合
+	 * @param childlist
+	 * @return
+	 */
+	List<MetaDataMapMDView> packageToParent(List<MetaDataMapMDView> childlist);
+	/**
+	 * 子集合封装至最终集合topView
+	 * @param endlist
+	 * @return
+	 */
+	List<MetaDataMapTopView> packageToEndView(List<MetaDataMapMDView> endlist);
+	/**
+	 * 查子集合有没有父类
+	 * @param startlist
+	 * @return
+	 */
+	boolean hasParent(List<MetaDataMapMDView> startlist);
+	/**
+	 * 创建映射关系,源到目标的之间关联的依赖模型ID
+	 * @param fromMdId
+	 * @param toMdId
+	 * @param mmDepeFromId
+	 */
+	void createMapping(String fromMdId, String toMdId, String mmDepeFromId);
+	/***
+	 * 查询依赖元模型通过id
+	 * @param id
+	 * @return
+	 */
+	MmDependency findMmDepById(String id);
+	/**
+	 * 根据上层元数据fromMdId查出下面组合的元数据集合
+	 * @param fromMdId
+	 * @return
+	 */
+	List<MdMetadata> findChildrenMDByFromMdId(String fromMdId);
+	/**
+	 * 查询元数据下一级的符合元模型的元数据集合
+	 * @param mmId 元模型
+	 * @param metadataId 元数据
+	 * @return
+	 */
+	List<MdMetadata> findMDFromTree(String mmId, String metadataId);
+	
+}

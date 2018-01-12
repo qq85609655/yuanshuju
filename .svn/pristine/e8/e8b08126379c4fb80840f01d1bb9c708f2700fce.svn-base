@@ -1,0 +1,15 @@
+package com.gilight.dep.metamodel.service;
+
+/**
+ * 
+ * @ClassName: IMetaModelCompService
+ *             <p>
+ *             元模型组合关系<br>
+ * @author wzx
+ * @date 2015年7月9日 下午2:30:34
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaModelCompService extends IMetaModelAssoService {
+
+}

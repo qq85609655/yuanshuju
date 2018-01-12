@@ -1,0 +1,46 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+/**
+ * 
+* @ClassName: PackageContentView 
+* <p>视图包括元数据信息；
+包含元数据树和文件夹树；
+<br>
+* @author wzx
+* @date 2015年7月9日 下午4:14:49
+* @version V1.0
+* @since JDK 1.7
+ */
+public class PackageContentView implements IView{
+	/**
+	 * 文件夹树的集合
+	 */
+	private List<PackageTreeView> packageTreeList;
+	/**
+	 * 元数据树的view
+	 */
+	private MetaDataTreeView metaDataTreeView;
+	
+	public List<PackageTreeView> getPackageTreeList() {
+		return packageTreeList;
+	}
+	public void setPackageTreeList(List<PackageTreeView> packageTreeList) {
+		this.packageTreeList = packageTreeList;
+	}
+	public MetaDataTreeView getMetaDataTreeView() {
+		return metaDataTreeView;
+	}
+	public void setMetaDataTreeView(MetaDataTreeView metaDataTreeView) {
+		this.metaDataTreeView = metaDataTreeView;
+	}
+	@Override
+	public String toString() {
+		return "PackageContentView [packageTreeList=" + packageTreeList
+				+ ", metaDataTreeView=" + metaDataTreeView + "]";
+	}
+	
+	
+}

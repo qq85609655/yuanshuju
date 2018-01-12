@@ -1,0 +1,63 @@
+package com.gilight.dep.metamodel.model;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.ext.model.DepBaseBasicModel;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdViewFolder;
+import com.gilight.dep.metadata.entity.MmEnum;
+import com.gilight.dep.metadata.entity.MmFolder;
+import com.gilight.dep.metamodel.model.procuder.ModelEnumMessageProducer;
+import com.gilight.dep.metamodel.model.procuder.ModelFolderMessageProducer;
+
+import java.util.List;
+
+
+@SuppressWarnings("rawtypes")
+public class MetaModelEnumModel extends DepBaseBasicModel {
+
+
+
+	@Override
+	protected IResult createAfter(IContext iContext, IResult iResult) throws ModelException {
+		return null;
+	}
+
+	@Override
+	protected IResult updateAfter(IContext iContext, IResult iResult) throws ModelException {
+		return null;
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext iContext, IResult iResult) throws ModelException {
+		return null;
+	}
+
+	@Override
+	protected IResult getAfter(IContext iContext, IResult iResult) throws ModelException {
+		return null;
+	}
+
+	@Override
+	public String getModelName() {
+		return MetaModelEnumModel.class.getName();
+	}
+
+	@Override
+	public Class getModelEntityClass() {
+		return MmEnum.class;
+	}
+
+	@Override
+	public void clearCache() {
+
+	}
+
+	@Override
+	public Class getMessageProcuderClass() {
+		return ModelEnumMessageProducer.class;
+	}
+
+
+}

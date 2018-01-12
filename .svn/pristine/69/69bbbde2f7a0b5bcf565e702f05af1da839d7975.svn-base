@@ -1,0 +1,219 @@
+/**   
+* @Title: AnalyzerImpl.java 
+* <p>TODO 
+* @author wzx 
+* @date 2015年8月3日 下午5:29:08
+* @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+* @version V1.0   
+*/
+
+package com.gilight.dep.metadata.analyzer.offline.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.analyzer.offline.IAnalyzer;
+import com.gilight.dep.metadata.entity.MmComposition;
+import com.gilight.dep.metadata.entity.MmDependency;
+import com.gilight.dep.metadata.entity.MmInherit;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IAnalyseExcuteRepository;
+
+/** 
+ * @ClassName: AnalyzerImpl 
+ * <p>TODO<br>
+ * @author wzx
+ * @date 2015年8月3日 下午5:29:08
+ * @version V1.0
+ * @since JDK 1.6 
+ */
+
+public class AnalyzerImpl implements IAnalyzer{
+	private static final Logger logger = Logger
+			.getLogger(AnalyzerImpl.class);
+	@Autowired 
+	IAnalyseExcuteRepository  analyseExcuteRepository;
+	/**  
+	 * <p>Description: </p>  
+	 */
+	public AnalyzerImpl() {
+		// TODO Auto-generated constructor stub
+	}
+	@Override
+	public List<String> getSubModelId(String id) throws ServiceException {
+		// TODO Auto-generated method stub
+		List<String> idlist= new ArrayList<String>();
+		List<MmMetamodel> list = getSubModel(id);
+		if(list!=null){
+			for (MmMetamodel mmMetamodel : list) {
+				idlist.add(mmMetamodel.getId());
+			}
+		}
+		return idlist;
+	}
+	@Override
+	public List<String> getSubModelIdByCode(String code) throws ServiceException {
+		// TODO Auto-generated method stub
+		MmMetamodel mm= getModelByCode(code);
+		if(mm==null){
+			throw new ServiceException("没有查询到相关元模型");
+		}
+		List<String> idlist =getSubModelId(mm.getId());
+		return idlist;
+	}
+	@Override
+	public List<MmMetamodel> getSubModel(String id) throws ServiceException {
+		// TODO Auto-generated method stub
+		MmMetamodel mm = this.getModelByid(id); //获得根
+		if(mm==null||mm.getId().equals("")){
+			throw new ServiceException("没有查询到相关元模型");
+		}
+		List<MmMetamodel> mlist = new ArrayList<MmMetamodel>();
+		List<MmMetamodel> mmlist = new ArrayList<MmMetamodel>();
+		mmlist.add(mm);
+		//根据id获取继承关系列表
+		List<MmInherit> list =getMmInheritByfromid(id);
+		if(list!=null&&list.size()!=0){
+			List<String> mmidlist = getModelId(list);
+			for (String mid : mmidlist) {
+				mlist=getSubModel(mid); //递归，查询子元模型
+				mmlist.addAll(mlist);
+			}
+			
+		}
+		return mmlist;
+	}
+	/**
+	 * 获取模型id
+	* <p><br>
+	* @param list
+	* @return  
+	* @author wzx
+	* @date 2015年8月3日 下午6:55:20
+	* @version V1.0
+	 */
+	private List<String> getModelId(List<MmInherit> list){
+		List<String> modelidlist = new ArrayList<String>();
+		
+		for (MmInherit mi : list) {
+			modelidlist.add(mi.getMmId());
+		}
+		return modelidlist;
+		
+	}
+	
+	@Override
+	public MmMetamodel getModelByCode(String code) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			MmMetamodel mm= analyseExcuteRepository.getModelByCode(code);
+			return mm;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元模型失败",e);
+			throw new ServiceException("查询元模型失败");
+		}
+	}
+	@Override
+	public MmMetamodel getModelByid(String id) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			MmMetamodel mm= analyseExcuteRepository.getModelByid(id);
+			return mm;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元模型失败",e);
+			throw new ServiceException("查询元模型失败");
+		}
+		
+	}
+	@Override
+	public String getModelIdByCode(String code) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			MmMetamodel mm= analyseExcuteRepository.getModelByCode(code);
+			return mm.getId();
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元模型失败",e);
+			throw new ServiceException("查询元模型失败");
+		}
+	}
+	@Override
+	public List<MmInherit> getMmInheritByfromid(String fromid) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			List<MmInherit> milist= analyseExcuteRepository.getMmInheritByfromid(fromid);
+			return milist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元模型继承关系失败",e);
+			throw new ServiceException("查询元模型继承关系失败");
+		}
+		
+	}
+	@Override
+	public List<MmInherit> getMmInheritByCode(String code)
+			throws ServiceException {
+		String fromid = this.getModelIdByCode(code);
+		List<MmInherit> milist= getMmInheritByfromid(fromid);	
+		return milist;
+	}
+	@Override
+	public List<MmComposition> getMmCompositionByfromid(String fromid)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			
+			List<MmComposition> milist= analyseExcuteRepository.getMmCompositionByfromid(fromid);	
+			return milist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元模型组合关系失败",e);
+			throw new ServiceException("查询元模型组合关系失败");
+		}
+	}
+	@Override
+	public List<MmDependency> getMmDependencyByfromid(String fromid)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			
+			List<MmDependency> milist= analyseExcuteRepository.getMmDependencyByfromid(fromid);	
+			return milist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元模型组合关系失败",e);
+			throw new ServiceException("查询元模型组合关系失败");
+		}
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		try {
+			ApplicationContext factory = new ClassPathXmlApplicationContext("spring-dispather.xml");
+			OffLineAnalyzerImpl off=(OffLineAnalyzerImpl) factory.getBean("offLineAnalyzer");
+			List<String> idlist =off.getSubModelIdByCode("DepPackage");
+			System.out.println(off);
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+}

@@ -1,0 +1,379 @@
+package com.gilight.dep.metadata.web.webservice;
+
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.repository.IMetaDataBaseRepository;
+import com.gilight.dep.metadata.repository.IMetaModelBasicRepository;
+import com.gilight.dep.metadata.repository.IMetaModelCompRepository;
+import com.gilight.dep.metadata.wsview.*;
+import com.gilight.dep.metamodel.service.IMetaModelQueryService;
+import com.thoughtworks.xstream.XStream;
+import org.apache.log4j.Logger;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+@Path("/")// 访问路径
+@Produces("*/*")
+public class MetaDataWebService {
+
+    private static final Logger logger = Logger
+            .getLogger(MetaDataWebService.class);
+    private IMetaDataBaseRepository metaDataBaseRepository ;
+
+    private IMetaModelQueryService metaModelQueryService ;
+
+    private IMetaModelCompRepository metaModelCompRepository;
+
+
+    private IMetaModelBasicRepository metaModelBasicRepository;
+
+    public IMetaDataBaseRepository getMetaDataBaseRepository() {
+        return metaDataBaseRepository;
+    }
+
+    public void setMetaDataBaseRepository(IMetaDataBaseRepository metaDataBaseRepository) {
+        this.metaDataBaseRepository = metaDataBaseRepository;
+    }
+
+    public IMetaModelQueryService getMetaModelQueryService() {
+        return metaModelQueryService;
+    }
+
+    public void setMetaModelQueryService(IMetaModelQueryService metaModelQueryService) {
+        this.metaModelQueryService = metaModelQueryService;
+    }
+
+    public IMetaModelCompRepository getMetaModelCompRepository() {
+        return metaModelCompRepository;
+    }
+
+    public void setMetaModelCompRepository(IMetaModelCompRepository metaModelCompRepository) {
+        this.metaModelCompRepository = metaModelCompRepository;
+    }
+
+    public IMetaModelBasicRepository getMetaModelBasicRepository() {
+        return metaModelBasicRepository;
+    }
+
+    public void setMetaModelBasicRepository(IMetaModelBasicRepository metaModelBasicRepository) {
+        this.metaModelBasicRepository = metaModelBasicRepository;
+    }
+
+    @GET
+    @Path("/doTest/{id}")// 访问路径
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})// 响应内容 MIME 类型
+    public String doTest(@PathParam("id") String id)//@QueryParam("regRequestXml")
+    {
+        System.out.println("服务端获取到客户端的报文如下：\n");
+        System.out.println("服务端获取到客户端的报文如下--------------：\n");
+        /* 构造响应报文 */
+        String responseXml = "<xml>"+id+"</xml>";//构造报文 XML 格式的字符串
+
+        return responseXml;
+    }
+
+    @GET
+    @Path("/doTest1")// 访问路径
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})// 响应内容 MIME 类型
+    public String doTest1()//@QueryParam("regRequestXml")
+    {
+        System.out.println("服务端获取到客户端的报文如下：\n");
+
+        /* 构造响应报文 */
+        String responseXml = "<xml>";//构造报文 XML 格式的字符串
+
+        return responseXml;
+    }
+
+
+    /**
+     * 4.1.	获取数据库元数据
+     * @param modelid
+     * @return
+     * /ws/service/MetaDataWebService/allSchema/DepSchema
+     */
+
+    @GET
+    @Path("/allSchema/{modelid}")// 访问路径
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})// 响应内容 MIME 类型
+    public String allSchema(@PathParam("modelid") String modelid){
+        /*MmMetamodel mmMetamodel = new MmMetamodel();
+        mmMetamodel.setMmCode(modelcode);*/
+        XStream xStream = new XStream();
+        xStream.autodetectAnnotations(true);
+        SchemasView schemasView = new SchemasView();
+        try {
+            MdMetadata mdMetadata = new MdMetadata();
+            mdMetadata.setUpdateDate(null);
+            mdMetadata.setMmId(modelid);
+
+            List<IEntity> list=this.getMetaDataBaseRepository().findByEntity(mdMetadata);
+            if (list==null||list.size()==0){
+
+                String xml=xStream.toXML(schemasView);
+                return xml;
+            }
+
+            for (IEntity entity:list) {
+                MdMetadata mdMetadataNew = (MdMetadata) entity;
+                String mdId=mdMetadataNew.getId();
+                SchemaView schemaView = new SchemaView();
+                Map<String,String> attrMap=this.getMetaDataBaseRepository().getAttrMapByMdId(mdId);
+                schemaView.setName(attrMap.get("enName"));
+                schemaView.setId(mdId);
+                schemaView.setCode(mdMetadataNew.getMdCode());
+                schemaView.setDisplayName(mdMetadataNew.getMdName());
+                schemaView.setType(attrMap.get("type"));
+                schemasView.addSchema(schemaView);
+            }
+
+            String xml=xStream.toXML(schemasView);
+            return xml;
+
+        } catch (RepositoryException e) {
+            logger.error("webService获取所有数据库元数据错误",e);
+            e.printStackTrace();
+        }
+
+        String xml=xStream.toXML(schemasView);
+        return xml;
+    }
+
+    // /ws/service/MetaDataWebService/getSchemaDetails/DepTable_BussTable/数据库id
+    @GET
+    @Path("/getSchemaDetails/{fromMmId}/{mdId}")// 访问路径
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})// 响应内容 MIME 类型
+    public String getSchemaDetails(@PathParam("mdId") String mdId,@PathParam("fromMmId") String fromMmId){
+        /*MmMetamodel mmMetamodel = new MmMetamodel();
+        mmMetamodel.setMmCode(modelcode);*/
+        //DepTable_BussTable
+        //583d4712-a8c0-4b89-a2f7-6288c1c29ad4
+        XStream xStream = new XStream();
+        xStream.autodetectAnnotations(true);
+        SchemasView schemasView = new SchemasView();
+
+        SchemaDetailsView schemaDetailsView = new SchemaDetailsView();
+        try {
+
+            MdMetadata schema=getMetaDataBaseRepository().getById(mdId);
+            if (schema==null){
+                String xml=xStream.toXML(schemaDetailsView);
+                return xml;
+            }
+            MdComposition mdComposition = new MdComposition();
+            mdComposition.setUpdateDate(null);
+            mdComposition.setFromMdId(schema.getId());
+            List<MdComposition> mdCompositionList =metaDataBaseRepository.findByEntity(mdComposition,MdComposition.class);
+            if (mdCompositionList!=null&&mdCompositionList.size()>0){
+                for (MdComposition composition:mdCompositionList) {
+                    String tableId=composition.getToMdId();
+                    MdMetadata tableMd=getMetaDataBaseRepository().getById(tableId);
+                    if (tableMd==null){
+                        continue;
+                    }
+                    MdMetadata physMd=getMetaDataBaseRepository().getById(tableMd.getId());
+                    MdMetadata bussMd=getMetaDataBaseRepository().findByTarget(tableMd.getId(),fromMmId);
+                    if (physMd==null){
+                        continue;
+                    }
+
+                    Map<String,String> arrTable=new HashMap<String,String>();
+                    arrTable=physMd.getAttrMap();
+                    TableView tableView = new TableView();
+                    tableView.setName(physMd.getMdName());
+                    tableView.setType(arrTable.get("type"));
+                    if (bussMd!=null){
+                        tableView.setDisplayName(bussMd.getMdName());
+                    }
+                    MdComposition fieldComp= new MdComposition();
+                    fieldComp.setUpdateDate(null);
+                    fieldComp.setFromMdId(physMd.getId());
+                    List<MdComposition> fieldCompositionList =metaDataBaseRepository.findByEntity(fieldComp,MdComposition.class);
+                    if (fieldCompositionList!=null||fieldCompositionList.size()==0){
+                        for (MdComposition compositionf:fieldCompositionList) {
+                            MdMetadata fieldMd=getMetaDataBaseRepository().getById(compositionf.getToMdId());
+                            if (fieldMd==null){
+                                continue;
+                            }
+                            String DepBussColumnMapping="DepBussColumnMapping";
+                            MdMetadata bussItem=getMetaDataBaseRepository().findByTarget(fieldMd.getId(),DepBussColumnMapping);
+                            Map<String,String> attrMap=getMetaDataBaseRepository().getAttrMapByMdId(fieldMd.getId());
+                            FieldView fieldView = new FieldView();
+                            fieldView.setName(fieldMd.getMdName());
+
+                            fieldView.setType(attrMap.get("type"));
+                            fieldView.setDefaultValue(attrMap.get("defaultValue"));
+                            fieldView.setDescription(attrMap.get("remark"));
+                            fieldView.setIsPK(attrMap.get("isPK"));
+                            fieldView.setJavaType(attrMap.get("javaType"));
+                            fieldView.setLength(attrMap.get("length"));
+                            if (bussItem!=null){
+                                fieldView.setDisplayName(bussItem.getMdName());
+                            }
+
+                            tableView.addField(fieldView);
+
+                        }
+                    }
+
+                    
+                    schemaDetailsView.addTable(tableView);
+
+
+                }
+            }
+
+
+
+            //
+            //schemaDetailsView.
+
+            //FieldView fieldView = new FieldView();
+            //fieldView.setName(physMd.getMdName());
+
+            //System.out.println(mdId);
+            //System.out.println(fromMmId);
+
+            String xml=xStream.toXML(schemaDetailsView);
+            return xml;
+
+        } catch (RepositoryException e) {
+            logger.error("webService获取所有数据库元数据错误",e);
+            e.printStackTrace();
+        }
+
+        String xml=xStream.toXML(schemaDetailsView);
+        return xml;
+    }
+
+
+    @GET
+    @Path("/allDepCodeMapping/{modelid}")// 访问路径
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})// 响应内容 MIME 类型
+    public String allDepCodeMapping(@PathParam("modelid") String modelid){
+        XStream xStream = new XStream();
+        xStream.autodetectAnnotations(true);
+
+        MdMetadata mdMetadata = new MdMetadata();
+        mdMetadata.setUpdateDate(null);
+        mdMetadata.setMmId(modelid);
+        CodesView codesView= new CodesView();
+        try {
+            List<MdMetadata> codeMdList=this.getMetaDataBaseRepository().findByEntity(mdMetadata,MdMetadata.class);
+            if (codeMdList==null||codeMdList.size()==0){
+                String xml=xStream.toXML(codesView);
+                return xml;
+            }
+            for (MdMetadata codeMd:codeMdList) {
+                if (codeMd==null){
+                    continue;
+                }
+                CodeView codeView = new CodeView();
+                Map<String,String> attrMap = codeMd.getAttrMap();
+                codeView.setName(attrMap.get("enName"));
+                codeView.setDisplayName(codeMd.getMdName());
+                codeView.setCode(codeMd.getMdCode());
+                codeView.setId(codeMd.getId());
+                codesView.addCodeView(codeView);
+
+            }
+
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        String xml=xStream.toXML(codesView);
+        return xml;
+        //return null;
+    }
+
+    @GET
+    @Path("/getDepCodeIetmMapping/{codeId}")// 访问路径
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})// 响应内容 MIME 类型
+    // /ws/service/MetaDataWebService/getDepCodeIetmMapping/编码id
+    public String getDepCodeIetmMapping(@PathParam("codeId") String codeId){
+        XStream xStream = new XStream();
+        xStream.autodetectAnnotations(true);
+        CodeItemsView codeItemsView= new CodeItemsView();
+
+        try {
+            MdMetadata mdMetadata = this.getMetaDataBaseRepository().getById(codeId);
+            if (mdMetadata==null){
+                String xml=xStream.toXML(codeItemsView);
+                return xml;
+            }
+            List<MdMetadata> subMdList=this.getMetaDataBaseRepository().getSubMdById(codeId);
+            if (subMdList==null||subMdList.size()==0){
+                String xml=xStream.toXML(codeItemsView);
+                return xml;
+            }
+            for (MdMetadata metadata:subMdList) {
+                String mdid= metadata.getId();
+
+                MdMetadata targetMd=this.getMetaDataBaseRepository().findBySource(mdid,"MetaDataCodeTransMetaMapping");
+
+                CodeIetmView codeIetmView = new CodeIetmView();
+                codeIetmView.setSrcCode(metadata.getMdCode());
+                codeIetmView.setSrcId(metadata.getId());
+                codeIetmView.setSrcName(metadata.getMdName());
+                codeIetmView.setSrcValue(metadata.getAttribute("code"));
+                if (targetMd!=null){
+                    codeIetmView.setTargetCode(targetMd.getMdCode());
+                    codeIetmView.setTargetId(targetMd.getId());
+                    codeIetmView.setTargetName(targetMd.getMdName());
+                    codeIetmView.setTargetValue(targetMd.getAttribute("code"));
+                }
+
+                codeItemsView.addCodeItemView(codeIetmView);
+
+            }
+
+
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+
+
+        String xml=xStream.toXML(codeItemsView);
+        return xml;
+        //return null;
+    }
+
+    public static void main(String arg[]){
+        SchemasView schemasView = new SchemasView();
+        SchemaDetailsView schemaDetailsView = new SchemaDetailsView();
+        TableView tableView = new TableView();
+        for (int i = 0; i <5 ; i++) {
+            FieldView fieldView = new FieldView();
+            fieldView.setType("ss");
+            fieldView.setDisplayName("asdf水电费");
+            fieldView.setName("aaa");
+
+            tableView.addField(fieldView);
+        }
+        schemaDetailsView.addTable(tableView);
+        
+        XStream xStream = new XStream();
+        xStream.autodetectAnnotations(true);
+        String xml=xStream.toXML(schemaDetailsView);
+        System.out.println(xml);
+    }
+}
+
+

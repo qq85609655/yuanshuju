@@ -1,0 +1,37 @@
+/**   
+ * @Title: MetaDataBaseView.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月22日 上午10:16:58
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+public class MetaDataBaseView extends MetaDataBasicView {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 属性list
+	 */
+	private List<MetaDataAttView> attList;
+
+	public List<MetaDataAttView> getAttList() {
+		return attList;
+	}
+
+	public void setAttList(List<MetaDataAttView> attList) {
+		this.attList = attList;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaDataBaseView [attList=" + attList + "]";
+	}
+
+}

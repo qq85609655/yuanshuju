@@ -1,0 +1,413 @@
+/**   
+ * @Title: MetaModelBussFactory.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月21日 下午7:02:45
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.init.data.buss;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.gilight.dep.metadata.view.MetaModelAttView;
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelCompView;
+import com.gilight.dep.metadata.view.MetaModelDepeView;
+import com.gilight.dep.metadata.view.MetaModelView;
+import com.gilight.dep.metamodel.init.data.MetaModelInitFactory;
+import com.gilight.dep.metamodel.init.data.common.MetaModelCommonFactory;
+import com.gilight.dep.metamodel.init.data.cwm.MetaModelCwmCoreFactory;
+
+/**
+ * 
+ * @ClassName: MetaModelBussFactory
+ *             <p>
+ *             公共元模型工厂数据类 TODO<br>
+ * @author zps
+ * @date 2015年7月21日 下午7:02:50
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetaModelBussFactory extends MetaModelInitFactory {
+	private static Map<String, MetaModelView> metaModel = new HashMap<String, MetaModelView>();
+
+	public static void main(String[] args) {
+		init();
+		System.out.println(metaModel.size());
+	}
+
+	public static Map<String, MetaModelView> getMetaModel() {
+		metaModel.clear();
+		init();
+		return metaModel;
+	}
+
+	private static void init() {
+		// TODO Auto-generated method stub
+		MetaModelBussFactory.setDepBussMeta();
+		MetaModelBussFactory.setDepPkgDataEle();
+		MetaModelBussFactory.setDepPkgBussObject();
+		MetaModelBussFactory.setDepPkgCode();
+		MetaModelBussFactory.setDepDataEle();
+		MetaModelBussFactory.setDepCode();
+		MetaModelBussFactory.setDepCodeItem();
+		MetaModelBussFactory.setDepBussObject();
+		MetaModelBussFactory.setDepBussFeature();
+	}
+
+	private static void putCache(MetaModelView m) {
+		// TODO Auto-generated method stub
+		if (!metaModel.containsKey(m.getCode())) {
+			metaModel.put(m.getCode(), m);
+		} else {
+			System.out.println("---------" + (m.getCode()));
+		}
+	}
+
+	private static MetaModelView getCache(String code) {
+		// TODO Auto-generated method stub
+		if (metaModel.containsKey(code)) {
+			return metaModel.get(code);
+		}
+		return null;
+	}
+
+	// 业务元数据 DepBussMeta 是 DepModelElement
+	public static String DepBussMeta = "DepBussMeta";
+
+	public static MetaModelView setDepBussMeta() {
+		String name = "业务元数据";
+		MetaModelView m = getCache(DepBussMeta);
+		if (m == null) {
+			m = getSystemMetaModel(DepBussMeta, name);
+		}
+		m.setIsabstract(true);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCwmCoreFactory.setCWMModelElement());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		return m;
+	}
+
+	// 编码小类 DepPkgCode 否 DepPkgClassiSub
+	public static String DepPkgCode = "DepPkgCode";
+
+	public static MetaModelView setDepPkgCode() {
+		String name = "编码小类";
+		MetaModelView m = getCache(DepPkgCode);
+		if (m == null) {
+			m = getSystemMetaModel(DepPkgCode, name);
+		}
+		m.setIsabstract(false);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCommonFactory.setDepPkgClassiSub());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编码
+		MetaModelCompView comview = getMetaModelCompView(m, setDepCode());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 数据元小类 DepPkgDataEle 否 DepPkgClassiSub
+	public static String DepPkgDataEle = "DepPkgDataEle";
+
+	public static MetaModelView setDepPkgDataEle() {
+		String name = "数据元小类";
+		MetaModelView m = getCache(DepPkgDataEle);
+		if (m == null) {
+			m = getSystemMetaModel(DepPkgDataEle, name);
+		}
+		m.setIsabstract(false);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCommonFactory.setDepPkgClassiSub());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编码
+		MetaModelCompView comview = getMetaModelCompView(m, setDepDataEle());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 数据实体小类 DepPkgBussObject 否 DepPkgClassiSub
+	public static String DepPkgBussObject = "DepPkgBussObject";
+
+	public static MetaModelView setDepPkgBussObject() {
+		String name = "数据实体小类";
+		MetaModelView m = getCache(DepPkgBussObject);
+		if (m == null) {
+			m = getSystemMetaModel(DepPkgBussObject, name);
+		}
+		m.setIsabstract(false);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCommonFactory.setDepPkgClassiSub());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编码
+		MetaModelCompView comview = getMetaModelCompView(m, setDepBussObject());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 编码 DepCode 否 DepBussMeta
+	public static String DepCode = "DepCode";
+
+	public static MetaModelView setDepCode() {
+		String name = "编码";
+		MetaModelView m = getCache(DepCode);
+		if (m == null) {
+			m = getSystemMetaModel(DepCode, name);
+		}
+		m.setIsabstract(false);
+		// 设置属性
+		List<MetaModelAttView> attList = new ArrayList<MetaModelAttView>();
+		MetaModelAttView attV = getMetaModelAttView(m.getId(), "enName",
+				"英文名称", 1);
+		attList.add(attV);
+		MetaModelAttView attV2 = getMetaModelAttView(m.getId(), "classType",
+				"信息分类方法", 2);
+		attList.add(attV2);
+		// 下拉框
+		MetaModelAttView attV3 = getMetaModelAttView(m.getId(), "codeRule",
+				"编码规则", 3);
+		attList.add(attV3);
+		MetaModelAttView attV4 = getMetaModelAttView(m.getId(),
+				"codeStructure", "代码结构", 4);
+		attList.add(attV4);
+		MetaModelAttView attV5 = getMetaModelAttView(m.getId(),
+				"referenceStandard", "引用的国家局标准", 5);
+		attList.add(attV5);
+		MetaModelAttView attV6 = getMetaModelAttView(m.getId(), "referenceNo",
+				"引用的编号", 6);
+		attList.add(attV6);
+		m.setAttList(attList);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepBussMeta());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编码
+		MetaModelCompView comview = getMetaModelCompView(m, setDepCodeItem());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 编码明细 DepCodeItem 否 DepBussMeta
+	public static String DepCodeItem = "DepCodeItem";
+
+	public static MetaModelView setDepCodeItem() {
+		String name = "编码明细";
+		MetaModelView m = getCache(DepCodeItem);
+		if (m == null) {
+			m = getSystemMetaModel(DepCodeItem, name);
+		}
+		m.setIsabstract(false);
+		// 设置属性
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepBussMeta());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		return m;
+	}
+
+	// 编码映射 DepCodeMapping 否 DepBussMeta
+	// 编码明细映射 DepCodeItemMapping 否 DepBussMeta
+
+	// 数据元 DepDataEle 否 DepBussMeta
+	public static String DepDataEle = "DepDataEle";
+
+	public static MetaModelView setDepDataEle() {
+		String name = "数据元";
+		MetaModelView m = getCache(DepDataEle);
+		if (m == null) {
+			m = getSystemMetaModel(DepDataEle, name);
+		}
+		m.setIsabstract(false);
+		// 设置属性
+		List<MetaModelAttView> attList = new ArrayList<MetaModelAttView>();
+		MetaModelAttView attV = getMetaModelAttView(m.getId(), "enName",
+				"英文名称", 1);
+		attList.add(attV);
+		// 下拉框
+		MetaModelAttView attV1 = getMetaModelAttView(m.getId(), "dataTypeId",
+				"数据类型", 2);
+		attList.add(attV1);
+		MetaModelAttView attV2 = getMetaModelAttView(m.getId(), "synonymsName",
+				"同义名词", 3);
+		attList.add(attV2);
+		MetaModelAttView attV3 = getMetaModelAttView(m.getId(), "length", "长度",
+				4);
+		attList.add(attV3);
+		MetaModelAttView attV4 = getMetaModelAttView(m.getId(), "unit", "计量单位",
+				5);
+		attList.add(attV4);
+		MetaModelAttView attV5 = getMetaModelAttView(m.getId(), "constraint",
+				"约束", 6);
+		attList.add(attV5);
+		MetaModelAttView attV6 = getMetaModelAttView(m.getId(),
+				"explanationExample", "解释/举例", 7);
+		attList.add(attV6);
+		MetaModelAttView attV7 = getMetaModelAttView(m.getId(),
+				"referenceStandard", "引用的标准", 8);
+		attList.add(attV7);
+		MetaModelAttView attV8 = getMetaModelAttView(m.getId(), "referenceNo",
+				"引用编号", 9);
+		attList.add(attV8);
+
+		m.setAttList(attList);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepBussMeta());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		return m;
+	}
+
+	// 数据实体 DepBussObject 否 DepBussMeta
+	public static String DepBussObject = "DepBussObject";
+
+	public static MetaModelView setDepBussObject() {
+		String name = "数据实体";
+		MetaModelView m = getCache(DepBussObject);
+		if (m == null) {
+			m = getSystemMetaModel(DepBussObject, name);
+		}
+		m.setIsabstract(false);
+		// 设置属性
+		List<MetaModelAttView> attList = new ArrayList<MetaModelAttView>();
+		MetaModelAttView attV = getMetaModelAttView(m.getId(), "enName",
+				"英文名称", 1);
+		attList.add(attV);
+		// 下拉框
+		MetaModelAttView attV1 = getMetaModelAttView(m.getId(), "status",
+				"实体状态", 2);
+		attList.add(attV1);
+		MetaModelAttView attV2 = getMetaModelAttView(m.getId(), "dateView",
+				"数据视图", 3);
+		attList.add(attV2);
+		MetaModelAttView attV3 = getMetaModelAttView(m.getId(), "description",
+				"实体描述", 4);
+		attList.add(attV3);
+		MetaModelAttView attV4 = getMetaModelAttView(m.getId(), "association",
+				"关联关系", 5);
+		attList.add(attV4);
+		m.setAttList(attList);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepBussMeta());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编码
+		MetaModelCompView comview = getMetaModelCompView(m, setDepBussFeature());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 数据实体属性 DepBussFeature 否 DepBussMeta
+	public static String DepBussFeature = "DepBussFeature";
+
+	public static MetaModelView setDepBussFeature() {
+		String name = "数据实体属性";
+		MetaModelView m = getCache(DepBussFeature);
+		if (m == null) {
+			m = getSystemMetaModel(DepBussFeature, name);
+		}
+		m.setIsabstract(false);
+
+		// 英文名称 中文名称 类型 长度 特征属性 约束 是否自增长 备注
+		// enName name type length features constraint isIncrement description
+		// 设置属性
+		List<MetaModelAttView> attList = new ArrayList<MetaModelAttView>();
+		MetaModelAttView attV = getMetaModelAttView(m.getId(), "enName",
+				"英文名称", 1);
+		attList.add(attV);
+		// 下拉框
+		MetaModelAttView attV2 = getMetaModelAttView(m.getId(), "type", "类型", 2);
+		attList.add(attV2);
+		MetaModelAttView attV3 = getMetaModelAttView(m.getId(), "length", "长度",
+				3);
+		attList.add(attV3);
+		MetaModelAttView attV4 = getMetaModelAttView(m.getId(), "features",
+				"特征属性", 4);
+		attList.add(attV4);
+		// 下拉框
+		MetaModelAttView attV5 = getMetaModelAttView(m.getId(), "约束", "约束", 5);
+		attList.add(attV5);
+		// 下拉框
+		MetaModelAttView attV6 = getMetaModelAttView(m.getId(), "isIncrement",
+				"是否自增长", 6);
+		attList.add(attV6);
+
+		m.setAttList(attList);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(setDepBussMeta());
+		m.setParentModelList(parentModelList);
+		// 设置依赖关系
+		List<MetaModelDepeView> depeList = new ArrayList<MetaModelDepeView>();
+		// 业务实体列依赖数据元
+		MetaModelDepeView depe1 = getMetaModelDepeView(m, setDepDataEle());
+		depeList.add(depe1);
+		m.setDepeList(depeList);
+		putCache(m);
+		return m;
+	}
+
+	// // 部署小类 DepPkgDeploy 否 DepPkgClassiSub
+	// public static String DepPkgDeploy = "DepPkgDeploy";
+	//
+	// public static MetaModelView setDepPkgDeploy() {
+	// String name = "部署小类";
+	// MetaModelView m = getCache(DepPkgDeploy);
+	// if (m == null) {
+	// m = getSystemMetaModel(DepPkgDeploy, name);
+	// }
+	// m.setIsabstract(false);
+	// // 设置父类
+	// List<MetaModelBasicView> parentModelList = new
+	// ArrayList<MetaModelBasicView>();
+	// parentModelList.add(MetaModelCommonFactory.setDepPkgClassiSub());
+	// m.setParentModelList(parentModelList);
+	// // 设置组合关系
+	// List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+	// // 组合编码
+	// MetaModelCompView comview = getMetaModelCompView(m,
+	// );
+	// compList.add(comview);
+	// m.setCompList(compList);
+	// putCache(m);
+	// return m;
+	// }
+	// 部署小类 DepPkgDeploy 否 DepPkgClassiSub
+	// 节点基类 DepNode 是 DepModelElement
+	// 交换节点 DepSwiNode 否 DepNode
+	// 数据节点 DepDataNode 否 DepNode
+	// 应用节点 DepAppNode 否 DepNode
+	// 系统 DepSystem 否 DepModelElement
+	// 服务 DepService 否 DepModelElement
+
+}

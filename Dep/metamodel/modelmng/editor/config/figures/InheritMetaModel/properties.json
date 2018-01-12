@@ -1,0 +1,18 @@
+{
+	"details" : [{
+				"text" : "代码",
+				"propertiesName" : "code",
+				"group" : "base",
+				"xtype" : "textField"
+			}, {
+				"text" : "名称",
+				"propertiesName" : "name",
+				"group" : "base",
+				"xtype" : "textField"
+			}, {
+				"text" : "描述",
+				"propertiesName" : "remark",
+				"group" : "base",
+				"xtype" : "textareafield"
+			}]
+}

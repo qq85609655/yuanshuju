@@ -1,0 +1,1587 @@
+package com.gilight.dep.metadata.service.impl;
+
+import com.csvreader.CsvReader;
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.IParameters;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.factory.ParameterFactory;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.ViewParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.ResultCode;
+import com.gilight.dep.framework.core.context.response.result.ResultImpl;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.ext.util.CallBackCheckUtil;
+import com.gilight.dep.framework.core.model.IBasicModel;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.model.IViewModel;
+import com.gilight.dep.framework.core.model.entity.IDEntity;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.core.service.impl.BasicServiceImpl;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.framework.util.common.UUIDGenerator;
+import com.gilight.dep.metadata.entity.*;
+import com.gilight.dep.metadata.enums.MetaDataStatus;
+import com.gilight.dep.metadata.model.DepDepeMappingModel;
+import com.gilight.dep.metadata.model.MetaDataModel;
+import com.gilight.dep.metadata.repository.IMetaDataBaseRepository;
+import com.gilight.dep.metadata.scope.MetaDataDepeAssoScope;
+import com.gilight.dep.metadata.scope.MetaDataDepeScope;
+import com.gilight.dep.metadata.scope.MetaHbiernateScope;
+import com.gilight.dep.metadata.service.IMetaDataBaseService;
+import com.gilight.dep.metadata.util.AutoCopyObj;
+import com.gilight.dep.metadata.util.Pinyin4jUtil;
+import com.gilight.dep.metadata.view.*;
+import com.gilight.dep.metamodel.model.MmMetaModelModel;
+import com.gilight.dep.metamodel.service.IMetaModelQueryService;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+
+public class MetaDataBaseServiceImpl extends BasicServiceImpl<String> implements
+		IMetaDataBaseService {
+	private static final Logger logger = Logger
+			.getLogger(MetaDataBaseServiceImpl.class);
+
+	@Autowired
+	private DepDepeMappingModel depDepeMappingModel;
+	@Autowired
+	public MmMetaModelModel mmMetaModelModel;
+
+
+
+	private IMetaDataBaseRepository metaDataBaseRepository = null;
+
+	private IMetaModelQueryService metaModelQueryService = null;
+
+	public MetaDataBaseServiceImpl() {
+	}
+
+	public IMetaModelQueryService getMetaModelQueryService() {
+		return metaModelQueryService;
+	}
+
+	public void setMetaModelQueryService(
+			IMetaModelQueryService metaModelQueryService) {
+		this.metaModelQueryService = metaModelQueryService;
+	}
+
+	public IMetaDataBaseRepository getMetaDataBaseRepository() {
+		return metaDataBaseRepository;
+	}
+
+	public void setMetaDataBaseRepository(
+			IMetaDataBaseRepository metaDataBaseRepository) {
+		this.metaDataBaseRepository = metaDataBaseRepository;
+	}
+
+	// @Override
+	// public IResponse getByScope(IContext paramIContext) throws
+	// ServiceException {
+	// // TODO Auto-generated method stub
+	// try {
+	//
+	// MetaHbiernateScope scope = (MetaHbiernateScope) paramIContext
+	// .getParameters();
+	// IContext context;
+	//
+	// // MdView mv = new MdView();
+	// // scope.setEntiey(mv);
+	// MetaDataBasicView mdv = (MetaDataBasicView) scope.getView();
+	// MdMetadata md = AutoCopyObj.objCopy(MdMetadata.class, mdv);
+	// scope.setEntiey(md);
+	// scope.autoSetWhere(md);
+	// context = ContextFactoryImpl.getInstance().createContextWithParams(
+	// scope);
+	// IResponse res = metaDataBaseRepository.getByScope(context);
+	// ResultImpl rs = (ResultImpl) res.getBlockedResult();
+	// // IContext ic= res.getResult();
+	// List<IEntity> list = (List<IEntity>) rs.getResult();
+	// // List<IEntity> list=(List<IEntity>) ic.getParameters();
+	// List<MetaDataBasicView> mmvlist = new ArrayList<MetaDataBasicView>();
+	// if (list != null) {
+	// for (IEntity iEntity : list) {
+	// MdMetadata mme = (MdMetadata) iEntity;
+	// MetaDataBasicView mmv = AutoCopyObj.objCopy(
+	// MetaDataBasicView.class, mme);
+	// mmvlist.add(mmv);
+	// }
+	// }
+	//
+	// res.setResult(ResultFactory.getInstance().createSuccessResult(
+	// mmvlist));
+	// return res;
+	//
+	// } catch (GilightException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// logger.error("查询元数据出现错误!", e);
+	// throw new ServiceException("查询元数据出现错误!");
+	// } catch (Exception e) {
+	// // TODO Auto-generated catch block
+	// logger.error("查询元数据出现错误!", e);
+	// e.printStackTrace();
+	// throw new ServiceException("查询元数据出现错误!");
+	// }
+	// }
+
+	@Override
+	public com.gilight.dep.framework.core.model.IModel<String> initModel(
+			IContext<? extends IParameters> context) throws Exception {
+		// TODO Auto-generated method stub
+		// MmViewFolder
+		// IDEntity<String> entity = this.createEntityFromContext(context);
+
+		IDEntity<String> entity = AutoCopyObj.objCopy(MdMetadata.class,
+				AutoCopyObj.getViewParam(context));
+		// entity.setId(UUID.randomUUID().toString());
+		IModel<String> dataModel = (IModel) getCacheManager().getObject(
+				entity.getId(), getModelClass());
+		IModel<String> model = this.createModel(entity.getId());
+		// 设置逻辑数据
+		if (model instanceof IBasicModel) {
+			((IBasicModel<String>) model).setData(entity);
+		}
+		// 设置图形数据，此处图形数据和业务数据都在一个view里面
+		if (model instanceof IViewModel) {
+			IDEntity<String> view = AutoCopyObj
+					.createViewEntityFromContext(context);
+			((IViewModel) model).setViewData(view);
+		}
+		return model;
+
+	}
+
+	@Override
+	public Class<? extends IModel<String>> getModelClass() {
+		// TODO Auto-generated method stub
+		return MetaDataModel.class;
+	}
+
+	private com.gilight.dep.framework.core.model.IModel<String> initAttrModel(
+			IContext<? extends IParameters> context) throws Exception {
+		// TODO Auto-generated method stub
+		// MmViewFolder
+		// IDEntity<String> entity = this.createEntityFromContext(context);
+
+		IDEntity<String> entity = AutoCopyObj.objCopy(MdAttribute.class,
+				AutoCopyObj.getViewParam(context));
+		IModel<String> dataModel = (IModel) getCacheManager().getObject(
+				entity.getId(), getModelClass());
+		IModel<String> model = this.createModel(entity.getId());
+		// 设置逻辑数据
+		if (model instanceof IBasicModel) {
+			((IBasicModel<String>) model).setData(entity);
+		}
+		// 设置图形数据，此处图形数据和业务数据都在一个view里面
+		if (model instanceof IViewModel) {
+			IDEntity<String> view = AutoCopyObj
+					.createViewEntityFromContext(context);
+			((IViewModel) model).setViewData(view);
+		}
+		return model;
+
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description:创建元数据 </p>
+	 * 
+	 * @param context
+	 * 
+	 * @return
+	 * 
+	 * @throws ServiceException
+	 * 
+	 * @see
+	 * com.gilight.dep.framework.core.service.impl.BasicServiceImpl#create(com
+	 * .gilight.dep.framework.core.context.base.IContext)
+	 */
+	@Override
+	public IResponse create(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			MetaDataBaseView view = (MetaDataBaseView) AutoCopyObj
+					.getViewParam(context);
+			if (view.getId() == null || view.getId().equals("")) {
+				view.setId(UUID.randomUUID().toString());
+			}
+			// view.setId(UUID.randomUUID().toString());
+			view.setStatus(MetaDataStatus.neworedit);
+			context = AutoCopyObj.setViewParam(context, view);
+			IModel model = initModel(context);
+
+			// view.setId(UUID.randomUUID().toString());
+
+			List<MetaDataAttView> attlist = view.getAttList();
+			List<MdAttribute> malist = new ArrayList<MdAttribute>();
+			if (attlist != null) {
+				for (MetaDataAttView metaDataAttView : attlist) {
+					MdAttribute ma = AutoCopyObj.objCopy(MdAttribute.class,
+							metaDataAttView);
+					ma.setMdId(view.getId());
+					createAttr(ma);
+				}
+
+			}
+
+			if ((model instanceof IBasicModel)) {
+				IContext modelContext = getDefaultContext(context);
+				((IBasicModel) model).create(modelContext);
+			}
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"创建元数据成功!", null));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			logger.error("创建元数据失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("创建元数据失败!", exception);
+		} catch (Exception exception) {
+			logger.error("创建元数据失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("创建元数据失败!", exception);
+		}
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description:删除元数据 </p>
+	 * 
+	 * @param context
+	 * 
+	 * @return
+	 * 
+	 * @throws ServiceException
+	 * 
+	 * @see
+	 * com.gilight.dep.framework.core.service.impl.BasicServiceImpl#create(com
+	 * .gilight.dep.framework.core.context.base.IContext)
+	 */
+	@Override
+	public IResponse delete(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			IDParameters idp = (IDParameters) context.getParameters();
+			String id = idp.getId();
+			MetaDataBaseView iview = new MetaDataBaseView();
+			iview.setId(id);
+			IContext icontext = ContextFactoryImpl.getInstance()
+					.createContextWithView(iview);
+			// 初始化模型
+			// model = this.initModel(icontext);
+
+			IModel model = initModel(icontext);
+
+			if ((model instanceof IBasicModel)) {
+				IContext modelContext = getDefaultContext(icontext);
+				((IBasicModel) model).delete(modelContext);
+			}
+			getCacheManager().deleteObject(iview.getId());
+			// return context.getResponse();
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"删除元数据成功!", null));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			logger.error("删除元数据失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("删除元数据失败!", exception);
+		} catch (Exception exception) {
+			logger.error("删除元数据失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("删除元数据失败!", exception);
+		}
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description:更新元数据 </p>
+	 * 
+	 * @param context
+	 * 
+	 * @return
+	 * 
+	 * @throws ServiceException
+	 * 
+	 * @see
+	 * com.gilight.dep.framework.core.service.impl.BasicServiceImpl#create(com
+	 * .gilight.dep.framework.core.context.base.IContext)
+	 */
+	@Override
+	public IResponse update(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			MetaDataBaseView view = (MetaDataBaseView) AutoCopyObj
+					.getViewParam(context);
+			// view.setId(UUID.randomUUID().toString());
+			view.setStatus(MetaDataStatus.neworedit);
+			context = AutoCopyObj.setViewParam(context, view);
+
+			IModel model = initModel(context);
+			// MetaDataBaseView view=(MetaDataBaseView)
+			// AutoCopyObj.getViewParam(context);
+			List<MetaDataAttView> attlist = view.getAttList();
+			List<MdAttribute> malist = new ArrayList<MdAttribute>();
+			if (attlist != null) {
+				for (MetaDataAttView metaDataAttView : attlist) {
+					MdAttribute ma = AutoCopyObj.objCopy(MdAttribute.class,
+							metaDataAttView);
+					if (ma!=null&&ma.getId()!=null){
+						updateAttr(ma);
+					}else {
+						ma.setId(UUIDGenerator.getUUID());
+						ma.setMdId(view.getId());
+						createAttr(ma);
+
+					}
+
+				}
+			}
+			if ((model instanceof IBasicModel)) {
+				IContext modelContext = getDefaultContext(context);
+				((IBasicModel) model).update(modelContext);
+			}
+			getCacheManager().deleteObject(view.getId());
+			// return context.getResponse();
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"编辑元数据成功!", null));
+			return context.getResponse();
+
+		} catch (ModelException exception) {
+			logger.error("更新元数据失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("更新元数据失败!", exception);
+		} catch (Exception exception) {
+			logger.error("更新元数据失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("更新元数据失败!", exception);
+		}
+	}
+
+	/**
+	 * 
+	 * <p>
+	 * 添加属性<br>
+	 * 
+	 * @param ma
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月22日 上午11:57:58
+	 * @version V1.0
+	 */
+	private IResponse createAttr(MdAttribute ma) throws ServiceException {
+		IContext context;
+		try {
+			ma.setId(UUID.randomUUID().toString());
+			context = ContextFactoryImpl.getInstance().createContextWithEntity(
+					ma);
+
+			return metaDataBaseRepository.createAttr(context);
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("添加属性失败!", e);
+			throw new ServiceException("添加属性失败!");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ServiceException("添加属性失败!");
+		}
+	}
+
+	private IResponse updateAttr(MdAttribute ma) throws ServiceException {
+		IContext context;
+		try {
+			context = ContextFactoryImpl.getInstance().createContextWithEntity(
+					ma);
+			return metaDataBaseRepository.updateAttr(context);
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("添加属性失败!", e);
+			throw new ServiceException("添加属性失败!");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ServiceException("添加属性失败!");
+		}
+	}
+
+	private IResponse deleteAttr(MdAttribute ma) throws ServiceException {
+		IContext context;
+		try {
+			context = ContextFactoryImpl.getInstance().createContextWithEntity(
+					ma);
+			return metaDataBaseRepository.deleteAttr(context);
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("添加属性失败!", e);
+			throw new ServiceException("添加属性失败!");
+		}
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description: 创建属性</p>
+	 * 
+	 * @param context
+	 * 
+	 * @return
+	 * 
+	 * @throws ServiceException
+	 * 
+	 * @see
+	 * com.gilight.dep.metadata.service.IMetaDataBaseService#createAttr(com.
+	 * gilight.dep.framework.core.context.base.IContext)
+	 */
+	@Override
+	public IResponse createAttr(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			IModel model = initAttrModel(context);
+
+			if ((model instanceof IBasicModel)) {
+				IContext modelContext = getDefaultContext(context);
+				((IBasicModel) model).create(modelContext);
+			}
+			return context.getResponse();
+		} catch (ModelException exception) {
+			logger.error("创建属性失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("创建属性失败!", exception);
+		} catch (Exception exception) {
+			logger.error("创建属性失败", exception);
+			exception.printStackTrace();
+			throw new ServiceException("创建属性失败!", exception);
+		}
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description: 更新属性</p>
+	 * 
+	 * @param context
+	 * 
+	 * @return
+	 * 
+	 * @throws ServiceException
+	 * 
+	 * @see
+	 * com.gilight.dep.metadata.service.IMetaDataBaseService#updateAttr(com.
+	 * gilight.dep.framework.core.context.base.IContext)
+	 */
+	@Override
+	public IResponse updateAttr(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			IModel model = initAttrModel(context);
+
+			if ((model instanceof IBasicModel)) {
+				IContext modelContext = getDefaultContext(context);
+				((IBasicModel) model).update(modelContext);
+			}
+			return context.getResponse();
+		} catch (ModelException exception) {
+			logger.error("更新属性失败!", exception);
+			exception.printStackTrace();
+			throw new ServiceException("更新属性失败!", exception);
+		} catch (Exception exception) {
+			logger.error("更新属性失败!", exception);
+			exception.printStackTrace();
+			throw new ServiceException("更新属性失败!", exception);
+		}
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description: 删除属性</p>
+	 * 
+	 * @param context
+	 * 
+	 * @return
+	 * 
+	 * @throws ServiceException
+	 * 
+	 * @see
+	 * com.gilight.dep.metadata.service.IMetaDataBaseService#deleteAttr(com.
+	 * gilight.dep.framework.core.context.base.IContext)
+	 */
+	@Override
+	public IResponse deleteAttr(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			IModel model = initAttrModel(context);
+
+			if ((model instanceof IBasicModel)) {
+				IContext modelContext = getDefaultContext(context);
+				((IBasicModel) model).delete(modelContext);
+			}
+			return context.getResponse();
+		} catch (ModelException exception) {
+			exception.printStackTrace();
+			logger.error("删除属性失败!", exception);
+			throw new ServiceException("删除属性失败!", exception);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			logger.error("删除属性失败!", exception);
+			throw new ServiceException("删除属性失败!", exception);
+		}
+	}
+
+	@Override
+	public IResponse getByAttrId(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * 获取属性list
+	 * <p>
+	 * <br>
+	 * 
+	 * @param id
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月21日 下午5:33:05
+	 * @version V1.0
+	 */
+	private List<MetaDataAttView> getAttrByMdId(String id)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			List<MetaDataAttView> mmvlist = new ArrayList<MetaDataAttView>();
+			MdAttribute arrt = new MdAttribute();
+			MetaHbiernateScope scope = new MetaHbiernateScope();
+			scope.setEntiey(arrt);
+			// scope.setQueryOrd("displayOrder");
+			if (id != null) {
+				scope.setQueryWhere("mdId='" + id + "'");
+			} else {
+				return mmvlist;
+			}
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(scope);
+			IResponse res = metaDataBaseRepository.getByScope(context);
+			ResultImpl rs = (ResultImpl) res.getResult();
+			// IContext ic= res.getResult();
+			List<IEntity> list = (List<IEntity>) rs.getResult();
+			// List<IEntity> list=(List<IEntity>) ic.getParameters();
+
+			for (IEntity iEntity : list) {
+				MdAttribute mme = (MdAttribute) iEntity;
+				MetaDataAttView mmv = AutoCopyObj.objCopy(
+						MetaDataAttView.class, mme);
+				/*String arrMm=mme.getMmAttId();
+				MmAttribute mmAttribute = new MmAttribute();
+				mmAttribute.setId(arrMm);
+				List<IEntity> entityList= metaDataBaseRepository.findByEntity(mmAttribute);
+				if(entityList==null||entityList.size()==0){
+					continue;
+				}
+				mmAttribute= (MmAttribute) entityList.get(0);
+				mmv.setMmAttName(mmAttribute.getAttName());*/
+				mmvlist.add(mmv);
+			}
+
+			res.setResult(ResultFactory.getInstance().createSuccessResult(
+					mmvlist));
+			// return res;
+			return mmvlist;
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			logger.error("查询元数据属性出现错误!", e);
+			e.printStackTrace();
+			throw new ServiceException("查询元数据属性出现错误!");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			logger.error("查询元数据属性出现错误!", e);
+			e.printStackTrace();
+			throw new ServiceException("查询元数据视图出现错误!");
+		}
+	}
+
+	@Override
+	public IResponse getByAttrScope(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse getById(IContext context) throws ServiceException {
+
+		IModel<String> model = null;
+		try {
+			IDParameters idp = (IDParameters) context.getParameters();
+			String id = idp.getId();
+			MetaDataBaseView iview = new MetaDataBaseView();
+			iview.setId(id);
+			IContext icontext = ContextFactoryImpl.getInstance()
+					.createContextWithView(iview);
+			// 初始化模型
+			model = this.initModel(icontext);
+
+			if (!(model instanceof IBasicModel)) {
+				throw new GilightException("不支持的模型类型");
+			}
+			// 重新创建上下文对象，没有依赖控制层传入的上下文对象
+			IContext serviceContext = this.getDefaultContext(icontext);
+			// 调用模型层方法
+			((IBasicModel<String>) model).get(serviceContext);
+			// 设置回调
+			/*
+			 * serviceContext.getResponse().regiestResultHandler( new
+			 * IResultHandler<String>() {
+			 * 
+			 * @Override public IResult<String> handle(IContext context,
+			 * IResult<String> result) throws Exception {
+			 * //System.out.println("SERVICE getById 回调,将---"); //this.
+			 * 
+			 * // throw new Exception("LLLLLLL"); return result; } });
+			 */
+			// 等待处理完毕
+			IResult result = (IResult) serviceContext.getResponse()
+					.getBlockedResult();
+			if (result.getResultCode() == ResultCode.RESULT_CODE_FAILED) {
+				if (result.getResult() instanceof Exception) {
+					throw (Exception) result.getResult();
+				} else {
+
+				}
+			}
+			IEntity entity = (IEntity) result.getResult();
+			// 处理结果
+			MetaDataView view = (MetaDataView) SpringBeansUtils.copyProperties(
+					MetaDataView.class, entity);
+			String name = view.getMdName();
+			name =Pinyin4jUtil.top2PinYin(name);
+			if(name.length() > 0) {
+				view.setTop(name.toUpperCase().substring(0,1));
+			}
+			List<MetaDataAttView> attlist = getAttrByMdId(view.getId());
+			view.setAttList(attlist);
+			// 设置控制层请求响应的结果对象
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"获取成功!", view));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			exception.printStackTrace();
+			logger.error("查询元数据出现错误!", exception);
+			throw new ServiceException("查询元数据出现错误!", exception);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			logger.error("查询元数据出现错误!", exception);
+			throw new ServiceException("查询元数据出现错误!", exception);
+		}
+
+	}
+
+	@Override
+	public IResponse createCompMetaData(IContext context)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			MetaDataSubBaseView mdsbv = (MetaDataSubBaseView) context
+					.getParameter(ParameterKeys.ATT_VIEW);
+			MetaDataBaseView md = mdsbv.getSubMetaData();
+			md.setId(UUID.randomUUID().toString());
+			// mdsbv.setFromMdCode(fromMdCode);
+			mdsbv.setFromMdId(mdsbv.getParentMdId());
+			mdsbv.setId(UUID.randomUUID().toString());
+			// mdsbv.setMmCompId(mmCompId);
+			// mdsbv.setName(name);
+			mdsbv.setParentMdId(mdsbv.getParentMdId());
+			// mdsbv.setRemark(remark);
+			mdsbv.setToMdCode(md.getMdCode());
+			mdsbv.setToMdId(md.getId());
+			// mdsbv.setUpdateDate(updateDate);
+			ViewParameters viewParameter = new ViewParameters();
+			viewParameter.setView(mdsbv);
+			context.setParameters(viewParameter);
+
+			IContext mdcontext = ContextFactoryImpl.getInstance()
+					.createContextWithView(md);
+			this.create(mdcontext);
+
+			IModel model = initCompModel(context);
+
+			if ((model instanceof IBasicModel)) {
+				IContext modelContext = getDefaultContext(context);
+				((MetaDataModel) model).createCompMetaData(modelContext);
+			}
+
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"创建子元数据成功!", md.getId()));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			exception.printStackTrace();
+			logger.error("创建组合关系失败!", exception);
+			throw new ServiceException("创建组合关系失败!!", exception);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			logger.error("创建组合关系失败!", exception);
+			throw new ServiceException("创建组合关系失败!!", exception);
+		}
+	}
+
+	@Override
+	public IResponse updateCompMetaData(IContext context)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			MetaDataSubBaseView mdsbv = (MetaDataSubBaseView) context
+					.getParameters();
+			MetaDataBaseView md = mdsbv.getSubMetaData();
+
+			mdsbv.setFromMdId(mdsbv.getParentMdId());
+			mdsbv.setId(mdsbv.getId());
+			mdsbv.setToMdCode(md.getMdCode());
+
+			mdsbv.setParentMdId(mdsbv.getParentMdId());
+			mdsbv.setToMdId(md.getId());
+			context.setParameters(mdsbv);
+			IContext mdcontext = ContextFactoryImpl.getInstance()
+					.createContextWithView(md);
+			this.update(mdcontext);
+
+			IModel model = initCompModel(context);
+
+			if ((model instanceof IBasicModel)) {
+				IContext modelContext = getDefaultContext(context);
+				((MetaDataModel) model).updateCompMetaData(modelContext);
+			}
+			return context.getResponse();
+		} catch (ModelException exception) {
+			exception.printStackTrace();
+			logger.error("更新组合关系失败!", exception);
+			throw new ServiceException("更新组合关系失败!!", exception);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			logger.error("更新组合关系失败!", exception);
+			throw new ServiceException("更新组合关系失败!!", exception);
+		}
+	}
+
+	@Override
+	public IResponse deleteCompMetaData(IContext context)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			IDParameters idp = (IDParameters) context.getParameters();
+			String id = idp.getId();
+			MetaDataCompBaseView iview = new MetaDataCompBaseView();
+			iview.setId(id);
+			IContext icontext = ContextFactoryImpl.getInstance()
+					.createContextWithView(iview);
+			IModel model = initCompModel(icontext);
+
+			// ContextFactoryImpl.getInstance().create
+			if ((model instanceof MetaDataModel)) {
+				IContext modelContext = getDefaultContext(icontext);
+				((MetaDataModel) model).deleteCompMetaData(modelContext);
+			}
+
+			return context.getResponse();
+		} catch (ModelException exception) {
+			exception.printStackTrace();
+			logger.error("删除组合关系失败!", exception);
+			throw new ServiceException("删除组合关系失败!!", exception);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			logger.error("创建组合关系失败!", exception);
+			throw new ServiceException("创建组合关系失败!!", exception);
+		}
+	}
+
+	@Override
+	public IResponse createDepe(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			IModel model = initDepeModel(context);
+
+			if ((model instanceof IBasicModel)) {
+				IContext modelContext = getDefaultContext(context);
+				((MetaDataModel) model).createDepe(modelContext);
+			}
+			return context.getResponse();
+		} catch (ModelException exception) {
+			exception.printStackTrace();
+			logger.error("创建依赖关系失败!", exception);
+			throw new ServiceException("创建依赖关系失败!!", exception);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			logger.error("创建依赖关系失败!", exception);
+			throw new ServiceException("创建依赖关系失败!!", exception);
+		}
+	}
+
+	@Override
+	public IResponse deteleDepe(IContext context) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			MetaDataDepeView view = (MetaDataDepeView) context
+					.getParameter(ParameterKeys.ATT_VIEW);
+			List<String> toList = view.getToIdList();
+			String toId = toList.get(0);
+			view.setToMdId(toId);
+			IContext icontext = ContextFactoryImpl.getInstance()
+					.createContextWithView(view);
+			// 初始化模型
+			IModel model = initDepeModel(icontext);
+			if ((model instanceof IBasicModel)) {
+				IContext modelContext = getDefaultContext(icontext);
+				((MetaDataModel) model).deteleDepe(modelContext);
+			}
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"删除依赖成功!", null));
+			return context.getResponse();
+		} catch (ModelException exception) {
+			exception.printStackTrace();
+			logger.error("删除依赖关系失败!", exception);
+			throw new ServiceException("删除依赖关系失败!!", exception);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			logger.error("删除依赖关系失败!", exception);
+			throw new ServiceException("删除依赖关系失败!!", exception);
+		}
+	}
+
+	@Override
+	public IResponse getAllDepeMetaData(IContext context)
+			throws ServiceException {
+		try {
+			DepeMetaDataView view = new DepeMetaDataView();
+			String id = (String) context.getParameter(ParameterKeys.ATT_ID);
+			view.setId(id);
+			MetaDataDepeScope scope = new MetaDataDepeScope();
+			scope.setFromId(id);
+			IContext contextScope = ContextFactoryImpl.getInstance()
+					.createContextWithParams(scope);
+			IResponse res = metaDataBaseRepository.getByScope(contextScope);
+			ResultImpl rs = (ResultImpl) res.getBlockedResult();
+			List<IEntity> list = (List<IEntity>) rs.getResult();
+			List<MetaDataBasicView> depelist = new ArrayList<MetaDataBasicView>();
+			if (list != null) {
+				for (IEntity iEntity : list) {
+					MdMetadata mme = (MdMetadata) iEntity;
+					MetaDataBasicView mmv = AutoCopyObj.objCopy(
+							MetaDataBasicView.class, mme);
+					depelist.add(mmv);
+				}
+			}
+			view.setMetadata(depelist);
+			this.getDepeRelation(view);
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"获取成功!", view));
+			return context.getResponse();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void getDepeRelation(DepeMetaDataView view) throws ServiceException {
+		MetaDataDepeAssoScope scope = new MetaDataDepeAssoScope();
+		scope.setFromMdId(view.getId());
+		try {
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(scope);
+			this.metaDataBaseRepository.getByScope(context);
+			List<IEntity> list = (List<IEntity>) context.getResponse()
+					.getBlockedResultObject();
+			List<MetaDataDepeBaseView> depelist = SpringBeansUtils
+					.copyPropertiesForList(MetaDataDepeBaseView.class, list,
+							null);
+			if (depelist != null) {
+				for (MetaDataDepeBaseView depe : depelist) {
+					String mmDepId = depe.getMmDepId();
+					String mmDepName = getMmDepName(mmDepId);
+					depe.setMmDepName(mmDepName);
+				}
+			}
+			view.setDepeList(depelist);
+		} catch (GilightException e) {
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+		} catch (Exception e) {
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+		}
+
+	}
+
+	protected String getMmDepName(String mmDepId) throws ServiceException {
+		try {
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithID(mmDepId);
+			this.getMetaModelQueryService().getDepeAssoById(context);
+			MetaModelDepeBasicView view = (MetaModelDepeBasicView) context
+					.getResponse().getBlockedResultObject();
+			return view == null ? null : view.getName();
+		} catch (GilightException e) {
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+		} catch (Exception e) {
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+		}
+	}
+
+	/**
+	 * 查询元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param id
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月27日 下午6:57:35
+	 * @version V1.0
+	 */
+	private MdMetadata getById(String id) throws ServiceException {
+		try {
+			MdMetadata md = metaDataBaseRepository.getById(id);
+			return md;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!!", e);
+		}
+	}
+
+	/**
+	 * 查询元数据依赖关系列表
+	 * <p>
+	 * <br>
+	 * 
+	 * @param id
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月27日 下午6:57:48
+	 * @version V1.0
+	 */
+	private List<MdDependency> getmdDepeList(String id) throws ServiceException {
+		try {
+			MetaHbiernateScope scope = new MetaHbiernateScope();
+			MdDependency mddepe = new MdDependency();
+			mddepe.setFromMdId(id);
+			scope.setEntiey(mddepe);
+			scope.autoSetWhere(mddepe);
+			IContext paramIContext;
+
+			paramIContext = ContextFactoryImpl.getInstance()
+					.createContextWithParams(scope);
+			IResponse res = metaDataBaseRepository.getByScope(paramIContext);
+			ResultImpl rs = (ResultImpl) res.getResult();
+			List<MdDependency> entitylist = (List<MdDependency>) rs.getResult();
+			return entitylist;
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+		}
+
+	}
+
+	private com.gilight.dep.framework.core.model.IModel<String> initCompModel(
+			IContext<? extends IParameters> context) throws Exception {
+		// TODO Auto-generated method stub
+		// MmViewFolder
+		// IDEntity<String> entity = this.createEntityFromContext(context);
+
+		IDEntity<String> entity = AutoCopyObj.objCopy(MdComposition.class,
+				AutoCopyObj.getViewParam(context));
+		// entity.setId(UUID.randomUUID().toString());
+		IModel<String> dataModel = (IModel) getCacheManager().getObject(
+				entity.getId(), getModelClass());
+		IModel<String> model = this.createModel(entity.getId());
+		// 设置逻辑数据
+		if (model instanceof IBasicModel) {
+			((IBasicModel<String>) model).setData(entity);
+		}
+		// 设置图形数据，此处图形数据和业务数据都在一个view里面
+		if (model instanceof IViewModel) {
+			IDEntity<String> view = AutoCopyObj
+					.createViewEntityFromContext(context);
+			((IViewModel) model).setViewData(view);
+		}
+		return model;
+
+	}
+
+	private com.gilight.dep.framework.core.model.IModel<String> initDepeModel(
+			IContext<? extends IParameters> context) throws Exception {
+		// TODO Auto-generated method stub
+		// MmViewFolder
+		// IDEntity<String> entity = this.createEntityFromContext(context);
+
+		IDEntity<String> entity = AutoCopyObj.objCopy(MdDependency.class,
+				AutoCopyObj.getViewParam(context));
+		// entity.setId(UUID.randomUUID().toString());
+		IModel<String> dataModel = (IModel) getCacheManager().getObject(
+				entity.getId(), getModelClass());
+		IModel<String> model = this.createModel(entity.getId());
+		// 设置逻辑数据
+		if (model instanceof IBasicModel) {
+			((IBasicModel<String>) model).setData(entity);
+		}
+		// 设置图形数据，此处图形数据和业务数据都在一个view里面
+		if (model instanceof IViewModel) {
+			IDEntity<String> view = AutoCopyObj
+					.createViewEntityFromContext(context);
+			((IViewModel) model).setViewData(view);
+		}
+		return model;
+
+	}
+
+	@Override
+	public IResponse getByScope(IContext context) throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				public IResult handle(IContext context, IResult result)
+						throws IllegalAccessException,
+						InvocationTargetException, RepositoryException,
+						ServiceException {
+					if (CallBackCheckUtil.checkCallBackResult(context, result)) {
+						return ((IResult) context.getResponse().getResult());
+					}
+					IResult afterResult = getByScopeAfter(context, result);
+
+					if (afterResult != null) {
+						return afterResult;
+					}
+					return ((IResult) context.getResponse().getResult());
+				}
+			});
+			this.getMetaDataBaseRepository().getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元数据出现错误!", e);
+			throw new ServiceException("查询元数据出现错误!");
+		} catch (Exception e) {
+			logger.error("查询元数据出现错误!", e);
+			e.printStackTrace();
+			throw new ServiceException("查询元数据出现错误!");
+		}
+	}
+
+	private IResult getByScopeAfter(IContext context, IResult result)
+			throws ServiceException {
+		try {
+			List<IEntity> list = (List<IEntity>) result.getResult();
+			List<MetaDataBasicView> mdvlist = new ArrayList<MetaDataBasicView>();
+			if (list != null) {
+				for (IEntity entity : list) {
+					MdMetadata md = (MdMetadata) entity;
+					MetaDataBasicView mdv = AutoCopyObj.objCopy(
+							MetaDataBasicView.class, md);
+					mdvlist.add(mdv);
+				}
+			}
+			return ResultFactory.getInstance().createSuccessResult(mdvlist);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+			throw new ServiceException("查询元数据视图出现错误!");
+		}
+	}
+
+	@Override
+	public IResponse getCompData(IContext context) throws ServiceException {
+		try {
+			// TODO Auto-generated method stub
+			IDParameters idp = (IDParameters) context.getParameters();
+			String id = idp.getId();
+			List<MetaDataBasicView> mdlist = new ArrayList<MetaDataBasicView>();
+			// 获取元数据组合关系
+			List<MdComposition> mdclist = getCompByMdId(id);
+			// 获取元数据
+			for (MdComposition mdComposition : mdclist) {
+				String toid = mdComposition.getToMdId();
+				MdMetadata md = this.getById(toid);
+				MetaDataBasicView mdbv = AutoCopyObj.objCopy(
+						MetaDataBasicView.class, md);
+				
+				String name=mdbv.getMdName();
+				name=Pinyin4jUtil.top2PinYin(name);
+				if (name==null||name.equals("")){
+					continue;
+				}
+				mdbv.setTop(name.toUpperCase().substring(0,1));
+
+				//view
+				/*MetaDataAttView attView =new MetaDataAttView();
+				attView.setMdId(mdbv.getId());*/
+				//List<>
+				List<MetaDataAttView> attrList=new ArrayList<MetaDataAttView>();
+				MdAttribute mdAttribute = new MdAttribute();
+				mdAttribute.setMdId(mdbv.getId());
+				List<IEntity> attrlist= this.getMetaDataBaseRepository().findByEntity(mdAttribute);
+				if (attrlist!=null&&attrlist.size()>0){
+
+					for (IEntity entity:attrlist ) {
+						MdAttribute mdAttr=(MdAttribute)entity;
+						MetaDataAttView attView = AutoCopyObj.objCopy(
+								MetaDataAttView.class, mdAttr);
+
+						attrList.add(attView);
+
+					}
+				}
+				mdbv.setAttribs(attrList);
+
+				mdlist.add(mdbv);
+			}
+			
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"获取成功!", mdlist));
+			return context.getResponse();
+
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询组合关系失败!", e);
+			throw new ServiceException("查询组合关系失败!!", e);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询组合关系失败!", e);
+			throw new ServiceException("查询组合关系失败!!", e);
+		}
+		// return null;
+
+	}
+
+	/**
+	 * 根据formmdi获取组合关系
+	 * <p>
+	 * <br>
+	 * 
+	 * @param mdid
+	 * @return
+	 * @throws ServiceException
+	 * @author wzx
+	 * @date 2015年7月28日 下午3:14:01
+	 * @version V1.0
+	 */
+	private List<MdComposition> getCompByMdId(String mdid)
+			throws ServiceException {
+		try {
+			List<MdComposition> mdclist = new ArrayList<MdComposition>();
+			MdComposition mdc = new MdComposition();
+			mdc.setFromMdId(mdid);
+			List<IEntity> list = metaDataBaseRepository.getCompByMdId(mdc);
+			for (IEntity iEntity : list) {
+				MdComposition mdcentity = (MdComposition) iEntity;
+				mdclist.add(mdcentity);
+			}
+			return mdclist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询组合关系失败!", e);
+			throw new ServiceException("查询组合关系失败!!", e);
+
+		}
+	}
+
+	@Override
+	public IResponse getNoDepeMetaData(IContext context)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			/*MetaDataDepeScope scope = (MetaDataDepeScope) context
+					.getParameters();*/
+			/*IContext modelContext = ContextFactoryImpl.getInstance()
+					.createContextWithID(scope.getModelId());
+			this.getMetaModelQueryService().getAllChildModelIds(modelContext);
+			List<String> ids = (List<String>) modelContext.getResponse()
+					.getBlockedResultObject();
+			ids.add(scope.getModelId());
+			scope.setChilderModelIds(ids);
+			scope.setModelId(null);*/
+			List<MetaDataBasicView> mdvlist = new ArrayList<MetaDataBasicView>();
+			List<MdMetadata> list = metaDataBaseRepository
+					.getNoDepeMetaData(context);
+			for (MdMetadata mdMetadata : list) {
+
+				MetaDataBasicView mdv = AutoCopyObj.objCopy(
+						MetaDataBasicView.class, mdMetadata);
+				mdvlist.add(mdv);
+			}
+
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"查询成功!", mdvlist));
+			return context.getResponse();
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("查询依赖关系失败!", e);
+			throw new ServiceException("查询依赖关系失败!!", e);
+		}
+	}
+
+
+
+	@Override
+	public IResponse createDepeBatch(IContext context) throws ServiceException {
+		try {
+			MetaDataDepeView view = (MetaDataDepeView) context
+					.getParameter(ParameterKeys.ATT_VIEW);
+			String fromId = view.getFromId();
+			String mmDepId = view.getMmDepId();
+			List<String> toList = view.getToIdList();
+			if (toList != null) {
+				for (String id : toList) {
+					MetaDataDepeBaseView depe = new MetaDataDepeBaseView();
+					depe.setId(UUIDGenerator.getUUID());
+					depe.setFromMdId(fromId);
+					depe.setToMdId(id);
+					depe.setMmDepId(mmDepId);
+					ViewParameters para = ParameterFactory.getInstance()
+							.createDefaultViewParameter(depe);
+					IContext contextCreate = ContextFactoryImpl.getInstance()
+							.createContextWithParams(para);
+					createDepe(contextCreate);
+				}
+			}
+		} catch (GilightException e) {
+			e.printStackTrace();
+			logger.error(e);
+			throw new ServiceException();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			throw new ServiceException();
+		}
+		context.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessModelAndView(
+						"创建依赖成功!", null));
+		return context.getResponse();
+	}
+
+
+	@Override
+	public IResponse createTableMapping(IContext context) throws ServiceException {
+		try {
+			String path="F:\\v2\\test\\biao3.csv";
+
+			ArrayList<HashMap<String,String>> mapList=this.readCvs(path);
+			if (mapList==null||mapList.size()==0){
+				return null;
+			}
+			for (HashMap<String,String> map:mapList) {
+				String stUrl=map.get("stUrl");
+				String tturl=map.get("ttUrl");
+
+				String scUrl=map.get("scUrl");
+				String tcurl=map.get("tcUrl");
+
+				String sourcetable=map.get("soruceTable");
+				String targettable=map.get("targetTable");
+
+				String soruceColunm=map.get("soruceColunm");
+				String targetColunm=map.get("targetColunm");
+
+				//System.out.println(soruceColunm);
+				//System.out.println(targetColunm);
+
+				MdMetadata mdSourceMetadata= metaDataBaseRepository.findColunmByUrl(scUrl,soruceColunm);
+				MdMetadata mdTargetMetadata= metaDataBaseRepository.findColunmByUrl(tcurl,targetColunm);
+
+				if (mdSourceMetadata==null||mdTargetMetadata==null){
+
+
+
+				}else {
+					System.out.println("mdSourceMetadata="+mdSourceMetadata.getMdName());
+					metaDataBaseRepository.createMapping(mdSourceMetadata,mdTargetMetadata,"DepColumnMapping");
+				}
+
+
+				mdSourceMetadata= metaDataBaseRepository.findTableByUrl(stUrl,sourcetable);
+				mdTargetMetadata= metaDataBaseRepository.findTableByUrl(tturl,targettable);
+
+				if (mdSourceMetadata==null||mdTargetMetadata==null){
+
+
+				}else {
+					metaDataBaseRepository.createMapping(mdSourceMetadata,mdTargetMetadata,"DepTableMapping");
+				}
+
+				//MdMetadata mdSourceMetadata=metaDataBaseRepository.getById("1e60e6c4-b199-4ea8-a040-818deebf4611");
+				//MdMetadata mdTargetMetadata=metaDataBaseRepository.getById("58c91f6b-ba10-4114-b411-c915c6de1061");
+				/**/
+
+
+
+
+
+				//String tableMapping="DepTableMapping";
+				//metaDataBaseRepository.create
+				//metaDataBaseRepository.createTableMapping(mdSourceMetadata,mdTargetMetadata,"DepTable-DepTable");
+
+			}
+
+			//MdMetadata mdSourceMetadata=metaDataBaseRepository.getById("1e60e6c4-b199-4ea8-a040-818deebf4611");
+			//MdMetadata mdTargetMetadata=metaDataBaseRepository.getById("58c91f6b-ba10-4114-b411-c915c6de1061");
+
+			//metaDataBaseRepository.createMapping(mdSourceMetadata,mdTargetMetadata,"DepTableMapping");
+			//metaDataBaseRepository.createMapping(mdSourceMetadata,mdTargetMetadata,"DepColumnMapping");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public IResponse createColunmMapping(IContext context) throws ServiceException {
+		return null;
+	}
+
+
+
+
+	private ArrayList<HashMap<String,String>> readCvs(String path){
+		ArrayList<HashMap<String,String>> mapList = new ArrayList<HashMap<String,String>>(); //用来保存数据
+		try {
+			//ArrayList<String[]> csvList = new ArrayList<String[]>(); //用来保存数据
+			//path="F:\\v2\\test\\biao.csv";
+			CsvReader r = new CsvReader(path, ',', Charset.forName("GBK"));
+
+			//读取表头
+			r.readHeaders();
+			//逐条读取记录，直至读完
+			while (r.readRecord()) {
+				//读取一条记录
+				//System.out.println(r.getRawRecord());
+				//按列名读取这条记录的值
+				/*System.out.println("发布数据源Url:"+r.get("发布数据源Url"));
+				System.out.println("订阅数据源url:"+r.get("订阅数据源url"));
+				System.out.println("发布数据源用户名:"+r.get("发布数据源用户名"));
+				System.out.println("订阅数据源用户名:"+r.get("订阅数据源用户名"));
+				System.out.println("发布表名称:"+r.get("发布表名称"));
+				System.out.println("发布字段名称:"+r.get("发布字段名称"));
+
+				System.out.println("订阅表名称:"+r.get("订阅表名称"));
+				System.out.println("订阅字段名称:"+r.get("订阅字段名称"));*/
+
+				String soruceUrl=r.get("发布数据源Url");
+				String targetUrl=r.get("订阅数据源url");
+
+				String soruceUser=r.get("发布数据源用户名");
+				String targetUser=r.get("订阅数据源用户名");
+
+				String soruceTable=r.get("发布表名称");
+				String targetTable=r.get("订阅表名称");
+
+				String soruceColunm=r.get("发布字段名称");
+				String targetColunm=r.get("订阅字段名称");
+
+				HashMap map=new HashMap();
+
+
+				String stUrl=soruceUrl+"_"+soruceUser;
+				String ttUrl=targetUrl+"_"+targetUser;
+
+
+
+
+				String scUrl=soruceUrl+"_"+soruceUser+"_"+soruceTable;
+				String tcUrl=targetUrl+"_"+targetUser+"_"+targetTable;
+				map.put("stUrl",stUrl);
+				map.put("ttUrl",ttUrl);
+				map.put("scUrl",scUrl);
+				map.put("tcUrl",tcUrl);
+				map.put("soruceTable",soruceTable);
+				map.put("targetTable",targetTable);
+				map.put("soruceColunm",soruceColunm);
+				map.put("targetColunm",targetColunm);
+
+				//mapList.
+
+				mapList.add(map);
+			}
+			r.close();
+
+
+		} catch (FileNotFoundException e) {
+			logger.equals(e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.equals(e);
+			e.printStackTrace();
+		}
+		return mapList;
+	}
+
+	static public void main(String args[]){
+		MetaDataBaseServiceImpl mdd = new MetaDataBaseServiceImpl();
+		try {
+			mdd.createTableMapping(null);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private List<MappDepeView> mapping2Views(List<DepDepeMappingModel> depDepeMappingModels){
+		List<MappDepeView> list=new ArrayList<MappDepeView>();
+		if (depDepeMappingModels==null||depDepeMappingModels.size()==0){
+			return list;
+		}
+		for (DepDepeMappingModel depDepeMappingModel:depDepeMappingModels) {
+			MappDepeView mappDepeView = new MappDepeView();
+			MdMetadata sourceMd=depDepeMappingModel.getSource();
+			MdMetadata targetMd=depDepeMappingModel.getTarget();
+			MdMetadata depeMd=depDepeMappingModel.getDepe();
+
+			mappDepeView.setSourceId(sourceMd.getId());
+			mappDepeView.setSourceCode(sourceMd.getMdCode());
+			mappDepeView.setSourceName(sourceMd.getMdName());
+
+			mappDepeView.setMappCode(depeMd.getMdCode());
+			mappDepeView.setMappId(depeMd.getId());
+			mappDepeView.setMappName(depeMd.getMdName());
+
+			mappDepeView.setTargetCode(targetMd.getMdCode());
+			mappDepeView.setTargetId(targetMd.getId());
+			mappDepeView.setTargetName(targetMd.getMdName());
+			mappDepeView.setMappTypeId(depeMd.getMmId());
+			MmMetamodel mmMetamodel = new MmMetamodel();
+			mmMetamodel.setId(depeMd.getMmId());
+			mmMetaModelModel.setMmMetamodel(mmMetamodel);
+			mmMetamodel=mmMetaModelModel.queryMmMetamodelById();
+			mappDepeView.setMappTypeName(mmMetamodel.getMmName());
+			//String mmNmae=
+			//mappDepeView.setMappTypeName();
+			//mappDepeView.setMappTypeName();
+
+			list.add(mappDepeView);
+		}
+		return list;
+	}
+
+	@Override
+	public IResponse queryMapping(IContext context) throws ServiceException {
+		List<MappDepeView> list=new ArrayList<MappDepeView>();
+
+		try {
+			String mdId=(String) context.getParameter("id");
+			MdMetadata mdMetadata = new MdMetadata();
+			mdMetadata.setId(mdId);
+			depDepeMappingModel.setSource(mdMetadata);
+			List<DepDepeMappingModel> depDepeMappingModels=depDepeMappingModel.queryMapping();
+
+			list= mapping2Views(depDepeMappingModels);
+		} catch (ModelException e) {
+			e.printStackTrace();
+			logger.error("查询映射失败",e);
+		}
+		context.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessModelAndView(
+						"获取成功!", list));
+		return context.getResponse();
+	}
+
+	@Override
+	public IResponse queryPassiveMapping(IContext context) throws ServiceException {
+		List<MappDepeView> list=new ArrayList<MappDepeView>();
+
+		try {
+			String mdId=(String) context.getParameter("id");
+			MdMetadata mdMetadata = new MdMetadata();
+			mdMetadata.setId(mdId);
+			depDepeMappingModel.setTarget(mdMetadata);
+			List<DepDepeMappingModel> depDepeMappingModels=depDepeMappingModel.queryPassiveMapping();
+
+			list= mapping2Views(depDepeMappingModels);
+		} catch (ModelException e) {
+			e.printStackTrace();
+			logger.error("查询映射失败",e);
+		}
+		context.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessModelAndView(
+						"获取成功!", list));
+		return context.getResponse();
+	}
+
+	/**
+	 * 获取映射关系元模型
+	 */
+	public void findMmByName(String mmName){
+		//metaDataBaseRepository.find
+
+	}
+
+	@Override
+	public IResponse delMapping(IContext context) throws ServiceException {
+		String depeId=(String) context.getParameter("id");
+		MdMetadata mdMetadata = new MdMetadata();
+		mdMetadata.setId(depeId);
+		depDepeMappingModel.setDepe(mdMetadata);
+		if (depDepeMappingModel.delMapping()){
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"删除成功!", null));
+		}else {
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"删除失败!", null));
+		}
+		return context.getResponse();
+	}
+
+
+}

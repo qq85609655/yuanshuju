@@ -1,0 +1,10 @@
+{
+    "details": [
+        {
+            "name": "分类字母",
+            "propertiesName": "mdName",
+            "description": "分类名称",
+            "xtype": "textField"
+        }
+    ]
+}

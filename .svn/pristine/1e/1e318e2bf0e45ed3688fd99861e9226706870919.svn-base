@@ -1,0 +1,163 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.ext.response.IDepView;
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+/**
+ * 
+ * @ClassName: GatherJobBasicView
+ *             <p>
+ *             采集任务<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:53:48
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class GatherJobBasicView implements IDepView {
+
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 任务类型
+	 */
+	private String jobType;
+	/**
+	 * 任务名称
+	 */
+	private String jobName;
+	/**
+	 * 数据源
+	 */
+	private String datasource;
+	/**
+	 * 数据策略
+	 */
+	private String dbpolicy;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 状态
+	 */
+	private Integer status;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+	/**
+	 * 分页后每页显示条数
+	 */
+	private Integer limit;
+	/**
+	 * 显示第几页，从1开始数，1为第一页
+	 */
+	private Integer page;
+	/**
+	 * 从第几条记录开始显示
+	 */
+	private Integer start;
+	
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getJobType() {
+		return jobType;
+	}
+
+	public void setJobType(String jobType) {
+		this.jobType = jobType;
+	}
+
+	public String getJobName() {
+		return jobName;
+	}
+
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
+	}
+
+	public String getDatasource() {
+		return datasource;
+	}
+
+	public void setDatasource(String datasource) {
+		this.datasource = datasource;
+	}
+
+	public String getDbpolicy() {
+		return dbpolicy;
+	}
+
+	public void setDbpolicy(String dbpolicy) {
+		this.dbpolicy = dbpolicy;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+
+	public Integer getPage() {
+		return page;
+	}
+
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+
+	public Integer getStart() {
+		return start;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	@Override
+	public String toString() {
+		return "GatherJobBasicView [id=" + id + ", jobType=" + jobType
+				+ ", jobName=" + jobName + ", datasource=" + datasource
+				+ ", dbpolicy=" + dbpolicy + ", remark=" + remark + ", status="
+				+ status + ", updateDate=" + updateDate + ", limit=" + limit
+				+ ", page=" + page + ", start=" + start + "]";
+	}
+
+
+
+}

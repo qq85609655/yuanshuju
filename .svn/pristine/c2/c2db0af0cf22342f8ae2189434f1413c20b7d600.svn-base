@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+       	
+       	
+    
+	 <!-- 注入spring 和 jdon的bean相互注入 -->
+	<!-- <import resource="beans/common/Jdon.xml"/>
+	扫描组件
+	<import resource="beans/common/AnnotationScan.xml"/> -->
+<!-- 	<import resource="beans/configurer.xml" /> -->
+	<!-- 定义国际化消息 -->
+	<!-- <import resource="beans/ResourceBundle.xml"/> -->
+	<!-- <import resource="beans/cache.xml" /> -->
+	<!-- 配置请参考官网： http://cxf.apache.org/docs/jax-rs-and-jax-ws.html -->
+   <!--  <import resource="classpath*:META-INF/cxf/cxf.xml" />
+    <import resource="classpath*:META-INF/cxf/cxf-extension-soap.xml" />
+    <import resource="classpath*:META-INF/cxf/cxf-servlet.xml" />
+    
+    
+    <bean id="helloWorld" class="com.jhkj.demp.metadata.webservice.hello.impl.HelloWorldImpl" />  -->
+    
+    <!-- JAX-WS -->
+    <!-- implementor 指定 WebService 实现类, address 指定访问地址 -->
+   <!--  <jaxws:endpoint implementor="#helloWorld" address="/helloworld" publish="true" />  -->
+<!-- 作为对JaxWsServerFactoryBean的注入 -->  
+	<!-- <bean id="cxfServiceFactory" class="org.apache.cxf.jaxws.JaxWsServerFactoryBean">  
+	    <property name="serviceClass" value="com.jhkj.demp.metadata.webservice.hello.impl.HelloWorldImpl" />  
+	    <property name="address" value="http://localhost:8080/service/helloCxf" />  
+	    <property name="inInterceptors">  
+	        <list>  
+	            <bean class="org.apache.cxf.interceptor.LoggingInInterceptor" />  
+	        </list>  
+	    </property>  
+	    <property name="outInterceptors">  
+	        <list>  
+	            <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor" />  
+	        </list>  
+	    </property>  
+	</bean> 
+	<bean id="helloCxfService" class="org.ws.server.cxf.chap1.impl.CXFServiceImpl" factory-bean="cxfServiceFactory" factory-method="create" /> -->
+</beans>

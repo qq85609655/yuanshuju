@@ -1,0 +1,49 @@
+package com.gilight.dep.metadata.web.controller;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.quartz.Trigger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+
+import com.gilight.dep.metadata.service.ISystemBackupService;
+import com.gilight.dep.metadata.service.IInitBackupTimeService;
+import com.gilight.dep.metadata.service.impl.GatherJobServiceImpl;
+import com.gilight.dep.metadata.service.impl.MetaDataBaseServiceImpl;
+
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
+@ContextConfiguration(locations = {
+		"classpath:*/applicationContext.xml",
+		 })
+//"classpath:*/test.xml",
+//"classpath:*/applicationContext.xml",
+//"classpath:*/analyzer/analyzer.xml",
+//"classpath:*/beans/service/metadata/service-md.xml",
+public class SystemBackupTest {
+	
+	@Autowired
+	private SystemBackupController systemBackupController;
+	public SystemBackupController getSystemBackupController() {
+		return systemBackupController;
+	}
+	public void setSystemBackupController(SystemBackupController systemBackupController) {
+		this.systemBackupController = systemBackupController;
+	}
+
+
+	@Test
+	public void test() {
+		//String cronExpressionFromDB = initBackupTimeService.getCronExpressionFromDB();
+		//System.out.println(cronExpressionFromDB);
+		
+	}
+
+}

@@ -1,0 +1,52 @@
+package com.gilight.dep.metadata.repository;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.entity.MdAnalyseResult;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdDependency;
+
+/**
+ * 元数据查询
+* @ClassName: IMetaDataQueryRepository 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:48:13
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IMetaDataQueryRepository extends IMetaDataRepository {
+	/**
+	 * 取上游关系
+	* <p><br>
+	* @param noids
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月5日 下午8:13:20
+	* @version V1.0
+	 */
+	public List<IEntity> getStreamByMdid(List<String> noids) throws RepositoryException;
+	public List<IEntity> getStreamByMdid(String noid) throws RepositoryException;
+	/**
+	 * 取下游关系
+	* <p><br>
+	* @param noids
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月5日 下午8:13:32
+	* @version V1.0
+	 */
+	public List<IEntity> getStreamByUpstream(List<String> noids) throws RepositoryException;
+	
+	public List<IEntity> getStreamByUpstream(String noid) throws RepositoryException;
+	
+	public MdDependency[] getDependencys(String id) throws RepositoryException;
+	
+	public MdComposition[] getMdCompositions(String id) throws RepositoryException;
+	
+	
+}

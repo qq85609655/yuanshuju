@@ -1,0 +1,110 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+/**
+ * 
+ * @ClassName: MetaDataDepeView
+ *             <p>
+ *             元数据依赖关系<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:07:29
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaDataDepeView extends MetaDataDepeBaseView implements IView {
+	/**
+	 * 元数据依赖关系的ID
+	 */
+	private String id;
+	/**
+	 * 起始元数据
+	 */
+	private MetaDataBasicView fromMetaData;
+	/**
+	 * 被依赖的元数据
+	 */
+	private MetaDataBasicView toMetaData;
+	/**
+	 * 依赖关系的名称
+	 */
+	private String name;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/***
+     * 依赖端元数据id
+     */
+	private String fromId;
+	/***
+     * 被依赖的元数据集合
+     */
+	private List<String> toIdList;
+
+	public String getFromId() {
+		return fromId;
+	}
+
+	public void setFromId(String fromId) {
+		this.fromId = fromId;
+	}
+
+	public List<String> getToIdList() {
+		return toIdList;
+	}
+
+	public void setToIdList(List<String> toIdList) {
+		this.toIdList = toIdList;
+	}
+
+	public MetaDataBasicView getToMetaData() {
+		return toMetaData;
+	}
+
+	public void setToMetaData(MetaDataBasicView toMetaData) {
+		this.toMetaData = toMetaData;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public MetaDataBasicView getFromMetaData() {
+		return fromMetaData;
+	}
+
+	public void setFromMetaData(MetaDataBasicView fromMetaData) {
+		this.fromMetaData = fromMetaData;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaDataDepeView [id=" + id + ", fromMetaData=" + fromMetaData
+				+ ", toMetaData=" + toMetaData + ", name=" + name + ", remark="
+				+ remark + "]";
+	}
+
+}

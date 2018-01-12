@@ -1,0 +1,184 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+/**
+ * 映射的元数据分级类
+ */
+public class MetaDataMapMDView implements IView{
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 新增字段
+	 */
+	private String mmDepeFromId;//映射名字的模型id
+	private String fromMdId;//映射源ID
+	private String toMdId;//映射目标ID
+	public String getMmDepeFromId() {
+		return mmDepeFromId;
+	}
+	public void setMmDepeFromId(String mmDepeFromId) {
+		this.mmDepeFromId = mmDepeFromId;
+	}
+	public String getFromMdId() {
+		return fromMdId;
+	}
+	public void setFromMdId(String fromMdId) {
+		this.fromMdId = fromMdId;
+	}
+	public String getToMdId() {
+		return toMdId;
+	}
+	public void setToMdId(String toMdId) {
+		this.toMdId = toMdId;
+	}
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 元模型名称
+	 */
+	private String mmName;
+	/**
+	 * 元模型id
+	 */
+	private String mmId;
+	/**
+	 * 元数据编码
+	 */
+	private String mdCode;
+	/**
+	 * 元数据名称
+	 */
+	private String mdName;
+	/**
+	 * 所属包id
+	 */
+	private String mdPackageid;
+	/**
+	 * 是否属于系统初始化数据
+	 */
+	private Integer issys;
+	/**
+	 * 状态
+	 */
+	private Integer status;
+	/**
+	 * 系统版本
+	 */
+	private String sysver;
+	/**
+	 * 用户定义版本
+	 */
+	private String userver;
+	/**
+	 * 版本描述
+	 */
+	private String verRemark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	
+	private List<MetaDataMapMDView> list = new ArrayList<>();
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getMmName() {
+		return mmName;
+	}
+	public void setMmName(String mmName) {
+		this.mmName = mmName;
+	}
+	public String getMmId() {
+		return mmId;
+	}
+	public void setMmId(String mmId) {
+		this.mmId = mmId;
+	}
+	public String getMdName() {
+		return mdName;
+	}
+	public void setMdName(String mdName) {
+		this.mdName = mdName;
+	}
+	public String getMdPackageid() {
+		return mdPackageid;
+	}
+	public void setMdPackageid(String mdPackageid) {
+		this.mdPackageid = mdPackageid;
+	}
+	public List<MetaDataMapMDView> getList() {
+		return list;
+	}
+	public void setList(List<MetaDataMapMDView> list) {
+		this.list = list;
+	}
+	public String getMdCode() {
+		return mdCode;
+	}
+	public void setMdCode(String mdCode) {
+		this.mdCode = mdCode;
+	}
+	public Integer getIssys() {
+		return issys;
+	}
+	public void setIssys(Integer issys) {
+		this.issys = issys;
+	}
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	public String getSysver() {
+		return sysver;
+	}
+	public void setSysver(String sysver) {
+		this.sysver = sysver;
+	}
+	public String getUserver() {
+		return userver;
+	}
+	public void setUserver(String userver) {
+		this.userver = userver;
+	}
+	public String getVerRemark() {
+		return verRemark;
+	}
+	public void setVerRemark(String verRemark) {
+		this.verRemark = verRemark;
+	}
+	public String getUpdateDate() {
+		return updateDate;
+	}
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	@Override
+	public String toString() {
+		return "MetaDataMapMDView [mmDepeFromId=" + mmDepeFromId + ", fromMdId=" + fromMdId + ", toMdId=" + toMdId
+				+ ", id=" + id + ", mmName=" + mmName + ", mmId=" + mmId + ", mdCode=" + mdCode + ", mdName=" + mdName
+				+ ", mdPackageid=" + mdPackageid + ", issys=" + issys + ", status=" + status + ", sysver=" + sysver
+				+ ", userver=" + userver + ", verRemark=" + verRemark + ", updateDate=" + updateDate + ", remark="
+				+ remark + ", list=" + list + "]";
+	}
+
+}

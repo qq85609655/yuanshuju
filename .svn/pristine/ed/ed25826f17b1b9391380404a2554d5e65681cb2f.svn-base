@@ -1,0 +1,143 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+
+/**
+ * 
+ * @ClassName: MetaModelCompBasicView
+ *             <p>
+ *             组合关系基本信息 <br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:11:56
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaModelCompBasicView extends MetaBaseView {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 组合关系的ID
+	 */
+	private String id;
+	/**
+	 * 组合关系的名称
+	 */
+	private String name;
+	/**
+	 * 多重性id
+	 */
+	private String multiplicityid;
+	/**
+	 * 起始元模型id
+	 */
+	private String fromMID;
+	/**
+	 * 起始元模型名称
+	 */
+	private String fromMName;
+	/**
+	 * 被组合的元模型id
+	 */
+	private String toMID;
+	/**
+	 * 被组合的元模型名称
+	 */
+	private String toMName;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+	/**
+	 * 所拥有的多重性
+	 */
+	private String ownerMultiplicity;
+	/**
+	 * 被组合的多重性
+	 */
+	private String toMultiplicity;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getMultiplicityid() {
+		return multiplicityid;
+	}
+	public void setMultiplicityid(String multiplicityid) {
+		this.multiplicityid = multiplicityid;
+	}
+	public String getFromMID() {
+		return fromMID;
+	}
+	public void setFromMID(String fromMID) {
+		this.fromMID = fromMID;
+	}
+	public String getFromMName() {
+		return fromMName;
+	}
+	public void setFromMName(String fromMName) {
+		this.fromMName = fromMName;
+	}
+	public String getToMID() {
+		return toMID;
+	}
+	public void setToMID(String toMID) {
+		this.toMID = toMID;
+	}
+	public String getToMName() {
+		return toMName;
+	}
+	public void setToMName(String toMName) {
+		this.toMName = toMName;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getUpdateDate() {
+		return updateDate;
+	}
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+	public String getOwnerMultiplicity() {
+		return ownerMultiplicity;
+	}
+	public void setOwnerMultiplicity(String ownerMultiplicity) {
+		this.ownerMultiplicity = ownerMultiplicity;
+	}
+	public String getToMultiplicity() {
+		return toMultiplicity;
+	}
+	public void setToMultiplicity(String toMultiplicity) {
+		this.toMultiplicity = toMultiplicity;
+	}
+	@Override
+	public String toString() {
+		return "MetaModelCompBasicView [id=" + id + ", name=" + name
+				+ ", multiplicityid=" + multiplicityid + ", fromMID=" + fromMID
+				+ ", fromMName=" + fromMName + ", toMID=" + toMID
+				+ ", toMName=" + toMName + ", remark=" + remark
+				+ ", updateDate=" + updateDate + ", ownerMultiplicity="
+				+ ownerMultiplicity + ", toMultiplicity=" + toMultiplicity
+				+ "]";
+	}
+
+}

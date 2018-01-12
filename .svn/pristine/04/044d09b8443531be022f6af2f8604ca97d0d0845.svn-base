@@ -1,0 +1,118 @@
+/**   
+ * @Title: CallApiResult.java 
+ * @Description: TODO 
+ * @author yuan  
+ * @date 2013年9月17日 上午11:57:39
+ * Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.web.response;
+
+/**
+ * @ClassName: CallApiResult
+ * @Description: TODO
+ * @author yuan
+ * @param <T>
+ * @date 2013年9月17日 上午11:57:39
+ * 
+ */
+public class ResponseResult implements IResponseData {
+
+	private int resultCode = ResultCode.RESULT_CODE_FAILED;
+
+	private String resultText = null;
+
+	private boolean successProperty = true;
+
+	private Object root = null;
+
+	/**
+	 * <p>
+	 * Description:
+	 * </p>
+	 * 
+	 * @param <T>
+	 * @param resultCode
+	 * @param resultText
+	 * @param root
+	 */
+	public <T> ResponseResult(int resultCode, String resultText, T root) {
+		super();
+		this.resultCode = resultCode;
+		this.resultText = resultText;
+		this.root = root;
+	}
+
+	/**
+	 * <p>
+	 * Description:
+	 * </p>
+	 */
+	public ResponseResult() {
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @return resultCode
+	 */
+	public int getResultCode() {
+		return resultCode;
+	}
+
+	/**
+	 * @param resultCode
+	 *            shou be set resultCode
+	 */
+	public void setResultCode(int resultCode) {
+		this.resultCode = resultCode;
+	}
+
+	/**
+	 * @return resultText
+	 */
+	public String getResultText() {
+		return resultText;
+	}
+
+	/**
+	 * @param resultText
+	 *            shou be set resultText
+	 */
+	public void setResultText(String resultText) {
+		this.resultText = resultText;
+	}
+
+	/**
+	 * @param <T>
+	 * @return root
+	 */
+	public <T> T getRoot() {
+		return (T) root;
+	}
+
+	/**
+	 * @param <T>
+	 * @param root
+	 *            shou be set root
+	 */
+	public <T> void setRoot(T root) {
+		this.root = root;
+	}
+
+	/**
+	 * @return successProperty
+	 */
+	public boolean isSuccessProperty() {
+		return successProperty;
+	}
+
+	/**
+	 * @param successProperty
+	 *            shou be set successProperty
+	 */
+	public void setSuccessProperty(boolean successProperty) {
+		this.successProperty = successProperty;
+	}
+
+
+}

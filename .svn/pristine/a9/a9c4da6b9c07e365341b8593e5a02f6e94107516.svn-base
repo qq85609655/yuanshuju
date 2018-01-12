@@ -1,0 +1,14 @@
+package com.gilight.dep.metamodel.service;
+
+/**
+ * 文件夹操作类
+* @ClassName: IMetaModelFolderService 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年11月30日 下午6:12:23
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IMetaModelEnumService extends IMetaModelService {
+
+}

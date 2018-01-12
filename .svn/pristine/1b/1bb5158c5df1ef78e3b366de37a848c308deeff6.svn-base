@@ -1,0 +1,53 @@
+/**   
+ * @Title: KettleSpringFactory.java  
+ * @Description: TODO 
+ * @author zps   
+ * @date 2015年6月29日 下午2:32:46
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.service.impl;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class SpringFactory {
+
+	private static SpringFactory instance = new SpringFactory();
+	private static ApplicationContext factory;
+
+	public static SpringFactory getInstance() {
+		return instance;
+	}
+
+	static {
+		factory = new ClassPathXmlApplicationContext("beans.xml");
+	}
+
+	public static Object getBean(String name) {
+		if (factory == null) {
+			return null;
+		}
+		try {
+			return factory.getBean(name);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public static ApplicationContext getFactory() {
+		return factory;
+	}
+
+	public static void setFactory(ApplicationContext factory) {
+		SpringFactory.factory = factory;
+	}
+
+	public static void main(String[] args) {
+		System.out.println("Test------");
+		Object beans = SpringFactory.getBean("dkettleJobService");
+		System.out.println(beans == null);
+		// System.out.println(s.findAll()==null);
+	}
+
+}

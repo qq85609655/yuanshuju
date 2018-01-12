@@ -1,0 +1,272 @@
+package com.gilight.dep.metadata.gather.excel;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.enmu.MetaDataGatherAdaptor;
+import com.gilight.dep.metadata.entity.MdAttributeImp;
+import com.gilight.dep.metadata.entity.MdGatherLog;
+import com.gilight.dep.metadata.entity.MdMetadataImp;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.enums.GatherDataBase;
+import com.gilight.dep.metadata.gather.common.BaseGatherJobTaskModel;
+import com.gilight.dep.metadata.gather.common.IGatherJobTaskModel;
+import com.gilight.dep.metadata.repository.IGatherAdaptorRepository;
+import com.gilight.dep.metadata.util.AutoObj2Xml;
+import com.gilight.dep.metadata.util.MetaDateUtils;
+import com.gilight.dep.metadata.view.DepErrordatas;
+import com.gilight.dep.metadata.view.DepImpErrordatas;
+import com.gilight.dep.metadata.view.DepImpSucceeddata;
+import com.gilight.dep.metadata.view.DepLog;
+import com.gilight.dep.metadata.view.DepSucceeds;
+
+public class ExcelGatherJobTaskModel extends BaseGatherJobTaskModel implements
+		IGatherJobTaskModel {
+	IGatherAdaptorRepository gatherAdaptorRepository;
+	
+	
+	
+	MetaDataGatherAdaptor adaptor = MetaDataGatherAdaptor.EXCEL_TYPE;
+	
+	
+	
+	
+	public IGatherAdaptorRepository getGatherAdaptorRepository() {
+		return gatherAdaptorRepository;
+	}
+
+	public void setGatherAdaptorRepository(
+			IGatherAdaptorRepository gatherAdaptorRepository) {
+		this.gatherAdaptorRepository = gatherAdaptorRepository;
+	}
+
+	@Override
+	public String getName() throws ModelException {
+		return adaptor.getName() + this.getJobTaskId();
+	}
+
+	@Override
+	public String getAdaptorName() throws ModelException {
+		return adaptor.getName();
+	}
+
+	@Override
+	public String getAdaptorCode() throws ModelException {
+		return adaptor.getValue();
+	}
+
+	@Override
+	public void excute() throws ModelException {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+             //线程执行采集工作
+				try {
+					getBuildMetadataService().buildMetadatas(
+							ExcelGatherJobTaskModel.this);
+				} catch (ServiceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (RepositoryException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (GilightException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
+		}).run();
+	}
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		File file = new File("gather/excel/111.xls");
+		
+	}
+	private MmMetamodel getModelByCode(String code){
+		MmMetamodel model=null;
+		try {
+			model = gatherAdaptorRepository.getModelByCode(code);
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return model;
+	}
+	public void saveData(List<List> listdata,MdGatherLog logentity) throws RepositoryException{
+		//MdGatherLog logentity = new MdGatherLog();
+		DepLog deplog = new DepLog();
+		DepSucceeds secceeds = new DepSucceeds();
+		DepErrordatas errors = new DepErrordatas();
+		List<DepImpSucceeddata> succeedlist = new ArrayList<DepImpSucceeddata>();	
+		List<DepImpErrordatas> errorlist = new ArrayList<DepImpErrordatas>();
+		
+		List<IEntity> alldata = new ArrayList<IEntity>();
+		List<MdMetadataImp> mds = new ArrayList<MdMetadataImp>();
+		List<MdAttributeImp> attrs = new ArrayList<MdAttributeImp>();
+		logentity.setJobId(this.getJobId());
+		//StringBuffer sb = new StringBuffer();
+		int failnum=0;
+		try {
+			if(listdata==null||listdata.size()==0){
+				return ;
+			}
+			
+			
+			//展开所有数据
+			for (List<Map> list : listdata) {
+				//展开每条数据
+				for (Map<String,String> datamap : list) {
+					//基本属性插入元数据表
+					String modelcode=getVal(datamap,GatherDataBase.modelcode);
+					String mdName =getVal(datamap,GatherDataBase.name);
+					String parentcode=getVal(datamap,GatherDataBase.parentCode);
+					String parentname =getVal(datamap,GatherDataBase.parentName);
+					String remark =getVal(datamap,GatherDataBase.remark);
+					String code =getVal(datamap,GatherDataBase.code);
+					if(code==null||code.equals("")){
+						code=parentcode+"_"+modelcode+"_"+mdName;
+					}
+					MmMetamodel model= getModelByCode(modelcode);
+					if(model==null){
+						failnum++;
+						DepImpErrordatas error = new DepImpErrordatas();
+						//error.setMdcode(mdcode);
+						error.setMdname(mdName);
+						error.setMmcode(modelcode);
+						error.setOperation("不执行导入");
+						error.setErrormsg("没有找到对应模型代码");
+						//error.setData2str(data2str);
+						errorlist.add(error);
+						
+						/*sb.append(mdName);
+						sb.append(":没有找到对应模型代码:");
+						sb.append(modelcode);
+						sb.append("不执行导入");
+						sb.append("\r\n");*/
+					}
+					MdMetadataImp mmi = new MdMetadataImp();
+					mmi.setId(UUID.randomUUID().toString());
+					mmi.setMmcode(modelcode);
+					mmi.setMmId(model.getId());
+					mmi.setMmName(model.getMmName());
+					mmi.setMdName(mdName);
+					mmi.setMdCode(code);
+					mmi.setParentcode(parentcode);
+					mmi.setParentname(parentname);
+					mmi.setRemark(remark);
+					mmi.setJobTaskId(logentity.getId());
+					mds.add(mmi);
+					
+					//扩展属性插入属性表
+					
+					for (Map.Entry<String, String> entry : datamap.entrySet()) {
+						MdAttributeImp mai = new MdAttributeImp();
+						String key=entry.getKey();
+						String val=entry.getValue();
+						mai.setId(UUID.randomUUID().toString());
+						mai.setMdId(mmi.getId());
+						mai.setMmAttCode(key);
+						mai.setMmAttName(key);
+						mai.setValUe(val);	
+						attrs.add(mai);
+					}
+					
+					
+				}
+			}
+			alldata = new ArrayList<IEntity>();
+			alldata.addAll(mds);
+			alldata.addAll(attrs);
+			logentity.setGatherNum(alldata.size());
+			logentity.setFailNum(0);
+			logentity.setSucceedNum(alldata.size());
+			//iEntity
+			for (MdMetadataImp mmi : mds) {
+				DepImpSucceeddata succeed = new DepImpSucceeddata();
+				succeed.setData2str(mmi.toString());
+				succeed.setMmcode(mmi.getMmcode());
+				succeed.setName(mmi.getMdName());
+				succeed.setUuid(mmi.getId());
+				succeed.setOperation("插入成功");
+				succeedlist.add(succeed);
+			}
+			for (IEntity iEntity : alldata) {
+				/*DepImpSucceeddata succeed = new DepImpSucceeddata();
+				
+				succeed.setUuid(iEntity.get);
+				sb.append("导入对象:");
+				sb.append(iEntity.toString());
+				sb.append("\r\n");*/
+				getGatherAdaptorRepository().create(iEntity);
+				
+			}
+			logentity.setRunStatus(1);
+			
+			
+			secceeds.setSucceedsList(succeedlist);
+			errors.setErrorsList(errorlist);
+			
+			logentity.setEndDate(MetaDateUtils.getDefaultUpdateDate());
+			deplog.setErrors(errors);
+			deplog.setSucceeds(secceeds);
+			String xmllog=AutoObj2Xml.toXml(deplog);
+			
+			logentity.setLogResult(xmllog);
+			getGatherAdaptorRepository().create(logentity);
+		} catch (RepositoryException e) {
+			//失败删除所有记录
+			logentity.setRunStatus(2);
+			for (MdMetadataImp mmi : mds) {
+				DepImpErrordatas error = new DepImpErrordatas();
+				error.setData2str(mmi.toString());
+				error.setErrormsg("导入失败，删除对象");
+				error.setMdcode(mmi.getMdCode());
+				error.setMdname(mmi.getMdName());
+				error.setMmcode(mmi.getMmcode());
+				error.setMsg(e.getMessage());
+				//error.setName(mmi.);
+				error.setOperation("导入失败，删除对象");
+				errorlist.add(error);
+			}
+			errors.setErrorsList(errorlist);
+			for (IEntity iEntity : alldata) {	
+				/*sb.append("导入失败，删除对象:");
+				sb.append(iEntity.toString());
+				sb.append("\r\n");*/
+				
+				getGatherAdaptorRepository().delete(iEntity);
+			}
+			
+			logentity.setGatherNum(0);
+			logentity.setFailNum(alldata.size());
+			logentity.setSucceedNum(0);
+			//sb.append(e.toString());
+			deplog.setErrors(errors);
+			deplog.setSucceeds(secceeds);
+			String xmllog=AutoObj2Xml.toXml(deplog);
+			logentity.setLogResult(xmllog);
+			getGatherAdaptorRepository().create(logentity);
+			e.printStackTrace();
+		}
+		//MdMetadataImp mmi = new MdMetadataImp();
+		//MdAttributeImp mai = new MdAttributeImp();
+		
+		//gatherAdaptorRepository.create(entity);
+	}
+	
+	
+	private String getVal(Map map,String key){
+		String val=(String) map.get(key);
+		map.remove(key);
+		return val;
+		
+	}
+}

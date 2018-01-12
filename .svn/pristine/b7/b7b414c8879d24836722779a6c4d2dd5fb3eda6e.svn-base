@@ -1,0 +1,96 @@
+package com.gilight.dep.metadata.view;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("Errordatas")
+public class DepImpErrordatas {
+	private String uuid;
+	private String mmcode;
+	private String mdcode;
+	private String mdname;
+	private String name;
+	private String errormsg;
+	private String operation;
+	private String msg;
+	private String data2str;
+	public DepImpErrordatas() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getMmcode() {
+		return mmcode;
+	}
+
+	public void setMmcode(String mmcode) {
+		this.mmcode = mmcode;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getData2str() {
+		return data2str;
+	}
+
+	public void setData2str(String data2str) {
+		this.data2str = data2str;
+	}
+
+	public String getMdcode() {
+		return mdcode;
+	}
+
+	public void setMdcode(String mdcode) {
+		this.mdcode = mdcode;
+	}
+
+	public String getMdname() {
+		return mdname;
+	}
+
+	public void setMdname(String mdname) {
+		this.mdname = mdname;
+	}
+
+	public String getErrormsg() {
+		return errormsg;
+	}
+
+	public void setErrormsg(String errormsg) {
+		this.errormsg = errormsg;
+	}
+
+	public String getOperation() {
+		return operation;
+	}
+
+	public void setOperation(String operation) {
+		this.operation = operation;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+	
+	
+	
+	
+
+}

@@ -1,0 +1,113 @@
+/**   
+analyseExcuteService * @Title: KettleSpringFactory.java  
+ * @Description: TODO 
+ * @author zps   
+ * @date 2015骞�鏈�9鏃�涓嬪崍2:32:46
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.spring;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.metadata.service.impl.DataMapQueryServiceImpl;
+import com.gilight.dep.metadata.view.MetaModelDataMapView;
+import com.gilight.dep.metamodel.service.impl.MetaModelQueryServiceImpl;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class SpringFactoryModelQueryTest {
+
+	private static SpringFactoryModelQueryTest instance = new SpringFactoryModelQueryTest();
+	private static ApplicationContext factory;
+
+	public static SpringFactoryModelQueryTest getInstance() {
+		return instance;
+	}
+
+	static {
+		//String[] beans={"beans/service/beans.xml","beans/hibernate/hibernate.xml"};
+		factory = new ClassPathXmlApplicationContext("test.xml");
+	}
+
+	public static Object getBean(String name) {
+		if (factory == null) {
+			return null;
+		}
+		try {
+			return factory.getBean(name);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public static ApplicationContext getFactory() {
+		return factory;
+	}
+
+	public static void setFactory(ApplicationContext factory) {
+		SpringFactoryModelQueryTest.factory = factory;
+	}
+
+	public static void main(String[] args) {
+		try {
+			/*System.out.println("Test------");
+			
+			//ExcelGatherJobTaskModel jobmodel = new ExcelGatherJobTaskModel();
+			MetaModelQueryServiceImpl gs = (MetaModelQueryServiceImpl) SpringFactoryModelQueryTest.getBean("metaModelQueryService");
+			System.out.println("Test------");
+			MetaModelDataMapView view = new MetaModelDataMapView();
+			IContext context= ContextFactoryImpl.getInstance().createContextWithView(view);
+			IContext idcontext= ContextFactoryImpl.getInstance().createContextWithID("212");
+			//gs.findCompRootModel(context);
+			//gs.findRootModel(context);
+			//MmMapData mf = new MmMapData();
+			IResponse response=gs.findAllMmInheritById(idcontext);
+
+			System.out.println("Test------");*/
+
+			SpringFactoryModelQueryTest test = new SpringFactoryModelQueryTest();
+
+			//test.tsetAllMapNode();
+
+			test.impDb();
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// System.out.println(s.findAll()==null);
+	}
+	public void impDb(){
+		DataMapQueryServiceImpl gs = (DataMapQueryServiceImpl) SpringFactoryModelQueryTest.getBean("dataMapQueryService");
+		try {
+			gs.impDb();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void tsetAllMapNode() throws GilightException {
+		System.out.println("Test------");
+
+		//ExcelGatherJobTaskModel jobmodel = new ExcelGatherJobTaskModel();
+		MetaModelQueryServiceImpl gs = (MetaModelQueryServiceImpl) SpringFactoryModelQueryTest.getBean("metaModelQueryService");
+		System.out.println("Test------");
+		MetaModelDataMapView view = new MetaModelDataMapView();
+		IContext context= ContextFactoryImpl.getInstance().createContextWithView(view);
+		IContext idcontext= ContextFactoryImpl.getInstance().createContextWithID("212");
+		//gs.findCompRootModel(context);
+		//gs.findRootModel(context);
+		//MmMapData mf = new MmMapData();
+		//IResponse response=gs.findDepeList(context);
+		//IResponse response1=gs.findCompList(context);
+		IResponse response2=gs.findInheList(context);
+		//IResponse response3=gs.findDepeList(context);
+		System.out.println("Test------");
+		System.out.println("Test------");
+	}
+
+}

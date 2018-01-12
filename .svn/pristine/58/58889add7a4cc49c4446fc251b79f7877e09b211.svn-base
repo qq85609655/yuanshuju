@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="dep-metadata-core-webapp:war">
+    <output-path>$PROJECT_DIR$/dep-metadata-core-webapp/target</output-path>
+    <root id="archive" name="metadata.war">
+      <element id="artifact" artifact-name="dep-metadata-core-webapp:war exploded" />
+    </root>
+  </artifact>
+</component>

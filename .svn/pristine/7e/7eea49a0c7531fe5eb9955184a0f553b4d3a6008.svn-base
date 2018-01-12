@@ -1,0 +1,112 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+/**
+ * 
+* @ClassName: MmDependency 
+* <p>TODO<br>
+* @author hww
+* @date 2015年7月7日 下午3:52:10
+* @version V1.0
+* @since JDK 1.7
+ */
+public class MmDependency extends BaseMetaDataEntity {
+
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 名字
+	 */
+	private String name;
+	/**
+	 * 起始元模型id，依赖端
+	 */
+	private String fromMmId;
+	/**
+	 * 目标元模型id，被依赖端
+	 */
+	private String toMmId;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+
+	private String trole;
+	
+	
+	
+	public String getTrole() {
+		return trole;
+	}
+
+	public void setTrole(String trole) {
+		this.trole = trole;
+	}
+
+	public MmDependency() {
+	}
+
+	public MmDependency(String id) {
+		this.id = id;
+	}
+
+	public MmDependency(String id, String name, String fromMmId, String toMmId,
+			String remark,String trole) {
+		this.id = id;
+		this.name = name;
+		this.fromMmId = fromMmId;
+		this.toMmId = toMmId;
+		this.remark = remark;
+		this.trole=trole;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getFromMmId() {
+		return this.fromMmId;
+	}
+
+	public void setFromMmId(String fromMmId) {
+		this.fromMmId = fromMmId;
+	}
+
+	public String getToMmId() {
+		return this.toMmId;
+	}
+
+	public void setToMmId(String toMmId) {
+		this.toMmId = toMmId;
+	}
+
+	public String getRemark() {
+		return this.remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	@Override
+	public String toString() {
+		return "MmDependency [id=" + id + ", name=" + name + ", fromMmId="
+				+ fromMmId + ", toMmId=" + toMmId + ", remark=" + remark + "]";
+	}
+
+}

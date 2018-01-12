@@ -1,0 +1,16 @@
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.metadata.entity.MmComposition;
+
+public interface IMetaModelCompRepository extends IMetaModelRepository {
+
+    IResponse deleteAllComp(IContext paramIContext) throws RepositoryException;
+
+    MmComposition getById(String mmid) throws RepositoryException;
+
+    boolean checkPublishVer(String id) throws RepositoryException, DaoException;
+}

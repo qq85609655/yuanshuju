@@ -1,0 +1,18 @@
+@title dep-metadata-analyzer-2.0.0
+@echo off
+
+@set JAVA_OPTS=-Xms256m -Xmx512m -Duser.timezone=GMT+08 -Duser.language=zh
+@set PLAT_HOME=.
+@set CLASSPATH=.
+@ set JARS=
+@for %%i in ("%PLAT_HOME%\lib\*.jar") do call :LIBAPPEND "%%i"
+@for %%i in ("%PLAT_HOME%\lib\*.zip") do call :LIBAPPEND "%%i"
+
+@set CLASSPATH=%CLASSPATH%;%JARS%
+
+@java %JAVA_OPTS% -cp "%CLASSPATH%" -jar dep-metadata-analyzer-2.0.0.jar
+
+ 
+
+:LIBAPPEND
+set JARS=%JARS%;%1

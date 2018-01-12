@@ -1,0 +1,19 @@
+<ehcache updateCheck="false">  
+    <defaultCache
+           maxElementsInMemory="30000"
+           eternal="false"
+           timeToIdleSeconds="30"
+           timeToLiveSeconds="30"
+           maxElementsOnDisk="10000000"
+           diskExpiryThreadIntervalSeconds="120"
+           memoryStoreEvictionPolicy="LRU">
+       <persistence strategy="localTempSwap"/>
+   </defaultCache>
+  <cache name="DEFAULT_CACHE"  
+        maxElementsInMemory="10000"  
+        eternal="false"  
+        timeToIdleSeconds="300000"  
+        timeToLiveSeconds="600000"  
+        overflowToDisk="true"  
+        />  
+</ehcache>  

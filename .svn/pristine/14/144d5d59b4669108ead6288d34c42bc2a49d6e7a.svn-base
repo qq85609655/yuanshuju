@@ -1,0 +1,29 @@
+package com.gilight.dep.metamodel.model;
+
+import com.gilight.dep.metadata.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+public class MmDepBaseModel {
+    @Autowired
+    IMetaModelAssoRepository metaModelAssoRepository;
+    @Autowired
+    IMetaModelInheRepository metaModelInheRepository;
+    @Autowired
+    IMetaModelBasicRepository metaModelBasicRepository;
+    @Autowired
+    IMetaModelAttrRepository metaModelAttrRepository;
+    @Autowired
+    IMetaModelFolderRepository metaModelFolderRepository;
+    @Autowired
+    IMetaModelCompRepository metaModelCompRepository;
+
+
+}

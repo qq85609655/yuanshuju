@@ -1,0 +1,446 @@
+package com.gilight.dep.metamodel.service.impl;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.collection.CollectionUtil;
+import com.gilight.dep.metadata.enmu.MetaModelYesOrNo;
+import com.gilight.dep.metadata.entity.MmAttribute;
+import com.gilight.dep.metadata.entity.MmDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IMetaModelQueryRepository;
+import com.gilight.dep.metadata.scope.MetaModelAttributeScope;
+import com.gilight.dep.metadata.scope.MetaModelScope;
+import com.gilight.dep.metadata.scope.MmDependencyScope;
+import com.gilight.dep.metadata.util.AutoFieldTypeMapp;
+import com.gilight.dep.metadata.view.MetaModelAttView;
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelDepeBasicView;
+import com.gilight.dep.metadata.view.MetaModelFolderView;
+import com.gilight.dep.metamodel.convert.MateModelConvertUtil;
+import com.gilight.dep.metamodel.service.IMetaModelQueryService;
+
+/**
+ * 
+ * @ClassName: MetaModelQueryServiceImpl
+ *             <p>
+ *             TODO<br>
+ * @author wzx
+ * @date 2015年7月16日 上午11:25:50
+ * @version V1.0
+ * @since JDK 1.6
+ */
+@SuppressWarnings("rawtypes")
+public class MetaModelQueryServiceImpl implements IMetaModelQueryService {
+	private static final Logger logger = Logger
+			.getLogger(MetaModelQueryServiceImpl.class);
+
+	private Map<String, MetaModelDepeBasicView> mmDepeCache = new HashMap<String, MetaModelDepeBasicView>();
+	IMetaModelQueryRepository metaModelQueryRepository;
+
+	public IMetaModelQueryRepository getMetaModelQueryRepository() {
+		return metaModelQueryRepository;
+	}
+
+	public void setMetaModelQueryRepository(
+			IMetaModelQueryRepository metaModelQueryRepository) {
+		this.metaModelQueryRepository = metaModelQueryRepository;
+	}
+
+	private MetaModelBasicView entity2View(MmMetamodel mme,
+			MetaModelBasicView mmv) {
+		mmv.setId(mme.getId());
+		mmv.setName(mme.getMmName());
+		mmv.setCode(mme.getMmCode());
+		if (null == mme.getIsabstract()) {
+			mmv.setIsabstract(false);
+		} else if ("true".equals(mme.getIsabstract())
+				|| "1".equals(mme.getIsabstract())) {
+			mmv.setIsabstract(true);
+		} else {
+			mmv.setIsabstract(false);
+		}
+		mmv.setGraphSvg(mme.getGraphPig());
+		mmv.setStatus(mme.getStatus());
+		mmv.setSysver(mme.getSysver());
+		mmv.setUserver(mme.getUserver());
+		mmv.setIssys(mme.getIssys());
+		mmv.setRemark(mme.getRemark());
+		mmv.setPackageid(mme.getMmPackageid());
+		return mmv;
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description:按scope查询 </p>
+	 * 
+	 * @param paramIContext
+	 * 
+	 * @return
+	 * 
+	 * @throws ServiceException
+	 * 
+	 * @see
+	 * com.gilight.dep.framework.core.service.IQueryService#getByScope(com.gilight
+	 * .dep.framework.core.context.base.IContext)
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IResponse getByScope(IContext context) throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelBasicView> views = new ArrayList<MetaModelBasicView>();
+					if (list != null) {
+						for (IEntity iEntity : list) {
+							MmMetamodel entity = (MmMetamodel) iEntity;
+							MetaModelBasicView view = new MetaModelBasicView();
+							view = entity2View(entity, view);
+							views.add(view);
+						}
+					}
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型成功", views);
+
+				}
+			});
+			metaModelQueryRepository.getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元模型出现错误!", e);
+			throw new ServiceException("查询元模型出现错误!");
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IResponse getModelAttrsByMid(IContext paramIContext)
+			throws ServiceException {
+		try {
+			IDParameters ids = (IDParameters) paramIContext.getParameters();
+			String id = ids.getId();
+			MetaModelAttributeScope scope = new MetaModelAttributeScope();
+			scope.setMmId(id);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelAttView> mmvlist = new ArrayList<MetaModelAttView>();
+					if (list != null) {
+						for (IEntity iEntity : list) {
+							MmAttribute mme = (MmAttribute) iEntity;
+							MetaModelAttView mmv = new MetaModelAttView();
+							mmv.setId(mme.getId());
+							mmv.setModelId(mme.getMmId());
+							mmv.setName(mme.getAttName());
+							mmv.setLength(mme.getAttLength());
+							mmv.setMax(mme.getAttMax());
+							mmv.setMin(mme.getAttMin());
+							mmv.setIsread(AutoFieldTypeMapp.autoTypeMapp(mme
+									.getIsread()));
+							mmv.setIsnull(AutoFieldTypeMapp.autoTypeMapp(mme
+									.getIsnull()));
+							mmv.setIsinherit(AutoFieldTypeMapp.autoTypeMapp(mme
+									.getInheritFlag()));
+							mmv.setIsshow(AutoFieldTypeMapp.autoTypeMapp(mme
+									.getIsshow()));
+							mmv.setIskey(AutoFieldTypeMapp.autoTypeMapp(mme
+									.getIskey()));
+							mmv.setRemark(mme.getRemark());
+							mmv.setDisplayorder(mme.getDisplayOrder());
+							mmv.setCode(mme.getAttCode());
+							mmvlist.add(mmv);
+						}
+					}
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型属性成功！", mmvlist);
+				}
+			});
+			metaModelQueryRepository.getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元模型属性出现错误!", e);
+			throw new ServiceException("查询元模型属性出现错误!", e);
+		}
+	}
+
+	@Override
+	public IResponse getChildModels(IContext paramIContext)
+			throws ServiceException {
+		try {
+			IDParameters ids = (IDParameters) paramIContext.getParameters();
+			String id = ids.getId();
+			MetaModelScope scope = new MetaModelScope();
+			scope.setCompMid(id);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelBasicView> mmvlist = new ArrayList<MetaModelBasicView>();
+					if (list != null) {
+						for (IEntity iEntity : list) {
+							MmMetamodel mme = (MmMetamodel) iEntity;
+							MetaModelBasicView mmv = new MetaModelBasicView();
+							mmv = entity2View(mme, mmv);
+							mmvlist.add(mmv);
+						}
+					}
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型属性成功！", mmvlist);
+				}
+			});
+			metaModelQueryRepository.getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元模型失败!", e);
+			throw new ServiceException("查询元模型失败!", e);
+		}
+
+	}
+
+	@Override
+	public IResponse getAllModels(IContext paramIContext)
+			throws ServiceException {
+		try {
+			MetaModelScope scope = new MetaModelScope();
+			scope.setIsabstract(new Integer(MetaModelYesOrNo.NO));
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws IllegalAccessException,
+						InvocationTargetException {
+					List entitys = (List) result.getResult();
+					List metaModelBaseViews = MateModelConvertUtil
+							.convertToBaseView(entitys);
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型属性成功！",
+									metaModelBaseViews);
+				}
+			});
+			metaModelQueryRepository.getBaseByScope(context);
+			return context.getResponse();
+		} catch (Exception e) {
+			logger.error(e);
+			throw new ServiceException(e);
+		}
+	}
+
+	@Override
+	public IResponse getDepeAsso(IContext paramIContext)
+			throws ServiceException {
+		try {
+			IDParameters ids = (IDParameters) paramIContext.getParameters();
+			String id = ids.getId();
+			MmDependencyScope scope = new MmDependencyScope();
+			scope.setFromMmId(id);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			return this.getDepeAssoByScope(context);
+		} catch (GilightException e) {
+			logger.error("查询元模型关系出现错误!", e);
+			throw new ServiceException("查询元模型关系出现错误!");
+		}
+	}
+
+	@Override
+	public IResponse getAllChildModels(IContext paramIContext)
+			throws ServiceException {
+		String mid = (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+		List<MmMetamodel> childs = this.getAllChildModels(mid);
+		List<MetaModelBasicView> views = new ArrayList<MetaModelBasicView>();
+		if (childs != null) {
+			for (MmMetamodel entity : childs) {
+				MetaModelBasicView view = new MetaModelBasicView();
+				view = entity2View(entity, view);
+				views.add(view);
+			}
+		}
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessModelAndView(
+						"查询元模型成功", views));
+		return paramIContext.getResponse();
+	}
+
+	public List<MmMetamodel> getAllChildModels(String id)
+			throws ServiceException {
+		List<MmMetamodel> mmList = new ArrayList<MmMetamodel>();
+		this.getAllChildModels(id, mmList);
+		return mmList;
+	}
+
+	private IContext createContext(String id) throws ServiceException {
+		MetaModelScope scope = new MetaModelScope();
+		scope.setParentMid(id);
+		scope.setIsabstract(null);
+		try {
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(scope);
+			return context;
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new ServiceException(e);
+		}
+
+	}
+
+	public List<MmMetamodel> getAllChildModels(String id,
+			List<MmMetamodel> mmList) throws ServiceException {
+		try {
+			IContext context = createContext(id);
+			IResponse response = this.getMetaModelQueryRepository()
+					.getBaseByScope(context);
+			List<MmMetamodel> result = (List<MmMetamodel>) response
+					.getBlockedResultObject();
+			mmList.addAll(result);
+			if (result != null) {
+				for (MmMetamodel mm : result) {
+					this.getAllChildModels(mm.getId(), mmList);
+				}
+			}
+		} catch (RepositoryException e) {
+			logger.error("查询元模型失败", e);
+			throw new ServiceException("查询元模型失败", e);
+		} catch (GilightException e) {
+			logger.error("查询元模型失败", e);
+			throw new ServiceException("查询元模型失败", e);
+		}
+		return mmList;
+	}
+
+	@Override
+	public IResponse getAllChildModelIds(IContext paramIContext)
+			throws ServiceException {
+		String mid = (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+		List<MmMetamodel> childs = this.getAllChildModels(mid);
+		List<String> ids = new ArrayList<String>();
+		if (childs != null) {
+			for (MmMetamodel entity : childs) {
+				ids.add(entity.getId());
+			}
+		}
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessModelAndView(
+						"查询元模型成功", ids));
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getDepeAssoById(IContext paramIContext)
+			throws ServiceException {
+		try {
+			MetaModelDepeBasicView view = null;
+			String depeId = (String) paramIContext
+					.getParameter(ParameterKeys.ATT_ID);
+			if (mmDepeCache.containsKey(depeId)) {
+				view = mmDepeCache.get(depeId);
+			}
+			if (view == null) {
+				MmDependencyScope scope = new MmDependencyScope();
+				scope.setId(depeId);
+				IContext context = ContextFactoryImpl.getInstance()
+						.createContextWithParams(scope);
+				this.getDepeAssoByScope(context);
+				List depeList = (List) context.getResponse()
+						.getBlockedResultObject();
+				view = (MetaModelDepeBasicView) CollectionUtil
+						.getFirstObj(depeList);
+			}
+			if (view != null) {
+				mmDepeCache.put(depeId, view);
+			}
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessModelAndView(
+							"查询元模型关系成功", view));
+			return paramIContext.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元模型关系出现错误!", e);
+			throw new ServiceException("查询元模型关系出现错误!");
+		}
+	}
+
+	public IResponse getDepeAssoByScope(IContext context)
+			throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws IllegalAccessException,
+						InvocationTargetException {
+					@SuppressWarnings("unchecked")
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					List<MetaModelDepeBasicView> mmvlist = new ArrayList<MetaModelDepeBasicView>();
+					if (list != null) {
+						for (IEntity iEntity : list) {
+							MmDependency mme = (MmDependency) iEntity;
+							MetaModelDepeBasicView mmv = new MetaModelDepeBasicView();
+							mmv.setFromMid(mme.getFromMmId());
+							mmv.setId(mme.getId());
+							mmv.setName(mme.getName());
+							mmv.setRemark(mme.getRemark());
+							mmv.setToMid(mme.getToMmId());
+							mmvlist.add(mmv);
+						}
+					}
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("查询元模型关系成功！", mmvlist);
+				}
+			});
+			metaModelQueryRepository.getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元模型关系出现错误!", e);
+			throw new ServiceException("查询元模型关系出现错误!");
+		}
+	}
+
+	@Override
+	public List<MetaModelFolderView> findByParentid(
+			IContext<IDParameters> context) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<MetaModelFolderView> findSubFolder(
+			IContext<IDParameters> context) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResponse getModelByFolderid(IContext paramIContext)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

@@ -1,0 +1,117 @@
+package com.gilight.dep.metadata.dao;
+
+import java.util.List;
+
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdView;
+import com.gilight.dep.metadata.entity.MmComposition;
+import com.gilight.dep.metadata.entity.MmDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.view.MetaDataMapTopView;
+
+/**
+ * 映射关系
+ */
+public interface IMetaDataMapDao extends IMetaDataDao{
+
+
+
+
+	/**
+	 * 通过id查元数据
+	 * @param id
+	 * @return
+	 */
+	MdMetadata findMdMetadataById(String id);
+	
+	/**
+	 * 作为源:查映射中的源元模型tid 1 0
+	 * @param toMmId
+	 * @return
+	 */
+	List<MmDependency> findSourceByToMmIdAsSource(String toMmId);
+	/**
+	 * 作为源:查映射中的目标元模型fid 1 1
+	 * @param fromMmId
+	 * @return
+	 */
+	MmDependency findTargetByFromMmIdAsSource(String fromMmId);
+	/**
+	 * 作为目标:查映射中的源元模型fid 1 0 
+	 * @param fromMmId
+	 * @return
+	 */
+	MmDependency findSourceByFromMmIdAsTarget(String fromMmId);
+	/**
+	 * 作为目标:查映射中的目标元模型tid 1 1
+	 * @param toMmId
+	 * @return
+	 */
+	List<MmDependency> findTargetByToMmIdAsTarget(String toMmId);
+	/**
+	 * 通过元模型id查出对应的元数据集合
+	 * @param mmId
+	 * @return
+	 */
+	List<MdMetadata> findMdListByMmId(String mmId);
+	/**
+	 * 通过toMdId查元数据组合关系
+	 * @param toMdId
+	 * @return
+	 */
+	MdComposition findCompositionByToMdId(String toMdId);
+	/**
+	 * 通过id查Mdview顶层视图entity
+	 * @param id
+	 * @return
+	 */
+	MdView findMdViewById(String id);
+	/**
+	 * 查询依赖元模型通过id
+	 * @param id
+	 * @return
+	 */
+	MmDependency findMmDepById(String id);
+	/**
+	 * 查询此元模型下的元数据的总数
+	 * @param mmId
+	 * @return
+	 */
+	Integer findMdCountsByMmId(String mmId);
+	/**
+	 * 分页查询元数据
+	 * @param mmId 所属元模型id
+	 * @param startCount 开始行号
+	 * @param pageSize 查询条数
+	 * @return
+	 */
+	List<MdMetadata> findMdListPagesByMmId(String mmId, Integer startCount, Integer pageSize);
+	/**
+	 * 通过toMmId查元模型组合关系
+	 * @param toMmId
+	 * @return
+	 */
+	MmComposition findCompositionByToMmId(String toMmId);
+	/**
+	 * 查元模型通过元模型ID
+	 * @param id
+	 * @return
+	 */
+	MmMetamodel findMmMetamodelById(String id);
+	/**
+	 * 通过fromMdId查下面的组合关系集合
+	 * @param fromMdId
+	 * @return
+	 */
+	List<MdComposition> findCompositionByFromMdId(String fromMdId);
+
+	/**
+	 * 查询元数据下一级的符合元模型的元数据集合
+	 * @param mmId 元模型
+	 * @param metadataId 元数据
+	 * @return
+	 */
+	List<MdMetadata> findMDFromTree(String mmId, String metadataId);
+
+}

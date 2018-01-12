@@ -1,0 +1,23 @@
+package com.gilight.dep.metadata.dao;
+
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.metadata.entity.MdSystemBackup;
+
+/**
+ * 系统备份Dao接口
+ *
+ */
+public interface ISystemBackupDao extends IMetaDataDao{
+	/**
+	 * 获得上一次的数据
+	 * @return
+	 * @throws DaoException
+	 */
+	MdSystemBackup getLatestMdSystemBackup() throws DaoException;
+	/**
+	 * 清空表数据
+	 * @throws DaoException
+	 */
+	void empty() throws DaoException;
+
+}

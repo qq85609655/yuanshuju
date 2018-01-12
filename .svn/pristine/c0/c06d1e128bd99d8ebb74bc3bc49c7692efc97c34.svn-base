@@ -1,0 +1,92 @@
+/**   
+* @Title: Pinyin4jUtil.java 
+* <p>TODO 
+* @author wzx 
+* @date 2015年10月9日 上午10:28:47
+* @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+* @version V1.0   
+*/
+
+package com.gilight.dep.metadata.util;
+
+import net.sourceforge.pinyin4j.PinyinHelper;
+
+/** 
+ * @ClassName: Pinyin4jUtil 
+ * <p>TODO<br>
+ * @author wzx
+ * @date 2015年10月9日 上午10:28:47
+ * @version V1.0
+ * @since JDK 1.6 
+ */
+
+public class Pinyin4jUtil {
+
+	/**  
+	 * <p>Description: </p>  
+	 */
+	public Pinyin4jUtil() {
+		// TODO Auto-generated constructor stub
+	}
+
+	/** 
+	 * <p><br>
+	 * @param args  
+	 * @author wzx
+	 * @date 2015年10月9日 上午10:28:48
+	 * @version V1.0  
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		//Hanyu hanyu = new Hanyu();
+        // 中英文混合的一段文字
+        String str = "荆溪白石出，Hello 天寒红叶稀。Android 山路元无雨，What's up?   空翠湿人衣。";
+        //String strPinyin = hanyu.getStringPinYin(str);
+        //PinyinHelper.toHanyuPinyinStringArray(str);
+        char[] cs=str.toCharArray();
+        for (char c : cs) {
+        	String[] p=PinyinHelper.toHanyuPinyinStringArray(c);
+        	System.out.println(c);
+        	if(p==null){
+        		continue;
+        	}
+        	//System.out.println(p.toString());
+        	
+        	for (String string : p) {
+        		System.out.println(string);
+			}
+		}
+        //for
+        
+	}
+	/**
+	 *将传入字符串首字转换为拼音
+	* <p><br>
+	* @param str
+	* @return  
+	* @author wzx
+	* @date 2015年10月9日 上午10:43:03
+	* @version V1.0
+	 */
+	public static String top2PinYin(String str){
+		if(str==null||str.equals("")){
+			return "";
+		}
+		char[] cs=str.toCharArray();
+		if(cs==null){
+			return "";
+		}
+		for (char c : cs) {
+			String[] p=PinyinHelper.toHanyuPinyinStringArray(c);//如果不是汉字的话，返回值为null
+			if(p==null){ 
+        		return String.valueOf(c); //如果不是汉字的话，返回字母本身
+        	}
+			for (String pystr : p) {
+	    		return pystr;
+			}
+			break;
+		}
+		return str;
+	}
+	
+}

@@ -1,0 +1,136 @@
+/**   
+ * @Title: MetaDataDepeScope.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月31日 下午3:18:51
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.core.dao.db.scope.ScopeCollectionParameter;
+import com.gilight.dep.framework.util.collection.ListUtils;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MdMetadata;
+
+import java.util.List;
+
+@SuppressWarnings("unchecked")
+public class MetaDataDepeScope extends BaseHbiernateScope {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/***
+	 * 不包含此元数据的依赖
+	 */
+	private String id;
+	/**
+	 * 模型id
+	 */
+	private String modelId;
+	/***
+	 * 元模型的所有子元模型
+	 */
+	private List<String> childerModelIds;
+	/**
+	 * 依赖端元模型
+	 */
+	private String fromId;
+
+	private String nodeId;
+
+	public String getNodeId() {
+		return nodeId;
+	}
+
+	public void setNodeId(String nodeId) {
+		this.nodeId = nodeId;
+	}
+
+	public List<String> getChilderModelIds() {
+		return childerModelIds;
+	}
+
+	public void setChilderModelIds(List<String> childerModelIds) {
+		this.childerModelIds = childerModelIds;
+	}
+
+	public String getFromId() {
+		return fromId;
+	}
+
+	public void setFromId(String fromId) {
+		this.fromId = fromId;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getModelId() {
+		return modelId;
+	}
+
+	public void setModelId(String modelId) {
+		this.modelId = modelId;
+	}
+
+	@Override
+	public <C> Class<C> getClazz() {
+		return (Class<C>) MdMetadata.class;
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+		StringBuffer sql = new StringBuffer();
+		if (!StringUtil.isEmpty(this.modelId)) {
+			sql.append(" and ").append(obj).append(".mmId = ? ");
+			this.paraList.add(this.modelId);
+		}
+		// 查询不包含已经依赖的所有的元数据
+		if (!StringUtil.isEmpty(this.id)) {
+			/*sql.append(" and ")
+					.append(obj)
+					.append(".id not in ( select model2.toMdId from MdDependency as model2 where model2.fromMdId = ? ");
+			this.paraList.add(id);
+			sql.append(" )");*/
+		}
+		// 查询改元数据依赖的所有的元数据
+		if (!StringUtil.isEmpty(this.fromId)) {
+			sql.append(" and ")
+					.append(obj)
+					.append(".id in ( select model2.toMdId from MdDependency as model2 where model2.fromMdId = ? ");
+			this.paraList.add(fromId);
+			sql.append(" )");
+		}
+		//在参数中 占位符和变量不能混合是哟领，否则 cannot define positional parameter after any named parameters；
+		//占位符放在前面，变量参数放到后面，不混合可以使用
+		if (!ListUtils.isEmpty(this.childerModelIds)) {
+			sql.append(" and ").append(obj).append(".mmId in ( :childerIds )");
+			ScopeCollectionParameter para = new ScopeCollectionParameter();
+			para.setParam(this.childerModelIds);
+			para.setParamKey("childerIds");
+			this.paraList.add(para);
+		}
+
+		if (!StringUtil.isEmpty(this.nodeId)){
+
+			sql.append(" and ").append(obj).append(".id in (select comp.toMdId FROM MdComposition as comp where comp.fromMdId=?) ");
+			this.paraList.add(nodeId);
+		}
+
+		return sql;
+	}
+
+	@Override
+	public String getDefaultOrderBy(String obj) {
+		return "";
+	}
+
+}

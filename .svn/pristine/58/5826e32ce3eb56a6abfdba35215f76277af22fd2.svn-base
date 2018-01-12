@@ -1,0 +1,87 @@
+/**   
+ * @Title: MetaDateEnumValueScope.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月28日 上午10:25:42
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MmEnumValue;
+
+@SuppressWarnings("unchecked")
+public class MetaDateEnumValueScope extends BaseHbiernateScope {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 枚举id
+	 */
+	private String enumId;
+	/**
+	 * 枚举的键
+	 */
+	private String enumKey;
+	/**
+	 * 枚举的值
+	 */
+	private String enumValue;
+
+	public String getEnumId() {
+		return enumId;
+	}
+
+	public void setEnumId(String enumId) {
+		this.enumId = enumId;
+	}
+
+	public String getEnumKey() {
+		return enumKey;
+	}
+
+	public void setEnumKey(String enumKey) {
+		this.enumKey = enumKey;
+	}
+
+	public String getEnumValue() {
+		return enumValue;
+	}
+
+	public void setEnumValue(String enumValue) {
+		this.enumValue = enumValue;
+	}
+
+	@Override
+	public Class<MmEnumValue> getClazz() {
+		return MmEnumValue.class;
+	}
+
+	@Override
+	public String getDefaultOrderBy(String arg0) {
+		return " order by enumId";
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+		StringBuffer sb = new StringBuffer();
+		if (this.enumId != null) {
+			sb.append(" and ").append(obj).append(".enumId = ? ");
+			this.paraList.add(this.enumId);
+		}
+		if (!StringUtil.isEmpty(this.enumKey)) {
+			sb.append(" and ").append(obj).append(".enumKey = ? ");
+			this.paraList.add(this.enumKey);
+		}
+		if (!StringUtil.isEmpty(this.enumValue)) {
+			sb.append(" and ").append(obj).append(".enumValue = ? ");
+			this.paraList.add(this.enumValue);
+		}
+		return sb;
+	}
+
+}

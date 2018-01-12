@@ -1,0 +1,1864 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import com.gilight.dep.framework.core.context.base.DomainMessageContext;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.IBasicModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.framework.util.common.UUIDGenerator;
+import com.gilight.dep.metadata.dao.IMetaDataBaseDao;
+import com.gilight.dep.metadata.enmu.EnumRelation;
+import com.gilight.dep.metadata.entity.*;
+import com.gilight.dep.metadata.enums.DepeSourceParam;
+import com.gilight.dep.metadata.enums.MappDireStatus;
+import com.gilight.dep.metadata.enums.MetaDataStatus;
+import com.gilight.dep.metadata.repository.IMetaDataBaseRepository;
+import com.gilight.dep.metadata.scope.MetaDataDepeAssoScope;
+import com.gilight.dep.metadata.scope.MetaDataDepeScope;
+import com.gilight.dep.metadata.util.AutoCopyList;
+import com.gilight.dep.metadata.util.MetaDateUtils;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class MetaDataBaseRepositoryImpl extends MetaDataRepositoryImpl
+		implements IMetaDataBaseRepository {
+	private IMetaDataBaseDao metaDataBaseDao;
+
+	public IMetaDataBaseDao getMetaDataBaseDao() {
+		return metaDataBaseDao;
+	}
+
+	public void setMetaDataBaseDao(IMetaDataBaseDao metaDataBaseDao) {
+		this.metaDataBaseDao = metaDataBaseDao;
+	}
+
+	public MetaDataBaseRepositoryImpl() {
+		// TODO Auto-generated constructor stub
+	}
+	private static final Logger logger = Logger
+			.getLogger(MetaDataBaseRepositoryImpl.class);
+	@Override
+	public IResponse create(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataBaseDao.save(model.getData()/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("创建元数据失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataBaseDao.update(model.getData()/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元数据失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			MdMetadata mdentity = (MdMetadata) model.getData();
+			mdentity.setUpdateDate(null);
+			List<IEntity> list=metaDataBaseDao.findByEntity(mdentity);
+			if(list!=null&&list.size()!=0){
+				mdentity=(MdMetadata) list.get(0);
+			}
+			metaDataBaseDao.delete(mdentity/* ,session */);
+			this.delDbsParam(mdentity.getId());
+			if (model.getData() instanceof MdMetadata) {
+
+				delArchive(mdentity.getMdCode());
+				delSubMetadata(mdentity);
+				
+				delAttr(mdentity);
+				delMdAsso(mdentity.getId());
+				
+			}
+
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("删除元数据属性失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	/**
+	 * 删除dbs参数
+	 * @param mdid
+	 */
+	private void delDbsParam(String mdid){
+		try {
+			MdDbsParam mdDbsParam = new MdDbsParam();
+			mdDbsParam.setMdid(mdid);
+			List<IEntity>  list=  this.findByEntity(mdDbsParam);
+
+			metaDataBaseDao.delete(list);
+		} catch (DaoException e) {
+			logger.info("删除dbs参数失败",e);
+			e.printStackTrace();
+		} catch (RepositoryException e) {
+			logger.info("删除dbs参数失败",e);
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * 删除子元数据
+	* <p><br>
+	* @param mdentity  
+	* @author wzx
+	* @date 2015年9月11日 上午11:30:38
+	* @version V1.0
+	 */
+	private void delSubMetadata(MdMetadata mdentity) throws RepositoryException{
+		try{
+			List<MdMetadata> submeta = new ArrayList<MdMetadata>();
+			//查询子元数据
+			MdComposition mdcomp = new MdComposition();
+			mdcomp.setFromMdId(mdentity.getId());
+			mdcomp.setUpdateDate(null);
+			List<IEntity> sublistc=metaDataBaseDao.findByEntity(mdcomp);
+			this.delDbsParam(mdentity.getId());
+			List<MdComposition> sublistcomp = AutoCopyList.getObjList(sublistc,MdComposition.class);
+			for (MdComposition mdComposition : sublistcomp) {
+				MdMetadata md=(MdMetadata) metaDataBaseDao.findById(mdComposition.getToMdId(),MdMetadata.class);
+				delArchive(md.getMdCode());
+				delSubMetadata(md);
+				this.delDbsParam(md.getId());
+				delAttr(md);
+				delMdAsso(md.getId());
+				metaDataBaseDao.delete(md);
+				//submeta.add(tmpmeta);
+			}
+
+			
+		}catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("删除元数据属性失败!-dao");
+		}
+		
+		
+		
+	}
+	/**
+	 * 删除归档元数据
+	* <p><br>
+	* @param code
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年9月14日 上午11:15:22
+	* @version V1.0
+	 */
+	private void delArchive(String code)throws RepositoryException {
+		try {
+			//String hql="delete "+MdMetadataArchive.class+" where mdCode="+code;
+			MdMetadataArchive mma = new MdMetadataArchive();
+			mma.setMdCode(code);
+			mma.setUpdateDate(null);
+			mma.setStatus(null);
+			List<IEntity> list=metaDataBaseDao.findByEntity(mma);
+			List<MdMetadataArchive> mmalist =AutoCopyList.getObjList(list, MdMetadataArchive.class);
+			for (MdMetadataArchive mdMetadataArchive : mmalist) {
+				if(mdMetadataArchive.getStatus().intValue()==MetaDataStatus.publishVer||mdMetadataArchive.getStatus().intValue()==MetaDataStatus.neworedit||mdMetadataArchive.getStatus().intValue()==MetaDataStatus.approveReject){
+					metaDataBaseDao.delete("mdId", mdMetadataArchive.getId(), MdAttributeArchive.class);
+					metaDataBaseDao.delete(mdMetadataArchive);
+				}
+			}
+			/*metaDataBaseDao.delete("mdCode", code, MdMetadataArchive.class);
+			metaDataBaseDao.d*/
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			new RepositoryException("删除元数据失败!-dao");
+			// TODO: handle exception
+		}
+	}
+	private void delAttr(MdMetadata mdentity) throws RepositoryException, DaoException {
+		if (mdentity == null || mdentity.getId() == null
+				|| mdentity.getId().equals("")) {
+			return;
+		}
+		String mdid = mdentity.getId();
+		/*String sql = "delete from MD_ATTRIBUTE where MD_ID = '" + mdid
+				+ "'";*/
+		
+		//metaDataBaseDao.executeSql(sql);
+		
+		metaDataBaseDao.delete("mdId", mdid, MdAttribute.class);
+	}
+
+	private void delMdAsso(String id) throws RepositoryException {
+		if (id == null || id.equals("")) {
+			return;
+		}
+		// String mdid=mdentity.getId();
+		/*String sql = "delete from MD_COMPOSITION where FROM_MD_ID = '" + id
+				+ "' or TO_MD_ID='" + id + "'";
+		metaDataBaseDao.executeSql(sql);
+		sql = "delete from MD_DEPENDENCY where FROM_MD_ID = '" + id
+				+ "' or TO_MD_ID='" + id + "'";
+		metaDataBaseDao.executeSql(sql);*/
+		
+		metaDataBaseDao.delete("fromMdId", id, MdComposition.class);
+		metaDataBaseDao.delete("toMdId", id, MdComposition.class);
+		metaDataBaseDao.delete("fromMdId", id, MdDependency.class);
+		metaDataBaseDao.delete("toMdId", id, MdDependency.class);
+	}
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			// metaDataBaseDao.ge(model.getData()/*,session*/);
+			MdMetadata md = (MdMetadata) model.getData();
+			IEntity mdentity = metaDataBaseDao.findById(md.getId(),
+					md.getClass());
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mdentity));
+			return paramIContext.getResponse();
+
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询元数据失败!-dao");
+		}
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public MdMetadata getById(String id) throws RepositoryException {
+		try {
+			MdMetadata mdentity = (MdMetadata) metaDataBaseDao.findById(id,
+					MdMetadata.class);
+			if(mdentity==null){
+				return null;
+			}
+			Map<String,String> attrMap= this.getAttrMapByMdId(id);
+			mdentity.setAttrMap(attrMap);
+			return mdentity;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据失败!-dao");
+		}
+		// return null;
+	}
+
+	@Override
+	/**
+	 * 获取被组合元数据
+	 */
+	public List<MdMetadata> getSubMdById(String id) throws RepositoryException {
+		List<MdMetadata> subMdList=new ArrayList<MdMetadata>();
+		try {
+			MdComposition composition = new MdComposition();
+			composition.setUpdateDate(null);
+			composition.setFromMdId(id);
+
+
+
+			List<MdComposition> listComp=metaDataBaseDao.findByEntity(composition,MdComposition.class);
+			if (listComp==null||listComp.size()==0){
+				return null;
+			}
+			for (MdComposition comp:listComp) {
+				if (comp==null){
+					continue;
+				}
+				MdMetadata mdMetadata = getById(comp.getToMdId());
+				if (mdMetadata==null){
+					continue;
+				}
+
+				subMdList.add(mdMetadata);
+			}
+
+
+
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据失败!-dao");
+		}
+		return subMdList;
+		// return null;
+	}
+
+	@Override
+	public <T extends IEntity> T getById(String id,Class<T> type) throws RepositoryException{
+
+		try {
+			T entity=(T)metaDataBaseDao.findById(id,type);
+
+			return entity;
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据失败!-dao");
+		}
+
+
+	}
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			BaseHbiernateScope scope = (BaseHbiernateScope) paramIContext
+					.getParameters();
+			List<IEntity> mmelist = metaDataBaseDao.findByScope(scope);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmelist));
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询元数据失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public List<MdAttribute> getAttrByMdId(String id)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			List attrList = this.metaDataBaseDao.findByProperty("mdId", id,
+					MdAttribute.class);
+			return attrList;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	/**
+	 * 获取元数据属性Map
+	 */
+	public Map<String,String> getAttrMapByMdId(String id)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			Map<String,String> attrMap=new HashMap<String,String>();
+			List attrList = this.metaDataBaseDao.findByProperty("mdId", id,
+					MdAttribute.class);
+			for (Object attribute:attrList) {
+				String attrMmId=((MdAttribute)attribute).getMmAttId();
+				MmAttribute mmAttribute = new MmAttribute();
+				mmAttribute.setId(attrMmId);
+
+				List<IEntity> entityList=this.findByEntity(mmAttribute);
+				if (entityList==null||entityList.size()==0){
+					continue;
+				}
+				mmAttribute= (MmAttribute) entityList.get(0);
+				attrMap.put(mmAttribute.getAttCode(),((MdAttribute) attribute).getValUe());
+
+			}
+			return attrMap;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public IResponse createAttr(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IEntity me = (IEntity) cxt.getParameter(ParameterKeys.ATT_ENTITY);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataBaseDao.save(me/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("创建元数据失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse deleteAttr(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IEntity me = (IEntity) cxt.getParameter(ParameterKeys.ATT_ENTITY);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataBaseDao.delete(me/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("创建元数据失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse updateAttr(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IEntity me = (IEntity) cxt.getParameter(ParameterKeys.ATT_ENTITY);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataBaseDao.update(me/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("创建元数据失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse createCompMetaData(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataBaseDao.save(model.getData()/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("创建元数据关系失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse updateCompMetaData(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataBaseDao.update(model.getData()/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult("更新元数据关系"));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元数据关系失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse deleteCompMetaData(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataBaseDao.delete(model.getData()/* ,session */);
+
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元数据关系失败!-dao");
+		} catch (ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元数据关系失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse createDepe(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			metaDataBaseDao.save(model.getData()/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元数据关系失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse deteleDepe(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			MdDependency entity = (MdDependency) model.getData();
+			MetaDataDepeAssoScope scope = new MetaDataDepeAssoScope();
+			scope.setFromMdId(entity.getFromMdId());
+			scope.setToMdId(entity.getToMdId());
+			metaDataBaseDao.deleteByScope(scope);
+			// metaDataBaseDao.delete(model.getData()/*,session*/);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元数据关系失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getAllDepeMetaData(IContext context)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<IEntity> getCompByMdId(MdComposition mdc)
+			throws RepositoryException {
+		try {
+			List<IEntity> list = metaDataBaseDao.findByProperty("fromMdId",
+					mdc.getFromMdId(), mdc.getClass());
+			if (list == null) {
+				new RepositoryException("查询元数据关系失败!-dao");
+			}
+			return list;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据关系失败!-dao");
+		}
+		// return null;
+
+	}
+
+	@Override
+	public List<MdMetadata> getNoDepeMetaData(IContext context)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			MetaDataDepeScope scope = (MetaDataDepeScope) context
+					.getParameters();
+			// String sql
+			// ="select * from MD_METADATA p where p.id not in (select t.to_md_id from MD_DEPENDENCY t) ";
+			// List<MdMetadata> list=metaDataBaseDao.createSQLQuery(sql,
+			// MdMetadata.class);
+			List list = this.metaDataBaseDao.findByScope(scope);
+			/*
+			 * context.getResponse().setResult(
+			 * ResultFactory.getInstance().createSuccessResult(list));
+			 */
+			return list;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据关系失败!-dao");
+		}
+		// return null;
+	}
+
+	@Override
+	public IResponse publish(DomainMessageContext cxt)
+			throws RepositoryException {
+		try {
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			MdMetadata md = (MdMetadata) model.getData();
+			MdMetadata mdo = (MdMetadata) this.metaDataBaseDao.findById(
+					md.getId(), MdMetadata.class);
+			mdo.setUserver(md.getUserver());
+			mdo.setVerRemark(md.getVerRemark());
+			mdo.setSysver(System.currentTimeMillis() + "");
+			mdo.setStatus(MetaDataStatus.publishVer);
+			List att = this.getAttrByMdId(md.getId());
+			MdMetadataArchive archive = (MdMetadataArchive) SpringBeansUtils
+					.copyProperties(MdMetadataArchive.class, mdo);
+			archive.setId(UUIDGenerator.getUUID());
+			metaDataBaseDao.save(archive);
+			if (att != null) {
+				List attList = SpringBeansUtils.copyPropertiesForList(
+						MdAttributeArchive.class, att, null);
+				for (int i = 0, j = attList.size(); i < j; i++) {
+					MdAttributeArchive attArch = (MdAttributeArchive) attList
+							.get(i);
+					attArch.setId(UUIDGenerator.getUUID());
+					attArch.setMdId(archive.getId());
+				}
+				metaDataBaseDao.save(attList);
+			}
+			cxt.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return cxt.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("创建元数据失败!-dao");
+		} catch (Exception e) {
+			e.printStackTrace();
+			new RepositoryException("创建元数据失败!-dao");
+		}
+		return cxt.getResponse();
+	}
+
+	@Override
+	public List<IEntity> getByCode(String code) throws RepositoryException {
+		// TODO Auto-generated method stub
+
+		try {
+			List<IEntity> mdentitylist = metaDataBaseDao.findByProperty(
+					"mdCode", code, MdMetadata.class);
+
+			return mdentitylist;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询元数据失败!-dao");
+		}
+	}
+
+	/**
+	 * 根据url查询表元数据
+	 * @param url
+	 * @return
+	 */
+	@Override
+	public MdMetadata findTableByUrl(String url) throws RepositoryException{
+		MdMetadata mdMetadata =findByRemark(url,"DepTable");
+		//mdMetadata.setUpdateDate(null);
+		return mdMetadata;
+	}
+	/**
+	 * 根据url查询表元数据
+	 * @param url
+	 * @return
+	 */
+	@Override
+	public MdMetadata findTableByUrl(String url,String mdname) throws RepositoryException{
+		MdMetadata mdMetadata =findByRemark(url,"DepTable",mdname);
+		//mdMetadata.setUpdateDate(null);
+		return mdMetadata;
+	}
+	@Override
+	public MdMetadata findColunmByUrl(String url,String mdname) throws RepositoryException{
+		MdMetadata mdMetadata =findByRemark(url,"DepColumn",mdname);
+		//mdMetadata.setUpdateDate(null);
+		return mdMetadata;
+	}
+
+	@Override
+	public List<IEntity> queryDbBak() throws RepositoryException{
+		MdDbBackup mdDbBackup = new MdDbBackup();
+		//mdMetadata.setUpdateDate(null);
+		List<IEntity> list=metaDataBaseDao.findByEntity(mdDbBackup);
+		return list;
+		//return mdMetadata;
+	}
+
+	@Override
+	public List<IEntity> queryDbBak(IEntity entity) throws RepositoryException{
+		//MdDbBackup mdDbBackup = new MdDbBackup();
+		//mdMetadata.setUpdateDate(null);
+		List<IEntity> list=metaDataBaseDao.findByEntity(entity);
+		return list;
+		//return mdMetadata;
+	}
+
+	@Override
+	/**
+	 * 根据模型查询
+	 */
+	public List<IEntity> findByEntity(IEntity entity) throws RepositoryException{
+		List<IEntity> list=metaDataBaseDao.findByEntity(entity);
+		return list;
+
+	}
+	@Override
+	/**
+	 * 根据模型查询
+	 */
+	public <T extends IEntity> List<T> findByEntity(T entity, Class<T> type) throws RepositoryException{
+		List<T> list=metaDataBaseDao.findByEntity(entity,type);
+		return list;
+
+	}
+
+
+	/**
+	 *根据remark查元数据
+	 * @param remark
+	 * @param mmid
+	 * @return
+	 */
+	private MdMetadata findByRemark(String remark,String mmid,String mdname){
+		MdMetadata metaData =new MdMetadata();
+		metaData.setUpdateDate(null);
+		metaData.setRemark(remark);
+		metaData.setMdName(mdname);
+		if (mmid!=null){
+			metaData.setMmId(mmid);
+		}
+
+		List<IEntity> list=metaDataBaseDao.findByEntity(metaData);
+		if (list==null||list.size()==0){
+			return null;
+		}
+		metaData= (MdMetadata) list.get(0);
+		return metaData;
+	}
+
+
+
+
+	/**
+	 *根据remark查元数据
+	 * @param remark
+	 * @param mmid
+	 * @return
+	 */
+    private MdMetadata findByRemark(String remark,String mmid){
+		MdMetadata metaData =new MdMetadata();
+		metaData.setUpdateDate(null);
+		metaData.setRemark(remark);
+		if (mmid!=null){
+			metaData.setMmId(mmid);
+		}
+
+		List<IEntity> list=metaDataBaseDao.findByEntity(metaData);
+		if (list==null||list.size()==0){
+			return null;
+		}
+		metaData= (MdMetadata) list.get(0);
+		return metaData;
+	}
+	@Override
+	public void createTableMapping(String sourceId,String targetId,String depeName) throws RepositoryException {
+		try {
+
+			MdMetadata sourceMetaData =this.getById(sourceId);
+			MdMetadata targetMetaData =this.getById(targetId);
+
+			MmDependency mmDependency = this.directDepe( sourceMetaData, targetMetaData, depeName);
+			if (mmDependency==null){
+				logger.info("关系已经存在");
+				return;
+			}
+
+			MdDependency mdDependency= this.createDirectDepe(sourceMetaData,targetMetaData,mmDependency);
+			metaDataBaseDao.save(mdDependency);
+		} catch (DaoException e) {
+			logger.error("创建表映射关系失败",e);
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void createTableMapping(MdMetadata sourceMetaData,MdMetadata targetMetaData,String depeName) throws RepositoryException {
+		try {
+			MmDependency mmDependency = this.directDepe( sourceMetaData, targetMetaData, depeName);
+			if (mmDependency==null){
+				logger.info("关系已经存在");
+				return;
+			}
+			MdDependency mdDependency= this.createDirectDepe(sourceMetaData,targetMetaData,mmDependency);
+			metaDataBaseDao.save(mdDependency);
+		} catch (DaoException e) {
+			logger.error("创建表映射关系失败",e);
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void createColunmMapping() throws RepositoryException {
+
+	}
+
+
+
+	@Override
+	public boolean createMapping(MdMetadata sourceMetaData, MdMetadata targetMetaData, String sourceDepe, String targetDepe) throws RepositoryException {
+		MappingDepe mappingDepe = checkDepe(sourceMetaData,targetMetaData,sourceDepe,targetDepe);
+		if (mappingDepe==null){
+			logger.error("没有找到映射关系");
+		}
+		return false;
+	}
+
+	@Override
+	/**
+	 *创建映射关系
+	 */
+	public boolean createMapping(MdMetadata sourceMetaData, MdMetadata targetMetaData, String mmDepeFromId) throws RepositoryException {
+		try {
+			MappingDepe mappingDepe = checkDepe(sourceMetaData,targetMetaData,mmDepeFromId);
+			if (mappingDepe==null){
+				logger.error("没有找到映射关系");
+				return false;
+			}
+			MdDependency mdDependency = new MdDependency();
+			MdMetadata mdMetadata=mappingDepe.createMappMetaData(sourceMetaData,targetMetaData);
+			mdMetadata.setUpdateDate(null);
+			List<IEntity> lsit=metaDataBaseDao.findByEntity(mdMetadata);
+			/*for (IEntity entity:lsit) {
+				MdMetadata mdMetadatadel= (MdMetadata) entity;
+				//delMdAsso(mdMetadatadel.getId());
+			}
+			if(lsit!=null&&lsit.size()>0){
+				//metaDataBaseDao.delete(lsit);
+			}*/
+
+			mdMetadata.setId(UUIDGenerator.getUUID());
+			mdMetadata.setMdCode(mappingDepe.getMappDepe().getMmCode()+"_"+(Math.random()*9+1)*100000);
+			mdMetadata.setUpdateDate(MetaDateUtils.getDefaultUpdateDate());
+
+			metaDataBaseDao.save(mdMetadata);
+			MdDependency sourceDependency=mappingDepe.createSourceMapp(sourceMetaData,mdMetadata);
+			MdDependency targetDependency=mappingDepe.createTargetMapp(targetMetaData,mdMetadata);
+			metaDataBaseDao.save(sourceDependency);
+			metaDataBaseDao.save(targetDependency);
+
+			Relation relation = new Relation(mdMetadata,sourceMetaData,targetMetaData);
+			MdRelation mdRelation=this.createMdRelation(relation, EnumRelation.TYPE_MAPPING);
+			metaDataBaseDao.save(mdRelation);
+
+
+		} catch (DaoException e) {
+			logger.error("创建映射关系失败",e);
+			e.printStackTrace();
+		}
+
+		return true;
+	}
+
+	private MdRelation createMdRelation(Relation relation,Integer type) throws RepositoryException {
+		MdRelation mdRelation = new MdRelation();
+		MdMetadata relationMd=relation.getRelationMd();
+		MdMetadata sourceMetaData=relation.getSourceMetaData();
+		MdMetadata targetMetaData=relation.getTargetMetaData();
+		if (relationMd==null||sourceMetaData==null||targetMetaData==null){
+			throw new RepositoryException("产生关系错误");
+		}
+		mdRelation.setId(UUIDGenerator.getUUID());
+		mdRelation.setRelationmdcode(relationMd.getMdCode());
+		mdRelation.setRelationmdid(relationMd.getId());
+		mdRelation.setSourcemdcode(sourceMetaData.getMdCode());
+		mdRelation.setSourcemdid(sourceMetaData.getId());
+		mdRelation.setTargetmdcode(targetMetaData.getMdCode());
+		mdRelation.setTargetmdid(targetMetaData.getId());
+		mdRelation.setRelationtype(type);
+
+		return mdRelation;
+	}
+	class Relation{
+		private MdMetadata relationMd;
+		private MdMetadata sourceMetaData;
+		private MdMetadata targetMetaData;
+
+		private Relation(){}
+
+		public Relation(MdMetadata relationMd, MdMetadata sourceMetaData, MdMetadata targetMetaData) {
+			this.relationMd = relationMd;
+			this.sourceMetaData = sourceMetaData;
+			this.targetMetaData = targetMetaData;
+		}
+
+		public MdMetadata getRelationMd() {
+			return relationMd;
+		}
+
+		public void setRelationMd(MdMetadata relationMd) {
+			this.relationMd = relationMd;
+		}
+
+		public MdMetadata getSourceMetaData() {
+			return sourceMetaData;
+		}
+
+		public void setSourceMetaData(MdMetadata sourceMetaData) {
+			this.sourceMetaData = sourceMetaData;
+		}
+
+		public MdMetadata getTargetMetaData() {
+			return targetMetaData;
+		}
+
+		public void setTargetMetaData(MdMetadata targetMetaData) {
+			this.targetMetaData = targetMetaData;
+		}
+	}
+	public boolean directMapping(MdMetadata sourceMetaData, MdMetadata targetMetaData, String depeName) throws RepositoryException {
+		MmDependency mmDependency = directDepe(sourceMetaData,targetMetaData,depeName);
+		if (mmDependency==null){
+			logger.error("没有找到映射关系");
+		}
+		return false;
+	}
+
+	private void createDiretcDepe(){
+
+	}
+
+	/**
+	 * 创建直接依赖
+	 * @param sourceMetaData
+	 * @param targetMetaData
+	 * @param mmDependency
+	 * @return
+	 */
+	private MdDependency createDirectDepe(MdMetadata sourceMetaData, MdMetadata targetMetaData, MmDependency mmDependency){
+		MdDependency mdDependency = new MdDependency();
+		mdDependency.setId(UUIDGenerator.getUUID());
+		mdDependency.setFromMdId(sourceMetaData.getId());
+		mdDependency.setToMdId(targetMetaData.getId());
+		mdDependency.setFromMdCode(sourceMetaData.getMdCode());
+		mdDependency.setToMdCode(targetMetaData.getMdCode());
+		mdDependency.setMmDepId(mmDependency.getId());
+
+		return mdDependency;
+	}
+	/**
+	 * 直接依赖关系
+	 * @param sourceMetaData
+	 * @param targetMetaData
+	 * @param depeName
+	 * @return
+	 */
+	private MmDependency directDepe(MdMetadata sourceMetaData, MdMetadata targetMetaData, String depeName){
+
+		String mdSourceId=sourceMetaData.getId();
+		String mdTargetId=targetMetaData.getId();
+		MdDependency mdDependency=new MdDependency();
+		mdDependency.setFromMdCode(mdSourceId);
+		mdDependency.setToMdId(mdTargetId);
+		List<IEntity> list=metaDataBaseDao.findByEntity(mdDependency);
+		if (list!=null&&list.size()>0){
+			return null;
+		}
+
+
+		//元模型id
+		String mmSourceId=sourceMetaData.getMmId();
+		String mmTargetId=targetMetaData.getMmId();
+		if (!checkModelExist(sourceMetaData,targetMetaData)){
+			return null;
+		}
+		//mmSource= (MmMetamodel) mmSourceList.get(0);
+		//mmTarget= (MmMetamodel) mmTargetList.get(0);
+
+		//验证关系是否存在
+		MmDependency mmDependency = new MmDependency();
+		mmDependency.setFromMmId(mmSourceId);
+		mmDependency.setToMmId(mmTargetId);
+		mmDependency.setName(depeName);
+
+		List<IEntity> mmDepeList=metaDataBaseDao.findByEntity(mmDependency);
+		//List<IEntity> mmTargetDepeList=metaDataBaseDao.findByEntity(mmDependencyTarget);
+
+		if (mmDepeList==null||mmDepeList.size()==0||mmDepeList==null||mmDepeList.size()==0){
+			return null;
+		}
+		mmDependency= (MmDependency) mmDepeList.get(0);
+
+		return mmDependency;
+
+		/*if (mmSource.){
+
+		}
+		MmMetamodel mmMetamodel =metaDataBaseDao.*/
+	}
+
+
+	/**
+	 * 两个元数据间是否有指定的依赖关系
+	 * @param sourceMetaData
+	 * @param targetMetaData
+	 * @param sourceDepe
+	 * @param targetDepe
+	 * @return
+	 */
+	private MappingDepe checkDepe(MdMetadata sourceMetaData, MdMetadata targetMetaData, String sourceDepe, String targetDepe){
+		//元模型id
+		String mmSourceId=sourceMetaData.getMmId();
+		String mmTargetId=targetMetaData.getMmId();
+		if (!checkModelExist(sourceMetaData,targetMetaData)){
+			return null;
+		}
+		//mmSource= (MmMetamodel) mmSourceList.get(0);
+		//mmTarget= (MmMetamodel) mmTargetList.get(0);
+
+		//验证关系是否存在
+		MmDependency mmDependencySource = new MmDependency();
+		MmDependency mmDependencyTarget = new MmDependency();
+		mmDependencySource.setToMmId(mmSourceId);
+		mmDependencySource.setName(sourceDepe);
+
+		mmDependencyTarget.setToMmId(mmTargetId);
+		mmDependencyTarget.setName(targetDepe);
+
+		List<IEntity> mmSourceDepeList=metaDataBaseDao.findByEntity(mmDependencySource);
+		List<IEntity> mmTargetDepeList=metaDataBaseDao.findByEntity(mmDependencyTarget);
+
+		if (mmSourceDepeList==null||mmSourceDepeList.size()==0||mmTargetDepeList==null||mmTargetDepeList.size()==0){
+			return null;
+		}
+		//mmDependencySource.get
+		for (IEntity dependency:mmSourceDepeList) {
+			mmDependencySource=(MmDependency)dependency;
+			if (mmDependencySource==null||mmDependencySource.getFromMmId()==null||mmDependencySource.getFromMmId().equals("")){
+				continue;
+			}
+			for (IEntity dependentar:mmTargetDepeList) {
+				mmDependencyTarget=(MmDependency)dependentar;
+
+				if (mmDependencyTarget==null||mmDependencyTarget.getFromMmId()==null||mmDependencyTarget.getFromMmId().equals("")){
+					continue;
+				}
+				if (mmDependencySource.getFromMmId().equals(mmDependencyTarget.getFromMmId())){
+					MappingDepe mappingDepe =new MappingDepe(mmDependencySource,mmDependencyTarget);
+					return mappingDepe;
+				}
+			}
+
+		}
+
+
+		return null;
+
+		/*if (mmSource.){
+
+		}
+		MmMetamodel mmMetamodel =metaDataBaseDao.*/
+	}
+
+	/**
+	 * 验证元模型是否存在
+	 * @param sourceMetaData
+	 * @param targetMetaData
+	 * @return
+	 */
+	private boolean checkModelExist(MdMetadata sourceMetaData, MdMetadata targetMetaData){
+		String mmSourceId=sourceMetaData.getMmId();
+		String mmTargetId=targetMetaData.getMmId();
+		if (mmSourceId==null||mmSourceId.equals("")||mmTargetId==null||mmTargetId.equals("")){
+			return false;
+		}
+
+
+		//验证元模型是否存在
+		MmMetamodel mmSource= new MmMetamodel();
+		MmMetamodel mmTarget= new MmMetamodel();
+		mmSource.setId(mmSourceId);
+		mmTarget.setId(mmTargetId);
+		List<IEntity> mmSourceList=metaDataBaseDao.findByEntity(mmSource);
+		List<IEntity> mmTargetList=metaDataBaseDao.findByEntity(mmTarget);
+		if (mmSourceList==null||mmSourceList.size()==0||mmTargetList==null||mmTargetList.size()==0){
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * 两个元数据间是否有指定的依赖关系
+	 * @param sourceMetaData
+	 * @param targetMetaData
+	 * @param
+	 * @param
+	 * @return
+	 */
+	private MappingDepe checkDepe(MdMetadata sourceMetaData, MdMetadata targetMetaData, String mmDepeFromId){
+		//元模型id
+		String mmSourceId=sourceMetaData.getMmId();
+		String mmTargetId=targetMetaData.getMmId();
+		if (!checkModelExist(sourceMetaData,targetMetaData)){
+			return null;
+		}
+		//mmSource= (MmMetamodel) mmSourceList.get(0);
+		//mmTarget= (MmMetamodel) mmTargetList.get(0);
+
+		//验证关系是否存在
+		MmDependency mmDependencySource = new MmDependency();
+		MmDependency mmDependencyTarget = new MmDependency();
+		mmDependencySource.setToMmId(mmSourceId);
+		mmDependencySource.setFromMmId(mmDepeFromId);
+		mmDependencySource.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+		//mmDependencySource.setName(DepeSourceParam.depsource);
+
+
+		mmDependencyTarget.setToMmId(mmTargetId);
+		mmDependencyTarget.setFromMmId(mmDepeFromId);
+		mmDependencyTarget.setMappDire(MappDireStatus.MAPPDIRETARGET+"");
+		//mmDependencyTarget.setName(DepeSourceParam.deptarget);
+
+		List<IEntity> mmSourceDepeList=metaDataBaseDao.findByEntity(mmDependencySource);
+		List<IEntity> mmTargetDepeList=metaDataBaseDao.findByEntity(mmDependencyTarget);
+
+		if (mmSourceDepeList==null||mmSourceDepeList.size()==0||mmTargetDepeList==null||mmTargetDepeList.size()==0){
+			mmDependencySource.setName(DepeSourceParam.source);
+			mmDependencyTarget.setName(DepeSourceParam.target);
+
+			mmSourceDepeList=metaDataBaseDao.findByEntity(mmDependencySource);
+			mmTargetDepeList=metaDataBaseDao.findByEntity(mmDependencyTarget);
+			if (mmSourceDepeList==null||mmSourceDepeList.size()==0||mmTargetDepeList==null||mmTargetDepeList.size()==0){
+				return null;
+			}
+			//return null;
+		}
+		//mmDependencySource.get
+		mmDependencySource= (MmDependency) mmSourceDepeList.get(0);
+		mmDependencyTarget= (MmDependency) mmTargetDepeList.get(0);
+
+		MmMetamodel mmDependencyMapp = new MmMetamodel();
+		//MmDependency mmDependencyMapp = new MmDependency();
+
+		mmDependencyMapp.setId(mmDepeFromId);
+		List<IEntity> mmDependencyMappList=metaDataBaseDao.findByEntity(mmDependencyMapp);
+
+		if (mmDependencyMappList==null||mmDependencyMappList.size()==0){
+			return null;
+		}
+		mmDependencyMapp= (MmMetamodel) mmDependencyMappList.get(0);
+		MappingDepe mappingDepe =new MappingDepe(mmDependencySource,mmDependencyTarget,mmDependencyMapp);
+
+
+		return mappingDepe;
+
+		/*if (mmSource.){
+
+		}
+		MmMetamodel mmMetamodel =metaDataBaseDao.*/
+	}
+
+
+
+
+
+	/**
+	 * 根据名称查询元模型
+	 * @param mmName
+	 * @return
+	 */
+	private MmDependency findMmByName(String mmName){
+		MmDependency mmDependency = new MmDependency();
+		mmDependency.setName(mmName);
+		List<IEntity> list=metaDataBaseDao.findByEntity(mmDependency);
+		if (list==null||list.size()==0){
+			return null;
+		}
+		mmDependency= (MmDependency) list.get(0);
+		return mmDependency;
+	}
+
+	public class MappingDepe{
+		private MmDependency sourceDepe;
+		private MmDependency targetDepe;
+		private MmMetamodel mappDepe;
+
+		public MappingDepe(MmDependency sourceDepe,MmDependency targetDepe){
+			this.sourceDepe=sourceDepe;
+			this.targetDepe=targetDepe;
+
+		}
+		public MappingDepe(MmDependency sourceDepe,MmDependency targetDepe,MmMetamodel mappDepe){
+			this.sourceDepe=sourceDepe;
+			this.targetDepe=targetDepe;
+			this.mappDepe=mappDepe;
+
+		}
+		public MappingDepe(){
+
+		}
+
+		public MmMetamodel getMappDepe() {
+			return mappDepe;
+		}
+
+		public void setMappDepe(MmMetamodel mappDepe) {
+			this.mappDepe = mappDepe;
+		}
+
+		public MmDependency getSourceDepe() {
+			return sourceDepe;
+		}
+
+		public void setSourceDepe(MmDependency sourceDepe) {
+			this.sourceDepe = sourceDepe;
+		}
+
+		public MmDependency getTargetDepe() {
+			return targetDepe;
+		}
+
+		public void setTargetDepe(MmDependency targetDepe) {
+			this.targetDepe = targetDepe;
+		}
+
+
+
+
+		/**
+		 * 创建映射元数据
+		 * @param sourceMetaData
+		 * @param targetMetaData
+		 * @return
+		 */
+		public MdMetadata createMappMetaData(MdMetadata sourceMetaData,MdMetadata targetMetaData){
+			MdMetadata mappMetaData = new MdMetadata();
+			//mappMetaData.setId(UUIDGenerator.getUUID());
+			//mappMetaData.setMdCode(mappDepe.getMmCode()+"_"+(Math.random()*9+1)*100000);
+			mappMetaData.setMdPackageid("deptablemapp");
+			mappMetaData.setMdName(sourceMetaData.getMdName()+"-->"+targetMetaData.getMdName());
+
+			mappMetaData.setIssys(0);
+			mappMetaData.setMmId(mappDepe.getId());
+			mappMetaData.setMmName(mappDepe.getMmName());
+			mappMetaData.setStatus(MetaDataStatus.approveAgree);
+
+			return mappMetaData;
+		}
+
+		public MdMetadata createColMappMetaData(MdMetadata sourceMetaData,MdMetadata targetMetaData){
+			MdMetadata mappMetaData = new MdMetadata();
+			mappMetaData.setId(UUIDGenerator.getUUID());
+			mappMetaData.setMdPackageid("deptablecolunmmapp");
+			mappMetaData.setMdCode(mappDepe.getMmCode()+"_"+(Math.random()*9+1)*100000);
+			mappMetaData.setMdName(sourceMetaData.getMdName()+"_"+targetMetaData.getMdName());
+			mappMetaData.setIssys(0);
+			mappMetaData.setMmId(mappDepe.getId());
+			mappMetaData.setMmName(mappDepe.getMmName());
+			mappMetaData.setStatus(MetaDataStatus.approveAgree);
+			return mappMetaData;
+		}
+
+		/**
+		 * 创建依赖关系source
+		 * @param
+		 * @param
+		 * @return
+		 */
+		public MdDependency createSourceMapp(MdMetadata sourceMetaData,MdMetadata mappMetadata){
+			MdDependency mdDependency = new MdDependency();
+			mdDependency.setToMdId(sourceMetaData.getId());
+			mdDependency.setToMdCode(sourceMetaData.getMdCode());
+			mdDependency.setId(UUIDGenerator.getUUID());
+			mdDependency.setMmDepId(this.getSourceDepe().getId());
+			mdDependency.setFromMdCode(mappMetadata.getMdCode());
+			mdDependency.setFromMdId(mappMetadata.getId());
+			mdDependency.setIsMapp("1");
+			mdDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+			return mdDependency;
+		}
+		/**
+		 * 创建依赖关系target
+		 * @param
+		 * @param
+		 * @return
+		 */
+		public MdDependency createTargetMapp(MdMetadata targetMetaData,MdMetadata mappMetadata){
+			MdDependency mdDependency = new MdDependency();
+			mdDependency.setToMdId(targetMetaData.getId());
+			mdDependency.setToMdCode(targetMetaData.getMdCode());
+			mdDependency.setId(UUIDGenerator.getUUID());
+			mdDependency.setMmDepId(this.getTargetDepe().getId());
+			mdDependency.setFromMdCode(mappMetadata.getMdCode());
+			mdDependency.setFromMdId(mappMetadata.getId());
+			mdDependency.setIsMapp("1");
+			mdDependency.setMappDire(MappDireStatus.MAPPDIRETARGET+"");
+			return mdDependency;
+
+
+		}
+
+		public MdDependency createSourceMetadata(MdMetadata sourceMetaData){
+			MdDependency sourceMdDependency=new  MdDependency();
+			sourceMdDependency.setId(UUIDGenerator.getUUID());
+			sourceMdDependency.setFromMdCode(sourceMetaData.getMdCode()+"_"+(Math.random()*9+1)*100000);
+			sourceMdDependency.setFromMdId(mappDepe.getId());
+			return null;
+		}
+	}
+
+	/**
+	 *获取所有映射关系元模型 起点
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<MmDependency> findAllMappModel() throws RepositoryException {
+		MmDependency mmDependency = new MmDependency();
+		mmDependency.setIsMapp(MappDireStatus.MAPPDIRESOURCE+"");
+		List<IEntity> entityList=metaDataBaseDao.findByEntity(mmDependency);
+		if (entityList==null||entityList.size()==0){
+			return null;
+		}
+		List<MmDependency> list=AutoCopyList.getObjList(entityList,MmDependency.class);
+
+		return list;
+	}
+
+	/**
+	 *获取映射关系元模型 起点
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<MmDependency> findAllMappBySource(String sourceMmid) throws RepositoryException {
+		MmDependency mmDependency = new MmDependency();
+		//mmDependency.setIsMapp(MappDireStatus.MAPPDIRESOURCE+"");
+		mmDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+		mmDependency.setToMmId(sourceMmid);
+		List<IEntity> entityList=metaDataBaseDao.findByEntity(mmDependency);
+		if (entityList==null||entityList.size()==0){
+			return null;
+		}
+		List<MmDependency> list=AutoCopyList.getObjList(entityList,MmDependency.class);
+		return list;
+	}
+
+	/**
+	 *获取映射关系元模型 起点
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<MmDependency> findAllMappBySource(String fromId,String sourceMmid) throws RepositoryException {
+		MmDependency mmDependency = new MmDependency();
+		//mmDependency.setIsMapp(MappDireStatus.MAPPDIRESOURCE+"");
+		mmDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+		mmDependency.setToMmId(sourceMmid);
+		mmDependency.setFromMmId(fromId);
+		List<IEntity> entityList=metaDataBaseDao.findByEntity(mmDependency);
+		if (entityList==null||entityList.size()==0){
+			return null;
+		}
+		List<MmDependency> list=AutoCopyList.getObjList(entityList,MmDependency.class);
+		return list;
+	}
+
+
+	/**
+	 *获取映射关系元模型 终点
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<MmDependency> findAllMappByTarget(String fromId,String targetMmid) throws RepositoryException {
+		MmDependency mmDependency = new MmDependency();
+		//mmDependency.setIsMapp(MappDireStatus.MAPPDIRETARGET+"");
+		mmDependency.setMappDire(MappDireStatus.MAPPDIRETARGET+"");
+		mmDependency.setFromMmId(fromId);
+		mmDependency.setToMmId(targetMmid);
+		List<IEntity> entityList=metaDataBaseDao.findByEntity(mmDependency);
+		if (entityList==null||entityList.size()==0){
+			return null;
+		}
+		List<MmDependency> list=AutoCopyList.getObjList(entityList,MmDependency.class);
+		return list;
+	}
+
+
+	/**
+	 * 获取所有的映射关系元数据 起点
+	 * @return
+	 */
+	public List<MdDependency> findAllMappMdMetadata(){
+		/*List<MmDependency> list=findAllMappModel();
+        if (list==null){
+            return null;
+        }*/
+		List<IEntity> iEntities= new ArrayList<IEntity>();
+		MdDependency mdDependency =new MdDependency();
+		mdDependency.setUpdateDate(null);
+		mdDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+
+		iEntities =metaDataBaseDao.findByEntity(mdDependency);
+		if (iEntities==null||iEntities.size()==0){
+            return null;
+        }
+		List<MdDependency> mdDependencyList = AutoCopyList.getObjList(iEntities,MdDependency.class);
+		return mdDependencyList;
+
+		//return null;
+
+
+	}
+	@Override
+	/**
+	 * 创建映射关系对象
+	 * @param sourceMdid
+	 * @param targetMdid
+	 * @return
+	 * @throws RepositoryException
+	 */
+	public MappingDepe findMappingByNode(String sourceMdid, String targetMdid) throws RepositoryException{
+
+		try {
+			MdMetadata sourceMd=getById(sourceMdid);
+			MdMetadata targetMd=getById(targetMdid);
+			if (sourceMd==null||targetMd==null){
+
+				logger.error("没有找到对应元模型");
+				throw new RepositoryException("没有找到对应元模型");
+				//return null;
+			}
+			String sourceMmid=sourceMd.getMmId();
+			String targetMmid=targetMd.getMmId();
+
+			List<MmDependency> mmDependencyList=findAllMappBySource(sourceMmid);
+			if (mmDependencyList==null||mmDependencyList.size()==0){
+				return null;
+			}
+			for (MmDependency dependency:mmDependencyList ) {
+				String fromid=dependency.getFromMmId();
+				if (fromid==null||"".equals(fromid)){
+					continue;
+				}
+				List<MmDependency> mmDependencies=this.findAllMappByTarget(fromid,targetMmid);
+				if (mmDependencies==null||mmDependencies.size()!=1){
+					continue;
+				}
+				MmDependency mmDependency=mmDependencies.get(0);
+				String depeMappMmid=mmDependency.getFromMmId();
+				MmMetamodel mmMetamodel= (MmMetamodel) metaDataBaseDao.findById(depeMappMmid,MmMetamodel.class);
+
+				MappingDepe mappingDepe = new MappingDepe(dependency,mmDependency,mmMetamodel);
+
+				return mappingDepe;
+
+			}
+
+
+			return null;
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			logger.error("创建映射失败",e);
+			throw new RepositoryException(e);
+		} catch (DaoException e) {
+			e.printStackTrace();
+			logger.error("创建映射失败",e);
+			throw new RepositoryException(e);
+		}
+
+
+	}
+
+
+
+	@Override
+	/**
+	 * 根据target端查询source
+	 */
+	public MdMetadata findByTargetMappId(String mdId, String mappId) throws RepositoryException {
+		MdMetadata mdMetadata = this.getById(mdId);
+		//String toMmId=mdMetadata.getMmId();
+
+
+
+
+
+		//this.getById()
+
+
+		MdDependency mdDependency= new MdDependency();
+		mdDependency.setUpdateDate(null);
+		mdDependency.setToMdId(mdId);
+		mdDependency.setFromMdId(mappId);
+		mdDependency.setIsMapp("1");
+		mdDependency.setMappDire("1");
+		//mdDependency.setMappDire(MappDireStatus.MAPPDIRETARGET+"");
+		List<MdDependency> mdDependencyList=this.findByEntity(mdDependency,MdDependency.class);
+		if (mdDependencyList==null||mdDependencyList.size()==0){
+			return null;
+		}
+		if (mdDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+		mdDependency=mdDependencyList.get(0);
+		MdMetadata fromMd=getById(mdDependency.getFromMdId());
+
+
+		MmDependency mmDependencySource=new MmDependency();
+		mmDependencySource.setFromMmId(fromMd.getMmId());
+		mmDependencySource.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+		List<MmDependency> mmDependencyList1 = this.findByEntity(mmDependencySource,MmDependency.class);
+		if (mmDependencyList1==null||mmDependencyList1.size()==0){
+			throw new RepositoryException("查找关系元数据错误");
+		}
+		if (mmDependencyList1.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+		mmDependencySource=mmDependencyList1.get(0);
+
+
+		MdDependency soureceDependency= new MdDependency();
+		soureceDependency.setUpdateDate(null);
+		soureceDependency.setFromMdId(fromMd.getId());
+		//soureceDependency.setMmDepId(mmDependencySource.getId());
+		soureceDependency.setIsMapp("1");
+		soureceDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+		//soureceDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+
+		List<MdDependency> sourceDependencyList=this.findByEntity(soureceDependency,MdDependency.class);
+		if (sourceDependencyList==null||sourceDependencyList.size()==0){
+			throw new RepositoryException("查找关系元数据错误");
+		}
+		if (sourceDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+
+
+		soureceDependency=sourceDependencyList.get(0);
+		MdMetadata source=getById(soureceDependency.getToMdId());
+
+		return source;
+	}
+
+	private List<MdDependency> getMdDependencies(MdDependency mdDependency) throws RepositoryException {
+		List<MdDependency> mdDependencyList=this.findByEntity(mdDependency,MdDependency.class);
+		if (mdDependencyList==null||mdDependencyList.size()==0){
+			return null;
+		}
+		if (mdDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+		mdDependency=mdDependencyList.get(0);
+		MdMetadata fromMd=getById(mdDependency.getFromMdId());
+
+
+		MmDependency mmDependencySource=new MmDependency();
+		mmDependencySource.setFromMmId(fromMd.getMmId());
+		mmDependencySource.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+		List<MmDependency> mmDependencyList1 = this.findByEntity(mmDependencySource,MmDependency.class);
+		if (mmDependencyList1==null||mmDependencyList1.size()==0){
+			throw new RepositoryException("查找关系元数据错误");
+		}
+		if (mmDependencyList1.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+		mmDependencySource=mmDependencyList1.get(0);
+
+
+		MdDependency soureceDependency= new MdDependency();
+		soureceDependency.setUpdateDate(null);
+		soureceDependency.setFromMdId(fromMd.getId());
+		soureceDependency.setMmDepId(mmDependencySource.getId());
+		//soureceDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+
+		List<MdDependency> sourceDependencyList=this.findByEntity(soureceDependency,MdDependency.class);
+		if (sourceDependencyList==null||sourceDependencyList.size()==0){
+			throw new RepositoryException("查找关系元数据错误");
+		}
+		if (sourceDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+		return sourceDependencyList;
+	}
+
+	@Override
+	/**
+	 * 根据target端查询source
+	 */
+	public MdMetadata findByTarget(String mdId, String fromMmId) throws RepositoryException {
+		MdMetadata mdMetadata = this.getById(mdId);
+		String toMmId=mdMetadata.getMmId();
+
+
+		List<MmDependency> mmDependencyList = this.findAllMappByTarget(fromMmId,toMmId);
+		if (mmDependencyList==null){
+			throw new RepositoryException("查找关系元模型错误");
+		}
+		if (mmDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元模型不唯一");
+		}
+		MmDependency mmDependency=mmDependencyList.get(0);
+
+
+		//this.getById()
+
+
+		MdDependency mdDependency= new MdDependency();
+		mdDependency.setUpdateDate(null);
+		mdDependency.setToMdId(mdId);
+		mdDependency.setMmDepId(mmDependency.getId());
+
+		//mdDependency.setMappDire(MappDireStatus.MAPPDIRETARGET+"");
+		List<MdDependency> mdDependencyList=this.findByEntity(mdDependency,MdDependency.class);
+		if (mdDependencyList==null||mdDependencyList.size()==0){
+			return null;
+		}
+		if (mdDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+		mdDependency=mdDependencyList.get(0);
+		MdMetadata fromMd=getById(mdDependency.getFromMdId());
+
+
+		MmDependency mmDependencySource=new MmDependency();
+		mmDependencySource.setFromMmId(fromMd.getMmId());
+		mmDependencySource.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+		List<MmDependency> mmDependencyList1 = this.findByEntity(mmDependencySource,MmDependency.class);
+		if (mmDependencyList1==null||mmDependencyList1.size()==0){
+			throw new RepositoryException("查找关系元数据错误");
+		}
+		if (mmDependencyList1.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+		mmDependencySource=mmDependencyList1.get(0);
+
+
+		MdDependency soureceDependency= new MdDependency();
+		soureceDependency.setUpdateDate(null);
+		soureceDependency.setFromMdId(fromMd.getId());
+		soureceDependency.setMmDepId(mmDependencySource.getId());
+		//soureceDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+
+		List<MdDependency> sourceDependencyList=this.findByEntity(soureceDependency,MdDependency.class);
+		if (sourceDependencyList==null||sourceDependencyList.size()==0){
+			throw new RepositoryException("查找关系元数据错误");
+		}
+		if (sourceDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+
+		soureceDependency=sourceDependencyList.get(0);
+		MdMetadata source=getById(soureceDependency.getToMdId());
+
+		return source;
+	}
+	@Override
+	/**
+	 * 根据source 查target
+	 */
+	public MdMetadata findBySource(String mdId, String fromMmId) throws RepositoryException {
+
+		MdMetadata mdMetadata = this.getById(mdId);
+		String toMmId=mdMetadata.getMmId();
+
+
+		List<MmDependency> mmDependencyList = this.findAllMappBySource(fromMmId,toMmId);
+		if (mmDependencyList==null){
+			throw new RepositoryException("查找关系元模型错误");
+		}
+		if (mmDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元模型不唯一");
+		}
+		MmDependency mmDependency=mmDependencyList.get(0);
+
+
+		//this.getById()
+
+
+
+
+		MdDependency mdDependency= new MdDependency();
+		mdDependency.setUpdateDate(null);
+		mdDependency.setToMdId(mdId);
+		mdDependency.setFromMdId(mmDependency.getId());
+		mdDependency.setIsMapp("1");
+		mdDependency.setMappDire("0");
+		//mdDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+		List<MdDependency> mdDependencyList=this.findByEntity(mdDependency,MdDependency.class);
+		if (mdDependencyList==null||mdDependencyList.size()==0){
+			return null;
+		}
+		if (mdDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+		mdDependency=mdDependencyList.get(0);
+		MdMetadata fromMd=getById(mdDependency.getFromMdId());
+
+
+		MmDependency mmDependencySource=new MmDependency();
+		mmDependencySource.setFromMmId(fromMd.getMmId());
+		mmDependencySource.setMappDire(MappDireStatus.MAPPDIRETARGET+"");
+		List<MmDependency> mmDependencyList1 = this.findByEntity(mmDependencySource,MmDependency.class);
+		if (mmDependencyList1==null||mmDependencyList1.size()==0){
+			throw new RepositoryException("查找关系元数据错误");
+		}
+		if (mmDependencyList1.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+		mmDependencySource=mmDependencyList1.get(0);
+
+
+		MdDependency targetDependency= new MdDependency();
+		targetDependency.setUpdateDate(null);
+		targetDependency.setFromMdId(fromMd.getId());
+		targetDependency.setMmDepId(mmDependencySource.getId());
+		//soureceDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+
+		List<MdDependency> targetDependencyList=this.findByEntity(targetDependency,MdDependency.class);
+		if (targetDependencyList==null||targetDependencyList.size()==0){
+			throw new RepositoryException("查找关系元数据错误");
+		}
+		if (targetDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+
+		targetDependency=targetDependencyList.get(0);
+		MdMetadata target=getById(targetDependency.getToMdId());
+
+		return target;
+	}
+
+	@Override
+	/**
+	 * 根据source 查target
+	 */
+	public MdMetadata findBySourceMappId(String mdId, String fromId) throws RepositoryException {
+
+		MdMetadata mdMetadata = this.getById(mdId);
+		String toMmId=mdMetadata.getMmId();
+
+
+		/*List<MmDependency> mmDependencyList = this.findAllMappBySource(fromId,toMmId);
+		if (mmDependencyList==null){
+			throw new RepositoryException("查找关系元模型错误");
+		}
+		if (mmDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元模型不唯一");
+		}
+		MmDependency mmDependency=mmDependencyList.get(0);*/
+
+
+		MdDependency mdDependency= new MdDependency();
+		mdDependency.setUpdateDate(null);
+		mdDependency.setToMdId(mdId);
+		mdDependency.setFromMdId(fromId);
+		mdDependency.setIsMapp("1");
+		mdDependency.setMappDire("0");
+		//mdDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+		List<MdDependency> mdDependencyList=this.findByEntity(mdDependency,MdDependency.class);
+		if (mdDependencyList==null||mdDependencyList.size()==0){
+			return null;
+		}
+		if (mdDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+		mdDependency=mdDependencyList.get(0);
+		MdMetadata fromMd=getById(mdDependency.getFromMdId());
+
+
+		MmDependency mmDependencySource=new MmDependency();
+		mmDependencySource.setFromMmId(fromMd.getMmId());
+		mmDependencySource.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+		List<MmDependency> mmDependencyList1 = this.findByEntity(mmDependencySource,MmDependency.class);
+		if (mmDependencyList1==null||mmDependencyList1.size()==0){
+			throw new RepositoryException("查找关系元数据错误");
+		}
+		if (mmDependencyList1.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+		mmDependencySource=mmDependencyList1.get(0);
+
+
+		MdDependency targetDependency= new MdDependency();
+		targetDependency.setUpdateDate(null);
+		targetDependency.setFromMdId(fromMd.getId());
+		//targetDependency.setMmDepId(mmDependencySource.getId());
+		targetDependency.setIsMapp("1");
+		targetDependency.setMappDire(MappDireStatus.MAPPDIRETARGET+"");
+		//soureceDependency.setMappDire(MappDireStatus.MAPPDIRESOURCE+"");
+
+		List<MdDependency> targetDependencyList=this.findByEntity(targetDependency,MdDependency.class);
+		if (targetDependencyList==null||targetDependencyList.size()==0){
+			throw new RepositoryException("查找关系元数据错误");
+		}
+		if (targetDependencyList.size()>1){
+			throw new RepositoryException("查找到的关系元数据不唯一");
+		}
+
+		targetDependency=targetDependencyList.get(0);
+		MdMetadata target=getById(targetDependency.getToMdId());
+
+		return target;
+	}
+
+
+}

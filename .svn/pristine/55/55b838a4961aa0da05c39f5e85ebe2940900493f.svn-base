@@ -1,0 +1,19 @@
+package com.gilight.dep.metadata.gather.excel;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Sheet;
+
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.gather.common.util.ExcelUtil;
+
+public class ReadExcel extends ReadExcelBase {
+
+	public ReadExcel() {
+		// TODO Auto-generated constructor stub
+	}
+
+	
+
+}

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       ">
+	<bean id="gatherDataScourceService"
+		class="com.gilight.dep.metadata.service.impl.GatherDataScourceServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+		<property name="repository">
+			<ref bean="gatherDataScourceRepository" />
+		</property>
+		<property name="metaDataService">
+			<ref bean="metaDataBaseService" />
+		</property>
+	</bean>
+	<bean id="gatherJobService"
+		class="com.gilight.dep.metadata.service.impl.GatherJobServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+		<property name="repository" ref="gatherJobRepository"></property>
+		<property name="metaDataBaseRepository" ref="metaDataBaseRepository"></property>
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+		<property name="metaModelCompRepository" ref="metaModelCompRepository"></property>
+		<property name="metaModelBasicRepository" ref="metaModelBasicRepository"></property>
+		<property name="gatherExcuteService" ref="gatherExcuteService"></property>
+
+
+	</bean>
+	<bean id="gatherTempleService"
+		class="com.gilight.dep.metadata.service.impl.GatherTempleServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+	</bean>
+
+	<bean id="gatherAdaptorService"
+		class="com.gilight.dep.metadata.service.impl.GatherAdaptorServiceImpl">
+	</bean>
+	<bean id="gatherExcuteService"
+		class="com.gilight.dep.metadata.service.impl.GatherExcuteServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+		<property name="metaDataBaseRepository" ref="metaDataBaseRepository"></property>
+		<property name="metaModelQueryService" ref="metaModelQueryService"></property>
+		<property name="metaModelCompRepository" ref="metaModelCompRepository"></property>
+		<property name="metaModelBasicRepository" ref="metaModelBasicRepository"></property>
+	</bean>
+	<bean id="gatherService" class="com.gilight.dep.metadata.service.impl.GatherServiceImpl">
+		<property name="cacheManager" ref="cacheManager"></property>
+
+
+	</bean>
+	<bean id="adaptorService"
+		class="com.gilight.dep.metadata.gather.common.impl.GatherAdaptorServiceImpl">
+	</bean>
+	<bean id="AppContextSpring"
+		class="com.gilight.dep.metadata.gather.common.spring.AppContextSpring">
+	</bean>
+	<bean id="dbSchema" class="com.gilight.dep.metadata.gather.db.DBGatherJobTaskModel">
+		<property name="buildMetadataService" ref="dbGatherService"></property>
+	</bean>
+	<bean id="excel"
+		class="com.gilight.dep.metadata.gather.excel.ExcelGatherJobTaskModel">
+		<property name="buildMetadataService" ref="excelGatherService"></property>
+	</bean>
+	<bean id="excelGatherService"
+		class="com.gilight.dep.metadata.gather.excel.ExcelGatherServiceImpl">
+	</bean>
+	<bean id="dbGatherService" class="com.gilight.dep.metadata.gather.db.DBGatherServiceImpl">
+	</bean>
+</beans>

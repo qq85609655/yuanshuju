@@ -1,0 +1,15 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.service.IBasicService;
+/**
+ * 
+* @ClassName: IMetaDataService 
+* <p>元数据服务层接口基类<br>
+* @author wzx
+* @date 2015年7月9日 下午3:01:19
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IMetaDataService  extends IBasicService{
+
+}

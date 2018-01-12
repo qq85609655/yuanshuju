@@ -1,0 +1,623 @@
+package com.gilight.dep.metadata.analyzer.offline.impl;
+
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.analyzer.offline.IOffLineAnalyzer;
+import com.gilight.dep.metadata.enmu.EnumRelation;
+import com.gilight.dep.metadata.entity.*;
+import com.gilight.dep.metadata.enums.DepeSourceParam;
+import com.gilight.dep.metadata.enums.MdAnalyseResultParam;
+import com.gilight.dep.metadata.repository.IAnalyseExcuteRepository;
+import com.gilight.dep.metadata.repository.impl.AnalyseExcuteRepositoryImpl;
+import com.gilight.dep.metadata.util.ListUtil;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+public class OffLineAnalyzerImpl extends AnalyzerImpl implements IOffLineAnalyzer {
+	@Autowired 
+	IAnalyseExcuteRepository  analyseExcuteRepository;
+	
+	private static final Logger logger = Logger
+			.getLogger(OffLineAnalyzerImpl.class);
+	public OffLineAnalyzerImpl() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	
+	
+	
+	/** 
+	 * <p><br>
+	 * @param args  
+	 * @author wzx
+	 * @date 2015年8月3日 下午5:11:34
+	 * @version V1.0  
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		//org/quartz/Job
+		  new ClassPathXmlApplicationContext("spring-dispather.xml");  
+		/*ApplicationContext factory = new ClassPathXmlApplicationContext("spring-dispather.xml");
+		OffLineAnalyzerImpl off=(OffLineAnalyzerImpl) factory.getBean("offLineAnalyzer");
+		try {
+			off.startAnalyzer();
+			logger.info("启动离线分析成功......");
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(off);
+		while(1==1){
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}*/
+	}
+
+	@Override
+	public List<MdDependency> getMetaDataDepe(String mdid)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		List<MdDependency> depelist;
+		try {
+			depelist = analyseExcuteRepository.getMetaDataDepe(mdid);
+			return depelist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			logger.error("获取元数据关系失败",e);
+			e.printStackTrace();
+			throw new ServiceException("获取元数据关系失败");
+		}
+
+	}
+
+	@Override
+	public List<MdDependency> getMetaDataDepe(List<String> idlist)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		List<MdDependency> depelist = new ArrayList<MdDependency>();
+		try {
+			for (String mdid : idlist) {
+				List<MdDependency> dplist = analyseExcuteRepository.getMetaDataDepe(mdid);
+				depelist.addAll(dplist);
+			}
+			return depelist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			logger.error("获取元数据关系失败",e);
+			e.printStackTrace();
+			throw new ServiceException("获取元数据关系失败");
+		}
+	}
+
+	@Override
+	public List<MdDependency> getMetaDataDepeByName(String name)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		List<MdDependency> depelist = new ArrayList<MdDependency>();
+		try {
+			List<String> mmidlist = new ArrayList<String>();
+			List<MmDependency> mmdepelist= getMetaModelDepeByName(name);
+			if(mmdepelist!=null){
+				for (MmDependency mmDependency : mmdepelist) {
+					mmidlist.add(mmDependency.getId());
+				}
+			}
+
+			List<MdDependency> dplist = analyseExcuteRepository.getMetaDataDepeByMmId(mmidlist);
+			depelist.addAll(dplist);
+			
+			return depelist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			logger.error("获取元数据关系失败",e);
+			e.printStackTrace();
+			throw new ServiceException("获取元数据关系失败");
+		}
+	}
+	
+
+	@Override
+	public List<MmDependency> getMetaModelDepeByName(String name)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		try {			
+			List<MmDependency> dplist = analyseExcuteRepository.getMetaModelDepeByName(name);
+			return dplist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			logger.error("获取元数据关系失败",e);
+			e.printStackTrace();
+			throw new ServiceException("获取元数据关系失败");
+		}
+	}
+	
+	
+	@Override
+	public MmMetamodel getMetaModel(String mdid) throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			return analyseExcuteRepository.getMetaModel(mdid);
+			
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			logger.error("获取元模型失败",e);
+			e.printStackTrace();
+			throw new ServiceException("获取元模型失败");
+		}
+		
+	}
+
+	@Override
+	public List<MdComposition> getMetaDataComp(String mdid)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		List<MdComposition> complist;
+		try {
+			complist = analyseExcuteRepository.getMetaDataComp(mdid);
+			return complist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			logger.error("获取元数据关系失败",e);
+			e.printStackTrace();
+			throw new ServiceException("获取元数据关系失败");
+		}
+	}
+
+	@Override
+	public List<MdMetadata> getMetaDataByCode(List<String> mmcodelist)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		List<MdMetadata> mdlist = new ArrayList<MdMetadata>();
+		for (String mmcode : mmcodelist) {
+			String mmid=this.getModelIdByCode(mmcode);
+			List<MdMetadata> list= getMetaDataByMmid(mmid);
+			mdlist.addAll(list);
+		}
+		return mdlist;
+	}
+
+
+	@Override
+	public List<MdMetadata> getMetaDataByCode(String mmcode)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		String mmid=this.getModelIdByCode(mmcode);
+		List<MdMetadata> mdlist= getMetaDataByMmid(mmid);
+		return mdlist;
+	}
+
+	@Override
+	public List<MdMetadata> getMetaDataByMmid(String mmid)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		List<MdMetadata> list;
+		try {
+			list = analyseExcuteRepository.getMetaDataByMmid(mmid);
+			return list;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			logger.error("获取元数据关系失败",e);
+			e.printStackTrace();
+			throw new ServiceException("获取元数据关系失败");
+		}
+	}
+
+	@Override
+	public List<MdMetadata> getMetaDataByMmid(List<String> mmidlist)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		try {
+			List<MdMetadata> mdlist = new ArrayList<MdMetadata>();
+			for (String mmid : mmidlist) {
+				List<MdMetadata> list = analyseExcuteRepository.getMetaDataByMmid(mmid);
+				mdlist.addAll(list);
+			}
+			return mdlist;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			logger.error("获取元数据关系失败",e);
+			e.printStackTrace();
+			throw new ServiceException("获取元数据关系失败");
+		}
+	}
+
+
+	private MdMetadata getMetaDataByMdid(String mdid) throws ServiceException{
+		try {
+			MdMetadata md = analyseExcuteRepository.getMetaDataByMdid(mdid);
+			return md;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			logger.error("获取元数据关系失败",e);
+			e.printStackTrace();
+			throw new ServiceException("获取元数据关系失败");
+		}
+		
+		
+	}
+	private MdAnalyseResult md2MdAnalyseResult(MdMetadata md){		
+		MdAnalyseResult mar = new MdAnalyseResult();
+		if(md==null){
+			return mar;
+		}
+		mar.setMdCode(md.getMdCode());
+		mar.setMdId(md.getId());
+		mar.setMdName(md.getMdName());
+		mar.setStatus(MdAnalyseResultParam.no);	
+		return mar;
+	}
+
+	@Override
+	public void startAnalyzer() throws ServiceException {
+		try {
+
+			analyseExcuteRepository.clearDepe();
+
+			List<AnalyseExcuteRepositoryImpl.DepeMapp> depeMappList = new ArrayList<AnalyseExcuteRepositoryImpl.DepeMapp>();
+			depeMappList=analyseExcuteRepository.findAllMappTarget();
+
+
+
+			if (depeMappList==null||depeMappList.size()==0){
+                return;
+                //analyzerResult(DepeSourceParam.source,DepeSourceParam.target);
+            }
+			ListUtil.removeDuplicate(depeMappList);
+
+			for (AnalyseExcuteRepositoryImpl.DepeMapp depeMapp:depeMappList) {
+				updateDepe(depeMapp);
+                //analyzerResult(depeMapp.getSource(),depeMapp.getTarget());
+            }
+			analyseExcuteRepository.addRelation();
+			//analyseExcuteRepository.delRelation(EnumRelation.TYPE_MAPPING);
+
+
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			logger.error("运行分析失败",e);
+			throw new ServiceException("运行分析失败");
+
+		}
+
+
+		//analyzerResult(DepeSourceParam.source,DepeSourceParam.target);
+		//analyzerResult(DepeSourceParam.depsource,DepeSourceParam.deptarget);
+		resultStatus();	
+	}
+
+	/**
+	 * 查找元模型依赖与元数据依赖的差别，更新依赖表
+	 * @param depeMapp
+	 */
+	private void updateDepe(AnalyseExcuteRepositoryImpl.DepeMapp depeMapp){
+		if (depeMapp==null){
+			return;
+		}
+
+		String sourceName=depeMapp.getSource();
+
+		String targetName=depeMapp.getTarget();
+		MmDependency mmDependency = new MmDependency();
+		mmDependency.setName(sourceName);
+		mmDependency.setIsMapp(EnumRelation.TYPE_MAPPING+"");
+		mmDependency.setMappDire(EnumRelation.MAPPDIRESOURCE+"");
+
+		try {
+			List<MmDependency> sourceMds=analyseExcuteRepository.getMetaModelDepeByName(sourceName);
+			if (ListUtil.isNotEmpty(sourceMds)){
+				for (MmDependency mm:sourceMds) {
+					if (mm==null){
+						continue;
+					}
+					if (EnumRelation.MAPPDIRESOURCE.equals(mm.getMappDire())){
+						String mmMappId=mm.getId();
+						List<MdDependency> mdDependencyList=analyseExcuteRepository.findMappDepeByMmId(mmMappId);
+
+						analyseExcuteRepository.updateSource(mdDependencyList);
+					}
+
+				}
+			}
+
+			List<MmDependency> targetMds=analyseExcuteRepository.getMetaModelDepeByName(targetName);
+			if (ListUtil.isNotEmpty(targetMds)){
+				for (MmDependency mm:targetMds) {
+					if (mm==null){
+						continue;
+					}
+					if (EnumRelation.MAPPDIRETARGET.equals(mm.getMappDire())){
+						String mmMappId=mm.getId();
+						List<MdDependency> mdDependencyList=analyseExcuteRepository.findMappDepeByMmId(mmMappId);
+
+						analyseExcuteRepository.updateTarget(mdDependencyList);
+					}
+
+				}
+			}
+
+
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
+
+
+	}
+
+	private void resultStatus()throws ServiceException{
+		try {
+			//不能放到一个事务中处理
+			analyseExcuteRepository.resultDel();
+			analyseExcuteRepository.resultStatus();
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 *根据技术元数据id查业务元数据
+	 * @return
+	 */
+	/*private MdMetadata findByPhysId(String physmdid) throws ServiceException{
+		try {
+			MdMetadata physmd = this.getMetaDataByMdid(physmdid);
+			if (physmd==null){
+				return null;
+			}
+			//List<MmDependency> list= analyseExcuteRepository.getMmDependencyByfromid(physmd.getId());
+			List<MmDependency> list=analyseExcuteRepository.getMetaModelDepeByName(DepeSourceParam.DEPTABLEMAPP_TARGET);
+			if (list!=null&&list.size()>0){
+				MmDependency mmDependency=list.get(0);
+				String depeId=mmDependency.getId();
+				List<MdDependency> mdDependencies=analyseExcuteRepository.getMetaDataTargetDepeByToid(physmdid,depeId);
+
+				if (mdDependencies==null||mdDependencies.size()==0){
+					return null;
+				}
+				MdDependency mdDependency=mdDependencies.get(0);
+				if (mdDependency==null){
+					return null;
+				}
+
+				String mappMdId=mdDependency.getFromMdId(); //映射元数据id
+
+				MdMetadata bussmd=analyseExcuteRepository.findByNotMdid(mappMdId,depeId,physmdid); //
+				return bussmd;
+			}
+			List<MmDependency> collist=analyseExcuteRepository.getMetaModelDepeByName(DepeSourceParam.DEPBUSSCOLUMNMAPP_TARGET);
+			if (collist!=null&&collist.size()>0){
+				MmDependency mmDependency=collist.get(0);  //关系元模型
+				String depeId=mmDependency.getId();   //关系元模型id
+				//相关映射
+				List<MdDependency> mdDependencies=analyseExcuteRepository.getMetaDataTargetDepeByToid(physmdid,depeId);
+
+				if (mdDependencies==null||mdDependencies.size()==0){
+					return null;
+				}
+				MdDependency mdDependency=mdDependencies.get(0);
+				if (mdDependency==null){
+					return null;
+				}
+
+				String mappMdId=mdDependency.getFromMdId(); //映射元数据id
+
+				MdMetadata bussmd=analyseExcuteRepository.findByNotMdid(mappMdId,null,physmdid); //
+				return bussmd;
+			}
+
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}*/
+
+	/**
+	 *根据技术元数据id查业务元数据
+	 * @return
+	 */
+	private List<MdMetadata> findByPhysIds(String physmdid) throws ServiceException{
+		List<MdMetadata> mdMetadataList=new ArrayList<MdMetadata>();
+		try {
+			MdMetadata physmd = this.getMetaDataByMdid(physmdid);
+			if (physmd==null){
+				return null;
+			}
+			//List<MmDependency> list= analyseExcuteRepository.getMmDependencyByfromid(physmd.getId());
+			List<MmDependency> list=analyseExcuteRepository.getMetaModelDepeByName(DepeSourceParam.DEPTABLEMAPP_TARGET);
+			if (list!=null&&list.size()>0){
+				MmDependency mmDependency=list.get(0);
+				String depeId=mmDependency.getId();
+				List<MdDependency> mdDependencies=analyseExcuteRepository.getMetaDataTargetDepeByToid(physmdid,depeId);
+
+				if (mdDependencies!=null&&mdDependencies.size()!=0){
+					//return ;
+					for (MdDependency mdDependency:mdDependencies) {
+						if (mdDependency==null){
+							return null;
+						}
+						String mappMdId=mdDependency.getFromMdId(); //映射元数据id
+						List<MdMetadata> bussmdList=analyseExcuteRepository.findByNotMdid(mappMdId,null,physmdid); //
+
+						mdMetadataList.addAll(bussmdList);
+					}
+				}
+				//MdDependency mdDependency=mdDependencies.get(0);
+
+
+				//return bussmd;
+			}
+			List<MmDependency> collist=analyseExcuteRepository.getMetaModelDepeByName(DepeSourceParam.DEPBUSSCOLUMNMAPP_TARGET);
+			if (collist!=null&&collist.size()>0){
+				MmDependency mmDependency=collist.get(0);  //关系元模型
+				String depeId=mmDependency.getId();   //关系元模型id
+				//相关映射
+				List<MdDependency> mdDependencies=analyseExcuteRepository.getMetaDataTargetDepeByToid(physmdid,depeId);
+
+				if (mdDependencies!=null&&mdDependencies.size()!=0){
+					for (MdDependency mdDependency:mdDependencies) {
+						String mappMdId=mdDependency.getFromMdId(); //映射元数据id
+						List<MdMetadata> bussmdList=analyseExcuteRepository.findByNotMdid(mappMdId,null,physmdid); //
+
+						mdMetadataList.addAll(bussmdList);
+					}
+				}
+
+				/*MdDependency mdDependency=mdDependencies.get(0);
+				if (mdDependency==null){
+					return null;
+				}*/
+
+
+
+
+				return mdMetadataList;
+			}
+
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
+		return mdMetadataList;
+	}
+
+
+	private void analyzerResult(String source,String target)  throws ServiceException{
+		try {
+			// TODO Auto-generated method stub
+			//按名称查询所有source
+				String targetid="";
+				List<MmDependency> mmdepelist= getMetaModelDepeByName(target);
+				if(mmdepelist!=null&&mmdepelist.size()!=0){
+					targetid=mmdepelist.get(0).getId();
+				}
+				List<MdDependency> mddepelists= this.getMetaDataDepeByName(source);
+				for (MdDependency mdDependency : mddepelists) {
+					
+					String mdid=mdDependency.getToMdId();
+					MdMetadata md = this.getMetaDataByMdid(mdid);
+					MdAnalyseResult mar = md2MdAnalyseResult(md);
+					mar.setId(UUID.randomUUID().toString());
+					analyseExcuteRepository.create(mar);
+					//遍历以source为form的target
+					List<MdDependency> mddepelistt=analyseExcuteRepository.getMetaDataTargetDepe(mdDependency.getFromMdId(), targetid);
+					for (MdDependency mdDependency2 : mddepelistt) {
+						String mid=mdDependency2.getToMdId();
+						MdMetadata tmd = this.getMetaDataByMdid(mid);
+						MdAnalyseResult tmar=md2MdAnalyseResult(tmd);
+						tmar.setId(UUID.randomUUID().toString());
+						tmar.setUpstream(md.getId());
+						
+						analyseExcuteRepository.create(tmar);
+
+						/*
+						//以下为把技术元数据转为业务元数据的代码
+						List<MdMetadata> bussMdList=findByPhysIds(mid);
+
+						if (bussMdList==null||bussMdList.size()==0){
+							continue;
+						}
+
+						for (MdMetadata bussMd:bussMdList) {
+							MdAnalyseResult tmarbuss=md2MdAnalyseResult(bussMd);
+							tmarbuss.setId(UUIDGenerator.getUUID());
+							if (tmar.getUpstream()!=null){
+								List<MdMetadata> upMdList=findByPhysIds(md.getId());
+								if (upMdList!=null&&upMdList.size()>0){
+									for (MdMetadata upMd:upMdList) {
+
+										tmarbuss.setUpstream(md.getId());
+										if (!tmarbuss.getMdId().equals(tmarbuss.getUpstream())){
+											MdAnalyseResult mdAnalyseResult =tmarbuss;
+											mdAnalyseResult.setId(UUIDGenerator.getUUID());
+											analyseExcuteRepository.create(mdAnalyseResult);
+										}
+									}
+								}else {
+									if (!tmarbuss.getMdId().equals(tmarbuss.getUpstream())){
+										MdAnalyseResult mdAnalyseResult =tmarbuss;
+										mdAnalyseResult.setId(UUIDGenerator.getUUID());
+										analyseExcuteRepository.create(mdAnalyseResult);
+									}
+								}
+
+							}else {
+								if (!tmarbuss.getMdId().equals(tmarbuss.getUpstream())){
+									MdAnalyseResult mdAnalyseResult =tmarbuss;
+									mdAnalyseResult.setId(UUIDGenerator.getUUID());
+									analyseExcuteRepository.create(mdAnalyseResult);
+								}
+							}
+						}*/
+
+					}
+
+
+
+
+					
+				}
+			
+			
+				
+			} catch (RepositoryException e) {
+				logger.error("获取元数据关系失败",e);
+				e.printStackTrace();
+				throw new ServiceException("获取元数据关系失败");
+			}
+	}
+	
+	public class bussMapping {
+		private MdMetadata sourceMd;
+		private MdMetadata targetMd;
+
+		private MmDependency sourceDepe;
+		private MmDependency targetDepe;
+
+
+		public MmDependency getSourceDepe() {
+			return sourceDepe;
+		}
+
+		public void setSourceDepe(MmDependency sourceDepe) {
+			this.sourceDepe = sourceDepe;
+		}
+
+		public MmDependency getTargetDepe() {
+			return targetDepe;
+		}
+
+		public void setTargetDepe(MmDependency targetDepe) {
+			this.targetDepe = targetDepe;
+		}
+
+		public MdMetadata getSourceMd() {
+			return sourceMd;
+		}
+
+		public void setSourceMd(MdMetadata sourceMd) {
+			this.sourceMd = sourceMd;
+		}
+
+		public MdMetadata getTargetMd() {
+			return targetMd;
+		}
+
+		public void setTargetMd(MdMetadata targetMd) {
+			this.targetMd = targetMd;
+		}
+	}
+	
+}

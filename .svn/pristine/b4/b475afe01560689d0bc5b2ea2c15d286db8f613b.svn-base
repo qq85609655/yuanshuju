@@ -1,0 +1,17 @@
+package com.gilight.dep.metamodel.service;
+
+import com.gilight.dep.framework.core.ext.service.IDepBasicService;
+
+/**
+ * 
+ * @ClassName: IMetaModelService
+ *             <p>
+ *             元模型所有服务的基类<br>
+ * @author wzx
+ * @date 2015年7月9日 下午2:31:02
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaModelService extends IDepBasicService {
+
+}

@@ -1,0 +1,47 @@
+#此句为将等级为INFO的日志信息输出到stdout和R这两个目的地，
+#stdout和R的定义在下面的代码，可以任意起名。
+#等级可分为OFF、 FATAL、ERROR、WARN、INFO、DEBUG、ALL，
+#如果配置OFF则不打出任何信息，如果配置为INFO这样只显示
+#INFO, WARN, ERROR的log信息，而DEBUG信息不会被显示
+log4j.rootCategory=INFO, stdout , R
+
+#此句为定义名为stdout的输出到控制台
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+
+#输出端layout：灵活地指定布局模式
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+#指定log输出格式：[METADATA] DEBUG [main] AbstractBeanFactory.getBean(189) | logmessage 
+log4j.appender.stdout.layout.ConversionPattern=%d-[METADATA] %p [%t] %C.%M(%L) | %m%n
+
+#定义名为R的输出端的类型为每天产生一个日志文件
+ log4j.appender.R=org.apache.log4j.DailyRollingFileAppender
+ 
+#定义名为R的输出端的文件名
+ log4j.appender.R.File=../logs/metadata/md.log
+ 
+ #定义每天生成一个日志文件
+log4j.appender.R.DatePattern = '.'yyyy-MM-dd
+ 
+#R输出端layout：灵活地指定布局模式
+ log4j.appender.R.layout=org.apache.log4j.PatternLayout
+ 
+##指定R输出端 log输出格式
+ log4j.appender.R.layout.ConversionPattern=%d-[METADATA] %p [%t] %C.%M(%L) | %m%n
+
+
+#下面对特定包进行设置
+ log4j.logger.com.jhkj=DEBUG
+
+
+ log4j.logger.org.apache.commons=WARN
+
+ log4j.logger.org.apache.struts=WARN
+
+ log4j.logger.org.springframework=ERROR
+ 
+  log4j.logger.com.jdon=DEBUG
+
+ log4j.logger.org.hibernate.ps.PreparedStatementCache=WARN
+
+ log4j.logger.org.hibernate=WARN

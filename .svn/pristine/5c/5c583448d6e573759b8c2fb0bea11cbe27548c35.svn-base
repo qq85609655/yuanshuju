@@ -1,0 +1,164 @@
+package com.gilight.dep.metadata.service.impl;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdMetadataImp;
+import com.gilight.dep.metadata.repository.IMetaDataQueryRepository;
+import com.gilight.dep.metadata.service.IMetaDataQueryService;
+import com.gilight.dep.metadata.util.AutoCopyObj;
+import com.gilight.dep.metadata.view.MetaDataBasicView;
+import org.apache.log4j.Logger;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MetaDataQueryServiceImpl implements IMetaDataQueryService {
+	private static final Logger logger = Logger
+			.getLogger(MetaDataQueryServiceImpl.class);
+	
+	private IMetaDataQueryRepository metaDataQueryRepository = null;
+	
+	
+
+	public IMetaDataQueryRepository getMetaDataQueryRepository() {
+		return metaDataQueryRepository;
+	}
+
+
+
+	public void setMetaDataQueryRepository(
+			IMetaDataQueryRepository metaDataQueryRepository) {
+		this.metaDataQueryRepository = metaDataQueryRepository;
+	}
+
+
+
+	public IResponse getByScope(IContext context) throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws IllegalAccessException,
+						InvocationTargetException, RepositoryException,
+						ServiceException {
+					IResult afterResult = getByScopeAfter(context, result);
+					if (afterResult != null) {
+						return afterResult;
+					}
+					return ((IResult) context.getResponse().getResult());
+				}
+			});
+			this.getMetaDataQueryRepository().getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询已审核元数据出现错误!", e);
+			throw new ServiceException("查询已审核元数据出现错误!");
+		} catch (Exception e) {
+			logger.error("查询已审核元数据出现错误!", e);
+			e.printStackTrace();
+			throw new ServiceException("查询已审核元数据出现错误!");
+		}
+	}
+	/**
+	 * 查询在已审核过的元数据表里是否有当前的元数据
+	* <p><br>
+	* @param context
+	* @param result
+	* @return
+	* @throws ServiceException  
+	* @author hww 
+	* @date 2015年11月7日 下午1:41:53
+	* @version V1.0
+	 */
+	private IResult getByScopeAfter(IContext context, IResult result)
+			throws ServiceException {
+		try {
+			List<IEntity> list = (List<IEntity>) result.getResult();
+			List<MetaDataBasicView> mdvlist = new ArrayList<MetaDataBasicView>();
+			if (list != null) {
+				for (IEntity entity : list) {
+					MdMetadata md = (MdMetadata) entity;
+					
+					MetaDataBasicView mdv = AutoCopyObj.objCopy(
+							MetaDataBasicView.class, md);
+					mdvlist.add(mdv);
+				}
+			}
+			return ResultFactory.getInstance().createSuccessResult(mdvlist);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+			throw new ServiceException("查询已审核元数据临时表视图出现错误!");
+		}
+	}
+	
+	
+	public IResponse getByScopeImp(IContext context) throws ServiceException {
+		try {
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws IllegalAccessException,
+						InvocationTargetException, RepositoryException,
+						ServiceException {
+					IResult afterResultImp = getByScopeAfterImp(context, result);
+					if (afterResultImp != null) {
+						return afterResultImp;
+					}
+					return ((IResult) context.getResponse().getResult());
+				}
+			});
+			this.getMetaDataQueryRepository().getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询未审核元数据出现错误!", e);
+			throw new ServiceException("查询未审核元数据出现错误!");
+		} catch (Exception e) {
+			logger.error("查询未审核元数据出现错误!", e);
+			e.printStackTrace();
+			throw new ServiceException("查询未审核元数据出现错误!");
+		}
+	}
+	/**
+	 * 再查询临时表里未审核的元数据信息
+	* <p><br>
+	* @param context
+	* @param result
+	* @return
+	* @throws ServiceException  
+	* @author hww 
+	* @date 2015年11月7日 下午1:42:56
+	* @version V1.0
+	 */
+	private IResult getByScopeAfterImp(IContext context, IResult result)
+			throws ServiceException {
+		try {
+			List<IEntity> list = (List<IEntity>) result.getResult();
+			List<MetaDataBasicView> mdvlist = new ArrayList<MetaDataBasicView>();
+			if (list != null) {
+				for (IEntity entity : list) {
+					MdMetadataImp md = (MdMetadataImp) entity;
+					MetaDataBasicView mdv = AutoCopyObj.objCopy(
+							MetaDataBasicView.class, md);
+					mdvlist.add(mdv);
+				}
+			}
+			return ResultFactory.getInstance().createSuccessResult(mdvlist);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+			throw new ServiceException("查询未审核元数据临时表视图出现错误!");
+		}
+	}
+
+
+}

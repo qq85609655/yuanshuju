@@ -1,0 +1,82 @@
+package com.gilight.dep.metadata.spring;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.metadata.service.impl.MetaDataBaseServiceImpl;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+public class MetaDataQueryMappingTest {
+    private static MetaDataQueryMappingTest instance = new MetaDataQueryMappingTest();
+    private static ApplicationContext factory;
+
+    public static MetaDataQueryMappingTest getInstance() {
+        return instance;
+    }
+
+    static {
+        //String[] beans={"beans/service/beans.xml","beans/hibernate/hibernate.xml"};
+        factory = new ClassPathXmlApplicationContext("test.xml");
+    }
+
+    public static Object getBean(String name) {
+        if (factory == null) {
+            return null;
+        }
+        try {
+            return factory.getBean(name);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static ApplicationContext getFactory() {
+        return factory;
+    }
+
+    public static void setFactory(ApplicationContext factory) {
+        MetaDataQueryMappingTest.factory = factory;
+    }
+
+    public static void main(String[] args) {
+        try {
+            MetaDataQueryMappingTest test = new MetaDataQueryMappingTest();
+
+            test.querytest();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // System.out.println(s.findAll()==null);
+    }
+
+    public void querytest(){
+        MetaDataBaseServiceImpl gs = (MetaDataBaseServiceImpl) MetaDataQueryMappingTest.getBean("metaDataBaseService");
+        try {
+            String id="54d77d97-f608-445a-b7b2-34155f5ed57d";
+            IContext context= ContextFactoryImpl.getInstance().createContextWithID(id);
+            IContext context1= ContextFactoryImpl.getInstance().createContextWithID(id);
+            //gs.queryPassiveMapping(context);
+            //gs.queryMapping(context);
+            gs.queryPassiveMapping(context1);
+            System.out.println("ddd");
+        } catch (GilightException e) {
+            e.printStackTrace();
+        }
+
+        //IContext context= ContextFactoryImpl.getInstance().createContextWithView(view);
+        //gs.queryDbBackup(context);
+    }
+
+
+}

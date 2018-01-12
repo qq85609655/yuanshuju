@@ -1,0 +1,93 @@
+/**   
+ * @Title: MetaModeSelectedView.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月24日 下午4:57:24
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.view;
+
+/**
+ * 
+ * @ClassName: MetaModeSelectedView
+ *             <p>
+ *             元模型属性下拉框的选项<br>
+ * @author zps
+ * @date 2015年7月24日 下午5:03:26
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetaModeSelectedView extends MetaBaseView {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String key = null;
+	private String value = null;
+
+	public MetaModeSelectedView() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public MetaModeSelectedView(String key, String value) {
+		super();
+		this.key = key;
+		this.value = value;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MetaModeSelectedView other = (MetaModeSelectedView) obj;
+		if (key == null) {
+			if (other.key != null)
+				return false;
+		} else if (!key.equals(other.key))
+			return false;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaModeSelectedView [key=" + key + ", value=" + value + "]";
+	}
+}

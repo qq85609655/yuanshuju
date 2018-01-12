@@ -1,0 +1,99 @@
+/**   
+ * @Title: BackupController.java  
+ * @Description: TODO 
+ * @author YHY   
+ * @date 
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.web.controller;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.ModelAndViewResult;
+import com.gilight.dep.metadata.service.IMetaDataDbBackupService;
+import com.gilight.dep.metadata.web.request.ViewRequestData;
+import com.gilight.dep.metadata.web.response.ResultCode;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@RequestMapping("/backup")
+public class BackupController extends MetadataBaseController {
+
+	
+	private IMetaDataDbBackupService metaDataDbBackupService;
+
+	public IMetaDataDbBackupService getMetaDataDbBackupService() {
+		return metaDataDbBackupService;
+	}
+
+	public void setMetaDataDbBackupService(
+			IMetaDataDbBackupService metaDataDbBackupService) {
+		this.metaDataDbBackupService = metaDataDbBackupService;
+	}
+
+	/**
+	 * 查询
+	 */
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public @ResponseBody
+	Object list(@ModelAttribute ViewRequestData viewRequestData)
+			throws Exception {
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithParams(null);
+		this.metaDataDbBackupService.queryDbBackup(context);
+		return context.getResponse().getResult();
+	}
+	/**
+	 * 启动任务
+	 */
+	@RequestMapping(value = "/start", method = RequestMethod.POST)
+	public @ResponseBody
+	Object start(@ModelAttribute ViewRequestData viewRequestData)
+			throws Exception {
+		this.metaDataDbBackupService.startDbbak();
+		return new ModelAndViewResult(
+				ResultCode.RESULT_CODE_SUCCESS, "发送任务成功",null );
+	}
+	/**
+	 * 
+	* <p>恢复<br>
+	* @return
+	* @throws Exception  
+	* @author yhy 
+	* @date 2017年4月10日 下午2:00:18
+	* @version V1.0
+	 */
+	@RequestMapping(value = "/recover", method = RequestMethod.POST)
+	public @ResponseBody
+	Object recover(String id)
+			throws Exception {
+		this.metaDataDbBackupService.recoverDb(id);
+		return new ModelAndViewResult(
+				ResultCode.RESULT_CODE_SUCCESS, "恢复任务成功",null );
+	}
+	/**
+	 * 
+	* <p><br>
+	* @param id
+	* @return
+	* @throws Exception  
+	* @author yhy 
+	* @date 2017年4月10日 下午2:20:59
+	* @version V1.0
+	 */
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public @ResponseBody
+	Object delete(String id)
+			throws Exception {
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithID(id);
+		IResponse response = this.metaDataDbBackupService.delDbBackup(context);
+		return context.getResponse().getResult();
+		
+	}
+
+}

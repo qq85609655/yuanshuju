@@ -1,0 +1,55 @@
+package com.gilight.dep.metadata.entity;
+/**
+ * 备份操作的实体类
+ *
+ */
+public class MdSystemBackup extends BaseMetaDataEntity{
+	private String id;//字段id
+	private String userid;//操作用户id
+	private String saveTime;//操作时间
+	private String cronExpression;//备份时间表达式
+	private String period;//执行周期
+	public String getPeriod() {
+		return period;
+	}
+	public void setPeriod(String period) {
+		this.period = period;
+	}
+	private String status;//状态:
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getUserid() {
+		return userid;
+	}
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
+	public String getSaveTime() {
+		return saveTime;
+	}
+	public void setSaveTime(String saveTime) {
+		this.saveTime = saveTime;
+	}
+	public String getCronExpression() {
+		return cronExpression;
+	}
+	public void setCronExpression(String cronExpression) {
+		this.cronExpression = cronExpression;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	@Override
+	public String toString() {
+		return "MdSystemBackup [id=" + id + ", userid=" + userid + ", saveTime=" + saveTime + ", cronExpression="
+				+ cronExpression + ", period=" + period + ", status=" + status + "]";
+	}
+	
+}

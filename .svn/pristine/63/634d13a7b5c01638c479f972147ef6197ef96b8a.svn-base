@@ -1,0 +1,30 @@
+{
+	"fields" : [{
+				"name" : "id",
+				"type" : "String",
+
+			}, {
+				"name" : "name",
+				"type" : "String",
+
+			}, {
+				"name" : "fromMid",
+				"type" : "String"
+			}, {
+				"name" : "fromMName",
+				"type" : "String"
+			}, {
+				"name" : "toMid",
+				"type" : "String",
+
+			}, {
+				"name" : "toMName",
+				"type" : "String",
+
+			}, {
+				"name" : "remark",
+				"type" : "String",
+
+			}]
+
+}

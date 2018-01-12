@@ -1,0 +1,81 @@
+package com.gilight.dep.metadata.gather.common;
+
+public class DBConnParam {
+
+	public DBConnParam() {
+		// TODO Auto-generated constructor stub
+	}
+	private String driver;  
+	private String url;
+	private String dbtype;
+	private String user;
+	private String pwd;
+	private String schema;
+	private String host;
+	private String port;
+	private String sid;
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
+	}
+
+	public String getSid() {
+		return sid;
+	}
+
+	public void setSid(String sid) {
+		this.sid = sid;
+	}
+
+	public String getDriver() {
+		return driver;
+	}
+	public void setDriver(String driver) {
+		this.driver = driver;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public String getDbtype() {
+		return dbtype;
+	}
+	public void setDbtype(String dbtype) {
+		this.dbtype = dbtype;
+	}
+	public String getUser() {
+		return user;
+	}
+	public void setUser(String user) {
+		this.user = user;
+	}
+	public String getPwd() {
+		return pwd;
+	}
+	public void setPwd(String pwd) {
+		this.pwd = pwd;
+	}
+	public String getSchema() {
+		return schema;
+	}
+	public void setSchema(String schema) {
+		this.schema = schema;
+	}
+	
+	
+	
+}

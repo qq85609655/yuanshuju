@@ -1,0 +1,93 @@
+Ext.define('Dep.EventManager', {
+			mixins : {
+				observable : 'Ext.util.Observable'
+			},
+			constructor : function(config) {
+				this.mixins.observable.constructor.call(this, config);
+			}
+		});
+/**
+ * 系统初始化js
+ */
+Ext.onReady(function() {
+	
+	Ext.application('Dep.metadata.main.App');
+//	
+//	Ext.QuickTips.init();
+//	Ext.form.Field.prototype.msgTarget='under';
+//	Dep.EventManager = Ext.create('Dep.EventManager'); // 创建根对象
+//	var tmpApp = new Ext.util.MixedCollection(); // 模块缓存Map[{key,val},{key1,val1}]
+//	/**
+//	 * 加载模块文件
+//	 */
+//	Dep.loadModule = function(appNs, path,initFn) {
+//		if (appNs && !Ext.Array.contains(tmpApp, appNs)) {
+//			Ext.Loader.loadScript({url : path,scope:this,onLoad:function(){
+//				Dep.createModule(appNs, path);
+//			}});
+//		}
+//	};
+//	/**
+//	 * 模块是否已经加载
+//	 */
+//	Dep.isExModule = function(appNs) {
+//		return tmpApp.containsKey(appNs);
+//	};
+//	/**
+//	 * 创建模块
+//	 * 
+//	 * @param appNs
+//	 */
+//	Dep.createModule = function(appNs, appPath) {
+//		if (appPath) {
+//			var appName = appPath.substr(0, appPath.length - 3);
+//			appName = appName.replace(new RegExp("/", 'g'), ".");
+//			var obj = Ext.create(appName);
+//			tmpApp.add(appNs, obj);
+//			return obj.controllers.items[0];
+//		}
+//	};	
+//	/**
+//	 * 显示模块
+//	 */
+//	Dep.showModule = function(appNs, path) {
+//		var controller = null;
+//		if (!Dep.isExModule(appNs)) {
+//			Dep.loadModule(appNs, path); 
+//		} 
+//		var obj = Dep.getModule(appNs);
+//		// 在各自模块中，要有一个showWin方法，此方法是显示模块面板使用
+//		if(obj)obj.controllers.items[0].showWin();
+//	};	
+//	/**
+//	 * 获取模块
+//	 * 
+//	 * @param appNs
+//	 */
+//	Dep.getModule = function(appNs) {
+//		var module = tmpApp.get(appNs);
+//		if (!module) {
+//		}
+//		return module;
+//	};	
+//	
+//	
+//	/**
+//	 * 启动方法
+//	 */
+//	Dep.launch = function() {
+//		//创建界面
+//		var mainView = Ext.create("Dep.metadata.main.view.MainView");
+//		var viewport = Ext.create("Ext.container.Viewport", {
+//			title : '',
+//			autoHeight : true,
+//			layout : 'fit',
+//			items :[mainView]
+//		});
+//		//初始化加载图形编辑器模块
+//		Ext.Loader.loadScript({ url: "Dep/metadata/metadatamng/InitView.js",scope:this,onLoad:function(){
+//			initEditor(mainView.getContentPanel());
+//		}});
+//	};
+//	Dep.launch();
+});

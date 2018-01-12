@@ -1,0 +1,19 @@
+{
+	"fName" : "line",
+	"fType" : "line",
+	"description" : "关系线",
+	"img" : "",
+	"groupId" : "metadata",
+	"shape" : "Dep.framework.editor.figure.NoBussConnection",
+	"viewConfig": {
+		"targetDecDemension" : [6,6],
+		"displayLabel":"true"
+	},	
+	"persistentViewAttributes" : ["x", "y", "dimension"],
+	"isPort" : "false",
+	"isConnection" : "true",
+	"isNoBussConnection" : "true",
+	"api" : null,
+	"statuEnums" : [],
+	"contextMenus" : []
+}

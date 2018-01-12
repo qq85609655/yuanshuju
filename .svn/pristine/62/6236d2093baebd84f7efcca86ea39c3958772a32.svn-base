@@ -1,0 +1,124 @@
+package com.gilight.dep.metadata.gather.excel;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Sheet;
+
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.gather.common.util.ExcelUtil;
+
+
+public abstract class ReadExcelBase implements IReadExcel {
+
+	public ReadExcelBase() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public Sheet readSheet(String path, int num) throws ServiceException{
+		// TODO Auto-generated method stub
+		try {
+			Sheet sheet=ExcelUtil.readSheet(path, num);
+			return sheet;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ServiceException("解析文件失败");
+		}
+	}
+
+	@Override
+	public String readModel(Sheet sheet, int num) throws ServiceException{
+		// TODO Auto-generated method stub
+		try {
+			String model=ExcelUtil.readStringVal(sheet, 0, 1);
+			return model;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ServiceException("解析文件失败");
+		}
+		
+	}
+
+	@Override
+	public List<String> readTitle(Sheet sheet, int num, int start, int end) throws ServiceException{
+		// TODO Auto-generated method stub
+		try {
+			List<String> list = ExcelUtil.readStringVal(sheet, num, start, end);
+			return list;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ServiceException("解析文件失败");
+		}
+		
+	}
+
+	@Override
+	public List<Map> readData(Sheet sheet, int num,int start, int end,String modelcode) throws ServiceException{
+		try {
+			List<Map> maplist = new ArrayList<Map>();
+			
+			List<String> listtit = ExcelUtil.readStringVal(sheet, num, start, end);
+			List<List> listdata = ExcelUtil.readStringValList(sheet, num+1, start, end);
+			for (List list : listdata) {
+				Map<String,String> map = new HashMap<String,String>();
+				for (int i=0;i<listtit.size();i++) {
+					String tit=listtit.get(i);
+					String data=(String) list.get(i);
+					
+					map.put(tit, data);
+					
+				}
+				
+				map.put("modelcode", modelcode);
+				maplist.add(map);
+			}
+			
+			return maplist;
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			throw new ServiceException("解析文件失败");
+		}
+		
+	}
+	@Override
+	public int readSheetnum(String path)
+			throws ServiceException{
+		
+		try {
+			return ExcelUtil.readSheetNum(path);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
+		
+	}
+	
+	@Override
+	public int readSheetnum(File file)
+			throws ServiceException{
+		
+		try {
+			return ExcelUtil.readSheetNum(file);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
+		
+	}
+	
+	@Override
+	public int  readCellNum(Sheet sheet,int rownum) throws Exception{
+		 int num=ExcelUtil.readCellNum(sheet, rownum);
+		 
+		 return num;
+	}
+}

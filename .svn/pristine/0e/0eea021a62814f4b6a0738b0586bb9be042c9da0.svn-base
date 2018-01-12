@@ -1,0 +1,124 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.IBasicModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IGatherDataScourceDao;
+import com.gilight.dep.metadata.entity.MdGatherDatasource;
+import com.gilight.dep.metadata.repository.IGatherDataScourceRepository;
+
+public class GatherDataScourceRepositoryImpl extends MetaDataRepositoryImpl
+		implements IGatherDataScourceRepository {
+
+	private IGatherDataScourceDao gatherDataScourceDao;
+
+	public IGatherDataScourceDao getGatherDataScourceDao() {
+		return gatherDataScourceDao;
+	}
+
+	public void setGatherDataScourceDao(
+			IGatherDataScourceDao gatherDataScourceDao) {
+		this.gatherDataScourceDao = gatherDataScourceDao;
+	}
+
+	public GatherDataScourceRepositoryImpl() {
+	}
+
+	@Override
+	public IResponse create(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			gatherDataScourceDao.save(model.getData()/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("创建元模型失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			gatherDataScourceDao.update(model.getData()/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元模型失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+			// Session session = (Session) cxt.getParameter("session");
+			gatherDataScourceDao.delete(model.getData()/* ,session */);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(null));
+			return paramIContext.getResponse();
+		} catch (DaoException | ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元模型失败!-dao");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IContext<IBasicModel> cxt = paramIContext;
+			IBasicModel model = (IBasicModel) cxt
+					.getParameter(ParameterKeys.ATT_MODEL);
+
+			MdGatherDatasource md = (MdGatherDatasource) model.getData();
+			IEntity mdentity = gatherDataScourceDao.findById(md.getId(),
+					md.getClass());
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mdentity));
+			return paramIContext.getResponse();
+
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询失败!-dao");
+		} catch (ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("查询失败!-dao");
+		}
+
+		// return paramIContext.getResponse();
+	}
+
+}

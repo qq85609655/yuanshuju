@@ -1,0 +1,43 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+/**
+ * 
+* @ClassName: MetaDataView 
+* <p>元数据信息，带有版本数据<br>
+* @author wzx
+* @date 2015年7月9日 下午4:09:55
+* @version V1.0
+* @since JDK 1.7
+ */
+public class MetaDataView extends MetaDataBaseView implements IView{
+	 
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 组合关系数据模型list
+	 */
+	private List<MetaDataBaseView> compMetaDataList;
+	/**
+	 * 依赖关系数据模型list
+	 */
+	private List<MetaDataBaseView> depeMetaDataList;
+	
+	public List<MetaDataBaseView> getCompMetaDataList() {
+		return compMetaDataList;
+	}
+	public void setCompMetaDataList(List<MetaDataBaseView> compMetaDataList) {
+		this.compMetaDataList = compMetaDataList;
+	}
+	public List<MetaDataBaseView> getDepeMetaDataList() {
+		return depeMetaDataList;
+	}
+	public void setDepeMetaDataList(List<MetaDataBaseView> depeMetaDataList) {
+		this.depeMetaDataList = depeMetaDataList;
+	}
+	 
+}

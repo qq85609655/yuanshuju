@@ -1,0 +1,58 @@
+package com.gilight.dep.metadata.entity;
+
+public class MdSubSvg extends BaseMetaDataEntity{
+  private String id;
+  private String mdid;
+  private String svg;
+  private int svgtype;
+  private int status;
+  private String tarnsformid;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getMdid() {
+    return mdid;
+  }
+
+  public void setMdid(String mdid) {
+    this.mdid = mdid;
+  }
+
+  public String getSvg() {
+    return svg;
+  }
+
+  public void setSvg(String svg) {
+    this.svg = svg;
+  }
+
+  public int getSvgtype() {
+    return svgtype;
+  }
+
+  public void setSvgtype(int svgtype) {
+    this.svgtype = svgtype;
+  }
+
+  public int getStatus() {
+    return status;
+  }
+
+  public void setStatus(int status) {
+    this.status = status;
+  }
+
+  public String getTarnsformid() {
+    return tarnsformid;
+  }
+
+  public void setTarnsformid(String tarnsformid) {
+    this.tarnsformid = tarnsformid;
+  }
+}

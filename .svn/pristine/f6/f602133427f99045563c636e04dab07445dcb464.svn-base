@@ -1,0 +1,116 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+/**
+ * 映射的最上层
+ */
+public class MetaDataMapTopView implements IView{
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 名称
+	 */
+	private String viewName;
+	/**
+	 * 默认显示
+	 */
+	private String defaultShow;
+	/**
+	 * 类别：系统视图，用户视图
+	 */
+	private String viewType;
+	/**
+	 * 显示顺序
+	 */
+	private String displayOrder;
+	/**
+	 * 描述
+	 */
+	private String remark;
+	/**
+	 * 是否隐藏：YES/NO
+	 */
+	private Integer ishidden;
+	
+	private List<MetaDataMapMDView> list = new ArrayList<>();
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getViewName() {
+		return viewName;
+	}
+
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
+	}
+
+	public String getDefaultShow() {
+		return defaultShow;
+	}
+
+	public void setDefaultShow(String defaultShow) {
+		this.defaultShow = defaultShow;
+	}
+
+	public String getViewType() {
+		return viewType;
+	}
+
+	public void setViewType(String viewType) {
+		this.viewType = viewType;
+	}
+
+	public String getDisplayOrder() {
+		return displayOrder;
+	}
+
+	public void setDisplayOrder(String displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getIshidden() {
+		return ishidden;
+	}
+
+	public void setIshidden(Integer ishidden) {
+		this.ishidden = ishidden;
+	}
+
+	public List<MetaDataMapMDView> getList() {
+		return list;
+	}
+
+	public void setList(List<MetaDataMapMDView> list) {
+		this.list = list;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaDataMapTopView [id=" + id + ", viewName=" + viewName + ", defaultShow=" + defaultShow
+				+ ", viewType=" + viewType + ", displayOrder=" + displayOrder + ", remark=" + remark + ", ishidden="
+				+ ishidden + ", list=" + list + "]";
+	}
+
+	
+}

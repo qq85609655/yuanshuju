@@ -1,0 +1,13 @@
+{
+	"plugins" : [{
+				"src" : "Dep/framework/editor/plugin/containers/layer/LayoutPlugin.js",
+				"name" : "Dep.framework.editor.plugin.containers.layer.LayoutPlugin"
+			}],
+	"details" : [{
+				"type" : "metamodel",
+				"fGroups" : "mmmNodes,mmrelation",
+				"layout":"MMLayout",
+				"name" : "元模型",
+				"desc" : "元模型管理" 
+			}]
+}

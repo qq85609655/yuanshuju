@@ -1,0 +1,98 @@
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MdGatherDatasource;
+
+@SuppressWarnings("unchecked")
+public class GatherDatasourceScope extends BaseHbiernateScope {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 数据源名称
+	 */
+	private String dbsName;
+	/**
+	 * 适配器
+	 */
+	private String adapter;
+	/**
+	 * 采集模式
+	 */
+	private String gatherModel;
+	/**
+	 * 数据路径
+	 */
+	private String dataPath;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+
+	public String getDbsName() {
+		return dbsName;
+	}
+
+	public void setDbsName(String dbsName) {
+		this.dbsName = dbsName;
+	}
+
+	public String getAdapter() {
+		return adapter;
+	}
+
+	public void setAdapter(String adapter) {
+		this.adapter = adapter;
+	}
+
+	public String getGatherModel() {
+		return gatherModel;
+	}
+
+	public void setGatherModel(String gatherModel) {
+		this.gatherModel = gatherModel;
+	}
+
+	public String getDataPath() {
+		return dataPath;
+	}
+
+	public void setDataPath(String dataPath) {
+		this.dataPath = dataPath;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Class getClazz() {
+		return MdGatherDatasource.class;
+	}
+
+	@Override
+	public String getDefaultOrderBy(String obj) {
+		// TODO Auto-generated method stub
+		return " order by " + obj + ".id";
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+		StringBuffer sql = new StringBuffer();
+		if (!StringUtil.isEmpty(this.adapter)) {
+			sql.append(" and ").append(obj).append(".adapter = ? ");
+			this.paraList.add(this.adapter);
+		}
+		return sql;
+
+	}
+
+}

@@ -1,0 +1,26 @@
+package com.gilight.dep.metadata.enums;
+
+public class DepeSourceParam {
+
+	public DepeSourceParam() {
+		// TODO Auto-generated constructor stub
+	}
+	public static final String source= "Dep-FeatureMap-Feature-source";
+	public static final String target= "Dep-FeatureMap-Feature-target";
+	
+	public static final String depsource= "Dep-Transformation-DataObjectSet-source";
+	public static final String deptarget= "Dep-Transformation-DataObjectSet-target";
+
+
+	public static final String DEPBUSSCOLUMNMAPP= "DepBussColumnMapping"; //数据实体属性映射
+
+	public static final String DEPTABLEMAPP= "DepTable_BussTable"; //数据实体映射
+
+	public static final String DEPBUSSCOLUMNMAPP_SOURCE= "Dep-Transformation-BussDataObject-Feature-source"; //数据实体属性映射源
+	public static final String DEPBUSSCOLUMNMAPP_TARGET= "Dep-Transformation-BussDataObject-Feature-target"; //数据实体属性映射目标
+
+	public static final String DEPTABLEMAPP_SOURCE= "Dep-Transformation-BussDataObjectSet-source"; //数据实体映射源
+	public static final String DEPTABLEMAPP_TARGET= "Dep-Transformation-BussDataObjectSet-target"; //数据实体映射目标
+
+
+}

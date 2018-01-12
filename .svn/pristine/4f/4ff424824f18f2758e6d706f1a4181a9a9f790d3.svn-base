@@ -1,0 +1,62 @@
+package com.gilight.dep.metadata.message.procuder;
+
+import com.gilight.dep.framework.core.context.base.DomainMessageContext;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.MessageProducerException;
+import com.gilight.dep.framework.core.message.producer.IBasicMessageProducer;
+import com.gilight.dep.framework.core.message.producer.impl.BaseMessageProducer;
+import com.jdon.annotation.Introduce;
+import com.jdon.annotation.model.Send;
+
+@Introduce("message")
+public class GatherJobProducer extends BaseMessageProducer implements
+		IBasicMessageProducer {
+
+	@Override
+	@Send("gatherJobEdit")
+	public DomainMessageContext update(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			throw new MessageProducerException("更新采集任务失败");
+		}
+	}
+
+	@Override
+	@Send("gatherJobDel")
+	public DomainMessageContext delete(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			throw new MessageProducerException("删除采集任务失败");
+		}
+	}
+
+	@Override
+	@Send("gatherJobGet")
+	public DomainMessageContext get(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			throw new MessageProducerException("删除采集任务失败");
+		}
+
+	}
+
+	@Override
+	@Send("gatherJobCreate")
+	public DomainMessageContext create(IContext paramIContext)
+			throws MessageProducerException {
+		try {
+			return new DomainMessageContext(paramIContext);
+		} catch (GilightException e) {
+			e.printStackTrace();
+			throw new MessageProducerException("创建采集任务失败");
+		}
+	}
+
+}

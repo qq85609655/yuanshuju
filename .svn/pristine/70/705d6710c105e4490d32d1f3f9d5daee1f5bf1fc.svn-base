@@ -1,0 +1,89 @@
+/**   
+ * @Title: MetaDataBasicRepositoryImpl.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年8月7日 下午4:35:14
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.repository.impl;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.ext.repository.DepBaseRepository;
+import com.gilight.dep.metadata.entity.MdAttribute;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.repository.IMetaDataBasicRepository;
+
+@SuppressWarnings("rawtypes")
+public class MetaDataBasicRepositoryImpl extends DepBaseRepository implements
+		IMetaDataBasicRepository {
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected IResult getByScopeAfter(IContext context, IResult result)
+			throws RepositoryException {
+		try {
+			List mdList = (List) result.getResult();// MdMetadata
+			if (mdList != null) {
+				for (int i = 0, j = mdList.size(); i < j; i++) {
+					MdMetadata md = (MdMetadata) mdList.get(i);
+					List attList = getAttList(md.getId());
+					md.setAttList(attList);
+				}
+			}
+			return ResultFactory.getInstance().createSuccessResult(mdList);
+		} catch (Exception e) {
+			new RepositoryException("查询元模型失败!-dao");
+		}
+		return result;
+	}
+
+	private List getAttList(String id) throws RepositoryException {
+		try {
+			List attrList = this.getBaseDao().findByProperty("mdId", id,
+					MdAttribute.class);
+			return attrList;
+		} catch (DaoException e) {
+			throw new RepositoryException("查询属性信息失败!", e);
+		}
+	}
+
+	@Override
+	protected IResult createAfter(IContext context, IResult result)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		return result;
+	}
+
+	@Override
+	protected IResult updateAfter(IContext context, IResult result) {
+		// TODO Auto-generated method stub
+		return result;
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext context, IResult result)
+			throws RepositoryException {
+		return result;
+	}
+
+	@Override
+	protected IResult getByIdAfter(IContext context, IResult result)
+			throws RepositoryException {
+		try {
+			MdMetadata md = (MdMetadata) result.getResult();// MdMetadata
+			List attList = getAttList(md.getId());
+			md.setAttList(attList);
+			return ResultFactory.getInstance().createSuccessResult(md);
+		} catch (Exception e) {
+			new RepositoryException("查询元模型失败!-dao");
+		}
+		return result;
+	}
+}

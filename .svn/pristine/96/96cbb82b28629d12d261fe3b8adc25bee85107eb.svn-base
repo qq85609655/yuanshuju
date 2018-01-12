@@ -1,0 +1,144 @@
+package com.gilight.dep.metadata.entity;
+
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+/**
+ * 
+ * @ClassName: MdDependencyImp
+ *             <p>
+ *             TODO<br>
+ * @author hww
+ * @date 2015年7月7日 下午3:49:29
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MdDependencyImp extends BaseMetaDataEntity {
+
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 元模型定义依赖关系
+	 */
+	private String mmDepId;
+	/**
+	 * 起始元数据id
+	 */
+	private String fromMdId;
+	/**
+	 * 起始元数据编码
+	 */
+	private String fromMdCode;
+	/**
+	 * 目标元数据id
+	 */
+	private String toMdId;
+	/**
+	 * 目标元数据代码
+	 */
+	private String toMdCode;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate = MetaDateUtils.getDefaultUpdateDate();
+
+	public MdDependencyImp() {
+	}
+
+	public MdDependencyImp(String id) {
+		this.id = id;
+	}
+
+	public MdDependencyImp(String id, String mmDepId, String fromMdId,
+			String fromMdCode, String toMdId, String toMdCode, String remark,
+			String updateDate) {
+		this.id = id;
+		this.mmDepId = mmDepId;
+		this.fromMdId = fromMdId;
+		this.fromMdCode = fromMdCode;
+		this.toMdId = toMdId;
+		this.toMdCode = toMdCode;
+		this.remark = remark;
+		this.updateDate = updateDate;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMmDepId() {
+		return this.mmDepId;
+	}
+
+	public void setMmDepId(String mmDepId) {
+		this.mmDepId = mmDepId;
+	}
+
+	public String getFromMdId() {
+		return this.fromMdId;
+	}
+
+	public void setFromMdId(String fromMdId) {
+		this.fromMdId = fromMdId;
+	}
+
+	public String getFromMdCode() {
+		return this.fromMdCode;
+	}
+
+	public void setFromMdCode(String fromMdCode) {
+		this.fromMdCode = fromMdCode;
+	}
+
+	public String getToMdId() {
+		return this.toMdId;
+	}
+
+	public void setToMdId(String toMdId) {
+		this.toMdId = toMdId;
+	}
+
+	public String getToMdCode() {
+		return this.toMdCode;
+	}
+
+	public void setToMdCode(String toMdCode) {
+		this.toMdCode = toMdCode;
+	}
+
+	public String getRemark() {
+		return this.remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	@Override
+	public String toString() {
+		return "MdDependencyImp [id=" + id + ", mmDepId=" + mmDepId
+				+ ", fromMdId=" + fromMdId + ", fromMdCode=" + fromMdCode
+				+ ", toMdId=" + toMdId + ", toMdCode=" + toMdCode + ", remark="
+				+ remark + ", updateDate=" + updateDate + "]";
+	}
+
+}

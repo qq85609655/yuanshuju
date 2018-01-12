@@ -1,0 +1,223 @@
+/**   
+ * @Title: GatherMetaDataScope.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年8月7日 上午10:49:22
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MdMetadataImp;
+
+public class GatherMetaDataScope extends BaseHbiernateScope {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/***
+	 * 采集任务执行批次标识
+	 */
+	private String jobTaskId;
+	/***
+	 * 采集任务标识
+	 */
+	private String jobId;
+	/***
+	 * 数据源标识
+	 */
+	private String dataSource;
+
+	/**
+	 * 元数据编码
+	 */
+	private String mdCode;
+	/**
+	 * 元数据名称
+	 */
+	private String mdName;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/***
+	 * 编码或者名称模糊查询
+	 */
+	private String nameCodeLike;
+	/***
+	 * 名称模糊查询
+	 */
+	private String mdNameLike;
+	/**
+	 * 元模型id
+	 */
+	private String mmId;
+	/**
+	 * 挂载点id
+	 */
+	private String dataPath;
+
+
+	public String getDataPath() {
+		return dataPath;
+	}
+
+	public void setDataPath(String dataPath) {
+		this.dataPath = dataPath;
+	}
+
+	public String getJobId() {
+		return jobId;
+	}
+
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
+
+	public String getMmId() {
+		return mmId;
+	}
+
+	public void setMmId(String mmId) {
+		this.mmId = mmId;
+	}
+
+	public String getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	public String getMdNameLike() {
+		return mdNameLike;
+	}
+
+	public void setMdNameLike(String mdNameLike) {
+		this.mdNameLike = mdNameLike;
+	}
+
+	public String getJobTaskId() {
+		return jobTaskId;
+	}
+
+	public void setJobTaskId(String jobTaskId) {
+		this.jobTaskId = jobTaskId;
+	}
+
+	public String getMdCode() {
+		return mdCode;
+	}
+
+	public void setMdCode(String mdCode) {
+		this.mdCode = mdCode;
+	}
+
+	public String getMdName() {
+		return mdName;
+	}
+
+	public void setMdName(String mdName) {
+		this.mdName = mdName;
+	}
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getNameCodeLike() {
+		return nameCodeLike;
+	}
+
+	public void setNameCodeLike(String nameCodeLike) {
+		this.nameCodeLike = nameCodeLike;
+	}
+
+	@Override
+	public Class getClazz() {
+		return MdMetadataImp.class;
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+		StringBuffer sql = new StringBuffer();
+		if (!StringUtil.isEmpty(this.jobTaskId)) {
+			sql.append(" and ").append(obj).append(".jobTaskId = ? ");
+			this.paraList.add(this.jobTaskId);
+		}
+		
+		if (!StringUtil.isEmpty(this.dataPath)) {
+			sql.append(" and ").append("(").append(obj).append(".parentid = ? ");	
+			this.paraList.add(this.dataPath);
+			
+			sql.append(" or ").append(obj).append(".parentcode in (select md.mdCode from MdMetadata md where md.id=?) ").append(")");	
+			this.paraList.add(this.dataPath);
+		}
+		
+		if (!StringUtil.isEmpty(this.mmId)) {
+			sql.append(" and ").append(obj).append(".mmId = ? ");
+			this.paraList.add(this.mmId);
+		}
+		if (!StringUtil.isEmpty(this.mdCode)) {
+			sql.append(" and ").append(obj).append(".mdCode = ? ");
+			this.paraList.add(this.mdCode);
+		}
+		if (!StringUtil.isEmpty(this.mdName)) {
+			sql.append(" and ").append(obj).append(".mdName = ? ");
+			this.paraList.add(this.mdName);
+		}
+		if (!StringUtil.isEmpty(this.mdNameLike)) {
+			sql.append(" and ").append(obj).append(".mdName like ? ");
+			this.paraList.add("%" + this.mdNameLike + "%");
+		}
+		if (!StringUtil.isEmpty(this.nameCodeLike)) {
+			sql.append(" and (").append(obj).append(".mdName like ?  or ")
+					.append(obj).append(".mdCode like ?  ) ");
+			this.paraList.add("%" + this.nameCodeLike + "%");
+			this.paraList.add("%" + this.nameCodeLike + "%");
+		}
+		if (!StringUtil.isEmpty(this.jobId)) {
+			sql.append(" and ")
+					.append(obj)
+					.append(".jobTaskId  in ( select gJobLog.id from MdGatherLog as gJobLog where gJobLog.jobId = ? ");
+			this.paraList.add(jobId);
+			sql.append(" )");
+		}
+
+		if (!StringUtil.isEmpty(this.dataSource)) {
+			sql.append(" and ")
+					.append(obj)
+					.append(".jobTaskId  in ( select gJobLog.id from MdGatherLog as gJobLog where gJobLog.jobId in (select job.id from MdGatherJob as job where job.datasource=? ) ");
+			this.paraList.add(dataSource);
+			sql.append(" )");
+		}
+		return sql;
+
+	}
+
+	@Override
+	public String getDefaultOrderBy(String obj) {
+		// TODO Auto-generated method stub
+		return " order by " + obj + ".updateDate";
+	}
+
+}

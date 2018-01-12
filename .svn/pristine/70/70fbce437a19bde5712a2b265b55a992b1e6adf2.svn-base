@@ -1,0 +1,275 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.ext.model.IDepBasicModel;
+import com.gilight.dep.framework.core.ext.repository.DepBaseRepository;
+import com.gilight.dep.framework.core.ext.util.CallBackCheckUtil;
+import com.gilight.dep.framework.core.ext.util.ContextUtil;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.metadata.dao.IMetaModelFolderDao;
+import com.gilight.dep.metadata.dao.impl.BaseDao;
+import com.gilight.dep.metadata.entity.MmFolder;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IMetaModelFolderRepository;
+import com.gilight.dep.metadata.util.AutoCopyList;
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelFolderView;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MetaModelFolderRepositoryImpl extends DepBaseRepository implements IMetaModelFolderRepository {
+
+	private IMetaModelFolderDao metaModelFolderDao;
+
+	public IMetaModelFolderDao getMetaModelFolderDao() {
+		return metaModelFolderDao;
+	}
+
+	public void setMetaModelFolderDao(IMetaModelFolderDao metaModelFolderDao) {
+		this.metaModelFolderDao = metaModelFolderDao;
+	}
+
+
+	private BaseDao baseDao = null;
+
+	public BaseDao getBaseDao() {
+		return baseDao;
+	}
+
+	public void setBaseDao(BaseDao baseDao) {
+		this.baseDao = baseDao;
+	}
+
+	@Override
+	protected IResult createAfter(IContext iContext, IResult iResult) throws RepositoryException {
+		//baseDao.f
+		return null;
+	}
+
+
+	@Override
+	protected IResult updateAfter(IContext iContext, IResult iResult) {
+		return null;
+	}
+
+
+	@Override
+	protected IResult deleteAfter(IContext iContext, IResult iResult) throws RepositoryException {
+		return null;
+	}
+
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IDParameters idp = (IDParameters) paramIContext.getParameters();
+			//EntityParameters mme=(MmMetamodel)entityParameters.getEntity();
+			String id = idp.getId();
+			//metaModelBasicDao.getById(mme.getId(),MmMetamodel.class);
+			MmMetamodel mme=(MmMetamodel) metaModelFolderDao.findById(id,MmMetamodel.class);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mme));
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询元模型失败!-dao");
+		}
+		return paramIContext.getResponse();
+	}
+
+
+
+	@Override
+	protected IResult getByIdAfter(IContext iContext, IResult iResult) throws RepositoryException {
+		return null;
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected IResult getByScopeAfter(IContext iContext, IResult iResult) throws RepositoryException {
+		return null;
+	}
+
+
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		try {
+			// TODO Auto-generated method stub
+
+				String id = (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+				IEntity mme= metaModelFolderDao.findById(id, MmFolder.class);
+
+				MmFolder submf = new MmFolder();
+				MmMetamodel mm = new MmMetamodel();
+				submf.setParentId(id);
+				mm.setMmPackageid(id);
+				List<IEntity> submflist = metaModelFolderDao.findByEntity(submf);
+				if(submflist!=null && submflist.size()>0){
+					paramIContext.getResponse().setResult(ResultFactory.getInstance().createFailedResult("非空文件夹不能删除"));
+					return paramIContext.getResponse();
+				}
+				List<IEntity> mmlist = metaModelFolderDao.findByEntity(mm);
+				if(mmlist!=null && mmlist.size()>0){
+					paramIContext.getResponse().setResult(ResultFactory.getInstance().createFailedResult("非空文件夹不能删除"));
+					return paramIContext.getResponse();
+				}
+
+				metaModelFolderDao.delete(mme);
+
+				paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult("文件夹删除成功"));
+				return paramIContext.getResponse();
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new RepositoryException("删除文件夹失败!-dao");
+			}
+	}
+
+	@Override
+	public IResponse findTree(IContext<IDParameters> iContext) throws RepositoryException {
+		try {
+			String id= (String) iContext.getParameter(ParameterKeys.ATT_ID);
+			MetaModelFolderView mmfv= new MetaModelFolderView();
+			MmFolder mmf = new MmFolder();
+			//MetaModelSubFolderView
+
+			if(id==null||"".equals(id)){
+				//mmf.setId(null);
+				//mmf.setParentId(null);
+				mmf.setFolderLevel("1");
+
+				List<IEntity> list= metaModelFolderDao.findByEntity(mmf);
+				List<MetaModelFolderView> folderlist=(List<MetaModelFolderView>)SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);
+				mmfv.setSubFolderList(folderlist);
+				iContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mmfv));
+
+			}else{
+				mmf.setParentId(id);
+				//mmf.setFolderLevel("1");
+				List<IEntity> list= metaModelFolderDao.findByEntity(mmf);
+				List<MetaModelFolderView> folderlist= null;
+
+				folderlist = (List<MetaModelFolderView>) SpringBeansUtils.copyPropertiesForList(MetaModelFolderView.class,list,null);
+
+				mmfv.setSubFolderList(folderlist);
+
+				MmMetamodel model=new MmMetamodel();
+				model.setMmPackageid(id);
+				List<IEntity> modellist=metaModelFolderDao.findByEntity(model);
+				List<MmMetamodel> models=AutoCopyList.getObjList(modellist, MmMetamodel.class);
+				List<MetaModelBasicView> submodellist=new ArrayList<MetaModelBasicView>();
+				for (MmMetamodel mmMetamodel : models) {
+					MetaModelBasicView mmbv = new MetaModelBasicView();
+					mmbv.setId(mmMetamodel.getId());
+					mmbv.setName(mmMetamodel.getMmName());
+					mmbv.setCode(mmMetamodel.getMmCode());
+					mmbv.setPackageid(mmMetamodel.getMmPackageid());
+					mmbv.setStatus(mmMetamodel.getStatus());
+					submodellist.add(mmbv);
+				}
+				//List<MetaModelBasicView> submodellist=(List<MetaModelBasicView>)SpringBeansUtils.copyPropertiesForList(MetaModelBasicView.class,modellist,null);
+				mmfv.setModelList(submodellist);
+
+				iContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mmfv));
+
+			}
+
+			return iContext.getResponse();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RepositoryException("查询文件夹失败");
+		}
+	}
+
+	@Override
+	public IResponse addModel(IContext<IView> iContext) throws RepositoryException {
+		try {
+			MetaModelFolderView view = (MetaModelFolderView) iContext.getParameter(ParameterKeys.ATT_VIEW);
+			String folderid = view.getId();
+			MmMetamodel mmMetamodel = new MmMetamodel();
+			mmMetamodel.setMmPackageid(folderid);
+			List<IEntity> list=metaModelFolderDao.findByEntity(mmMetamodel);
+			List<MmMetamodel> mmMetamodelList=AutoCopyList.getObjList(list,MmMetamodel.class);
+			if(mmMetamodelList!=null){
+				for (MmMetamodel model:mmMetamodelList) {
+					model.setMmPackageid("");
+					metaModelFolderDao.save(model);
+				}
+			}
+
+			List<MetaModelBasicView> iEntityList= view.getModelList();
+			//List<MmMetamodel> mmlist = SpringBeansUtils.copyPropertiesForList(MmMetamodel.class, iEntityList, null);
+			List<MmMetamodel> mmlist = new ArrayList<MmMetamodel>();
+			for(MetaModelBasicView mmbv : iEntityList) {
+				MmMetamodel mmodel = new MmMetamodel();
+				mmodel.setId(mmbv.getId());
+				mmodel.setMmPackageid(folderid);
+				mmlist.add(mmodel);
+			}
+			if(mmlist != null) {
+				for (MmMetamodel model : mmlist) {
+					MmMetamodel mmmdel= (MmMetamodel) metaModelFolderDao.findById(model.getId(), MmMetamodel.class);
+					mmmdel.setMmPackageid(folderid);
+					metaModelFolderDao.save(mmmdel);
+				}
+			}
+			iContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mmlist));
+			return iContext.getResponse();
+
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("向文件夹添加元模型失败");
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RepositoryException("向文件夹添加元模型失败");
+		}
+
+
+	}
+
+
+	public IResponse create(IContext context) throws RepositoryException {
+		try {
+			IDepBasicModel e = this.getModelParameter(context);
+
+			metaModelFolderDao.save(e.getData());
+			context.getResponse().regiestResultHandler(new IResultHandler() {
+				public IResult handle(IContext context, IResult result) throws IllegalAccessException, InvocationTargetException, RepositoryException {
+					if(CallBackCheckUtil.checkCallBackResult(context, result)) {
+						return (IResult)context.getResponse().getResult();
+					}
+					return result;
+				}
+			});
+			ContextUtil.setDefaultSuccessResponse(context);
+			return context.getResponse();
+		} catch (ModelException | DaoException var3) {
+			throw new RepositoryException("创建模型失败!", var3);
+		}
+	}
+
+
+
+
+
+}

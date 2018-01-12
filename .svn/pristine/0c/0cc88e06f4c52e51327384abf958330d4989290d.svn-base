@@ -1,0 +1,128 @@
+/**   
+ * @Title: MetaModelBussFactory.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月21日 下午7:02:45
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.init.data.phys;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelView;
+import com.gilight.dep.metamodel.init.data.MetaModelInitFactory;
+import com.gilight.dep.metamodel.init.data.common.MetaModelCommonFactory;
+
+/**
+ * 
+ * @ClassName: MetaModelPyhsComFactory
+ *             <p>
+ *             公共元模型工厂数据类 TODO<br>
+ * @author zps
+ * @date 2015年7月21日 下午7:02:50
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetaModelPyhsComFactory extends MetaModelInitFactory {
+	private static Map<String, MetaModelView> metaModel = new HashMap<String, MetaModelView>();
+
+	public static void main(String[] args) {
+		init();
+		System.out.println(metaModel.size());
+	}
+
+	public static Map<String, MetaModelView> getMetaModel() {
+		metaModel.clear();
+		init();
+		return metaModel;
+	}
+
+	private static void init() {
+		// TODO Auto-generated method stub
+		MetaModelPyhsComFactory.setDepTecMeta();
+		MetaModelPyhsComFactory.setDepTechObject();
+		MetaModelPyhsComFactory.setDepTechFeature();
+	}
+
+	private static void putCache(MetaModelView m) {
+		// TODO Auto-generated method stub
+		if (!metaModel.containsKey(m.getCode())) {
+			metaModel.put(m.getCode(), m);
+		} else {
+			System.out.println("---------" + (m.getCode()));
+		}
+	}
+
+	private static MetaModelView getCache(String code) {
+		// TODO Auto-generated method stub
+		if (metaModel.containsKey(code)) {
+			return metaModel.get(code);
+		}
+		return null;
+	}
+
+	
+
+	// 技术元数据 DepTecMeta 是 DepModelElement
+	public static String DepTecMeta = "DepTecMeta";
+
+	public static MetaModelView setDepTecMeta() {
+		String name = "技术元数据";
+		MetaModelView m = getCache(DepTecMeta);
+		if (m == null) {
+			m = getSystemMetaModel(DepTecMeta, name);
+		}
+		m.setIsabstract(true);
+
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCommonFactory.setDepModelElement());
+		m.setParentModelList(parentModelList);
+		// 设置依赖关系
+		putCache(m);
+		return m;
+	}
+
+	// 技术实体 DepTechObject 是 DepModelElement
+	public static String DepTechObject = "DepTechObject";
+	public static MetaModelView setDepTechObject() {
+		String name = "技术实体";
+		MetaModelView m = getCache(DepTechObject);
+		if (m == null) {
+			m = getSystemMetaModel(DepTechObject, name);
+		}
+		m.setIsabstract(true);
+
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCommonFactory.setDepModelElement());
+		m.setParentModelList(parentModelList);
+		// 设置依赖关系
+		putCache(m);
+		return m;
+	}
+	
+	// 技术实体属性 DepTechFeature 是 DepModelElement
+	public static String DepTechFeature = "DepTechFeature";
+	public static MetaModelView setDepTechFeature() {
+		String name = "技术实体属性";
+		MetaModelView m = getCache(DepTechFeature);
+		if (m == null) {
+			m = getSystemMetaModel(DepTechFeature, name);
+		}
+		m.setIsabstract(true);
+
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCommonFactory.setDepModelElement());
+		m.setParentModelList(parentModelList);
+		// 设置依赖关系
+		putCache(m);
+		return m;
+	}
+}

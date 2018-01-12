@@ -1,0 +1,43 @@
+{
+	"fields" : [{
+				"name" : "id",
+				"type" : "String",
+
+			}, {
+				"name" : "name",
+				"type" : "String",
+
+			}, {
+				"name" : "multiplicityid",
+				"type" : "String",
+				"required" : "true"
+			}, {
+				"name" : "fromMID",
+				"type" : "String"
+			}, {
+				"name" : "fromMName",
+				"type" : "String"
+			}, {
+				"name" : "toMID",
+				"type" : "String",
+
+			}, {
+				"name" : "toMName",
+				"type" : "String",
+
+			}, {
+				"name" : "remark",
+				"type" : "String",
+
+			}, {
+				"name" : "description",
+				"type" : "String",
+			}, {
+				"name" : "createTime",
+				"type" : "int"
+			}, {
+				"name" : "updateTime",
+				"type" : "int"
+			}]
+
+}

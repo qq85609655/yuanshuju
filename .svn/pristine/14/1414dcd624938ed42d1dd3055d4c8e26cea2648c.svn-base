@@ -1,0 +1,169 @@
+/**
+ * @Title: MetaModelDataTypeService.java
+ * <p>TODO
+ * @author zps
+ * @date 2015年7月24日 下午5:12:35
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd.
+ * @version V1.0
+ */
+package com.gilight.dep.metamodel.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.framework.util.common.UUIDGenerator;
+import com.gilight.dep.metadata.entity.MmEnum;
+import com.gilight.dep.metadata.entity.MmEnumValue;
+import com.gilight.dep.metadata.repository.IMetaModelDataTypeRepository;
+import com.gilight.dep.metadata.view.MetaModeDataTypeView;
+import com.gilight.dep.metadata.view.MetaModeSelectedView;
+import com.gilight.dep.metamodel.service.IMetaModelDataTypeService;
+
+public class MetaModelDataTypeServiceImpl implements IMetaModelDataTypeService {
+    private static final Logger logger = Logger
+            .getLogger(MetaModelDataTypeServiceImpl.class);
+
+    private IMetaModelDataTypeRepository metaModelDataTypeRepository;
+
+    public MetaModelDataTypeServiceImpl() {
+        super();
+    }
+
+    public IMetaModelDataTypeRepository getMetaModelDataTypeRepository() {
+        return metaModelDataTypeRepository;
+    }
+
+    public void setMetaModelDataTypeRepository(
+            IMetaModelDataTypeRepository metaModelDataTypeRepository) {
+        this.metaModelDataTypeRepository = metaModelDataTypeRepository;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public IResponse create(IContext context) throws ServiceException {
+        try {
+            MetaModeDataTypeView dataTypeView = (MetaModeDataTypeView) context
+                    .getParameter(ParameterKeys.ATT_VIEW);
+            MmEnum mme = (MmEnum) SpringBeansUtils.copyProperties(MmEnum.class,
+                    dataTypeView);
+            if (mme.getId() == null || "".equals(mme.getId())) {
+                mme.setId(UUIDGenerator.getUUID());
+            }
+            List<MmEnumValue> values = getEnumValue(dataTypeView);
+            mme.setValueList(values);
+            IContext contextRepository = ContextFactoryImpl.getInstance()
+                    .createContextWithEntity(context, mme);
+            return metaModelDataTypeRepository.create(contextRepository);
+        } catch (GilightException e) {
+            logger.error("添加数据类型失败!", e);
+            throw new ServiceException("添加数据类型失败!");
+        } catch (Exception e) {
+            logger.error("添加数据类型失败!", e);
+            throw new ServiceException("添加数据类型失败!");
+        }
+    }
+
+    private List<MmEnumValue> getEnumValue(MetaModeDataTypeView dataTypeView) {
+        List<MmEnumValue> values = new ArrayList<MmEnumValue>();
+        String emid = dataTypeView.getId();
+        List<MetaModeSelectedView> views = dataTypeView.getSelectedList();
+        if (views != null) {
+            for (MetaModeSelectedView view : views) {
+                MmEnumValue value = new MmEnumValue();
+                value.setId(UUIDGenerator.getUUID());
+                value.setEnumId(emid);
+                value.setEnumKey(view.getKey());
+                value.setEnumValue(view.getValue());
+                values.add(value);
+            }
+        }
+        return values;
+    }
+
+    @Override
+    public IResponse delete(IContext context) throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IResponse getById(IContext context) throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IResponse update(IContext context) throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IResponse getDataTypeSelectByDId(IContext<IDParameters> context)
+            throws ServiceException {
+        try {
+            // TODO Auto-generated method stub
+            // // 设置回调
+            // context.getResponse().regiestResultHandler(
+            // new IResultHandler<String>() {
+            // @SuppressWarnings({ "rawtypes", "unchecked" })
+            // @Override
+            // public IResult<Object> handle(IContext context,
+            // IResult result) throws Exception {
+            // metaModelDataTypeRepository
+            // .getDataTypeSelectByDId(context);
+            // List<MetaModeSelectedView> views = new
+            // ArrayList<MetaModeSelectedView>();
+            // List<MmEnumValue> values = (List<MmEnumValue>) result
+            // .getResult();
+            // if (values == null) {
+            // return ResultFactory.getInstance()
+            // .createSuccessModelAndView("查询数据类型成功",
+            // views);
+            // }
+            // for (MmEnumValue value : values) {
+            // MetaModeSelectedView view = new MetaModeSelectedView();
+            // view.setKey(value.getEnumKey());
+            // view.setValue(value.getEnumValue());
+            // }
+            // return ResultFactory.getInstance()
+            // .createSuccessModelAndView("查询数据类型成功",
+            // views);
+            // }
+            // });
+            // IResponse response =
+            IResponse response = metaModelDataTypeRepository
+                    .getDataTypeSelectByDId(context);
+            List<MetaModeSelectedView> views = new ArrayList<MetaModeSelectedView>();
+            IResult resResult = (IResult) response.getResult();
+            List<MmEnumValue> values = (List<MmEnumValue>) resResult.getResult();
+            if (values != null) {
+                for (MmEnumValue value : values) {
+                    MetaModeSelectedView view = new MetaModeSelectedView();
+                    view.setKey(value.getEnumKey());
+                    view.setValue(value.getEnumValue());
+                    views.add(view);
+                }
+            }
+            context.getResponse().setResult(
+                    ResultFactory.getInstance().createSuccessResult(views));
+            return context.getResponse();
+        } catch (Exception e) {
+            logger.error(e);
+            e.printStackTrace();
+            throw new ServiceException("查询数据类型失败", e);
+        }
+    }
+}

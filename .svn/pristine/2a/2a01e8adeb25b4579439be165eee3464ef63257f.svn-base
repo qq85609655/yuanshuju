@@ -1,0 +1,87 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.metadata.util.ListUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+/**
+ * 
+* @ClassName: DataAnalyzeView 
+* <p>元数据分析结果视图<br>
+* @author wzx
+* @date 2015年7月9日 下午3:50:24
+* @version V1.0
+* @since JDK 1.7
+ */
+public class DataAnalyzeView implements IView{
+	/**
+	 * 节点
+	 */
+	private List<AnalyseResultTreeNodeView> node;
+	/**
+	 * 线
+	 */
+	private List<AnalyseNodeLineView> lines;
+	/**
+	 * 分析类型
+	 */
+	private String analyzeType;
+	/**
+	 * svg图像串
+	 */
+	private List<String> convSvg;
+
+
+	public List<String> getConvSvg() {
+		return convSvg;
+	}
+
+	public String modelType;
+
+
+	public String getModelType() {
+		return modelType;
+	}
+
+	public void setModelType(String modelType) {
+		this.modelType = modelType;
+	}
+
+	public void setConvSvg(List<String> convSvg) {
+		this.convSvg = convSvg;
+	}
+
+	public void addSvg(String svg){
+		if(ListUtil.isEmpty(convSvg)){
+			convSvg=new ArrayList<>();
+		}
+		convSvg.add(svg);
+	}
+
+	public List<AnalyseResultTreeNodeView> getNode() {
+		return node;
+	}
+	public void setNode(List<AnalyseResultTreeNodeView> node) {
+		this.node = node;
+	}
+	public List<AnalyseNodeLineView> getLines() {
+		return lines;
+	}
+	public void setLines(List<AnalyseNodeLineView> lines) {
+		this.lines = lines;
+	}
+	public String getAnalyzeType() {
+		return analyzeType;
+	}
+	public void setAnalyzeType(String analyzeType) {
+		this.analyzeType = analyzeType;
+	}
+	@Override
+	public String toString() {
+		return "DataAnalyzeView [noed=" + node + ", lines=" + lines
+				+ ", analyzeType=" + analyzeType + "]";
+	}
+
+	
+}

@@ -1,0 +1,29 @@
+package com.gilight.dep.metadata.util;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+
+import com.gilight.dep.framework.core.model.entity.IEntity;
+
+public class AutoCopyList {
+
+	public AutoCopyList() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+	static synchronized public <T extends IEntity> List<T> getObjList(List<IEntity> list,Class<T> type){
+		if(list==null){
+			return null;
+		}
+		T[] objs = list.toArray((T[]) Array.newInstance(type, list.size()));
+		List<T> objlist=Arrays.asList(objs);
+		return objlist;
+		
+	}
+}

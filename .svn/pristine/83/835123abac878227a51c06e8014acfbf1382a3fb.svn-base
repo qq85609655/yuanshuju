@@ -1,0 +1,36 @@
+package com.gilight.dep.metadata.wsview;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+@XStreamAlias("metadatas")
+public class CodeItemsView {
+    @XStreamImplicit()
+    private List<CodeIetmView> codeIetmViewList;
+
+    public List<CodeIetmView> getCodeIetmViewList() {
+        return codeIetmViewList;
+    }
+
+    public void setCodeIetmViewList(List<CodeIetmView> codeIetmViewList) {
+        this.codeIetmViewList = codeIetmViewList;
+    }
+
+    public void addCodeItemView(CodeIetmView codeIetmView){
+        if (codeIetmViewList==null){
+            codeIetmViewList=new ArrayList<CodeIetmView>();
+        }
+        codeIetmViewList.add(codeIetmView);
+    }
+}

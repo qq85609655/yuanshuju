@@ -1,0 +1,104 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.ext.response.IDepView;
+
+import java.util.List;
+
+/**
+ * 
+ * @ClassName: MetaModelView
+ *             <p>
+ *             元模型对象；包含基本信息和属性信息集合；<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:13:54
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaModelFolderView extends MetaBaseView implements IDepView {
+
+    private String id;
+    private String name;
+    private String parentId;
+    private String namespace;
+    private String folderLevel;
+    private String displayOrder;
+    private Integer ishidden;
+    //private String parentid;
+    private List<MetaModelFolderView> subFolderList;
+
+	/**
+	 * 元模型
+	 */
+	private List<MetaModelBasicView> modelList;
+
+	public List<MetaModelBasicView> getModelList() {
+		return modelList;
+	}
+
+	public void setModelList(List<MetaModelBasicView> modelList) {
+		this.modelList = modelList;
+	}
+
+	public List<MetaModelFolderView> getSubFolderList() {
+		return subFolderList;
+	}
+	public void setSubFolderList(List<MetaModelFolderView> subFolderList) {
+		this.subFolderList = subFolderList;
+	}
+	
+//	public String getParentid() {
+//		return parentid;
+//	}
+//	public void setParentid(String parentid) {
+//		this.parentid = parentid;
+//	}
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getParentId() {
+		return parentId;
+	}
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+	public String getNamespace() {
+		return namespace;
+	}
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
+	}
+	public String getFolderLevel() {
+		return folderLevel;
+	}
+	public void setFolderLevel(String folderLevel) {
+		this.folderLevel = folderLevel;
+	}
+	public String getDisplayOrder() {
+		return displayOrder;
+	}
+	public void setDisplayOrder(String displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+	public Integer getIshidden() {
+		return ishidden;
+	}
+	public void setIshidden(Integer ishidden) {
+		this.ishidden = ishidden;
+	}
+    
+    
+    
+    
+	
+
+}

@@ -1,0 +1,23 @@
+/**   
+ * @Title: ExcelPOIParse.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月29日 上午8:58:01
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.gather.excel;
+
+/***
+ * 
+ * @ClassName: ExcelPOIParse
+ *             <p>poi解析excel操作
+ *             TODO<br>
+ * @author zps
+ * @date 2015年7月29日 上午9:07:09
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class ExcelPOIParse implements IExcelParse {
+
+}

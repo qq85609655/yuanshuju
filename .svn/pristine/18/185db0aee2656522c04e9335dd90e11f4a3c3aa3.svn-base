@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+	<class name="com.gilight.dep.metadata.entity.MmMetamodel" table="MM_METAMODEL">
+		<cache usage="read-write" />
+		<id name="id" type="string">
+			<column name="ID" length="64" />
+			<generator class="assigned" />
+		</id>
+		<property name="mmCode" type="string">
+			<column name="MM_CODE" length="256">
+			</column>
+		</property>
+		<property name="mmName" type="string">
+			<column name="MM_NAME" length="256">
+			</column>
+		</property>
+		<property name="mmPackageid" type="string">
+			<column name="MM_PACKAGEID" length="256">
+			</column>
+		</property>
+		<property name="isabstract" type="integer">
+			<column name="ISABSTRACT" precision="22" scale="0" />
+		</property>
+		<property name="graphPig" type="string">
+			<column name="GRAPH_PIG" length="256">
+			</column>
+		</property>
+		<property name="status" type="integer">
+			<column name="STATUS" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="sysver" type="string">
+			<column name="SYSVER" length="256">
+			</column>
+		</property>
+		<property name="userver" type="string">
+			<column name="USERVER" length="256">
+			</column>
+		</property>
+		<property name="isuse" type="integer">
+			<column name="ISUSE" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="issys" type="integer">
+			<column name="ISSYS" precision="22" scale="0">
+			</column>
+		</property>
+		<property name="remark" type="string">
+			<column name="REMARK" length="512">
+			</column>
+		</property>
+	</class>
+</hibernate-mapping>

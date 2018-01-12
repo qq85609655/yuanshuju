@@ -1,0 +1,17 @@
+{
+    "fields": [
+        {
+            "name": "id",
+            "type": "String"
+        },
+        {
+            "name": "mdName",
+            "type": "String"
+        }
+    ],
+    "validations" : [],
+    "api":{
+	    "read"    : "",
+	    "update"  : "",
+	}
+}

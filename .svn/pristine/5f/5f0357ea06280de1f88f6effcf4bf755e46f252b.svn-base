@@ -1,0 +1,24 @@
+package com.gilight.dep.metadata.web.request;
+/**
+ * 
+* @ClassName: MetamodelRequestData 
+* <p>TODO<br>
+* @author Rao JunJun
+* @date 2015-7-20 下午3:22:09
+* @version V1.0
+* @since JDK 1.6
+ */
+public class MetamodelRequestData extends BaseRequestData {
+
+	private String id;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}   
+
+
+}

@@ -1,0 +1,45 @@
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+
+import java.util.List;
+
+public interface IMetaModelBasicRepository extends IMetaModelRepository {
+    @SuppressWarnings("unchecked")
+    IEntity getById(String id) throws RepositoryException;
+
+    /**
+     * 根据mmid查属性
+     * @throws RepositoryException
+     */
+    public List<IEntity> findAttribByMmid(String mmid) throws RepositoryException;
+
+    /**
+     * 发布元模型
+     * @param paramIContext
+     * @return
+     * @throws RepositoryException
+     */
+    public IResponse publishVer(IContext paramIContext) throws RepositoryException, DaoException;
+
+
+    /**
+     * 验证元模型是否发布
+     * @param
+     * @return
+     * @throws RepositoryException
+     */
+    boolean checkPublishVer(String id) throws RepositoryException, DaoException;
+
+	/**
+     * 撤销元模型
+     * @param paramIContext
+     * @return
+     * @throws RepositoryException
+     */
+    public IResponse repealPublish(IContext paramIContext) throws RepositoryException, DaoException;
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gilight.dep.metadata.entity.MdAttributeReject" table="MD_ATTRIBUTE_REJECT" >
+        <id name="id" type="string">
+            <column name="ID" length="64" />
+            <generator class="assigned" />
+        </id>
+        <property name="mmAttId" type="string">
+            <column name="MM_ATT_ID" length="64">
+            </column>
+        </property>
+        <property name="mmAttName" type="string">
+            <column name="MM_ATT_NAME" length="256">
+            </column>
+        </property>
+        <property name="mdId" type="string">
+            <column name="MD_ID" length="64">
+            </column>
+        </property>
+        <property name="valUe" type="string">
+            <column name="VAlUE" length="512">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

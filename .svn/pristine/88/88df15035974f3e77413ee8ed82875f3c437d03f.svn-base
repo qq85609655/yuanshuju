@@ -1,0 +1,53 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class test {
+
+	public test() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		AnalyseResultTreeNodeView anv1 =new AnalyseResultTreeNodeView();
+		AnalyseResultTreeNodeView anv2 =new AnalyseResultTreeNodeView();
+		AnalyseResultTreeNodeView anv3 =new AnalyseResultTreeNodeView();
+		
+		List<AnalyseResultTreeNodeView> list1 = new ArrayList<AnalyseResultTreeNodeView>();
+		List<AnalyseResultTreeNodeView> list2 = new ArrayList<AnalyseResultTreeNodeView>();
+		List<AnalyseResultTreeNodeView> list3 = new ArrayList<AnalyseResultTreeNodeView>();
+		
+		
+		Map<String,List> map1 = new HashMap<String,List>();
+		anv1.setName("11111");
+		anv2.setName("2222");
+		anv3.setName("3333");
+		
+		
+		
+		//anv1.setChildren(list1);
+		//anv2.setChildren(list2);
+		
+		list3.add(anv1);
+		list3.add(anv2);
+		list3.add(anv3);
+		
+		AnalyseResultTreeNodeView anv22=list3.get(1);
+		AnalyseResultTreeNodeView anv33=list3.get(2);
+		//list1.add(anv2);
+		//list2.add(anv3);
+		//anv33.setName("ddddd");
+		
+		
+		map1.put("1", list1);
+		map1.put("2", list2);
+		
+		
+		
+	}
+	
+}

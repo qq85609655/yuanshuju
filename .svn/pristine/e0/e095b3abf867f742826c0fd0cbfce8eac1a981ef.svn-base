@@ -1,0 +1,13 @@
+package com.gilight.dep.metadata.enums;
+
+public class DepeSourceParam {
+
+	public DepeSourceParam() {
+		// TODO Auto-generated constructor stub
+	}
+	public static final String source= "Dep-FeatureMap-Feature-source";
+	public static final String target= "Dep-FeatureMap-Feature-target";
+	
+	public static final String depsource= "Dep-Transformation-DataObjectSet-source";
+	public static final String deptarget= "Dep-Transformation-DataObjectSet-target";
+}

@@ -1,0 +1,56 @@
+/**   
+ * @Title: MetaModelBussFactory.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月21日 下午7:02:45
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.init.data.phys;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.gilight.dep.metadata.view.MetaModelView;
+import com.gilight.dep.metamodel.init.data.MetaModelInitFactory;
+
+/**
+ * 
+ * @ClassName: MetaModelBussFactory
+ *             <p>
+ *             公共元模型工厂数据类 TODO<br>
+ * @author zps
+ * @date 2015年7月21日 下午7:02:50
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public class MetaModelPhysFactory extends MetaModelInitFactory {
+
+	private static Map<String, MetaModelView> metaModel = new HashMap<String, MetaModelView>();
+
+	public static void main(String[] args) {
+		metaModel.clear();
+		init();
+		System.out.println("");
+		System.out.println(metaModel);
+	}
+
+	public static Map<String, MetaModelView> getMetaModel() {
+		metaModel.clear();
+		init();
+		return metaModel;
+	}
+
+	private static void init() {
+		Map<String, MetaModelView> map = MetaModelPyhsComFactory.getMetaModel();
+		putCache(map);
+		Map<String, MetaModelView> map2 = MetaModelPyhsMapFactory.getMetaModel();
+		putCache(map2);
+		Map<String, MetaModelView> map3 = MetaModelPyhsDBFactory.getMetaModel();
+		putCache(map3);
+	}
+
+	private static void putCache(Map<String, MetaModelView> map) {
+		metaModel.putAll(map);
+	}
+}

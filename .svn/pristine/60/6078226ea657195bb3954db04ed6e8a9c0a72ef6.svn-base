@@ -1,0 +1,1079 @@
+/**   
+ * @Title: GatherController.java  
+ * @Description: TODO 
+ * @author hww   
+ * @date 2015年7月29日 下午4:34:54
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.web.controller;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.ModelAndViewResult;
+import com.gilight.dep.framework.core.context.response.view.PageView;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.ControllerException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.util.common.UUIDGenerator;
+import com.gilight.dep.metadata.enmu.MetaDataGatherAdaptor;
+import com.gilight.dep.metadata.entity.BatchIdEntity;
+import com.gilight.dep.metadata.scope.GatherAuditedMetaDataScope;
+import com.gilight.dep.metadata.scope.GatherJobScope;
+import com.gilight.dep.metadata.scope.GatherMetaDataScope;
+import com.gilight.dep.metadata.scope.MetaHbiernateScope;
+import com.gilight.dep.metadata.service.*;
+import com.gilight.dep.metadata.view.*;
+import com.gilight.dep.metadata.web.request.BatchAuditData;
+import com.gilight.dep.metadata.web.request.GatherRequestData;
+import com.gilight.dep.metadata.web.response.ResultCode;
+import org.apache.commons.io.FileUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RequestMapping("/gather")
+public class GatherController extends MetadataBaseController {
+	/**
+	 * 采集配置（数据源）的服务层
+	 */
+	private IGatherDataScourceService gatherDataScourceService = null;
+	private IGatherAdaptorService adaptorService = null;
+	private IGatherJobService gatherJobService = null;
+	private IGatherTempleService gatherTempleService = null;
+	private IMetaDataQueryService metaDataQueryService = null;
+
+	public IGatherAdaptorService getAdaptorService() {
+		return adaptorService;
+	}
+
+	public void setAdaptorService(IGatherAdaptorService adaptorService) {
+		this.adaptorService = adaptorService;
+	}
+
+	public IGatherDataScourceService getGatherDataScourceService() {
+		return gatherDataScourceService;
+	}
+
+	public void setGatherDataScourceService(
+			IGatherDataScourceService gatherDataScourceService) {
+		this.gatherDataScourceService = gatherDataScourceService;
+	}
+
+	public IGatherJobService getGatherJobService() {
+		return gatherJobService;
+	}
+
+	public void setGatherJobService(IGatherJobService gatherJobService) {
+		this.gatherJobService = gatherJobService;
+	}
+
+	public IGatherTempleService getGatherTempleService() {
+		return gatherTempleService;
+	}
+
+	public void setGatherTempleService(IGatherTempleService gatherTempleService) {
+		this.gatherTempleService = gatherTempleService;
+	}
+
+	public IMetaDataQueryService getMetaDataQueryService() {
+		return metaDataQueryService;
+	}
+
+	public void setMetaDataQueryService(IMetaDataQueryService metaDataQueryService) {
+		this.metaDataQueryService = metaDataQueryService;
+	}
+
+	@RequestMapping(value = "/findMenuNodes", method = RequestMethod.GET)
+	public @ResponseBody
+	Object findMenuNodes() throws Exception {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+
+		Map<String, Object> adapterNode = new HashMap<String, Object>();
+		adapterNode.put("id", "1");
+		adapterNode.put("text", "适配器（采集方式）");
+		adapterNode.put("name", "适配器");
+		adapterNode.put("leaf", false);
+		adapterNode.put("nodeType", "adapterRoot");
+		adapterNode.put("children", new ArrayList<Map<String, Object>>());
+
+		Map<String, Object> auditNode = new HashMap<String, Object>();
+		auditNode.put("id", "2");
+		auditNode.put("text", "元数据审核");
+		auditNode.put("name", "审核");
+		auditNode.put("leaf", true);
+		auditNode.put("nodeType", "auditRoot");
+		auditNode.put("children", new ArrayList<Map<String, Object>>());
+
+		list.add(adapterNode);
+		list.add(auditNode);
+
+		return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS,
+				"获取树形菜单成功", list);
+	}
+
+	/**
+	 * 获取所有适配器
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月29日 下午8:03:46
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/findAdapters", method = RequestMethod.GET)
+	public @ResponseBody
+	Object findAdapters(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithParams(null);
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<List<?>>() {
+					@Override
+					public IResult<List<Map<String, Object>>> handle(
+							IContext context, IResult<List<?>> result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+						List<Map<String, Object>> adapterlist = new ArrayList<Map<String, Object>>();
+						List<MetaDataGatherAdaptor> resultList = (List<MetaDataGatherAdaptor>) result
+								.getResult();
+						for (MetaDataGatherAdaptor adaptor : resultList) {
+							Map<String, Object> map = new HashMap<String, Object>();
+							map.put("id", adaptor.getValue());
+							map.put("name", adaptor.getName());
+							map.put("text", adaptor.getName());
+							map.put("leaf", false);
+							map.put("expanded", false);
+							map.put("nodeType", "adapter");
+							map.put("parentId", "1");
+							adapterlist.add(map);
+						}
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS, "获取所有适配器成功",
+								adapterlist);
+					}
+				});
+		adaptorService.getAllAdaptor(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 根据适配器Id获取配置及任务
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月29日 下午8:07:38
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/findByAdapterId", method = RequestMethod.GET)
+	public @ResponseBody
+	Object findByAdapterId(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String adapter = gatherRequestData.getId(); // 适配器的id
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithID(adapter);
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<List<GatherDSBaseView>>() {
+					@Override
+					public IResult<List<Map<String, Object>>> handle(
+							IContext context,
+							IResult<List<GatherDSBaseView>> result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+
+						List<Map<String, Object>> dsList = new ArrayList<Map<String, Object>>();
+						List<GatherDSBaseView> list = result.getResult();
+
+						for (int i = 0; i < list.size(); i++) {
+							GatherDSBaseView view = list.get(i);
+							Map<String, Object> map = new HashMap<String, Object>();
+							map.put("id", view.getId());
+							map.put("text", view.getDbsName());
+							map.put("parentId", view.getAdapter());
+							map.put("dataPath", view.getDataPath());
+							map.put("dataPathName", view.getDataPathName());
+							map.put("remark", view.getRemark());
+							map.put("dbsParam", view.getDbsParam());
+							map.put("leaf", false);
+							map.put("nodeType", "dataSource");
+							map.put("expanded", false);
+
+							List<Map<String, Object>> taskList = new ArrayList<Map<String, Object>>();
+							List<GatherJobBasicView> jobList = view
+									.getJobList();
+
+							for (int j = 0; j < jobList.size(); j++) {
+								GatherJobBasicView jobView = jobList.get(j);
+								Map<String, Object> jobMap = new HashMap<String, Object>();
+								jobMap.put("id", jobView.getId());
+								jobMap.put("text", jobView.getJobName());
+								jobMap.put("parentId", jobView.getDatasource());
+								jobMap.put("jobType", jobView.getJobType());
+								jobMap.put("dbpolicy", jobView.getDbpolicy());
+								jobMap.put("remark", jobView.getRemark());
+								jobMap.put("status", jobView.getStatus());
+								jobMap.put("updateDate",
+										jobView.getUpdateDate());
+								jobMap.put("leaf", false);
+								jobMap.put("nodeType", "task");
+								jobMap.put("expanded", false);
+								taskList.add(jobMap);
+							}
+							map.put("children", taskList);
+							dsList.add(map);
+						}
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS, "获取配置及任务成功",
+								dsList);
+					}
+				});
+		this.gatherDataScourceService.getGatherDBByAdaptor(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 根据采集配置（数据源）id获取任务
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月30日 下午1:37:04
+	 * @version V1.0
+	 */
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value = "/findTasksByDsId", method = RequestMethod.GET)
+	public @ResponseBody
+	Object findTasksByDsId(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String dsid = gatherRequestData.getDataSource(); // 数据源id
+		GatherJobScope scope = new GatherJobScope();
+		scope.setDatasource(dsid);
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithParams(scope);
+		context.getResponse().regiestResultHandler(new IResultHandler() {
+			@Override
+			public IResult handle(IContext context, IResult result)
+					throws IllegalAccessException, InvocationTargetException {
+				List resObje = (List) result.getResult();
+				List<Map<String, Object>> dsList = new ArrayList<Map<String, Object>>();
+				for (int i = 0; i < resObje.size(); i++) {
+					GatherJobBasicView view = (GatherJobBasicView) resObje
+							.get(i);
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("id", view.getId());
+					map.put("name", view.getJobName());
+					dsList.add(map);
+				}
+				return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS,
+						"获取所有采集任务成功", dsList);
+			}
+		});
+		this.getGatherJobService().getByScope(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 根据任务Id获取详情信息（任务统计）
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月29日 下午8:08:55
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/findDetailByTaskId", method = RequestMethod.GET)
+	public @ResponseBody
+	Object findDetailByTaskId(
+			@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String id = gatherRequestData.getId();
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithID(id);
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<List<GatherLogBasicView>>() {
+					@Override
+					public IResult<List<Map<String, Object>>> handle(
+							IContext context,
+							IResult<List<GatherLogBasicView>> result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+						List<GatherLogBasicView> resultList = (List<GatherLogBasicView>) result
+								.getResult();
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS, "获取任务执行详情信息成功",
+								resultList);
+					}
+				});
+		this.gatherJobService.getJobExcuteDetail(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 根据任务批次获取这次所导入的所有元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月29日 下午8:09:54
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/findMDsByTaskBathId", method = RequestMethod.GET)
+	public @ResponseBody
+	Object findMDsByTaskBathId(
+			@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String nameLike = gatherRequestData.getMdNameLike() != null ? gatherRequestData
+				.getMdNameLike() : "";
+		String mdNameLike = java.net.URLDecoder.decode(nameLike, "UTF-8");
+		GatherMetaDataScope scope = new GatherMetaDataScope();
+		scope.setJobTaskId(gatherRequestData.getId());
+		scope.setMdNameLike(mdNameLike);
+		scope.setMmId(gatherRequestData.getMmId());
+		scope.setLimit(gatherRequestData.getLimit());
+		scope.setPage(gatherRequestData.getPage());
+		scope.setDataPath(gatherRequestData.getDataPath());
+		
+		
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithParams(scope);
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<List<?>>() {
+					@Override
+					public IResult handle(IContext context, IResult result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+						// List<MetaDataBasicView> resultList =
+						// (List<MetaDataBasicView>) result.getResult();
+						PageView view = (PageView) result.getResult();
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS,
+								"获取本批次任务导入的所有元数据成功", view);
+					}
+				});
+		this.gatherJobService.getJobGatherMetaData(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 添加采集配置（数据源）
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月29日 下午8:15:28
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/ds/add", method = RequestMethod.POST)
+	public @ResponseBody
+	Object addDs(@RequestBody GatherDataSourceBasicView view) throws Exception {
+		try {
+			// 校验参数
+			this.checkViewParameter(view);
+			// 构造上下文（异步响应）
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithView(view);
+			// 调用服务层的方法获取响应
+			IResponse response = this.gatherDataScourceService.create(context);
+			// 返回结果
+			return response.getResult();
+		} catch (ServiceException e) {
+			e.printStackTrace();
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 修改采集配置（数据源）
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月29日 下午8:16:11
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/ds/edit", method = RequestMethod.POST)
+	public @ResponseBody
+	Object editDs(@RequestBody GatherDataSourceBasicView view) throws Exception {
+		try {
+			// 校验参数
+			this.checkViewParameter(view);
+			// 构造上下文（异步响应）
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithView(view);
+			// 调用服务层的方法获取响应
+			IResponse response = this.gatherDataScourceService.update(context);
+			// 返回结果
+			return response.getResult();
+		} catch (ServiceException e) {
+			e.printStackTrace();
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 删除采集配置（数据源）
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月29日 下午8:16:48
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/ds/delete", method = RequestMethod.POST)
+	public @ResponseBody
+	Object deteleDs(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String id = gatherRequestData.getId();
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithID(id);
+		IResponse response = this.gatherDataScourceService.delete(context);
+		return response.getResult();
+	}
+
+	/**
+	 * 查询所有采集配置（数据源）
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年8月24日 下午14:16:48
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/ds/queryAll", method = RequestMethod.GET)
+	public @ResponseBody
+	Object queryAllDs(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithID(null);
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<List<GatherDSBaseView>>() {
+					@Override
+					public IResult<List<Map<String, Object>>> handle(
+							IContext context,
+							IResult<List<GatherDSBaseView>> result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+
+						List<Map<String, Object>> dsList = new ArrayList<Map<String, Object>>();
+						List<GatherDSBaseView> list = result.getResult();
+
+						for (int i = 0; i < list.size(); i++) {
+							GatherDSBaseView view = list.get(i);
+							Map<String, Object> map = new HashMap<String, Object>();
+							map.put("id", view.getId());
+							map.put("name", view.getDbsName());
+							dsList.add(map);
+						}
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS, "获取所有数据源成功",
+								dsList);
+					}
+				});
+		this.gatherDataScourceService.getGatherDBByAdaptor(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 添加任务
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月30日 上午10:21:42
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/task/add", method = RequestMethod.POST)
+	public @ResponseBody
+	Object addTask(@RequestBody GatherJobBasicView view) throws Exception {
+		try {
+			// 校验参数
+			this.checkViewParameter(view);
+			// 构造上下文（异步响应）
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithView(view);
+			// 调用服务层的方法获取响应
+			IResponse response = this.gatherJobService.create(context);
+			// 返回结果
+			return response.getResult();
+		} catch (ServiceException e) {
+			e.printStackTrace();
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 修改任务
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月30日 上午10:22:41
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/task/edit", method = RequestMethod.POST)
+	public @ResponseBody
+	Object editTask(@RequestBody GatherJobBasicView view) throws Exception {
+		try {
+			// 校验参数
+			this.checkViewParameter(view);
+			// 构造上下文（异步响应）
+			IContext context = ContextFactoryImpl.getInstance()
+					.createDifferResponseContextWithView(view);
+			// 调用服务层的方法获取响应
+			IResponse response = this.gatherJobService.update(context);
+			// 返回结果
+			return response.getResult();
+		} catch (ServiceException e) {
+			e.printStackTrace();
+			throw new ControllerException(e);
+		} catch (Exception e) {
+			throw new ControllerException(e);
+		}
+	}
+
+	/**
+	 * 删除任务
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月30日 上午10:23:28
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/task/delete", method = RequestMethod.POST)
+	public @ResponseBody
+	Object deleteTask(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String id = gatherRequestData.getId();
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithID(id);
+		IResponse response = this.gatherJobService.delete(context);
+		return response.getResult();
+	}
+
+	/**
+	 * 批量删除任务
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月30日 上午10:31:20
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/task/deleteTaskBatch", method = RequestMethod.POST)
+	public @ResponseBody
+	Object deleteTaskBatch(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String id = gatherRequestData.getId();
+		MetaHbiernateScope scope = new MetaHbiernateScope();
+		// TODO
+		return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS,
+				"批量删除任务成功", id);
+	}
+
+	/**
+	 * 执行任务
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月30日 上午10:32:36
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/task/execute", method = RequestMethod.POST)
+	public @ResponseBody
+	Object execute(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String id = gatherRequestData.getId();
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithID(id);
+		IResponse response = this.gatherJobService.excute(context);
+		return response.getResult();
+	}
+
+	/**
+	 * 查询所有模板
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月30日 上午10:35:27
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/template/queryAll", method = RequestMethod.GET)
+	public @ResponseBody
+	Object queryAll(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithParams(null);
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<List<GatherExcelTempleteView>>() {
+					@Override
+					public IResult<List<Map<String, Object>>> handle(
+							IContext context,
+							IResult<List<GatherExcelTempleteView>> result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+						List<GatherExcelTempleteView> resultList = (List<GatherExcelTempleteView>) result
+								.getResult();
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS, "查询所有模板成功",
+								resultList);
+					}
+				});
+		this.gatherTempleService.getDefaultTemple(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 查询已经采集的未审核的元数据（第一层级）
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月30日 上午10:36:23
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/queryMDs", method = RequestMethod.GET)
+	public @ResponseBody
+	Object queryMDs(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String nameLike = gatherRequestData.getMdNameLike() != null ? gatherRequestData
+				.getMdNameLike() : "";
+		String mdNameLike = java.net.URLDecoder.decode(nameLike, "UTF-8");
+		GatherMetaDataScope scope = new GatherMetaDataScope();
+		scope.setMdNameLike(mdNameLike);
+		scope.setMmId(gatherRequestData.getMmId());
+		scope.setDataSource(gatherRequestData.getDataSource());
+		scope.setJobId(gatherRequestData.getJobId());
+		scope.setLimit(gatherRequestData.getLimit());
+		scope.setPage(gatherRequestData.getPage());
+		scope.setDataPath(gatherRequestData.getDataPath());
+		IContext context = ContextFactoryImpl.getInstance()
+				.createContextWithParams(scope);
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<List<?>>() {
+					@Override
+					public IResult handle(IContext context, IResult result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+						PageView view = (PageView) result.getResult();
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS,
+								"获取本批次任务导入的所有元数据成功", view);
+					}
+				});
+		this.gatherJobService.getAuditingGatherMetaData(context);
+		return context.getResponse().getResult();
+	}
+	
+	/**
+	 * 查询已经采集的未审核的元数据（第二层级或第三层级）
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年10月13日 上午10:36:23
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/querySubMDs", method = RequestMethod.GET)
+	public @ResponseBody
+	Object querySubMDs(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+				String id = gatherRequestData.getId();
+				IContext context = ContextFactoryImpl.getInstance()
+						.createDifferResponseContextWithID(id);
+				context.getResponse().regiestResultHandler(
+						new IResultHandler<List<?>>() {
+							@Override
+							public IResult handle(IContext context, IResult result)
+									throws IllegalAccessException,
+									InvocationTargetException {
+								List<MetaDataBasicView> viewlist = (List<MetaDataBasicView>)result.getResult();
+								return new ModelAndViewResult(
+										ResultCode.RESULT_CODE_SUCCESS,
+										"获取下一层级的元数据成功", viewlist);
+							}
+						});
+				this.gatherJobService.getJobGatherSubMetaData(context);
+				return context.getResponse().getResult();
+	}
+
+	/**
+	 * 根据元数据id查询其基本信息以及属性信息
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年8月26日 上午10:36:23
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getMDById", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getMDById(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String id = gatherRequestData.getId();
+		IContext context = ContextFactoryImpl.getInstance()
+				.createContextWithID(id);
+		IResponse response = this.getGatherJobService().getGatherMetaDataById(
+				context);
+		return response.getResult();
+	}
+	
+	/**
+	 * 根据code查询已经审核过的元数据基本信息以及属性信息
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年11月6日 上午10:36:23
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getMDByCode", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getMDByCode(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String code = gatherRequestData.getCode();
+		GatherAuditedMetaDataScope scope = new GatherAuditedMetaDataScope();
+		scope.setMdCode(code);
+		IContext context = ContextFactoryImpl.getInstance()
+				.createContextWithParams(scope);
+		System.out.println(this.metaDataQueryService);
+		IResponse response = this.metaDataQueryService.getByScope(context);
+		return response.getResult();
+	}
+	
+	/**
+	 * 根据code查询未审核的临时表元数据信息
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年11月6日 上午10:36:23
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getMDByCodeImp", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getMDByCodeImp(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		String code = gatherRequestData.getCode();
+		GatherMetaDataScope scope = new GatherMetaDataScope();
+		scope.setMdCode(code);
+		IContext context = ContextFactoryImpl.getInstance()
+				.createContextWithParams(scope);
+		System.out.println(this.metaDataQueryService);
+		IResponse response = this.metaDataQueryService.getByScopeImp(context);
+		return response.getResult();
+	}
+
+	/**
+	 * 获取数据源schemas
+	 * <p>
+	 * <br>
+	 * 
+	 * @param gatherRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年7月30日 上午10:37:39
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/ds/getSchemas", method = RequestMethod.POST)
+	public @ResponseBody
+	Object getSchemas(@ModelAttribute DBConnectionInfo DBConnectionInfo)
+			throws Exception {
+
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithView(DBConnectionInfo);
+
+		context.getResponse().regiestResultHandler(
+				new IResultHandler<List<?>>() {
+					@Override
+					public IResult<List<Map<String, Object>>> handle(
+							IContext context, IResult<List<?>> result)
+							throws IllegalAccessException,
+							InvocationTargetException {
+						List<String> resultList = (List<String>) result
+								.getResult();
+						List<Map<String, Object>> schemaList = new ArrayList<Map<String, Object>>();
+						for (String schema : resultList) {
+							Map<String, Object> map = new HashMap<String, Object>();
+							map.put("id", schema);
+							map.put("name", schema);
+							schemaList.add(map);
+						}
+						return new ModelAndViewResult(
+								ResultCode.RESULT_CODE_SUCCESS,
+								"获取元数据数据库schema成功", schemaList);
+					}
+				});
+
+		this.gatherDataScourceService.getDBSchames(context);
+		return context.getResponse().getResult();
+	}
+
+	/**
+	 * 审核元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年8月10日 下午4:10:39
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/auditingMD", method = RequestMethod.POST)
+	public @ResponseBody
+	Object auditingMD(@ModelAttribute GatherRequestData gatherRequestData)
+			throws Exception {
+		boolean flag = gatherRequestData.isFlag();
+		List<Object> ids = gatherRequestData.getIds();
+		String comment = gatherRequestData.getRemark();
+		MetaDataBatchAuditView view = new MetaDataBatchAuditView();
+		view.setComment(comment);
+		view.setMdIdList(ids);
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithView(view);
+		if (flag) { // 批量审核通过
+			this.gatherJobService.approveAgree(context);
+		} else { // 批量审核都不通过
+			this.gatherJobService.approveReject(context);
+
+		}
+		return context.getResponse().getResult();
+
+	}
+
+	/**
+	 * 批量审核元数据
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年8月10日 下午4:10:39
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/batchAuditingMD", method = RequestMethod.POST)
+	public @ResponseBody
+	Object batchAuditingMD(@RequestBody GatherRequestData gatherRequestData)
+			throws Exception {
+		BatchAuditData batchAuditData = gatherRequestData.getBatchAuditData();
+		boolean flag = batchAuditData.isFlag();
+		String comment = batchAuditData.getRemark();
+		List<BatchIdEntity> idList = (List<BatchIdEntity>)batchAuditData.getIds();
+		
+		MetaDataBatchAuditView view = new MetaDataBatchAuditView();
+		view.setComment(comment);
+		List<Object> mdIdList = new ArrayList<Object>();
+		for(int i=0; i<idList.size(); i++) {
+			BatchIdEntity idObj = (BatchIdEntity)idList.get(i);
+			mdIdList.add(idObj);
+		}
+		view.setMdIdList(mdIdList);
+		
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithView(view);
+		if (flag) { // 批量审核通过
+			this.gatherJobService.approveAgree(context);
+		} else { // 批量审核都不通过
+			this.gatherJobService.approveReject(context);
+
+		}
+		return context.getResponse().getResult();
+
+	}
+
+	/**
+	 * 导入元数据采集的Excel文件
+	 * <p>
+	 * <br>
+	 * 
+	 * @param metadataRequestData
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年8月10日 下午4:10:39
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/excel/import", method = RequestMethod.POST)
+	public @ResponseBody
+	Object importExcelFile(@RequestParam("file") MultipartFile file,
+			@RequestParam("jobId") String jobId) throws Exception {
+		GatherJobFileView view = new GatherJobFileView();
+		view.setJobId(jobId);
+		view.setFile(file);
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithView(view);
+		IResponse response = this.gatherJobService.upLoad(context);
+		return response.getResult();
+	}
+
+	/**
+	 * 导入元数据采集的csv文件
+	 * <p>
+	 * <br>
+	 *
+	 * @param
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年8月10日 下午4:10:39
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/csv/import", method = RequestMethod.POST)
+	public @ResponseBody
+	Object importCsvFile(@RequestParam("file") MultipartFile file,
+						   @RequestParam("id") String id,@RequestParam("mmId") String mmid) throws Exception {
+		GatherJobFileView view = new GatherJobFileView();
+		//view.setJobId(jobId);
+		view.setJobId(UUIDGenerator.getUUID());
+		view.setFile(file);
+		view.setMdId(id);
+		view.setMmId(mmid);
+
+		IContext context = ContextFactoryImpl.getInstance()
+				.createDifferResponseContextWithView(view);
+
+		IResponse response = this.gatherJobService.upLoadImpCsv(context);
+		return response.getResult();
+	}
+
+	/**
+	 * 采集配置节点展开请求采集任务的空方法
+	 * <p>
+	 * <br>
+	 * @param 
+	 * @return
+	 * @throws Exception
+	 * @author hww
+	 * @date 2015年8月20日 下午4:10:39
+	 * @version V1.0
+	 */
+	@RequestMapping(value = "/getTasksByDsId", method = RequestMethod.GET)
+	public @ResponseBody
+	Object getTasksByDsId() throws Exception {
+		return new ModelAndViewResult(ResultCode.RESULT_CODE_SUCCESS,
+				"获取所有采集任务成功", new ArrayList());
+	}
+
+
+	@RequestMapping(value = "/csv/downLoadMmModelCsv", method = RequestMethod.GET)
+	public void downLoadMmModelCsv(@RequestParam("mmId") String mmid,
+			HttpServletRequest request, HttpServletResponse response) throws IOException {
+		//String path="D:\\workspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\springMVC\\WEB-INF\\upload\\图片10（定价后）.xlsx";
+		//
+		String path=this.getGatherJobService().downLoadMmModelCsv(mmid);
+		File file=new File(path);
+//		HttpHeaders headers = new HttpHeaders();
+//		//String fileName=new String("你好.xlsx".getBytes("UTF-8"),"iso-8859-1");//为了解决中文名称乱码问题
+//		String fileName=mmid+".csv";
+//		headers.setContentDispositionFormData("attachment", fileName);
+//		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		byte[] fileContent = FileUtils.readFileToByteArray(file);
+		response.setContentType("application/x-msdownload;charset=utf-8");
+		response.reset();
+		// 设置response的Header
+		response.addHeader("Content-Disposition", "attachment;filename="
+				+ mmid+".csv");
+		response.addHeader("Content-Length", "" + fileContent.length);
+
+		// 以流的形式下载文件
+
+		OutputStream toClient = new BufferedOutputStream(
+				response.getOutputStream());
+		toClient.write(fileContent);
+		toClient.flush();
+		toClient.close();
+		
+//		return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),
+//				headers, HttpStatus.CREATED);
+
+
+	}
+}

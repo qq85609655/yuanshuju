@@ -1,0 +1,21 @@
+/**   
+* @Title: IGatherLog.java 
+* <p>TODO 
+* @author zps  
+* @date 2015年7月29日 下午5:28:00
+* @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+* @version V1.0   
+*/
+package com.gilight.dep.metadata.gather.common.log;
+/***
+ * 
+* @ClassName: IGatherLog 
+* <p>TODO<br>
+* @author zps
+* @date 2015年7月29日 下午5:28:16
+* @version V1.0
+* @since JDK 1.7
+ */
+public interface IGatherLog {
+	 
+}

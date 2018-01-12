@@ -1,0 +1,23 @@
+package com.gilight.dep.metadata.enmu;
+
+import com.gilight.dep.framework.util.enmu.StringEnum;
+
+public class MetaDataViewType extends StringEnum {
+
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+	public static String SYSTEM = "0";
+	public static String CUSTOM = "1";
+	public static final MetaDataViewType SYSTEM_TYPE = new MetaDataViewType(
+			"系统视图", SYSTEM);
+	public static final MetaDataViewType CUSTOM_TYPE = new MetaDataViewType(
+			"自定义视图", CUSTOM);
+
+	protected MetaDataViewType(String iName, String iValue) {
+		super(iName, iValue);
+		// TODO Auto-generated constructor stub
+	}
+
+}

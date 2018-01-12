@@ -1,0 +1,133 @@
+package com.gilight.dep.metadata.web.request;
+
+import java.util.List;
+
+import com.gilight.dep.metadata.view.MetaModelBaseView;
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelEnumValueView;
+
+/**
+ * 
+* @ClassName: MetamodelRequestData 
+* <p>TODO<br>
+* @author HWW
+* @date 2015-12-09 上午10:58:09
+* @version V2.0
+* @since JDK 1.7
+ */
+public class MetamodelRequestData extends BaseRequestData {
+	/**
+	 * 主键ID
+	 */
+	private String id;
+	/**
+	 * 元模型代码
+	 */
+	private String code;
+	/**
+	 * 元模型名称
+	 */
+	private String name;
+	/**
+	 * 是否抽象类
+	 */
+	private boolean isabstract;
+	/**
+	 * 所属文件夹的id
+	 */
+	private String packageid;
+	/**
+	 * 描述
+	 */
+	private String remark;
+	/**
+	 * 组合关系被组合端的多重性："1"或"N"
+	 */
+	private String toMultiplicity;
+	/**
+	 * 批量保存的枚举值集合
+	 */
+	private List<MetaModelEnumValueView> enumValueList;
+	/**
+	 * 元模型集合
+	 */
+	private List<MetaModelBasicView> modelList;
+	
+	
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean getIsabstract() {
+		return isabstract;
+	}
+
+	public void setIsabstract(boolean isabstract) {
+		this.isabstract = isabstract;
+	}
+
+	public String getPackageid() {
+		return packageid;
+	}
+
+	public void setPackageid(String packageid) {
+		this.packageid = packageid;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
+	public String getToMultiplicity() {
+		return toMultiplicity;
+	}
+
+	public void setToMultiplicity(String toMultiplicity) {
+		this.toMultiplicity = toMultiplicity;
+	}
+
+	public List<MetaModelEnumValueView> getEnumValueList() {
+		return enumValueList;
+	}
+
+	public void setEnumValueList(List<MetaModelEnumValueView> enumValueList) {
+		this.enumValueList = enumValueList;
+	}
+
+	public List<MetaModelBasicView> getModelList() {
+		return modelList;
+	}
+
+	public void setModelList(List<MetaModelBasicView> modelList) {
+		this.modelList = modelList;
+	}
+
+	
+	
+
+}

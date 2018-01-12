@@ -1,0 +1,356 @@
+package com.gilight.dep.metadata.service.impl;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.ext.model.IDepBasicModel;
+import com.gilight.dep.framework.core.ext.response.IDepView;
+import com.gilight.dep.framework.core.ext.service.DepBaseServiceImpl;
+import com.gilight.dep.framework.core.ext.util.CallBackCheckUtil;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.framework.util.bean.SpringBeansUtils;
+import com.gilight.dep.framework.util.common.UUIDGenerator;
+import com.gilight.dep.metadata.entity.MdView;
+import com.gilight.dep.metadata.entity.MdViewFolder;
+import com.gilight.dep.metadata.model.MetaFolderModel;
+import com.gilight.dep.metadata.model.MetaViewModel;
+import com.gilight.dep.metadata.scope.MetaDataScope;
+import com.gilight.dep.metadata.scope.MetaDataViewScope;
+import com.gilight.dep.metadata.scope.MetaDateViewFolderScope;
+import com.gilight.dep.metadata.service.IMetaDataBaseService;
+import com.gilight.dep.metadata.service.IMetaDataViewService;
+import com.gilight.dep.metadata.util.AutoCopyObj;
+import com.gilight.dep.metadata.view.MetaDataBasicView;
+import com.gilight.dep.metadata.view.PackageBasicView;
+import com.gilight.dep.metadata.view.PackageFolderBasicView;
+import com.gilight.dep.metadata.view.PackageTreeView;
+
+@SuppressWarnings("rawtypes")
+public class MetaDataViewServiceImpl extends DepBaseServiceImpl implements
+		IMetaDataViewService {
+	private static final Logger logger = Logger
+			.getLogger(MetaDataViewServiceImpl.class);
+
+	private IMetaDataBaseService metaDataService = null;
+
+	public IMetaDataBaseService getMetaDataService() {
+		return metaDataService;
+	}
+
+	public void setMetaDataService(IMetaDataBaseService metaDataService) {
+		this.metaDataService = metaDataService;
+	}
+
+	@Override
+	public Class getModelClass() {
+		return MetaViewModel.class;
+	}
+
+	@Override
+	public IResponse createFolder(IContext context) throws ServiceException {
+		try {
+			IDepView view = this.getViewParameter(context);
+			if (view.getId() == null || "".equals(view.getId())) {
+				view.setId(UUIDGenerator.getUUID());
+			}
+			IModel model = this
+					.createModel(view.getId(), MetaFolderModel.class);
+			this.initFolderModel(context, model);
+			// 更新数据
+			if (model instanceof IDepBasicModel) {
+				IContext modelContext = this.getDefaultContext(context);
+				modelContext.getResponse().regiestResultHandler(
+						new IResultHandler() {
+							@Override
+							public IResult handle(IContext context,
+									IResult result)
+									throws IllegalAccessException,
+									InvocationTargetException,
+									RepositoryException, ServiceException {
+								// 如果消息层返回的结构是异常只，或者没有结果集，则直接返回给上一层，不在回调处理；
+								if (CallBackCheckUtil.checkCallBackResult(
+										context, result)) {
+									return (IResult) context.getResponse()
+											.getResult();
+								}
+								return ResultFactory.getInstance()
+										.createSuccessModelAndView("新增子文件成功!",
+												result.getResult());
+							}
+						});
+				((IDepBasicModel) model).create(modelContext);
+			}
+			return context.getResponse();
+		} catch (GilightException exception) {
+			logger.error("更新失败!", exception);
+			throw new ServiceException("更新失败!", exception);
+		} catch (Exception exception) {
+			logger.error("更新失败!", exception);
+			throw new ServiceException("更新失败!", exception);
+		}
+
+	}
+
+	private void initFolderModel(IContext context, IModel model)
+			throws ServiceException {
+		try {
+			IEntity data = (IEntity) SpringBeansUtils.copyProperties(
+					MdViewFolder.class, this.getViewParameter(context));
+			if (model instanceof IDepBasicModel) {
+				((IDepBasicModel) model).setData(data);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			throw new ServiceException("");
+		}
+	}
+
+	@Override
+	public IResponse deleteFolder(IContext context) throws ServiceException {
+		try {
+			String id = this.getIDParameter(context);
+			IModel model = this.createModel(id, MetaFolderModel.class);
+			if (model instanceof IDepBasicModel) {
+				IContext modelContext = this.getDefaultContext(context);
+				modelContext.getResponse().regiestResultHandler(
+						new IResultHandler() {
+							@Override
+							public IResult handle(IContext context,
+									IResult result)
+									throws IllegalAccessException,
+									InvocationTargetException,
+									RepositoryException, ServiceException {
+								// 如果消息层返回的结构是异常只，或者没有结果集，则直接返回给上一层，不在回调处理；
+								if (CallBackCheckUtil.checkCallBackResult(
+										context, result)) {
+									return (IResult) context.getResponse()
+											.getResult();
+								}
+								return ResultFactory.getInstance()
+										.createSuccessModelAndView("删除子文件成功!",
+												result.getResult());
+							}
+						});
+				((IDepBasicModel) model).delete(modelContext);
+			}
+			return context.getResponse();
+		} catch (GilightException exception) {
+			logger.error("删除子文件失败!", exception);
+			throw new ServiceException("删除子文件失败!", exception);
+		} catch (Exception exception) {
+			logger.error("删除子文件失败!", exception);
+			throw new ServiceException("删除子文件失败!", exception);
+		}
+
+	}
+
+	@Override
+	public IResponse getByFolderId(IContext context) throws ServiceException {
+		try {
+			String id = this.getIDParameter(context);
+			MetaDateViewFolderScope scope = new MetaDateViewFolderScope();
+			scope.setParentId(id);
+			IContext repContext = this.getContextWithParams(context, scope);
+			repContext.getResponse().regiestResultHandler(new IResultHandler() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public IResult handle(IContext context, IResult result)
+						throws Exception {
+					if (CallBackCheckUtil.checkCallBackResult(context, result)) {
+						return (IResult) context.getResponse().getResult();
+					}
+					List<PackageFolderBasicView> packlist = new ArrayList<PackageFolderBasicView>();
+					List<IEntity> list = (List<IEntity>) result.getResult();
+					for (IEntity iEntity : list) {
+						PackageFolderBasicView packbase = AutoCopyObj.objCopy(
+								PackageFolderBasicView.class, iEntity);
+						packlist.add(packbase);
+					}
+					return ResultFactory.getInstance()
+							.createSuccessModelAndView("获取成功！", packlist);
+				}
+			});
+			this.getRepository().getByScope(repContext);
+			return context.getResponse();
+		} catch (Exception exception) {
+			logger.error("查询文件夹失败!", exception);
+			exception.printStackTrace();
+			throw new ServiceException("查询文件夹失败！", exception);
+		}
+	}
+
+	/*
+	 * (非 Javadoc) <p>Description: 获取全部视图</p>
+	 * 
+	 * @param paramIContext
+	 * 
+	 * @return
+	 * 
+	 * @throws GilightException
+	 * 
+	 * @see
+	 * com.gilight.dep.metadata.service.IMetaDataViewService#getAllView(com.
+	 * gilight.dep.framework.core.context.base.IContext)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public IResponse getAllView(IContext context) throws GilightException {
+		try {
+			MetaDataViewScope scope = new MetaDataViewScope();
+			context.setParameters(scope);
+			this.getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元数据视图出现错误!", e);
+			e.printStackTrace();
+			throw new ServiceException("查询元数据视图出现错误!");
+		} catch (Exception e) {
+			logger.error("查询元数据视图出现错误!", e);
+			e.printStackTrace();
+			throw new ServiceException("查询元数据视图出现错误!");
+		}
+
+	}
+
+	@Override
+	public IResponse getMetaDataTree(IContext paramIContext)
+			throws ServiceException {
+		try {
+			String viewFolderId = this.getIDParameter(paramIContext);
+			MetaDataScope scope = new MetaDataScope();
+			scope.setMdPackageid(viewFolderId);
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithParams(paramIContext, scope);
+			metaDataService.getByScope(context);
+			return context.getResponse();
+		} catch (GilightException e) {
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!");
+		} catch (Exception e) {
+			logger.error("查询元数据失败!", e);
+			throw new ServiceException("查询元数据失败!");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected IResult getByScopeAfter(IContext context, IResult result)
+			throws ServiceException {
+		try {
+			List<IEntity> list = (List<IEntity>) result.getResult();
+			List<PackageBasicView> mmvlist = new ArrayList<PackageBasicView>();
+			if (list != null) {
+				for (IEntity iEntity : list) {
+					MdView mme = (MdView) iEntity;
+					PackageBasicView mmv = AutoCopyObj.objCopy(
+							PackageBasicView.class, mme);
+					mmvlist.add(mmv);
+				}
+			}
+			return ResultFactory.getInstance().createSuccessResult(mmvlist);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+			throw new ServiceException("查询元数据视图出现错误!");
+		}
+	}
+
+	@Override
+	protected IResult updateAfter(IContext context, IResult result)
+			throws ServiceException {
+		return createSuccessModelAndView("修改视图成功！", null);
+	}
+
+	@Override
+	protected void initModel(IContext context, IModel model)
+			throws ServiceException {
+		try {
+			IEntity data = (IEntity) SpringBeansUtils.copyProperties(
+					MdView.class, this.getViewParameter(context));
+			if (model instanceof IDepBasicModel) {
+				((IDepBasicModel) model).setData(data);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			throw new ServiceException("");
+		}
+
+	}
+
+	@Override
+	protected IResult deleteAfter(IContext context, IResult result)
+			throws ServiceException {
+		return createSuccessModelAndView("删除视图成功!", null);
+	}
+
+	@Override
+	protected IResult createAfter(IContext context, IResult result)
+			throws ServiceException {
+		return this.createSuccessModelAndView("添加视图成功!", result.getResult());
+	}
+
+	@Override
+	protected IResult getByIdAfter(IContext context, IResult result)
+			throws ServiceException {
+		return null;
+	}
+
+	@Override
+	protected Class getDefaultModelClass() throws ServiceException {
+		return MetaViewModel.class;
+	}
+
+	@Override
+	public IResponse getChildContentTree(IContext context)
+			throws ServiceException {
+		context.getResponse().regiestResultHandler(new IResultHandler() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public IResult handle(IContext context, IResult result)
+					throws Exception {
+				PackageTreeView view = new PackageTreeView();
+				List<PackageFolderBasicView> folders = (List<PackageFolderBasicView>) result
+						.getResult();
+				String viewId = getIDParameter(context);
+				view.setId(viewId);
+				view.setPackageFolderList(folders);
+				setMetaData(view);
+				return ResultFactory.getInstance().createSuccessModelAndView(
+						"获取成功！", view);
+			}
+
+			@SuppressWarnings("unchecked")
+			private void setMetaData(PackageTreeView view) {
+				try {
+					MetaDataScope scope = new MetaDataScope();
+					scope.setMdPackageid(view.getId());
+					IContext context = ContextFactoryImpl.getInstance()
+							.createContextWithParams(scope);
+					IResponse response = metaDataService.getByScope(context);
+					List<MetaDataBasicView> metaDataList = (List<MetaDataBasicView>) response
+							.getBlockedResultObject();
+					view.setMetaDataList(metaDataList);
+				} catch (GilightException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		this.getByFolderId(context);
+		return context.getResponse();
+	}
+}

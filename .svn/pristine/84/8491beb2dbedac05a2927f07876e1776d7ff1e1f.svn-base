@@ -1,0 +1,21 @@
+package com.gilight.dep.metadata.model;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.framework.core.model.IBasicModel;
+import com.gilight.dep.framework.core.model.impl.BaseBasicModel;
+
+public class MetaDataGatherTempleModel  extends BaseBasicModel<IView> {
+
+	@Override
+	public String getModelName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class getMessageProcuderClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

@@ -1,0 +1,188 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.request.parameter.impl.EntityParameters;
+import com.gilight.dep.framework.core.context.request.parameter.impl.IDParameters;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IMetaModelCompDao;
+import com.gilight.dep.metadata.entity.MmComposition;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.enums.MetaModelStatus;
+import com.gilight.dep.metadata.repository.IMetaModelCompRepository;
+
+import java.util.List;
+
+public class MetaModelCompRepositoryImpl implements IMetaModelCompRepository {
+	private IMetaModelCompDao metaModelCompDao;
+	
+	
+	public IMetaModelCompDao getMetaModelCompDao() {
+		return metaModelCompDao;
+	}
+
+	public void setMetaModelCompDao(IMetaModelCompDao metaModelCompDao) {
+		this.metaModelCompDao = metaModelCompDao;
+	}
+
+
+
+	@Override
+	public IResponse create(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			//paramIContext.getRequest()create(paramIContext)
+				EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+				IEntity mme=(IEntity)entityParameters.getEntity();
+			//metaModelBasicDao.save(paramIEntity);
+				if (!checkPublishVer(((MmComposition)mme).getFromMmId())){
+					throw new RepositoryException("未发布的元模型不能创建关系");
+				}
+				if (!checkPublishVer(((MmComposition)mme).getToMmId())){
+					throw new RepositoryException("未发布的元模型不能创建关系");
+				}
+
+				String id=((MmComposition) mme).getId();
+
+
+				metaModelCompDao.save(mme);
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new RepositoryException("创建元模型失败!-dao");
+			}
+			
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse update(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			EntityParameters<IEntity> entityParameters = (EntityParameters) paramIContext.getParameters();
+			IEntity mme=(IEntity)entityParameters.getEntity();
+			//metaModelBasicDao.save(paramIEntity);
+		
+			metaModelCompDao.update(mme);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(null));
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("更新元模型失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse deleteAllComp(IContext paramIContext) throws RepositoryException {
+		try {
+			// TODO Auto-generated method stub
+
+			String mmid = (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+			MmComposition comp=new MmComposition();
+			comp.setFromMmId(mmid);
+			comp.setUpdateDate(null);
+			if (comp.getFromMmId()!=null){
+				List<IEntity> complist=metaModelCompDao.findByEntity(comp);
+				metaModelCompDao.delete(complist);
+			}
+
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult("组合关系删除成功"));
+			return paramIContext.getResponse();
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RepositoryException("删除元模型组合关系失败!-dao");
+		}
+	}
+
+	@Override
+	public IResponse delete(IContext paramIContext) throws RepositoryException {
+		try {
+				String id = (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+				if(id == "" || id.equals(null)) {
+					throw new RepositoryException("传递的参数不能为空");
+				}
+				IEntity mme = metaModelCompDao.findById(id, MmComposition.class);
+				metaModelCompDao.delete(mme);
+
+				paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult("组合关系删除成功"));
+				return paramIContext.getResponse();
+			} catch (DaoException e) {
+				e.printStackTrace();
+				throw new RepositoryException("删除组合关系失败!-dao");
+			}
+			
+	}
+
+	 
+
+	@Override
+	public IResponse getById(IContext paramIContext) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			IDParameters idp = (IDParameters) paramIContext.getParameters();
+			//EntityParameters mme=(MmMetamodel)entityParameters.getEntity();
+			String id = idp.getId();
+			//metaModelBasicDao.getById(mme.getId(),MmMetamodel.class);
+			MmMetamodel mme=(MmMetamodel) metaModelCompDao.findById(id,MmMetamodel.class);
+			paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mme));
+			
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询元模型失败!-dao");
+		}
+		
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public MmComposition getById(String mmid) throws RepositoryException {
+		// TODO Auto-generated method stub
+		try {
+			//IDParameters idp = (IDParameters) paramIContext.getParameters();
+			//EntityParameters mme=(MmMetamodel)entityParameters.getEntity();
+			String id = mmid;
+			//metaModelBasicDao.getById(mme.getId(),MmMetamodel.class);
+			MmComposition mme=(MmComposition) metaModelCompDao.findById(id,MmComposition.class);
+			//paramIContext.getResponse().setResult(ResultFactory.getInstance().createSuccessResult(mme));
+			return mme;
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new RepositoryException("查询元模型失败!-dao");
+		}
+
+		return null;
+	}
+
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean checkPublishVer(String id) throws RepositoryException, DaoException {
+		//String id= (String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+		MmMetamodel mmMetamodel= (MmMetamodel) metaModelCompDao.findById(id,MmMetamodel.class);
+		if(mmMetamodel.getStatus() != null) {
+			if(MetaModelStatus.publishVer ==  mmMetamodel.getStatus()){
+				return true;
+			}else{
+				return false;
+			}
+		}else {
+			return false;
+		}
+	}
+}

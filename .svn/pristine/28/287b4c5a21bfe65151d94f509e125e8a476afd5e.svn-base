@@ -1,0 +1,121 @@
+package com.gilight.dep.metadata.gather.common.util;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.metadata.gather.common.DBConnParam;
+
+public class DBUtils {
+
+	public DBUtils() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static Connection getConn(DBConnParam dbparam)
+			throws GilightException {
+		try {
+			Class.forName(dbparam.getDriver());
+			String url = dbparam.getUrl();
+			String user = dbparam.getUser();
+			String password = dbparam.getPwd();
+			Connection con = DriverManager.getConnection(url, user, password);
+			return con;
+		} catch (ClassNotFoundException e) {
+			throw new GilightException("请输入正确的驱动!", e);
+		} catch (SQLException e) {
+			throw new GilightException("请检查端口号,用户名,密码是否正常!", e);
+		}
+	}
+
+	public static DatabaseMetaData getDatabaseMetaData(Connection conn)
+			throws GilightException {
+		try {
+			DatabaseMetaData dbmd = conn.getMetaData();
+			return dbmd;
+		} catch (SQLException e) {
+			throw new GilightException("获取元数据信息失败!", e);
+		}
+	}
+
+	public static DatabaseMetaData getDatabaseMetaData(DBConnParam dbparam)
+			throws GilightException {
+		if (dbparam == null) {
+			return null;
+		}
+		Connection conn = getConn(dbparam);
+		DatabaseMetaData dbmd = getDatabaseMetaData(conn);
+		return dbmd;
+
+	}
+
+	public static List<String> getSchemaNames(DBConnParam dbparam)
+			throws GilightException {
+		List<String> list = new ArrayList<String>();
+		if (dbparam == null) {
+			return null;
+		}
+		Connection conn = getConn(dbparam);
+		DatabaseMetaData dbmd = null;
+		ResultSet rs = null;
+		try {
+			dbmd = conn.getMetaData();
+			rs = dbmd.getSchemas();
+			while (rs.next()) {
+				String name = rs.getString(1);
+				list.add(name);
+			}
+		} catch (SQLException e) {
+			throw new GilightException("获取数据库schema失败!", e);
+		} catch (Exception e) {
+			throw new GilightException("获取数据库schema失败!", e);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return list;
+	}
+	
+	
+	public static  void close(DatabaseMetaData databaseMetaData) throws GilightException{
+		try {
+			Connection conn=databaseMetaData.getConnection();
+			close(conn);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new GilightException("关闭数据库连接失败!", e);
+		}
+	}
+	
+	public static  void close(Connection conn ) throws GilightException{
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new GilightException("关闭数据库连接失败!", e);
+		}
+	}
+	
+}

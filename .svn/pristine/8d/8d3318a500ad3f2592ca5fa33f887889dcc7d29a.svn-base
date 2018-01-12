@@ -1,0 +1,117 @@
+/**
+ * 添加依赖关系时选择元数据的窗口
+ */
+Ext.define("Dep.metadata.metadatamng.view.MDDependWin", {
+	extend : "Ext.window.Window",
+	title :"未依赖元数据列表",
+	layout: 'fit',
+	closeAction :'hide',
+	width : 500,
+	initHeight : 300,
+	height : 300,
+	parentContainer : null,
+	gridPanel : null,
+	buttonAlign :"center",
+	constructor : function(conf) {
+		var me = this;
+		if(conf.parentContainer)me.parentContainer = conf.parentContainer;
+		
+		me.gridPanel = me.bulidGridPanel(conf);
+		me.items = me.gridPanel;
+		me.buttons = me.buildBtn();	
+		me.callParent();
+	},
+	/**
+	 * 自动构建扩展列
+	 * @param props
+	 * @param ar
+	 * @returns
+	 */
+	autoBulidColumns : function(props,ar){
+		var me = this;
+		if(props){
+			for(var i=0;i<props.length;i++){
+				ar.push({ text: props[i].name, dataIndex: props[i].code, align: 'center', maxWidth: 80});
+			}
+		}
+		return ar;
+	},
+	/**
+	 * 创建gridpanel
+	 */
+	bulidGridPanel :function(conf){
+		var me = this,gridpanel=null,columns = null;
+		//列
+		columns =[                    
+	              { text: 'id', dataIndex: 'id', align: 'center', maxWidth: 80,hidden : true },
+	              { text: Dep.metadata.I18N.metadatamng.metadatagrid.code, dataIndex: 'mdCode',  align: 'center',maxWidth: 120 },
+	              { text: Dep.metadata.I18N.metadatamng.metadatagrid.name, dataIndex: 'mdName', align: 'center', minWidth: 80 },
+	              { text: Dep.metadata.I18N.metadatamng.metadatagrid.mmName, dataIndex: 'mmName', align: 'center', minWidth: 80 }
+	    ];
+		if(conf && conf.propsData){
+			columns = me.autoBulidColumns(conf.propsData, columns);
+		}
+		gridpanel =  Ext.create('Ext.grid.Panel',{
+				xtype :"gridpanel",
+				selModel: { selType: 'checkboxmodel' },   //选择框
+				loadMask: true,
+				title :"元数据",
+				columns : columns
+		});
+		if(conf && conf.store){
+			gridpanel.bindStore(conf.store);
+		}else{
+			console.log("元数据gridPanel配置异常，没有store配置");
+			return null;
+		}
+		return gridpanel;
+	},
+	/**
+	 * 创建按钮
+	 */
+	buildBtn : function(){
+		var me = this,btnAr = null;
+		btnAr = [{
+			xtype : 'button',
+			text : Dep.metadata.I18N.metadatamng.view.savebtn,
+			handler : function(){
+				me.parentContainer.executeActionSpanContainer("Dep.framework.editor.plugin.containers.Layer","addDependMetadata");
+			}
+		},{
+			xtype : 'button',
+			text : Dep.metadata.I18N.metadatamng.view.cancelbtn,
+			handler : function(){
+				me.hide();
+			}		
+		}];	
+		return btnAr;
+	},
+	/**
+	 * win的监听器
+	 */
+	listeners : {
+		'hide' : function(){
+			var me = this;
+			if(me.parentContainer){
+				me.parentContainer.executeActionSpanContainer("Dep.framework.editor.plugin.containers.Layer","closeDependMetadataWin");
+			}
+		}
+	},
+	/**
+	 * 获取gridpanel中选中的记录
+	 */
+	getValues : function(){
+		var me = this,res =[];
+		if(me.gridPanel){
+			res = me.gridPanel.getSelectionModel().getSelection();
+		}
+		return res;
+	},
+	/**
+	 * 获取gridpanel
+	 */
+	getGridPanel : function(){
+		var me = this;
+		return me.gridPanel;
+	}
+});

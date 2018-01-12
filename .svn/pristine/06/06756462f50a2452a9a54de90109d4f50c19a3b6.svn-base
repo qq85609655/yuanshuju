@@ -1,0 +1,67 @@
+{
+	"padding" : "5 10 5 10",
+    "details": [
+        {
+            "lType": "metadata",
+             "items" : [{
+                  "xtype": "button",
+                  "uniqueID" : "versionSearch",
+                  "name": "versionSearch",
+                  "text" : "版本查询",
+                  "pressed":true,
+                  "allowDepress":true,
+                  "icon":"Dep/metadata/resource/img/version.png",
+                  "action": "versionSearch",
+                  "relationsCom": []
+        	},{
+                  "xtype": "button",
+                  "uniqueID" : "dependMng ",
+                  "name": "dependMng",
+                  "pressed":true,
+                  "text" : "依赖管理",
+                  "icon":"Dep/metadata/resource/img/depend.png",
+                  "action": "dependMng",
+                  "relationsCom": []
+        	},{
+                  "xtype": "button",
+                  "uniqueID" : "impactAnalysis",
+                  "name": "impactAnalysis",
+                  "text" : "影响分析",
+                  "pressed":true,
+                  "icon":"Dep/metadata/resource/img/analyse.png",
+                  "action": "impactAnalysis",
+                  "relationsCom": []
+        	},{
+                  "xtype": "button",
+                  "uniqueID" : "strainAnalysis",
+                  "name": "strainAnalysis",
+                  "pressed":true,
+                  "icon":"Dep/metadata/resource/img/analyse.png",
+                  "text" : "血统分析",
+                  "action": "strainAnalysis",
+                  "relationsCom": []
+        	},{
+                  "xtype": "button",
+                  "uniqueID" : "allAnalysis",
+                  "name": "allAnalysis",
+                  "pressed":true,
+                  "text" : "全链分析",
+                  "icon":"Dep/metadata/resource/img/analyse.png",
+                  "action": "allAnalysis",
+                  "relationsCom": []
+        	},{
+                  "xtype": "button",
+                  "uniqueID" : "associateAnalysis",
+                  "name": "associateAnalysis",
+                  "pressed":true,
+                  "icon":"Dep/metadata/resource/img/associate.png",
+                  "text" : "关联度分析",
+                  "action": "associateAnalysis",
+                  "relationsCom": []
+        	}]
+        }],
+    "plugins": [{
+		"src": "Dep/metadata/metadatamng/extends/editor/plugin/busstoolbar/MDOptPlugin.js",
+		"name": "JHE.plugin.busstoolbar.MDOptPlugin"
+	}]
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gilight.dep.metadata.entity.MdSystemBackup" table="MD_SYSTEM_BACKUP" >
+    <cache usage="read-write" />
+        <id name="id" type="string">
+            <column name="ID" length="64" />
+            <generator class="assigned" />
+        </id>
+
+        <property name="userid" type="string">
+            <column name="USER_ID" length="64">
+            </column>
+        </property>
+
+        <property name="saveTime" type="string">
+            <column name="SAVE_TIME" length="64">
+            </column>
+        </property>
+        <property name="cronExpression" type="string">
+            <column name="CRON_EXPRESSION" length="64">
+            </column>
+        </property>
+        <property name="period" type="string">
+            <column name="PERIOD" length="64">
+            </column>
+        </property>
+        <property name="status" type="string">
+            <column name="STATUS" length="64">
+            </column>
+        </property>
+
+    </class>
+</hibernate-mapping>

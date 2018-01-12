@@ -1,0 +1,49 @@
+/**
+ * 模拟视图请求数据的对象
+ */
+package com.gilight.dep.metadata.web.request;
+
+public class ViewRequestDataSimulate extends BaseRequestData {
+
+	private String id;
+	
+	private String viewType;
+	
+	private String viewId;
+	
+	private String nodeType;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getViewType() {
+		return viewType;
+	}
+
+	public void setViewType(String viewType) {
+		this.viewType = viewType;
+	}
+
+	public String getViewId() {
+		return viewId;
+	}
+
+	public void setViewId(String viewId) {
+		this.viewId = viewId;
+	}
+
+	public String getNodeType() {
+		return nodeType;
+	}
+
+	public void setNodeType(String nodeType) {
+		this.nodeType = nodeType;
+	}
+	
+	
+}

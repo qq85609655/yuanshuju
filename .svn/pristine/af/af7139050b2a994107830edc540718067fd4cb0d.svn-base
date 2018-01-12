@@ -1,0 +1,24 @@
+package com.gilight.dep.metadata.dao;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.entity.MdMetadataImp;
+import com.gilight.dep.metadata.entity.MmComposition;
+
+/**
+ * 数据采集任务
+* @ClassName: IGatherJobDao 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:13:17
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IGatherJobDao extends IMetaDataDao{
+
+	public List<MmComposition> getMmComposition(String mmid, String tommid);
+	public List<MdMetadataImp> getMetaDataImpByCode(String code,String jobid);
+	public List<IEntity> getMdComposition(String fromid, String tocode);
+	
+}

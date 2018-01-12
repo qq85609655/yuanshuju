@@ -1,0 +1,158 @@
+package com.gilight.dep.metadata.entity;
+
+public class Mdmetadatapubtake extends BaseMetaDataEntity {
+  private String id;
+
+  private String sourceid;
+  private String targetid;
+  private String publishid;
+  private String takeid;
+  private String publishname;
+  private String takename;
+  private String publishurl;
+  private String takeurl;
+  private String publishuser;
+  private String takeuser;
+  private String publishdb_mdid;
+  private String takedb_mdid;
+  private String publishtable;
+  private String taketable;
+  private String publishsvgurl;
+  private String takesvgurl;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getSourceid() {
+    return sourceid;
+  }
+
+  public void setSourceid(String sourceid) {
+    this.sourceid = sourceid;
+  }
+
+  public String getTargetid() {
+    return targetid;
+  }
+
+  public void setTargetid(String targetid) {
+    this.targetid = targetid;
+  }
+
+  public String getPublishid() {
+    return publishid;
+  }
+
+  public void setPublishid(String publishid) {
+    this.publishid = publishid;
+  }
+
+  public String getTakeid() {
+    return takeid;
+  }
+
+  public void setTakeid(String takeid) {
+    this.takeid = takeid;
+  }
+
+  public String getPublishname() {
+    return publishname;
+  }
+
+  public void setPublishname(String publishname) {
+    this.publishname = publishname;
+  }
+
+  public String getTakename() {
+    return takename;
+  }
+
+  public void setTakename(String takename) {
+    this.takename = takename;
+  }
+
+  public String getPublishurl() {
+    return publishurl;
+  }
+
+  public void setPublishurl(String publishurl) {
+    this.publishurl = publishurl;
+  }
+
+  public String getTakeurl() {
+    return takeurl;
+  }
+
+  public void setTakeurl(String takeurl) {
+    this.takeurl = takeurl;
+  }
+
+  public String getPublishuser() {
+    return publishuser;
+  }
+
+  public void setPublishuser(String publishuser) {
+    this.publishuser = publishuser;
+  }
+
+  public String getTakeuser() {
+    return takeuser;
+  }
+
+  public void setTakeuser(String takeuser) {
+    this.takeuser = takeuser;
+  }
+
+  public String getPublishdb_mdid() {
+    return publishdb_mdid;
+  }
+
+  public void setPublishdb_mdid(String publishdb_mdid) {
+    this.publishdb_mdid = publishdb_mdid;
+  }
+
+  public String getTakedb_mdid() {
+    return takedb_mdid;
+  }
+
+  public void setTakedb_mdid(String takedb_mdid) {
+    this.takedb_mdid = takedb_mdid;
+  }
+
+  public String getPublishtable() {
+    return publishtable;
+  }
+
+  public void setPublishtable(String publishtable) {
+    this.publishtable = publishtable;
+  }
+
+  public String getTaketable() {
+    return taketable;
+  }
+
+  public void setTaketable(String taketable) {
+    this.taketable = taketable;
+  }
+
+  public String getPublishsvgurl() {
+    return publishsvgurl;
+  }
+
+  public void setPublishsvgurl(String publishsvgurl) {
+    this.publishsvgurl = publishsvgurl;
+  }
+
+  public String getTakesvgurl() {
+    return takesvgurl;
+  }
+
+  public void setTakesvgurl(String takesvgurl) {
+    this.takesvgurl = takesvgurl;
+  }
+}

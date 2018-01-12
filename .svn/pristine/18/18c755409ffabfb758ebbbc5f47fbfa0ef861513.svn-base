@@ -1,0 +1,1085 @@
+-----------------------------------------------------
+-- Export file for user METADATA                   --
+-- Created by Administrator on 2015/8/21, 15:06:26 --
+-----------------------------------------------------
+
+---spool aaa.log
+
+---prompt
+---prompt Creating table MD_ANALYSE_LOG
+---prompt =============================
+---prompt
+create table MD_ANALYSE_LOG
+(
+  ID         NVARCHAR2(64) not null,
+  START_DATE NVARCHAR2(64),
+  END_DATE   NVARCHAR2(64),
+  RUN_STATUS INTEGER
+)
+;
+comment on column MD_ANALYSE_LOG.RUN_STATUS
+  is '成功失败';
+alter table MD_ANALYSE_LOG
+  add constraint PK_MD_ANALYSE_LOG primary key (ID);
+
+---prompt
+---prompt Creating table MD_ANALYSE_RESULT
+---prompt ================================
+---prompt
+create table MD_ANALYSE_RESULT
+(
+  ID          NVARCHAR2(64) not null,
+  MD_ID       NVARCHAR2(64),
+  MD_CODE     NVARCHAR2(256),
+  MD_NAME     NVARCHAR2(256),
+  UPSTREAM    NVARCHAR2(64),
+  DOWNSTREAM  NVARCHAR2(64),
+  UPDATE_DATE NVARCHAR2(64),
+  STATUS      INTEGER
+)
+;
+comment on column MD_ANALYSE_RESULT.ID
+  is '主键';
+comment on column MD_ANALYSE_RESULT.MD_CODE
+  is '元数据编码';
+comment on column MD_ANALYSE_RESULT.MD_NAME
+  is '元数据名称';
+comment on column MD_ANALYSE_RESULT.UPSTREAM
+  is '上游数据';
+comment on column MD_ANALYSE_RESULT.DOWNSTREAM
+  is '下游数据';
+comment on column MD_ANALYSE_RESULT.UPDATE_DATE
+  is '创建时间';
+comment on column MD_ANALYSE_RESULT.STATUS
+  is '状态';
+alter table MD_ANALYSE_RESULT
+  add constraint PK_MD_ANALYSE_RESULT primary key (ID);
+
+---prompt
+---prompt Creating table MD_ATTRIBUTE
+---prompt ===========================
+---prompt
+create table MD_ATTRIBUTE
+(
+  ID          NVARCHAR2(64) not null,
+  MM_ATT_ID   NVARCHAR2(64),
+  MM_ATT_NAME NVARCHAR2(256),
+  MD_ID       NVARCHAR2(64),
+  MD_VALUE    NVARCHAR2(512)
+)
+;
+comment on table MD_ATTRIBUTE
+  is '元数据属性表';
+comment on column MD_ATTRIBUTE.ID
+  is '主键';
+comment on column MD_ATTRIBUTE.MM_ATT_ID
+  is '元模型属性id';
+comment on column MD_ATTRIBUTE.MM_ATT_NAME
+  is '元模型属性名称';
+comment on column MD_ATTRIBUTE.MD_ID
+  is '元数据ID';
+comment on column MD_ATTRIBUTE.MD_VALUE
+  is '属性值';
+alter table MD_ATTRIBUTE
+  add constraint PK_MD_ATTRIBUTE primary key (ID);
+
+---prompt
+---prompt Creating table MD_ATTRIBUTE_ARCHIVE
+---prompt ===================================
+---prompt
+create table MD_ATTRIBUTE_ARCHIVE
+(
+  ID          NVARCHAR2(64) not null,
+  MM_ATT_ID   NVARCHAR2(64),
+  MM_ATT_NAME NVARCHAR2(256),
+  MD_ID       NVARCHAR2(64),
+  MD_VALUE    NVARCHAR2(512)
+)
+;
+comment on table MD_ATTRIBUTE_ARCHIVE
+  is '元数据属性表';
+comment on column MD_ATTRIBUTE_ARCHIVE.ID
+  is '主键';
+comment on column MD_ATTRIBUTE_ARCHIVE.MM_ATT_ID
+  is '元模型属性id';
+comment on column MD_ATTRIBUTE_ARCHIVE.MM_ATT_NAME
+  is '元模型属性名称';
+comment on column MD_ATTRIBUTE_ARCHIVE.MD_ID
+  is '元数据ID';
+comment on column MD_ATTRIBUTE_ARCHIVE.MD_VALUE
+  is '属性值';
+alter table MD_ATTRIBUTE_ARCHIVE
+  add constraint PK_MD_ATTRIBUTE_ARCHIVE primary key (ID);
+
+---prompt
+---prompt Creating table MD_ATTRIBUTE_IMP
+---prompt ===============================
+---prompt
+create table MD_ATTRIBUTE_IMP
+(
+  ID          NVARCHAR2(64) not null,
+  MM_ATT_ID   NVARCHAR2(64),
+  MM_ATT_NAME NVARCHAR2(256),
+  MD_ID       NVARCHAR2(64),
+  MD_VALUE    NVARCHAR2(512),
+  MM_ATT_CODE NVARCHAR2(256)
+)
+;
+comment on table MD_ATTRIBUTE_IMP
+  is '元数据属性表';
+comment on column MD_ATTRIBUTE_IMP.ID
+  is '主键';
+comment on column MD_ATTRIBUTE_IMP.MM_ATT_ID
+  is '元模型属性id';
+comment on column MD_ATTRIBUTE_IMP.MM_ATT_NAME
+  is '元模型属性名称';
+comment on column MD_ATTRIBUTE_IMP.MD_ID
+  is '元数据ID';
+comment on column MD_ATTRIBUTE_IMP.MD_VALUE
+  is '属性值';
+alter table MD_ATTRIBUTE_IMP
+  add constraint PK_MD_ATTRIBUTE_IMP primary key (ID);
+
+---prompt
+---prompt Creating table MD_ATTRIBUTE_REJECT
+---prompt ==================================
+---prompt
+create table MD_ATTRIBUTE_REJECT
+(
+  ID          NVARCHAR2(64) not null,
+  MM_ATT_ID   NVARCHAR2(64),
+  MM_ATT_NAME NVARCHAR2(256),
+  MD_ID       NVARCHAR2(64),
+  VALUE       NVARCHAR2(512)
+)
+;
+comment on table MD_ATTRIBUTE_REJECT
+  is '元数据属性表';
+comment on column MD_ATTRIBUTE_REJECT.ID
+  is '主键';
+comment on column MD_ATTRIBUTE_REJECT.MM_ATT_ID
+  is '元模型属性id';
+comment on column MD_ATTRIBUTE_REJECT.MM_ATT_NAME
+  is '元模型属性名称';
+comment on column MD_ATTRIBUTE_REJECT.MD_ID
+  is '元数据ID';
+comment on column MD_ATTRIBUTE_REJECT.VALUE
+  is '属性值';
+alter table MD_ATTRIBUTE_REJECT
+  add constraint PK_MD_ATTRIBUTE_REJECT primary key (ID);
+
+---prompt
+---prompt Creating table MD_COMPOSITION
+---prompt =============================
+---prompt
+create table MD_COMPOSITION
+(
+  ID           NVARCHAR2(64) not null,
+  FROM_MD_ID   NVARCHAR2(64),
+  TO_MD_ID     NVARCHAR2(64),
+  FROM_MD_CODE NVARCHAR2(256),
+  TO_MD_CODE   NVARCHAR2(256),
+  MM_COMP_ID   NVARCHAR2(64),
+  UPDATE_DATE  NVARCHAR2(64),
+  REMARK       NVARCHAR2(512)
+)
+;
+comment on table MD_COMPOSITION
+  is '组合关系表';
+comment on column MD_COMPOSITION.ID
+  is '主键';
+comment on column MD_COMPOSITION.FROM_MD_ID
+  is '起始元数据id,父元数据';
+comment on column MD_COMPOSITION.TO_MD_ID
+  is '目标元数据id，被组合元数据';
+comment on column MD_COMPOSITION.FROM_MD_CODE
+  is '起始元数据编码';
+comment on column MD_COMPOSITION.TO_MD_CODE
+  is '目标元数据代码';
+comment on column MD_COMPOSITION.MM_COMP_ID
+  is '组合关系id';
+comment on column MD_COMPOSITION.REMARK
+  is '描述，备注';
+alter table MD_COMPOSITION
+  add constraint PK_MD_COMPOSITION primary key (ID);
+
+---prompt
+---prompt Creating table MD_COMPOSITION_IMP
+---prompt =================================
+---prompt
+create table MD_COMPOSITION_IMP
+(
+  ID           NVARCHAR2(64) not null,
+  FROM_MD_ID   NVARCHAR2(64),
+  TO_MD_ID     NVARCHAR2(64),
+  FROM_MD_CODE NVARCHAR2(256),
+  TO_MD_CODE   NVARCHAR2(256),
+  MM_COMP_ID   NVARCHAR2(64),
+  UPDATE_DATE  NVARCHAR2(64),
+  REMARK       NVARCHAR2(512)
+)
+;
+comment on table MD_COMPOSITION_IMP
+  is '组合关系表';
+comment on column MD_COMPOSITION_IMP.ID
+  is '主键';
+comment on column MD_COMPOSITION_IMP.FROM_MD_ID
+  is '起始元数据id,父元数据';
+comment on column MD_COMPOSITION_IMP.TO_MD_ID
+  is '目标元数据id，被组合元数据';
+comment on column MD_COMPOSITION_IMP.FROM_MD_CODE
+  is '起始元数据编码';
+comment on column MD_COMPOSITION_IMP.TO_MD_CODE
+  is '目标元数据代码';
+comment on column MD_COMPOSITION_IMP.MM_COMP_ID
+  is '组合关系id';
+comment on column MD_COMPOSITION_IMP.REMARK
+  is '描述，备注';
+alter table MD_COMPOSITION_IMP
+  add constraint PK_MD_COMPOSITION_IMP primary key (ID);
+
+---prompt
+---prompt Creating table MD_COMPOSITION_REJECT
+---prompt ====================================
+---prompt
+create table MD_COMPOSITION_REJECT
+(
+  ID           NVARCHAR2(64) not null,
+  FROM_MD_ID   NVARCHAR2(64),
+  TO_MD_ID     NVARCHAR2(64),
+  FROM_MD_CODE NVARCHAR2(256),
+  TO_MD_CODE   NVARCHAR2(256),
+  MM_COMP_ID   NVARCHAR2(64),
+  UPDATE_DATE  NVARCHAR2(64),
+  REMARK       NVARCHAR2(512)
+)
+;
+comment on table MD_COMPOSITION_REJECT
+  is '组合关系表';
+comment on column MD_COMPOSITION_REJECT.ID
+  is '主键';
+comment on column MD_COMPOSITION_REJECT.FROM_MD_ID
+  is '起始元数据id,父元数据';
+comment on column MD_COMPOSITION_REJECT.TO_MD_ID
+  is '目标元数据id，被组合元数据';
+comment on column MD_COMPOSITION_REJECT.FROM_MD_CODE
+  is '起始元数据编码';
+comment on column MD_COMPOSITION_REJECT.TO_MD_CODE
+  is '目标元数据代码';
+comment on column MD_COMPOSITION_REJECT.MM_COMP_ID
+  is '组合关系id';
+comment on column MD_COMPOSITION_REJECT.REMARK
+  is '描述，备注';
+alter table MD_COMPOSITION_REJECT
+  add constraint PK_MD_COMPOSITION_REJECT primary key (ID);
+
+---prompt
+---prompt Creating table MD_DATAMAP_RESULT
+---prompt ================================
+---prompt
+create table MD_DATAMAP_RESULT
+(
+  ID          NVARCHAR2(64) not null,
+  MD_ID       NVARCHAR2(64),
+  MD_CODE     NVARCHAR2(256),
+  MD_NAME     NVARCHAR2(256),
+  UPSTREAM    NVARCHAR2(64),
+  DOWNSTREAM  NVARCHAR2(64),
+  UPDATE_DATE NVARCHAR2(64),
+  STATUS      INTEGER
+)
+;
+comment on column MD_DATAMAP_RESULT.ID
+  is '主键';
+comment on column MD_DATAMAP_RESULT.MD_CODE
+  is '元数据编码';
+comment on column MD_DATAMAP_RESULT.MD_NAME
+  is '元数据名称';
+comment on column MD_DATAMAP_RESULT.UPSTREAM
+  is '上游数据';
+comment on column MD_DATAMAP_RESULT.DOWNSTREAM
+  is '下游数据';
+comment on column MD_DATAMAP_RESULT.UPDATE_DATE
+  is '创建时间';
+comment on column MD_DATAMAP_RESULT.STATUS
+  is '状态';
+alter table MD_DATAMAP_RESULT
+  add constraint PK_MD_DATAMAP_RESULT primary key (ID);
+
+---prompt
+---prompt Creating table MD_DEPENDENCY
+---prompt ============================
+---prompt
+create table MD_DEPENDENCY
+(
+  ID           NVARCHAR2(64) not null,
+  MM_DEP_ID    NVARCHAR2(64),
+  FROM_MD_ID   NVARCHAR2(64),
+  FROM_MD_CODE NVARCHAR2(256),
+  TO_MD_ID     NVARCHAR2(64),
+  TO_MD_CODE   NVARCHAR2(256),
+  REMARK       NVARCHAR2(512),
+  UPDATE_DATE  NVARCHAR2(64)
+)
+;
+comment on table MD_DEPENDENCY
+  is '依赖关系表';
+comment on column MD_DEPENDENCY.ID
+  is '主键';
+comment on column MD_DEPENDENCY.MM_DEP_ID
+  is '元模型定义依赖关系';
+comment on column MD_DEPENDENCY.FROM_MD_ID
+  is '起始元数据id';
+comment on column MD_DEPENDENCY.FROM_MD_CODE
+  is '起始元数据编码';
+comment on column MD_DEPENDENCY.TO_MD_ID
+  is '目标元数据id';
+comment on column MD_DEPENDENCY.TO_MD_CODE
+  is '目标元数据代码';
+comment on column MD_DEPENDENCY.REMARK
+  is '描述，备注';
+alter table MD_DEPENDENCY
+  add constraint PK_MD_DEPENDENCY primary key (ID);
+
+---prompt
+---prompt Creating table MD_DEPENDENCY_IMP
+---prompt ================================
+---prompt
+create table MD_DEPENDENCY_IMP
+(
+  ID           NVARCHAR2(64) not null,
+  MM_DEP_ID    NVARCHAR2(64),
+  FROM_MD_ID   NVARCHAR2(64),
+  FROM_MD_CODE NVARCHAR2(256),
+  TO_MD_ID     NVARCHAR2(64),
+  TO_MD_CODE   NVARCHAR2(256),
+  REMARK       NVARCHAR2(512),
+  UPDATE_DATE  NVARCHAR2(64)
+)
+;
+comment on table MD_DEPENDENCY_IMP
+  is '依赖关系表';
+comment on column MD_DEPENDENCY_IMP.ID
+  is '主键';
+comment on column MD_DEPENDENCY_IMP.MM_DEP_ID
+  is '元模型定义依赖关系';
+comment on column MD_DEPENDENCY_IMP.FROM_MD_ID
+  is '起始元数据id';
+comment on column MD_DEPENDENCY_IMP.FROM_MD_CODE
+  is '起始元数据编码';
+comment on column MD_DEPENDENCY_IMP.TO_MD_ID
+  is '目标元数据id';
+comment on column MD_DEPENDENCY_IMP.TO_MD_CODE
+  is '目标元数据代码';
+comment on column MD_DEPENDENCY_IMP.REMARK
+  is '描述，备注';
+alter table MD_DEPENDENCY_IMP
+  add constraint PK_MD_DEPENDENCY_IMP primary key (ID);
+
+---prompt
+---prompt Creating table MD_DEPENDENCY_REJECT
+---prompt ===================================
+---prompt
+create table MD_DEPENDENCY_REJECT
+(
+  ID           NVARCHAR2(64) not null,
+  MM_DEP_ID    NVARCHAR2(64),
+  FROM_MD_ID   NVARCHAR2(64),
+  FROM_MD_CODE NVARCHAR2(256),
+  TO_MD_ID     NVARCHAR2(64),
+  TO_MD_CODE   NVARCHAR2(256),
+  REMARK       NVARCHAR2(512),
+  UPDATE_DATE  NVARCHAR2(64)
+)
+;
+comment on table MD_DEPENDENCY_REJECT
+  is '依赖关系表';
+comment on column MD_DEPENDENCY_REJECT.ID
+  is '主键';
+comment on column MD_DEPENDENCY_REJECT.MM_DEP_ID
+  is '元模型定义依赖关系';
+comment on column MD_DEPENDENCY_REJECT.FROM_MD_ID
+  is '起始元数据id';
+comment on column MD_DEPENDENCY_REJECT.FROM_MD_CODE
+  is '起始元数据编码';
+comment on column MD_DEPENDENCY_REJECT.TO_MD_ID
+  is '目标元数据id';
+comment on column MD_DEPENDENCY_REJECT.TO_MD_CODE
+  is '目标元数据代码';
+comment on column MD_DEPENDENCY_REJECT.REMARK
+  is '描述，备注';
+alter table MD_DEPENDENCY_REJECT
+  add constraint PK_MD_DEPENDENCY_REJECT primary key (ID);
+
+---prompt
+---prompt Creating table MD_GATHER_DATASOURCE
+---prompt ===================================
+---prompt
+create table MD_GATHER_DATASOURCE
+(
+  ID           NVARCHAR2(64) not null,
+  DBS_NAME     NVARCHAR2(256),
+  ADAPTER      NVARCHAR2(256),
+  GATHER_MODEL NVARCHAR2(256),
+  DATA_PATH    NVARCHAR2(256),
+  REMARK       NVARCHAR2(512)
+)
+;
+comment on column MD_GATHER_DATASOURCE.ID
+  is '主键';
+comment on column MD_GATHER_DATASOURCE.DBS_NAME
+  is '数据源名称';
+comment on column MD_GATHER_DATASOURCE.ADAPTER
+  is '适配器';
+comment on column MD_GATHER_DATASOURCE.GATHER_MODEL
+  is '采集模式';
+comment on column MD_GATHER_DATASOURCE.DATA_PATH
+  is '数据路径';
+comment on column MD_GATHER_DATASOURCE.REMARK
+  is '描述，备注';
+alter table MD_GATHER_DATASOURCE
+  add constraint PK_IDENTIFIER_1_MD_GATHE primary key (ID);
+
+---prompt
+---prompt Creating table MD_GATHER_DATASOURCE_PARAM
+---prompt =========================================
+---prompt
+create table MD_GATHER_DATASOURCE_PARAM
+(
+  ID          NVARCHAR2(64) not null,
+  DBS_ID      NVARCHAR2(64),
+  PARAM_KEY   NVARCHAR2(256),
+  PARAM_VALUE NVARCHAR2(256)
+)
+;
+comment on table MD_GATHER_DATASOURCE_PARAM
+  is '采集数据源参数表';
+comment on column MD_GATHER_DATASOURCE_PARAM.ID
+  is '主键';
+comment on column MD_GATHER_DATASOURCE_PARAM.DBS_ID
+  is '数据源id';
+comment on column MD_GATHER_DATASOURCE_PARAM.PARAM_KEY
+  is '参数名';
+comment on column MD_GATHER_DATASOURCE_PARAM.PARAM_VALUE
+  is '参数值';
+alter table MD_GATHER_DATASOURCE_PARAM
+  add constraint PK_IDENTIFIER_2_MD_GATHE primary key (ID);
+
+---prompt
+---prompt Creating table MD_GATHER_JOB
+---prompt ============================
+---prompt
+create table MD_GATHER_JOB
+(
+  ID          NVARCHAR2(64) not null,
+  JOB_TYPE    NVARCHAR2(256),
+  JOB_NAME    NVARCHAR2(256),
+  DATASOURCE  NVARCHAR2(256),
+  DBPOLICY    NVARCHAR2(256),
+  REMARK      NVARCHAR2(512),
+  STATUS      INTEGER,
+  UPDATE_DATE NVARCHAR2(64)
+)
+;
+comment on column MD_GATHER_JOB.ID
+  is '主键';
+comment on column MD_GATHER_JOB.JOB_TYPE
+  is '任务类型';
+comment on column MD_GATHER_JOB.JOB_NAME
+  is '任务名称';
+comment on column MD_GATHER_JOB.DATASOURCE
+  is '数据源';
+comment on column MD_GATHER_JOB.DBPOLICY
+  is '数据策略';
+comment on column MD_GATHER_JOB.REMARK
+  is '描述，备注';
+comment on column MD_GATHER_JOB.STATUS
+  is '状态';
+alter table MD_GATHER_JOB
+  add constraint PK_MD_GATHER_JOB primary key (ID);
+
+---prompt
+---prompt Creating table MD_GATHER_JOB_PARAM
+---prompt ==================================
+---prompt
+create table MD_GATHER_JOB_PARAM
+(
+  JOB_ID      NVARCHAR2(64) not null,
+  PARAM_KEY   NVARCHAR2(256),
+  PARAM_VALUE NVARCHAR2(256),
+  UPDATE_DATE NVARCHAR2(64),
+  ID          NVARCHAR2(64)
+)
+;
+comment on table MD_GATHER_JOB_PARAM
+  is '采集任务配置参数';
+comment on column MD_GATHER_JOB_PARAM.JOB_ID
+  is '主键';
+comment on column MD_GATHER_JOB_PARAM.PARAM_KEY
+  is '参数编码';
+comment on column MD_GATHER_JOB_PARAM.PARAM_VALUE
+  is '参数值';
+alter table MD_GATHER_JOB_PARAM
+  add constraint PK_IDENTIFIER_3_MD_GATHE primary key (JOB_ID);
+
+---prompt
+---prompt Creating table MD_GATHER_LOG
+---prompt ============================
+---prompt
+create table MD_GATHER_LOG
+(
+  ID          NVARCHAR2(64) not null,
+  JOB_ID      NVARCHAR2(64),
+  START_DATE  NVARCHAR2(64),
+  END_DATE    NVARCHAR2(64),
+  RUN_STATUS  INTEGER,
+  GATHER_NUM  INTEGER,
+  SUCCEED_NUM INTEGER,
+  FAIL_NUM    INTEGER,
+  LOG_RESULT  CLOB
+)
+;
+comment on column MD_GATHER_LOG.JOB_ID
+  is '任务标识';
+comment on column MD_GATHER_LOG.RUN_STATUS
+  is '成功，失败';
+comment on column MD_GATHER_LOG.GATHER_NUM
+  is '采集元数据';
+comment on column MD_GATHER_LOG.SUCCEED_NUM
+  is '成功元数据';
+comment on column MD_GATHER_LOG.FAIL_NUM
+  is '失败元数据';
+alter table MD_GATHER_LOG
+  add constraint PK_LOG_1_MD_GATHE primary key (ID);
+
+---prompt
+---prompt Creating table MD_METADATA
+---prompt ==========================
+---prompt
+create table MD_METADATA
+(
+  ID           NVARCHAR2(64) not null,
+  MM_NAME      NVARCHAR2(256),
+  MM_ID        NVARCHAR2(64),
+  MD_CODE      NVARCHAR2(256),
+  MD_NAME      NVARCHAR2(256),
+  MD_PACKAGEID NVARCHAR2(64),
+  ISSYS        INTEGER,
+  STATUS       INTEGER,
+  SYSVER       NVARCHAR2(256),
+  USERVER      NVARCHAR2(256),
+  VER_REMARK   NVARCHAR2(256),
+  UPDATE_DATE  NVARCHAR2(64),
+  REMARK       NVARCHAR2(512)
+)
+;
+comment on table MD_METADATA
+  is '元数据表';
+comment on column MD_METADATA.ID
+  is '主键';
+comment on column MD_METADATA.MM_ID
+  is '元模型id';
+comment on column MD_METADATA.MD_CODE
+  is '元数据编码';
+comment on column MD_METADATA.MD_NAME
+  is '元数据名称';
+comment on column MD_METADATA.MD_PACKAGEID
+  is '所属包id';
+comment on column MD_METADATA.ISSYS
+  is '是否属于系统初始化数据';
+comment on column MD_METADATA.STATUS
+  is '状态';
+comment on column MD_METADATA.SYSVER
+  is '系统版本';
+comment on column MD_METADATA.USERVER
+  is '用户定义版本';
+comment on column MD_METADATA.VER_REMARK
+  is '版本描述';
+comment on column MD_METADATA.UPDATE_DATE
+  is '创建时间';
+comment on column MD_METADATA.REMARK
+  is '描述，备注';
+alter table MD_METADATA
+  add constraint PK_MD_METADATA primary key (ID);
+
+---prompt
+---prompt Creating table MD_METADATA_ARCHIVE
+---prompt ==================================
+---prompt
+create table MD_METADATA_ARCHIVE
+(
+  ID           NVARCHAR2(64) not null,
+  MM_NAME      NVARCHAR2(256),
+  MM_ID        NVARCHAR2(64),
+  MD_CODE      NVARCHAR2(256),
+  MD_NAME      NVARCHAR2(256),
+  MD_PACKAGEID NVARCHAR2(64),
+  ISSYS        INTEGER,
+  STATUS       INTEGER,
+  SYSVER       NVARCHAR2(256),
+  USERVER      NVARCHAR2(256),
+  VER_REMARK   NVARCHAR2(256),
+  UPDATE_DATE  NVARCHAR2(64),
+  REMARK       NVARCHAR2(512),
+  ISUSE        INTEGER
+)
+;
+comment on table MD_METADATA_ARCHIVE
+  is '元数据表';
+comment on column MD_METADATA_ARCHIVE.ID
+  is '主键';
+comment on column MD_METADATA_ARCHIVE.MM_ID
+  is '元模型id';
+comment on column MD_METADATA_ARCHIVE.MD_CODE
+  is '元数据编码';
+comment on column MD_METADATA_ARCHIVE.MD_NAME
+  is '元数据名称';
+comment on column MD_METADATA_ARCHIVE.MD_PACKAGEID
+  is '所属包id';
+comment on column MD_METADATA_ARCHIVE.ISSYS
+  is '是否属于系统初始化数据';
+comment on column MD_METADATA_ARCHIVE.STATUS
+  is '状态';
+comment on column MD_METADATA_ARCHIVE.SYSVER
+  is '系统版本';
+comment on column MD_METADATA_ARCHIVE.USERVER
+  is '用户定义版本';
+comment on column MD_METADATA_ARCHIVE.VER_REMARK
+  is '版本描述';
+comment on column MD_METADATA_ARCHIVE.UPDATE_DATE
+  is '创建时间';
+comment on column MD_METADATA_ARCHIVE.REMARK
+  is '描述，备注';
+comment on column MD_METADATA_ARCHIVE.ISUSE
+  is '是否当前版本';
+alter table MD_METADATA_ARCHIVE
+  add constraint PK_MD_METADATA_ARCHIVE primary key (ID);
+
+---prompt
+---prompt Creating table MD_METADATA_IMP
+---prompt ==============================
+---prompt
+create table MD_METADATA_IMP
+(
+  ID           NVARCHAR2(64) not null,
+  JOB_TASK_ID  NVARCHAR2(256),
+  MM_NAME      NVARCHAR2(256),
+  MM_ID        NVARCHAR2(64),
+  MD_CODE      NVARCHAR2(256),
+  MD_NAME      NVARCHAR2(256),
+  MD_PACKAGEID NVARCHAR2(64),
+  ISSYS        INTEGER,
+  STATUS       INTEGER,
+  SYSVER       NVARCHAR2(256),
+  USERVER      NVARCHAR2(256),
+  VER_REMARK   NVARCHAR2(256),
+  UPDATE_DATE  NVARCHAR2(64),
+  REMARK       NVARCHAR2(512),
+  PARENTCODE   NVARCHAR2(256),
+  PARENTNAME   NVARCHAR2(256),
+  MM_CODE      NVARCHAR2(256),
+  PARENTID     NVARCHAR2(256)
+)
+;
+comment on table MD_METADATA_IMP
+  is '元数据表';
+comment on column MD_METADATA_IMP.ID
+  is '主键';
+comment on column MD_METADATA_IMP.JOB_TASK_ID
+  is '采集任务执行ID,关联GatherLog';
+comment on column MD_METADATA_IMP.MM_ID
+  is '元模型id';
+comment on column MD_METADATA_IMP.MD_CODE
+  is '元数据编码';
+comment on column MD_METADATA_IMP.MD_NAME
+  is '元数据名称';
+comment on column MD_METADATA_IMP.MD_PACKAGEID
+  is '所属包id';
+comment on column MD_METADATA_IMP.ISSYS
+  is '是否属于系统初始化数据';
+comment on column MD_METADATA_IMP.STATUS
+  is '状态';
+comment on column MD_METADATA_IMP.SYSVER
+  is '系统版本';
+comment on column MD_METADATA_IMP.USERVER
+  is '用户定义版本';
+comment on column MD_METADATA_IMP.VER_REMARK
+  is '版本描述';
+comment on column MD_METADATA_IMP.UPDATE_DATE
+  is '创建时间';
+comment on column MD_METADATA_IMP.REMARK
+  is '描述，备注';
+comment on column MD_METADATA_IMP.PARENTCODE
+  is '父元数据编码';
+comment on column MD_METADATA_IMP.PARENTNAME
+  is '父元数据名称';
+comment on column MD_METADATA_IMP.MM_CODE
+  is '元模型编码';
+alter table MD_METADATA_IMP
+  add constraint PK_MD_METADATA_IMP primary key (ID);
+
+---prompt
+---prompt Creating table MD_METADATA_REJECT
+---prompt =================================
+---prompt
+create table MD_METADATA_REJECT
+(
+  ID           NVARCHAR2(64) not null,
+  JOB_TASK_ID  NVARCHAR2(256),
+  MM_NAME      NVARCHAR2(256),
+  MM_ID        NVARCHAR2(64),
+  MD_CODE      NVARCHAR2(256),
+  MD_NAME      NVARCHAR2(256),
+  MD_PACKAGEID NVARCHAR2(64),
+  ISSYS        INTEGER,
+  STATUS       INTEGER,
+  SYSVER       NVARCHAR2(256),
+  USERVER      NVARCHAR2(256),
+  VER_REMARK   NVARCHAR2(256),
+  UPDATE_DATE  NVARCHAR2(64),
+  REMARK       NVARCHAR2(512),
+  REJ_REMARK   NVARCHAR2(512),
+  NAME         NVARCHAR2(256)
+)
+;
+comment on table MD_METADATA_REJECT
+  is '元数据表';
+comment on column MD_METADATA_REJECT.ID
+  is '主键';
+comment on column MD_METADATA_REJECT.MM_ID
+  is '元模型id';
+comment on column MD_METADATA_REJECT.MD_CODE
+  is '元数据编码';
+comment on column MD_METADATA_REJECT.MD_NAME
+  is '元数据名称';
+comment on column MD_METADATA_REJECT.MD_PACKAGEID
+  is '所属包id';
+comment on column MD_METADATA_REJECT.ISSYS
+  is '是否属于系统初始化数据';
+comment on column MD_METADATA_REJECT.STATUS
+  is '状态';
+comment on column MD_METADATA_REJECT.SYSVER
+  is '系统版本';
+comment on column MD_METADATA_REJECT.USERVER
+  is '用户定义版本';
+comment on column MD_METADATA_REJECT.VER_REMARK
+  is '版本描述';
+comment on column MD_METADATA_REJECT.UPDATE_DATE
+  is '创建时间';
+comment on column MD_METADATA_REJECT.REMARK
+  is '描述，备注';
+comment on column MD_METADATA_REJECT.REJ_REMARK
+  is '驳回原因';
+alter table MD_METADATA_REJECT
+  add constraint PK_MD_METADATA_REJECT primary key (ID);
+
+---prompt
+---prompt Creating table MD_VERSION_LOG
+---prompt =============================
+---prompt
+create table MD_VERSION_LOG
+(
+  ID           NVARCHAR2(64) not null,
+  MID          NVARCHAR2(64),
+  MCODE        NVARCHAR2(64),
+  MNAME        NVARCHAR2(64),
+  OPERATION    INTEGER,
+  OPERATIONMSG NVARCHAR2(512),
+  UPDATE_DATE  NVARCHAR2(64)
+)
+;
+comment on table MD_VERSION_LOG
+  is '版本操作日志';
+comment on column MD_VERSION_LOG.OPERATION
+  is '操作类型 1 通过，0驳回';
+comment on column MD_VERSION_LOG.OPERATIONMSG
+  is '原因';
+alter table MD_VERSION_LOG
+  add constraint PK_MD_VERSION_LOG primary key (ID);
+
+---prompt
+---prompt Creating table MD_VIEW
+---prompt ======================
+---prompt
+create table MD_VIEW
+(
+  ID            NVARCHAR2(64) not null,
+  VIEW_NAME     NVARCHAR2(256),
+  DEFAULT_SHOW  NVARCHAR2(64),
+  VIEW_TYPE     NVARCHAR2(64),
+  DISPLAY_ORDER NVARCHAR2(64),
+  REMARK        NVARCHAR2(512),
+  ISHIDDEN      INTEGER
+)
+;
+comment on column MD_VIEW.ID
+  is '主键';
+comment on column MD_VIEW.VIEW_NAME
+  is '名称';
+comment on column MD_VIEW.DEFAULT_SHOW
+  is '默认显示';
+comment on column MD_VIEW.VIEW_TYPE
+  is '类别：系统视图，用户视图';
+comment on column MD_VIEW.DISPLAY_ORDER
+  is '显示顺序';
+comment on column MD_VIEW.REMARK
+  is '描述';
+comment on column MD_VIEW.ISHIDDEN
+  is '是否隐藏';
+alter table MD_VIEW
+  add constraint PK_MD_VIEW primary key (ID);
+
+---prompt
+---prompt Creating table MD_VIEW_FOLDER
+---prompt =============================
+---prompt
+create table MD_VIEW_FOLDER
+(
+  ID            NVARCHAR2(64) not null,
+  VIEW_ID       NVARCHAR2(64),
+  PARENT_ID     NVARCHAR2(64),
+  NAME          NVARCHAR2(256),
+  NAMESPACE     NVARCHAR2(256),
+  FOLDER_LEVEL  NVARCHAR2(64),
+  DISPLAY_ORDER NVARCHAR2(64),
+  ISHIDDEN      INTEGER
+)
+;
+alter table MD_VIEW_FOLDER
+  add constraint PK_MM_VIEW_FOLDER primary key (ID);
+
+---prompt
+---prompt Creating table MM_ATTRIBUTE
+---prompt ===========================
+---prompt
+create table MM_ATTRIBUTE
+(
+  ID            NVARCHAR2(64) not null,
+  ATT_CODE      NVARCHAR2(256),
+  ATT_NAME      NVARCHAR2(256),
+  MM_ID         NVARCHAR2(64),
+  INHERIT_FLAG  INTEGER,
+  ISREAD        INTEGER,
+  ISNULL        INTEGER,
+  DATATYPE_ID   NVARCHAR2(64),
+  DISPLAY_TYPE  NVARCHAR2(64),
+  ENUM_ID       NVARCHAR2(256),
+  ATT_LENGTH    INTEGER,
+  ATT_MAX       INTEGER,
+  ATT_MIN       INTEGER,
+  ISSHOW        INTEGER,
+  ISKEY         INTEGER,
+  REMARK        NVARCHAR2(512),
+  DISPLAY_ORDER NVARCHAR2(64)
+)
+;
+comment on table MM_ATTRIBUTE
+  is '元模型属性';
+comment on column MM_ATTRIBUTE.ID
+  is '元模型属性id';
+comment on column MM_ATTRIBUTE.ATT_CODE
+  is '属性代码';
+comment on column MM_ATTRIBUTE.ATT_NAME
+  is '属性名称';
+comment on column MM_ATTRIBUTE.MM_ID
+  is '元模型的ID';
+comment on column MM_ATTRIBUTE.INHERIT_FLAG
+  is '是否可继承';
+comment on column MM_ATTRIBUTE.ISREAD
+  is '是否只读';
+comment on column MM_ATTRIBUTE.ISNULL
+  is '是否可为null';
+comment on column MM_ATTRIBUTE.DATATYPE_ID
+  is '类型id';
+comment on column MM_ATTRIBUTE.DISPLAY_TYPE
+  is '控件类型1：文本框；2：文本域；3：下拉框';
+comment on column MM_ATTRIBUTE.ENUM_ID
+  is '枚举值，下拉框的选项';
+comment on column MM_ATTRIBUTE.ATT_LENGTH
+  is '属性长度';
+comment on column MM_ATTRIBUTE.ATT_MAX
+  is '属性最大值';
+comment on column MM_ATTRIBUTE.ATT_MIN
+  is '属性最小值';
+comment on column MM_ATTRIBUTE.ISSHOW
+  is '是否可见';
+comment on column MM_ATTRIBUTE.ISKEY
+  is '是否逻辑主键';
+comment on column MM_ATTRIBUTE.REMARK
+  is '描述，备注';
+comment on column MM_ATTRIBUTE.DISPLAY_ORDER
+  is '显示顺序';
+alter table MM_ATTRIBUTE
+  add constraint PK_MM_ATTRIBUTE primary key (ID);
+
+---prompt
+---prompt Creating table MM_COMPOSITION
+---prompt =============================
+---prompt
+create table MM_COMPOSITION
+(
+  ID                 NVARCHAR2(64) not null,
+  FROM_MM_ID         NVARCHAR2(64),
+  TO_MM_ID           NVARCHAR2(64),
+  OWNER_MULTIPLICITY NVARCHAR2(256),
+  TO_MULTIPLICITY    NVARCHAR2(256),
+  REMARK             NVARCHAR2(512),
+  UPDATE_DATE        NVARCHAR2(64),
+  NAME               NVARCHAR2(256)
+)
+;
+comment on table MM_COMPOSITION
+  is '元模型组合关系';
+comment on column MM_COMPOSITION.ID
+  is '主键';
+comment on column MM_COMPOSITION.FROM_MM_ID
+  is '起始元模型id,父元模型';
+comment on column MM_COMPOSITION.TO_MM_ID
+  is '目标元模型id，子元模型，被组合元模型';
+comment on column MM_COMPOSITION.REMARK
+  is '描述，备注';
+alter table MM_COMPOSITION
+  add constraint PK_MM_COMPOSITION primary key (ID);
+
+---prompt
+---prompt Creating table MM_DEPENDENCY
+---prompt ============================
+---prompt
+create table MM_DEPENDENCY
+(
+  ID         NVARCHAR2(64) not null,
+  NAME       NVARCHAR2(256),
+  FROM_MM_ID NVARCHAR2(64),
+  TO_MM_ID   NVARCHAR2(64),
+  TROLE      NVARCHAR2(512),
+  REMARK     NVARCHAR2(512)
+)
+;
+comment on table MM_DEPENDENCY
+  is '元模型依赖关系';
+comment on column MM_DEPENDENCY.ID
+  is '主键';
+comment on column MM_DEPENDENCY.NAME
+  is '名字';
+comment on column MM_DEPENDENCY.FROM_MM_ID
+  is '起始元模型id，依赖端';
+comment on column MM_DEPENDENCY.TO_MM_ID
+  is '目标元模型id，被依赖端';
+comment on column MM_DEPENDENCY.REMARK
+  is '描述，备注';
+alter table MM_DEPENDENCY
+  add constraint PK_IDENTIFIER_1_MM_DEPEN primary key (ID);
+
+---prompt
+---prompt Creating table MM_ENUM
+---prompt ======================
+---prompt
+create table MM_ENUM
+(
+  ID          NVARCHAR2(64) not null,
+  NAME        NVARCHAR2(256),
+  REMARK      NVARCHAR2(256),
+  UPDATE_DATE NVARCHAR2(64)
+)
+;
+comment on column MM_ENUM.ID
+  is '标识';
+comment on column MM_ENUM.NAME
+  is '名称';
+comment on column MM_ENUM.REMARK
+  is '描述';
+comment on column MM_ENUM.UPDATE_DATE
+  is '最后更新时间';
+alter table MM_ENUM
+  add constraint PK_MM_ENUM primary key (ID);
+
+---prompt
+---prompt Creating table MM_ENUM_VALUE
+---prompt ============================
+---prompt
+create table MM_ENUM_VALUE
+(
+  ID         NVARCHAR2(64) not null,
+  ENUM_ID    NVARCHAR2(64),
+  ENUM_KEY   NVARCHAR2(64),
+  ENUM_VALUE NVARCHAR2(256)
+)
+;
+alter table MM_ENUM_VALUE
+  add constraint PK_MM_ENUM_VALUE primary key (ID);
+
+---prompt
+---prompt Creating table MM_INHERIT
+---prompt =========================
+---prompt
+create table MM_INHERIT
+(
+  ID          NVARCHAR2(64) not null,
+  MM_ID       NVARCHAR2(64),
+  PARENT_ID   NVARCHAR2(64),
+  REMARK      NVARCHAR2(512),
+  UPDATE_DATE NVARCHAR2(64)
+)
+;
+comment on table MM_INHERIT
+  is '元模型继承关系表';
+comment on column MM_INHERIT.ID
+  is '主键';
+comment on column MM_INHERIT.MM_ID
+  is '元模型id';
+comment on column MM_INHERIT.PARENT_ID
+  is '元模型的父类id';
+comment on column MM_INHERIT.REMARK
+  is '描述，备注';
+alter table MM_INHERIT
+  add constraint PK_IDENTIFIER_1_MM_INHER primary key (ID);
+
+---prompt
+---prompt Creating table MM_METAMODEL
+---prompt ===========================
+---prompt
+create table MM_METAMODEL
+(
+  ID           NVARCHAR2(64) not null,
+  MM_CODE      NVARCHAR2(256),
+  MM_NAME      NVARCHAR2(256),
+  MM_PACKAGEID NVARCHAR2(256),
+  ISABSTRACT   INTEGER,
+  GRAPH_PIG    NVARCHAR2(256),
+  STATUS       INTEGER,
+  SYSVER       NVARCHAR2(256),
+  USERVER      NVARCHAR2(256),
+  ISUSE        INTEGER,
+  ISSYS        INTEGER,
+  REMARK       NVARCHAR2(512)
+)
+;
+comment on table MM_METAMODEL
+  is '元模型存储表';
+comment on column MM_METAMODEL.ID
+  is '主键';
+comment on column MM_METAMODEL.MM_CODE
+  is '元模型编码';
+comment on column MM_METAMODEL.MM_NAME
+  is '元模型名称';
+comment on column MM_METAMODEL.MM_PACKAGEID
+  is '元模型包';
+comment on column MM_METAMODEL.GRAPH_PIG
+  is '图元文件包括相对路径';
+comment on column MM_METAMODEL.STATUS
+  is '状态';
+comment on column MM_METAMODEL.SYSVER
+  is '系统版本';
+comment on column MM_METAMODEL.USERVER
+  is '用户定义版本';
+comment on column MM_METAMODEL.ISUSE
+  is '是否为当前版本';
+comment on column MM_METAMODEL.ISSYS
+  is '是否属于系统初始化数据';
+comment on column MM_METAMODEL.REMARK
+  is '描述，备注';
+alter table MM_METAMODEL
+  add constraint PK_MM_METAMODEL primary key (ID);
+
+
+---spool off

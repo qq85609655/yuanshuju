@@ -1,0 +1,109 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.Map;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+/**
+ * 
+* @ClassName: GatherDataSourceBasicView 
+* <p>采集数据源<br>
+* @author wzx
+* @date 2015年7月9日 下午3:51:51
+* @version V1.0
+* @since JDK 1.7
+ */
+public class GatherDataSourceBasicView implements IView{
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 数据源名称
+	 */
+	private String dbsName;
+	/**
+	 * 适配器
+	 */
+	private String adapter;
+	/**
+	 * 采集模式
+	 */
+	private String gatherModel;
+	/**
+	 * 数据路径
+	 */
+	private String dataPath;
+	/**
+	 * 悬挂点名称
+	 */
+	private String dataPathName;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 数据源参数
+	 */
+	private Map dbsParam;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public String getDbsName() {
+		return dbsName;
+	}
+	public void setDbsName(String dbsName) {
+		this.dbsName = dbsName;
+	}
+	public String getAdapter() {
+		return adapter;
+	}
+	public void setAdapter(String adapter) {
+		this.adapter = adapter;
+	}
+	public String getGatherModel() {
+		return gatherModel;
+	}
+	public void setGatherModel(String gatherModel) {
+		this.gatherModel = gatherModel;
+	}
+	public String getDataPath() {
+		return dataPath;
+	}
+	public void setDataPath(String dataPath) {
+		this.dataPath = dataPath;
+	}
+	
+	public String getDataPathName() {
+		return dataPathName;
+	}
+	public void setDataPathName(String dataPathName) {
+		this.dataPathName = dataPathName;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Map getDbsParam() {
+		return dbsParam;
+	}
+	public void setDbsParam(Map dbsParam) {
+		this.dbsParam = dbsParam;
+	}
+	@Override
+	public String toString() {
+		return "GatherDataSourceBasicView [id=" + id + ", dbsName=" + dbsName
+				+ ", adapter=" + adapter + ", gatherModel=" + gatherModel
+				+ ", dataPath=" + dataPath + ", dataPathName=" + dataPathName
+				+ ", remark=" + remark + ", dbsParam=" + dbsParam + "]";
+	}
+	
+
+	
+}

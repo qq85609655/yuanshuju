@@ -1,0 +1,79 @@
+package com.gilight.dep.metadata.entity;
+
+public class MdRelation  extends BaseMetaDataEntity {
+  //transform
+
+
+  private String id;
+  private String sourcemdid;
+  private String sourcemdcode;
+  private String targetmdid;
+  private String targetmdcode;
+  private String relationmdid;
+  private String relationmdcode;
+  private Integer relationtype;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getSourcemdid() {
+    return sourcemdid;
+  }
+
+  public void setSourcemdid(String sourcemdid) {
+    this.sourcemdid = sourcemdid;
+  }
+
+  public String getSourcemdcode() {
+    return sourcemdcode;
+  }
+
+  public void setSourcemdcode(String sourcemdcode) {
+    this.sourcemdcode = sourcemdcode;
+  }
+
+  public String getTargetmdid() {
+    return targetmdid;
+  }
+
+  public void setTargetmdid(String targetmdid) {
+    this.targetmdid = targetmdid;
+  }
+
+  public String getTargetmdcode() {
+    return targetmdcode;
+  }
+
+  public void setTargetmdcode(String targetmdcode) {
+    this.targetmdcode = targetmdcode;
+  }
+
+  public String getRelationmdid() {
+    return relationmdid;
+  }
+
+  public void setRelationmdid(String relationmdid) {
+    this.relationmdid = relationmdid;
+  }
+
+  public String getRelationmdcode() {
+    return relationmdcode;
+  }
+
+  public void setRelationmdcode(String relationmdcode) {
+    this.relationmdcode = relationmdcode;
+  }
+
+  public Integer getRelationtype() {
+    return relationtype;
+  }
+
+  public void setRelationtype(Integer relationtype) {
+    this.relationtype = relationtype;
+  }
+}

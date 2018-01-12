@@ -1,0 +1,116 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+/**
+ * 
+ * @ClassName: MetaModelView
+ *             <p>
+ *             元模型对象；包含基本信息和属性信息集合；<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:13:54
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaModelView extends MetaModelBasicView {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/***
+	 * 父类集合
+	 */
+	private List<MetaModelInheritView> parentList;
+	/***
+	 * 组合集合
+	 */
+	private List<MetaModelCompView> compList;
+	/**
+	 * 依赖组合
+	 */
+	private List<MetaModelDepeView> depeList;
+	/***
+	 * 组合模型集合
+	 */
+	private List<MetaModelBasicView> compModelList;
+	/***
+	 * 依赖模型组合
+	 */
+	private List<MetaModelBasicView> depeModelList;
+	/***
+	 * 父类模型组合
+	 */
+	private List<MetaModelBasicView> parentModelList;
+	/***
+	 * 属性集合
+	 */
+	private List<MetaModelAttView> attList;
+
+
+	public List<MetaModelCompView> getCompList() {
+		return compList;
+	}
+
+	public void setCompList(List<MetaModelCompView> compList) {
+		this.compList = compList;
+	}
+
+	public List<MetaModelDepeView> getDepeList() {
+		return depeList;
+	}
+
+	public void setDepeList(List<MetaModelDepeView> depeList) {
+		this.depeList = depeList;
+	}
+
+	public List<MetaModelBasicView> getCompModelList() {
+		return compModelList;
+	}
+
+	public void setCompModelList(List<MetaModelBasicView> compModelList) {
+		this.compModelList = compModelList;
+	}
+
+	public List<MetaModelBasicView> getDepeModelList() {
+		return depeModelList;
+	}
+
+	public void setDepeModelList(List<MetaModelBasicView> depeModelList) {
+		this.depeModelList = depeModelList;
+	}
+
+	public List<MetaModelAttView> getAttList() {
+		return attList;
+	}
+
+	public void setAttList(List<MetaModelAttView> attList) {
+		this.attList = attList;
+	}
+
+	public List<MetaModelInheritView> getParentList() {
+		return parentList;
+	}
+
+	public void setParentList(List<MetaModelInheritView> parentList) {
+		this.parentList = parentList;
+	}
+
+	public List<MetaModelBasicView> getParentModelList() {
+		return parentModelList;
+	}
+
+	public void setParentModelList(List<MetaModelBasicView> parentModelList) {
+		this.parentModelList = parentModelList;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaModelView [parentList=" + parentList + ", compList="
+				+ compList + ", depeList=" + depeList + ", compModelList="
+				+ compModelList + ", depeModelList=" + depeModelList
+				+ ", parentModelList=" + parentModelList + ", attList="
+				+ attList + "]";
+	}
+
+}

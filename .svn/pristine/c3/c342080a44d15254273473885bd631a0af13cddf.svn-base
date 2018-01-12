@@ -1,0 +1,266 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+
+/**
+ * 
+* @ClassName: MmAttribute 
+* <p>TODO<br>
+* @author hww
+* @date 2015年7月7日 下午3:51:49
+* @version V1.0
+* @since JDK 1.7
+ */
+public class MmAttribute extends BaseMetaDataEntity {
+
+	/**
+	 * 元模型属性id
+	 */
+	private String id;
+	/**
+	 * 属性代码
+	 */
+	private String attCode;
+	/**
+	 * 属性名称
+	 */
+	private String attName;
+	/**
+	 * 元模型的ID
+	 */
+	private String mmId;
+	/**
+	 * 是否可继承:YES/NO
+	 */
+	private Integer inheritFlag;
+	/**
+	 * 是否只读:YES/NO
+	 */
+	private Integer isread;
+	/**
+	 * 是否可为null::YES/NO
+	 */
+	private Integer isnull;
+	/**
+	 * 类型id
+	 */
+	private String datatypeId;
+	/**
+	 * 控件类型 1：文本框；2：文本域；3：下拉框
+	 */
+	private String displayType = "TEXT";
+	/**
+	 * 枚举值，下拉框的选项
+	 */
+	private String enumId;
+	/**
+	 * 属性长度
+	 */
+	private Integer attLength;
+	/**
+	 * 属性最大值
+	 */
+	private Integer attMax;
+	/**
+	 * 属性最小值
+	 */
+	private Integer attMin;
+	/**
+	 * 是否可见: YES/NO
+	 */
+	private Integer isshow;
+	/**
+	 * 是否逻辑主键
+	 */
+	private Integer iskey;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 显示顺序
+	 */
+	private String displayOrder;
+
+	public MmAttribute() {
+	}
+
+	public MmAttribute(String id) {
+		this.id = id;
+	}
+
+	public MmAttribute(String id, String attCode, String attName, String mmId,
+			Integer inheritFlag, Integer isread, Integer isnull,
+			String datatypeId, String displayType, String enumId,
+			Integer attLength, Integer attMax, Integer attMin,
+			Integer isshow, Integer iskey, String remark,
+			String displayOrder) {
+		this.id = id;
+		this.attCode = attCode;
+		this.attName = attName;
+		this.mmId = mmId;
+		this.inheritFlag = inheritFlag;
+		this.isread = isread;
+		this.isnull = isnull;
+		this.datatypeId = datatypeId;
+		this.displayType = displayType;
+		this.enumId = enumId;
+		this.attLength = attLength;
+		this.attMax = attMax;
+		this.attMin = attMin;
+		this.isshow = isshow;
+		this.iskey = iskey;
+		this.remark = remark;
+		this.displayOrder = displayOrder;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getAttCode() {
+		return this.attCode;
+	}
+
+	public void setAttCode(String attCode) {
+		this.attCode = attCode;
+	}
+
+	public String getAttName() {
+		return this.attName;
+	}
+
+	public void setAttName(String attName) {
+		this.attName = attName;
+	}
+
+	public String getMmId() {
+		return this.mmId;
+	}
+
+	public void setMmId(String mmId) {
+		this.mmId = mmId;
+	}
+
+	public Integer getInheritFlag() {
+		return this.inheritFlag;
+	}
+
+	public void setInheritFlag(Integer inheritFlag) {
+		this.inheritFlag = inheritFlag;
+	}
+
+	public Integer getIsread() {
+		return this.isread;
+	}
+
+	public void setIsread(Integer isread) {
+		this.isread = isread;
+	}
+
+	public Integer getIsnull() {
+		return this.isnull;
+	}
+
+	public void setIsnull(Integer isnull) {
+		this.isnull = isnull;
+	}
+
+	public String getDatatypeId() {
+		return this.datatypeId;
+	}
+
+	public void setDatatypeId(String datatypeId) {
+		this.datatypeId = datatypeId;
+	}
+
+	public String getDisplayType() {
+		return this.displayType;
+	}
+
+	public void setDisplayType(String displayType) {
+		this.displayType = displayType;
+	}
+
+	public String getEnumId() {
+		return this.enumId;
+	}
+
+	public void setEnumId(String enumId) {
+		this.enumId = enumId;
+	}
+
+	public Integer getAttLength() {
+		return this.attLength;
+	}
+
+	public void setAttLength(Integer attLength) {
+		this.attLength = attLength;
+	}
+
+	public Integer getAttMax() {
+		return this.attMax;
+	}
+
+	public void setAttMax(Integer attMax) {
+		this.attMax = attMax;
+	}
+
+	public Integer getAttMin() {
+		return this.attMin;
+	}
+
+	public void setAttMin(Integer attMin) {
+		this.attMin = attMin;
+	}
+
+	public Integer getIsshow() {
+		return this.isshow;
+	}
+
+	public void setIsshow(Integer isshow) {
+		this.isshow = isshow;
+	}
+
+	public Integer getIskey() {
+		return this.iskey;
+	}
+
+	public void setIskey(Integer iskey) {
+		this.iskey = iskey;
+	}
+
+	public String getRemark() {
+		return this.remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getDisplayOrder() {
+		return this.displayOrder;
+	}
+
+	public void setDisplayOrder(String displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+
+	@Override
+	public String toString() {
+		return "MmAttribute [id=" + id + ", attCode=" + attCode + ", attName="
+				+ attName + ", mmId=" + mmId + ", inheritFlag=" + inheritFlag
+				+ ", isread=" + isread + ", isnull=" + isnull + ", datatypeId="
+				+ datatypeId + ", displayType=" + displayType + ", enumId="
+				+ enumId + ", attLength=" + attLength + ", attMax=" + attMax
+				+ ", attMin=" + attMin + ", isshow=" + isshow + ", iskey="
+				+ iskey + ", remark=" + remark + ", displayOrder="
+				+ displayOrder + "]";
+	}
+
+}

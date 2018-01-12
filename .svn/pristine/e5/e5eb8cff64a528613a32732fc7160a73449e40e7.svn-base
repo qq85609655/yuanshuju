@@ -1,0 +1,55 @@
+package com.gilight.dep.metadata.util;
+
+import java.util.*;
+
+/**
+ * @author wzx
+ * @version V1.0
+ * @Title: ${file_name}
+ * @Description: ${todo}
+ * @date ${date} ${time}
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ */
+public class ListUtil {
+
+    /**
+     * List 判空
+     * @param arlList
+     */
+    public static boolean isEmpty(List arlList){
+        if (arlList==null||arlList.size()==0){
+            return true;
+        }
+        return false;
+    }
+    public static boolean isNotEmpty(List arlList){
+        return !isEmpty(arlList);
+    }
+    /**
+     * List去重 无顺序
+     * @param arlList
+     */
+    public static void removeDuplicate(List arlList)
+    {
+        HashSet h = new HashSet(arlList);
+        arlList.clear();
+        arlList.addAll(h);
+    }
+
+    /**
+     * List去重 按顺序
+     * @param arlList
+     */
+    public static void removeDuplicateWithOrder(List arlList)
+    {
+        Set set = new HashSet();
+        List newList = new ArrayList();
+        for (Iterator iter = arlList.iterator(); iter.hasNext(); )
+        {
+            Object element = iter.next();
+            if (set.add(element)) newList.add(element);
+        }
+        arlList.clear();
+        arlList.addAll(newList);
+    }
+}

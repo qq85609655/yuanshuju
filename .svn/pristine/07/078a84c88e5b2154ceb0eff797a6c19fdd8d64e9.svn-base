@@ -1,0 +1,50 @@
+package com.gilight.dep.metadata.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.service.IQueryService;
+
+/**
+ * 
+ * @ClassName: IMetaDataBaseService
+ *             <p>
+ *             数据库备份接口<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:06:24
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaDataDbBackupService extends IMetaDataService, IQueryService {
+	/**
+	 *备份数据库
+	 */
+	public void backupDb() throws Exception;
+
+	/**
+	 * 查询备份记录
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
+	public IResponse queryDbBackup(IContext context) throws Exception;
+
+
+	/**
+     * 删除备份
+     * @param context
+     * @return
+     */
+	IResponse delDbBackup(IContext context);
+
+	/**
+	 * 恢复数据库
+	 * @param id 备份id
+	 * @throws Exception
+	 */
+	void recoverDb(String id) throws Exception;
+
+	/**
+	 * 单开一个线程，开始备份
+	 */
+	void startDbbak();
+}

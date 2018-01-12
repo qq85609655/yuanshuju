@@ -1,0 +1,287 @@
+package com.gilight.dep.metadata.dao.impl;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.type.StandardBasicTypes;
+
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IMetaDataMapDao;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdView;
+import com.gilight.dep.metadata.entity.Mdmetadatapubtake;
+import com.gilight.dep.metadata.entity.MmComposition;
+import com.gilight.dep.metadata.entity.MmDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+/**
+ * 映射关系
+ */
+public class MetaDataMapDaoImpl extends BaseDao implements IMetaDataMapDao{
+	public MetaDataMapDaoImpl(){}
+
+	@Override
+	public MdMetadata findMdMetadataById(String id) {
+		String hql = "from " +MdMetadata.class.getName()+ " where id = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, id);
+		List<IEntity> list = query.list();
+		if(list!=null&&list.size()>0){
+			return (MdMetadata) list.get(0);
+		}
+		MdMetadata mdMetadata = new MdMetadata();
+		List<IEntity> list2 = findByEntity(mdMetadata);
+		return null;
+	}
+	
+	@Override
+	public MmMetamodel findMmMetamodelById(String id) {
+		String hql = "from " +MmMetamodel.class.getName()+ " where id = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, id);
+		List<IEntity> list = query.list();
+		if(list!=null&&list.size()>0){
+			return (MmMetamodel) list.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public List<MmDependency> findSourceByToMmIdAsSource(String toMmId) {
+		String hql = "from " +MmDependency.class.getName()+ " where toMmId = ? and isMapp= ? and mappDire = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, toMmId);
+		query.setString(1, "1");
+		query.setString(2, "0");
+		List<IEntity> list = query.list();
+		if(list!=null&&list.size()>0){
+			List<MmDependency> retList = new ArrayList<>();
+			for (IEntity iEntity : list) {
+				MmDependency m = (MmDependency) iEntity;
+				retList.add(m);
+			}
+			return retList;
+		}
+		return null;
+	}
+
+	@Override
+	public MmDependency findTargetByFromMmIdAsSource(String fromMmId) {
+		String hql = "from " +MmDependency.class.getName()+ " where fromMmId = ? and isMapp= ? and mappDire = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, fromMmId);
+		query.setString(1, "1");
+		query.setString(2, "1");
+		List<IEntity> list = query.list();
+		if(list!=null&&list.size()>0){
+			return (MmDependency) list.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public List<MmDependency> findTargetByToMmIdAsTarget(String toMmId) {
+		String hql = "from " +MmDependency.class.getName()+ " where toMmId = ? and isMapp= ? and mappDire = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, toMmId);
+		query.setString(1, "1");
+		query.setString(2, "1");
+		List<IEntity> list = query.list();
+		if(list!=null&&list.size()>0){
+			List<MmDependency> retList = new ArrayList<>();
+			for (IEntity iEntity : list) {
+				MmDependency m = (MmDependency) iEntity;
+				retList.add(m);
+			}
+			return retList;
+		}
+		return null;
+	}
+	
+	@Override
+	public MmDependency findSourceByFromMmIdAsTarget(String fromMmId) {
+		String hql = "from " +MmDependency.class.getName()+ " where fromMmId = ? and isMapp= ? and mappDire = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, fromMmId);
+		query.setString(1, "1");
+		query.setString(2, "0");
+		List<IEntity> list = query.list();
+		if(list!=null&&list.size()>0){
+			return (MmDependency) list.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public List<MdMetadata> findMdListByMmId(String mmId) {
+		String hql = "from " +MdMetadata.class.getName()+ " where mmId = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, mmId);
+		List<IEntity> list = query.list();
+		if(list!=null&&list.size()>0){
+			List<MdMetadata> retList = new ArrayList<>();
+			for (IEntity iEntity : list) {
+				MdMetadata m = (MdMetadata) iEntity;
+				retList.add(m);
+			}
+			return retList;
+		}
+		return null;
+	}
+	@Override
+	public Integer findMdCountsByMmId(String mmId) {
+		String sql = "select count(*) from ( select * from MD_METADATA t where t.MM_Id = ? )";
+		Query query=this.getSession().createSQLQuery(sql);
+		query.setString(0, mmId);
+		Integer allcounts =((BigDecimal)query.uniqueResult()).intValue();
+		if(allcounts!=null){
+			return allcounts;
+		}
+		return null;
+	}
+	
+	@Override
+	public List<MdMetadata> findMdListPagesByMmId(String mmId,Integer startCount,Integer pageSize) {
+		String hql = "from " +MdMetadata.class.getName()+ " where mmId = ? ";
+
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, mmId);
+		query.setFirstResult(startCount);
+		query.setMaxResults(pageSize);
+		List<IEntity> list = query.list();
+		if(list!=null&&list.size()>0){
+			List<MdMetadata> retList = new ArrayList<>();
+			for (IEntity iEntity : list) {
+				MdMetadata m = (MdMetadata) iEntity;
+				retList.add(m);
+			}
+			return retList;
+		}
+		return null;
+	}
+
+
+
+	@Override
+	public MmDependency findMmDepById(String id) {
+		String hql = "from " +MmDependency.class.getName()+ " where id = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, id);
+		List<IEntity> list = query.list();
+		if(list!=null&&list.size()>0){
+			return (MmDependency) list.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public MdView findMdViewById(String id) {
+		String hql = "from " +MdView.class.getName()+ " where id = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, id);
+		List<IEntity> list = query.list();
+		if(list!=null&&list.size()>0){
+			return (MdView) list.get(0);
+		}
+		return null;
+	}
+	
+	@Override
+	public MdComposition findCompositionByToMdId(String toMdId) {
+		String hql = "from " +MdComposition.class.getName()+ " where toMdId = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, toMdId);
+		List<IEntity> list = query.list();
+		if(list!=null&&list.size()>0){
+			return (MdComposition) list.get(0);
+		}
+		return null;
+	}
+	
+	@Override
+	public MmComposition findCompositionByToMmId(String toMmId) {
+		String hql = "from " +MmComposition.class.getName()+ " where toMmId = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, toMmId);
+		List<IEntity> list = query.list();
+		if(list!=null && list.size()>0){
+			return (MmComposition) list.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public List<MdComposition> findCompositionByFromMdId(String fromMdId) {
+		String hql = "from " +MdComposition.class.getName()+ " where fromMdId = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, fromMdId);
+		List<IEntity> list = query.list();
+		if(list!=null && list.size()>0){
+			List<MdComposition> retList = new ArrayList<>();
+			for (IEntity iEntity : list) {
+				MdComposition m = (MdComposition) iEntity;
+				retList.add(m);
+			}
+			return retList;
+		}
+		return null;
+	}
+	
+	@Override
+	public List<MdMetadata> findMDFromTree(String mmId, String metadataId) {
+		List<MdComposition> list = this.findMsComps(metadataId);
+		List<MdMetadata> retlist = new ArrayList<MdMetadata>();
+		if(list!=null && list.size()>0){
+			for (MdComposition mdComposition : list) {
+				MdMetadata m = this.findHasDepen(mdComposition.getToMdId(),mmId);
+				if(m!=null){
+					retlist.add(m);
+				}
+			}
+			return retlist;
+		}
+		return null;
+	}
+	/**
+	 * 查元数据组合表下的下层组合元数据集合
+	 * @param metadataId
+	 * @return
+	 */
+	private List<MdComposition> findMsComps(String metadataId){
+		String hql = "from " +MdComposition.class.getName()+ " where fromMdId = ? ";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, metadataId);
+		List<IEntity> list = query.list();
+		if(list!=null && list.size()>0){
+			List<MdComposition> retlist = new ArrayList<MdComposition>();
+			for (IEntity iEntity : list) {
+				MdComposition m = (MdComposition)iEntity;
+				retlist.add(m);
+			}
+			return retlist;
+		}
+		return null;
+	}
+	/**
+	 * 查元数据表的指定id和mmId的元数据
+	 * @param id
+	 * @param mmId
+	 * @return
+	 */
+	private MdMetadata findHasDepen(String id, String mmId) {
+		String hql = "from " +MdMetadata.class.getName()+ " where id = ? and mmId = ?";
+		Query query=this.getSession().createQuery(hql);
+		query.setString(0, id);
+		query.setString(1, mmId);
+		List<IEntity> list = query.list();
+		if(list!=null && list.size()>0){
+			return (MdMetadata) list.get(0);
+		}
+		return null;
+	}
+	
+	
+}

@@ -1,0 +1,13 @@
+/**   
+* @Title: IResponseData.java  
+* @Description: TODO 
+* @author yuan hongyan   
+* @date 2015年3月17日 下午4:51:37
+* @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+* @version V1.0   
+*/
+package com.gilight.dep.metadata.web.response;
+
+public interface IResponseData {
+
+}

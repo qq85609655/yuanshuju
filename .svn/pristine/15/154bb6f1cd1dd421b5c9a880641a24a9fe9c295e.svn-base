@@ -1,0 +1,46 @@
+package com.gilight.dep.metadata.dao.impl;
+
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.metadata.dao.ISystemBackupDao;
+import com.gilight.dep.metadata.entity.MdSystemBackup;
+
+/**
+ * 系统备份Dao实现类
+ */
+public class SystemBackupDaoImpl extends BaseDao implements ISystemBackupDao{
+	
+	public SystemBackupDaoImpl(){
+		
+	}
+
+	@Override
+	public MdSystemBackup getLatestMdSystemBackup() throws DaoException{
+		try {
+			String hql = "from "  +MdSystemBackup.class.getName()+ " order by saveTime desc";
+			Query createQuery = getSession().createQuery(hql);
+			
+			List<MdSystemBackup> list = createQuery.list();
+			if(list != null && list.size() > 0){
+				return list.get(0);
+			}
+			return null;
+		} catch (HibernateException e) {
+			e.printStackTrace();
+			throw new DaoException("查询最新系统备份异常");
+		}
+	}
+
+	@Override
+	public void empty() throws DaoException{
+		String hql = "delete from " +MdSystemBackup.class.getName();
+		Query createQuery = getSession().createQuery(hql);
+		createQuery.executeUpdate();
+		
+	}
+
+}

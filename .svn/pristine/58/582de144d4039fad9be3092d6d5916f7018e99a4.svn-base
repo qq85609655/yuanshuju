@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="svn" />
+    <mapping directory="D:/gilightframework-all/gilightframework-web-common" vcs="svn" />
+    <mapping directory="D:/gilightframework-all/gilightframework-web-editor" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/../metamodel" vcs="svn" />
+  </component>
+</project>

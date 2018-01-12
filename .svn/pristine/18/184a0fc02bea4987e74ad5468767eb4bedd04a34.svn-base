@@ -1,0 +1,59 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.ext.response.IDepView;
+
+import java.util.List;
+
+/**
+ * 
+ * @ClassName: MetaModelView
+ *             <p>
+ *             元模型对象；包含基本信息和属性信息集合；<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:13:54
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaModelDataMapView extends MetaBaseView implements IDepView {
+
+	// Fields
+
+	private String id;
+	private String mapdata;
+	private String status;
+	private String remark;
+
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMapdata() {
+		return mapdata;
+	}
+
+	public void setMapdata(String mapdata) {
+		this.mapdata = mapdata;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+}

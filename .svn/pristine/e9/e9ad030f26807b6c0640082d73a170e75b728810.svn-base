@@ -1,0 +1,30 @@
+/**   
+ * @Title: MetaModelBaseView.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月30日 上午10:58:20
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+public class MetaModelBaseView extends MetaModelBasicView {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/***
+	 * 元模型属性列表
+	 */
+	private List<MetaModelAttView> attList = null;
+	public List<MetaModelAttView> getAttList() {
+		return attList;
+	}
+	public void setAttList(List<MetaModelAttView> attList) {
+		this.attList = attList;
+	}
+
+}

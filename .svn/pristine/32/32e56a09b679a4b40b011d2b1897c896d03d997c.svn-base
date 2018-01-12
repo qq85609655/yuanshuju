@@ -1,0 +1,27 @@
+package com.gilight.dep.metamodel.service.impl;
+
+import com.gilight.dep.metadata.repository.IMetaModelAssoRepository;
+import com.gilight.dep.metamodel.service.IMetaModelAssoService;
+
+/**
+ * 
+ * @ClassName: MetaModelAssoServiceImpl
+ *             <p>
+ *             元模型组合关系、依赖关系、继承关系创建的基类<br>
+ * @author zps
+ * @date 2015年7月21日 下午6:02:50
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public abstract class MetaModelAssoServiceImpl implements IMetaModelAssoService {
+	IMetaModelAssoRepository metaModelAssoRepository;
+
+	public IMetaModelAssoRepository getMetaModelAssoRepository() {
+		return metaModelAssoRepository;
+	}
+
+	public void setMetaModelAssoRepository(
+			IMetaModelAssoRepository metaModelAssoRepository) {
+		this.metaModelAssoRepository = metaModelAssoRepository;
+	}
+}

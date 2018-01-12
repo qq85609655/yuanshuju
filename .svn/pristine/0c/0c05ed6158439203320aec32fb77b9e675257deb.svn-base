@@ -1,0 +1,59 @@
+package com.gilight.dep.metamodel.service;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+
+/**
+ * 
+ * @ClassName: IMetaModelBasicService
+ *             <p>
+ *             元模型基本操作类<br>
+ * @author wzx
+ * @date 2015年7月9日 下午2:30:29
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IMetaModelBasicService extends IMetaModelService {
+    /**
+     * 元模型发布
+     * @param paramIContext
+     * @return
+     * @throws ServiceException
+     */
+    public IResponse publishVer(IContext paramIContext) throws ServiceException;
+
+    /**
+     * 创建属性
+     * @param paramIContext
+     * @return
+     * @throws ServiceException
+     */
+    IResponse createAttrib(IContext paramIContext) throws ServiceException;
+
+    /**
+     * 删除属性
+     * @param paramIContext
+     * @return
+     * @throws ServiceException
+     */
+    IResponse delAttrib(IContext paramIContext) throws ServiceException;
+    /**
+     * 上传图标文件
+     * @param context
+     * @return
+     * @throws ServiceException
+     */
+	IResponse upLoad(IContext context) throws ServiceException;
+	/**
+	 * 撤销已发布的元模型
+	* <p><br>
+	* @param paramIContext
+	* @return
+	* @throws ServiceException  
+	* @author hww 
+	* @date 2016年1月22日 上午11:00:59
+	* @version V1.0
+	 */
+	IResponse repealPublish(IContext paramIContext) throws ServiceException;
+}

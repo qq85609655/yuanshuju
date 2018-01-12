@@ -1,0 +1,52 @@
+package com.gilight.dep.metadata.web.request;
+
+import java.util.List;
+
+import com.gilight.dep.metadata.entity.BatchIdEntity;
+
+/**
+ * 批量审核的元数据ID和通过与否及描述封装的参数对象
+* @ClassName: BatchAuditData 
+* <p>TODO<br>
+* @author hww
+* @date 2015年10月16日 上午11:25:42
+* @version V1.0
+* @since JDK 1.7
+ */
+public class BatchAuditData extends BaseRequestData {
+	/**
+	 * 审核结果通过与否，即true or false
+	 */
+	private boolean flag;
+	/**
+	 * 说明
+	 */
+	private String remark;
+	/**
+	 * 由批量审核的元数据ID组成的对象数组
+	 */
+	private List<BatchIdEntity> ids;
+	
+	
+	public boolean isFlag() {
+		return flag;
+	}
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public List<BatchIdEntity> getIds() {
+		return ids;
+	}
+	public void setIds(List<BatchIdEntity> ids) {
+		this.ids = ids;
+	}
+	
+	
+	
+}

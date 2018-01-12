@@ -1,0 +1,206 @@
+package com.gilight.dep.metadata.scope;
+
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.util.string.StringUtil;
+import com.gilight.dep.metadata.entity.MdMetadataArchive;
+
+@SuppressWarnings("unchecked")
+public class MetaDataVersionScope extends BaseHbiernateScope {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 元模型名称
+	 */
+	private String mmName;
+	/**
+	 * 元模型id
+	 */
+	private String mmId;
+	/**
+	 * 元数据编码
+	 */
+	private String mdCode;
+	/**
+	 * 元数据名称
+	 */
+	private String mdName;
+	/**
+	 * 所属包id
+	 */
+	private String mdPackageid;
+	/**
+	 * 是否属于系统初始化数据
+	 */
+	private Integer issys;
+	/**
+	 * 状态
+	 */
+	private Integer status;
+	/**
+	 * 系统版本
+	 */
+	private String sysver;
+	/**
+	 * 用户定义版本
+	 */
+	private String userver;
+	/**
+	 * 版本描述
+	 */
+	private String verRemark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate;
+	/**
+	 * 描述，备注
+	 */
+	private String remark;
+	/**
+	 * 是否当前版本
+	 */
+	private Integer isuse;
+
+	public String getMmName() {
+		return mmName;
+	}
+
+	public void setMmName(String mmName) {
+		this.mmName = mmName;
+	}
+
+	public String getMmId() {
+		return mmId;
+	}
+
+	public void setMmId(String mmId) {
+		this.mmId = mmId;
+	}
+
+	public String getMdCode() {
+		return mdCode;
+	}
+
+	public void setMdCode(String mdCode) {
+		this.mdCode = mdCode;
+	}
+
+	public String getMdName() {
+		return mdName;
+	}
+
+	public void setMdName(String mdName) {
+		this.mdName = mdName;
+	}
+
+	public String getMdPackageid() {
+		return mdPackageid;
+	}
+
+	public void setMdPackageid(String mdPackageid) {
+		this.mdPackageid = mdPackageid;
+	}
+
+	public Integer getIssys() {
+		return issys;
+	}
+
+	public void setIssys(Integer issys) {
+		this.issys = issys;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getSysver() {
+		return sysver;
+	}
+
+	public void setSysver(String sysver) {
+		this.sysver = sysver;
+	}
+
+	public String getUserver() {
+		return userver;
+	}
+
+	public void setUserver(String userver) {
+		this.userver = userver;
+	}
+
+	public String getVerRemark() {
+		return verRemark;
+	}
+
+	public void setVerRemark(String verRemark) {
+		this.verRemark = verRemark;
+	}
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getIsuse() {
+		return isuse;
+	}
+
+	public void setIsuse(Integer isuse) {
+		this.isuse = isuse;
+	}
+
+	@Override
+	public Class getClazz() {
+		// TODO Auto-generated method stub
+		return MdMetadataArchive.class;
+	}
+
+	@Override
+	public String getDefaultOrderBy(String obj) {
+		return " order by " + obj + ".id";
+	}
+
+	@Override
+	public StringBuffer getWhereHql(String obj) {
+
+		StringBuffer sql = new StringBuffer();
+		if (this.isuse != null) {
+			sql.append(" and ").append(obj).append(".isuse = ? ");
+			this.paraList.add(this.isuse);
+		}
+		if (this.status != null) {
+			sql.append(" and ").append(obj).append(".status = ? ");
+			this.paraList.add(this.status);
+		}
+		if (!StringUtil.isEmpty(this.userver)) {
+			sql.append(" and ").append(obj).append(".userver like ? ");
+			this.paraList.add("%" + this.userver + "%");
+		}
+		if (!StringUtil.isEmpty(this.mdCode)) {
+			sql.append(" and ").append(obj).append(".mdCode = ? ");
+			this.paraList.add(this.mdCode);
+		}
+		return sql;
+
+	}
+
+}

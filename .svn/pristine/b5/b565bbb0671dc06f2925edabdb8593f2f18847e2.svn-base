@@ -1,0 +1,140 @@
+/**   
+ * @Title: IGatherService.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月28日 下午8:07:49
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.gather.common;
+
+import com.gilight.dep.framework.core.exception.ModelException;
+import com.gilight.dep.metadata.gather.common.log.IGatherResult;
+
+/***
+ * 
+ * @ClassName: IGatherService
+ *             <p>
+ *             采集服务的接口，根据参数传递，获取采集适配器中配置的采集服务，根据采集服务执行采集 TODO<br>
+ * @author zps
+ * @date 2015年7月28日 下午8:48:48
+ * @version V1.0
+ * @since JDK 1.6
+ */
+public interface IGatherJobTaskModel {
+	/***
+	 * 
+	 * <p>
+	 * 获取采集任务的名称 <br>
+	 * 
+	 * @return
+	 * @author zps
+	 * @date 2015年7月28日 下午8:09:01
+	 * @version V1.0
+	 */
+	public String getName() throws ModelException;
+
+	/****
+	 * 
+	 * <p>
+	 * 获取采集任务执行id <br>
+	 * 
+	 * @return
+	 * @throws ModelException
+	 * @author zps
+	 * @date 2015年7月29日 上午10:29:54
+	 * @version V1.0
+	 */
+	public String getJobTaskId() throws ModelException;
+
+	/**
+	 * 
+	 * <p>
+	 * 设置任务ID <br>
+	 * 
+	 * @return
+	 * @throws ModelException
+	 * @author zps
+	 * @date 2015年7月29日 上午11:56:10
+	 * @version V1.0
+	 */
+	public String getJobId() throws ModelException;
+	public void setJobId(String jobid) throws ModelException;
+
+	/***
+	 * 
+	 * <p>
+	 * 获取采集适配器的名称 <br>
+	 * 
+	 * @return
+	 * @author zps
+	 * @date 2015年7月28日 下午8:09:36
+	 * @version V1.0
+	 */
+	public String getAdaptorName() throws ModelException;
+
+	/***
+	 * 
+	 * <p>
+	 * 获取采集适配器的代码 <br>
+	 * 
+	 * @return
+	 * @throws ModelException
+	 * @author zps
+	 * @date 2015年7月28日 下午8:21:17
+	 * @version V1.0
+	 */
+	public String getAdaptorCode() throws ModelException;
+
+	/**
+	 * 
+	 * <p>
+	 * 根据参数传递，获取采集适配器中配置的采集服务，根据采集服务执行采集<br>
+	 * 
+	 * @return
+	 * @throws ModelException
+	 * @author zps
+	 * @date 2015年7月28日 下午8:30:52
+	 * @version V1.0
+	 */
+	public void excute() throws ModelException;
+
+	/**
+	 * 
+	 * <p>
+	 * 查询任务执行的状态<br>
+	 * 
+	 * @return
+	 * @throws ModelException
+	 * @author zps
+	 * @date 2015年7月29日 上午9:38:47
+	 * @version V1.0
+	 */
+	public String getStatus() throws ModelException;
+
+	/***
+	 * 
+	 * <p>
+	 * 获取日志信息 <br>
+	 * 
+	 * @return
+	 * @throws ModelException
+	 * @author zps
+	 * @date 2015年7月29日 上午10:41:28
+	 * @version V1.0
+	 */
+	public IGatherResult getResult() throws ModelException;
+
+	/***
+	 * 
+	 * <p>
+	 * 获取采集任务执行日志详情 <br>
+	 * 
+	 * @return
+	 * @throws ModelException
+	 * @author zps
+	 * @date 2015年7月29日 上午10:42:05
+	 * @version V1.0
+	 */
+	public String getLogResult() throws ModelException;
+}

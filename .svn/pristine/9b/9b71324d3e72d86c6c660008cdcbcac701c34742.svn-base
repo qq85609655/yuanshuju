@@ -1,0 +1,241 @@
+package com.gilight.dep.metamodel.init.data.phys;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.gilight.dep.metadata.view.MetaModelAttView;
+import com.gilight.dep.metadata.view.MetaModelBasicView;
+import com.gilight.dep.metadata.view.MetaModelCompView;
+import com.gilight.dep.metadata.view.MetaModelView;
+import com.gilight.dep.metamodel.init.data.MetaModelInitFactory;
+import com.gilight.dep.metamodel.init.data.common.MetaModelCommonFactory;
+
+public class MetaModelPyhsDBFactory extends MetaModelInitFactory {
+
+	private static Map<String, MetaModelView> metaModel = new HashMap<String, MetaModelView>();
+
+	public static void main(String[] args) {
+		init();
+		System.out.println(metaModel.size());
+	}
+
+	public static Map<String, MetaModelView> getMetaModel() {
+		metaModel.clear();
+		init();
+		return metaModel;
+	}
+
+	private static void init() {
+		// TODO Auto-generated method stub
+		MetaModelPyhsDBFactory.setDepPkgRelational();
+		MetaModelPyhsDBFactory.setDepCatalog();
+		MetaModelPyhsDBFactory.setDepSchema();
+		MetaModelPyhsDBFactory.setDepView();
+		MetaModelPyhsDBFactory.setDepColumn();
+	}
+
+	private static void putCache(MetaModelView m) {
+		// TODO Auto-generated method stub
+		if (!metaModel.containsKey(m.getCode())) {
+			metaModel.put(m.getCode(), m);
+		} else {
+			System.out.println("---------" + (m.getCode()));
+		}
+	}
+
+	private static MetaModelView getCache(String code) {
+		// TODO Auto-generated method stub
+		if (metaModel.containsKey(code)) {
+			return metaModel.get(code);
+		}
+		return null;
+	}
+
+	// 数据库小类 DepPkgRelational
+	public static String DepPkgRelational = "DepPkgRelational";
+
+	public static MetaModelView setDepPkgRelational() {
+		String name = "数据库小类";
+		MetaModelView m = getCache(DepPkgRelational);
+		if (m == null) {
+			m = getSystemMetaModel(DepPkgRelational, name);
+		}
+		m.setIsabstract(false);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelCommonFactory.setDepPkgClassiSub());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合目录
+		MetaModelCompView comview = getMetaModelCompView(m, setDepCatalog());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 目录 DepCatalog
+	public static String DepCatalog = "DepCatalog";
+
+	public static MetaModelView setDepCatalog() {
+		String name = "目录";
+		MetaModelView m = getCache(DepCatalog);
+		if (m == null) {
+			m = getSystemMetaModel(DepCatalog, name);
+		}
+		m.setIsabstract(false);
+		// // 设置父类
+		// List<MetaModelBasicView> parentModelList = new
+		// ArrayList<MetaModelBasicView>();
+		// parentModelList.add(MetaModelCwmCoreFactory.setCWMModelElement());
+		// m.setParentModelList(parentModelList);
+
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编数据库
+		MetaModelCompView comview = getMetaModelCompView(m, setDepSchema());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 数据库 DepSchema
+	public static String DepSchema = "DepSchema";
+
+	public static MetaModelView setDepSchema() {
+		String name = "数据库";
+		MetaModelView m = getCache(DepSchema);
+		if (m == null) {
+			m = getSystemMetaModel(DepSchema, name);
+		}
+		m.setIsabstract(false);
+		// // 设置父类
+		// List<MetaModelBasicView> parentModelList = new
+		// ArrayList<MetaModelBasicView>();
+		// parentModelList.add(MetaModelCommonFactory.setDepPkgClassiSub());
+		// m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合表
+		MetaModelCompView comview = getMetaModelCompView(m, setDepTable());
+		compList.add(comview);
+		MetaModelCompView comview2 = getMetaModelCompView(m, setDepView());
+		compList.add(comview2);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 表 DepTable
+	public static String DepTable = "DepTable";
+
+	public static MetaModelView setDepTable() {
+		String name = "表";
+		MetaModelView m = getCache(DepTable);
+		if (m == null) {
+			m = getSystemMetaModel(DepTable, name);
+		}
+		m.setIsabstract(false);
+		// 设置属性
+		List<MetaModelAttView> attList = new ArrayList<MetaModelAttView>();
+		MetaModelAttView attV = getMetaModelAttView(m.getId(), "enName",
+				"英文名称", 1);
+		attList.add(attV);
+		// 下拉框
+		MetaModelAttView attV1 = getMetaModelAttView(m.getId(), "remark", "描述",
+				2);
+		attList.add(attV1);
+		m.setAttList(attList);
+		// // 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelPyhsComFactory.setDepTechObject());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编码
+		MetaModelCompView comview = getMetaModelCompView(m, setDepColumn());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 视图 DepView
+	public static String DepView = "DepView";
+
+	public static MetaModelView setDepView() {
+		String name = "视图";
+		MetaModelView m = getCache(DepView);
+		if (m == null) {
+			m = getSystemMetaModel(DepView, name);
+		}
+		m.setIsabstract(false);
+		List<MetaModelAttView> attList = new ArrayList<MetaModelAttView>();
+		MetaModelAttView attV = getMetaModelAttView(m.getId(), "enName",
+				"英文名称", 1);
+		attList.add(attV);
+		// 下拉框
+		MetaModelAttView attV1 = getMetaModelAttView(m.getId(), "remark", "描述",
+				2);
+		attList.add(attV1);
+		m.setAttList(attList);
+		// 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelPyhsComFactory.setDepTechObject());
+		m.setParentModelList(parentModelList);
+		// 设置组合关系
+		List<MetaModelCompView> compList = new ArrayList<MetaModelCompView>();
+		// 组合编码
+		MetaModelCompView comview = getMetaModelCompView(m, setDepColumn());
+		compList.add(comview);
+		m.setCompList(compList);
+		putCache(m);
+		return m;
+	}
+
+	// 列 DepColumn
+	public static String DepColumn = "DepColumn";
+
+	public static MetaModelView setDepColumn() {
+		String name = "列";
+		MetaModelView m = getCache(DepColumn);
+		if (m == null) {
+			m = getSystemMetaModel(DepColumn, name);
+		}
+		m.setIsabstract(false);
+		// 设置属性
+		List<MetaModelAttView> attList = new ArrayList<MetaModelAttView>();
+		MetaModelAttView attV1 = getMetaModelAttView(m.getId(), "enName",
+				"英文名称", 1);
+		attList.add(attV1);
+		// 下拉框
+		MetaModelAttView attV2 = getMetaModelAttView(m.getId(), "dataType",
+				"数据类型", 2);
+		attList.add(attV2);
+		MetaModelAttView attV3 = getMetaModelAttView(m.getId(), "length", "长度",
+				3);
+		attList.add(attV3);
+
+		MetaModelAttView attV4 = getMetaModelAttView(m.getId(), "precision",
+				"精度", 4);
+		attList.add(attV4);
+		MetaModelAttView attV5 = getMetaModelAttView(m.getId(), "isNull",
+				"是否为空", 5);
+		attList.add(attV5);
+		MetaModelAttView attV6 = getMetaModelAttView(m.getId(), "defaultValue",
+				"默认值", 6);
+		attList.add(attV6);
+		m.setAttList(attList);
+		// // 设置父类
+		List<MetaModelBasicView> parentModelList = new ArrayList<MetaModelBasicView>();
+		parentModelList.add(MetaModelPyhsComFactory.setDepTechFeature());
+		m.setParentModelList(parentModelList);
+		putCache(m);
+		return m;
+	}
+
+}

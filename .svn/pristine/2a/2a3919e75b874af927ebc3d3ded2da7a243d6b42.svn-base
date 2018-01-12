@@ -1,0 +1,46 @@
+/**   
+ * @Title: GatherTempletCode.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月29日 下午3:40:43
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.enmu;
+
+import com.gilight.dep.framework.util.enmu.StringEnum;
+
+/***
+ * 
+ * @ClassName: GatherTempletCode
+ *             <p>
+ *             目前采集模板的编码 TODO<br>
+ * @author zps
+ * @date 2015年7月29日 下午3:41:41
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class GatherTempletCode extends StringEnum {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/***
+	 * 数据元
+	 */
+	public static String dataElement = "dataStandard-dataElement";
+	/***
+	 * 编码
+	 */
+	public static String code = "dataStandard-code";
+	/***
+	 * 元数据
+	 */
+	public static String dataObject = "dataStandard-dataObject";
+
+	protected GatherTempletCode(String iName, String iValue) {
+		super(iName, iValue);
+		// TODO Auto-generated constructor stub
+	}
+
+}

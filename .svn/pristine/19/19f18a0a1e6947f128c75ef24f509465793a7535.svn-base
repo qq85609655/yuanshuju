@@ -1,0 +1,123 @@
+package com.gilight.dep.metadata.repository;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.metadata.entity.MdGatherDatasource;
+import com.gilight.dep.metadata.entity.MdGatherDatasourceParam;
+import com.gilight.dep.metadata.entity.MdGatherJob;
+import com.gilight.dep.metadata.entity.MdGatherJobParam;
+
+import java.util.List;
+
+/**
+ * 采集任务操作
+ * 
+ * @ClassName: IGatherJobRepository
+ *             <p>
+ *             TODO<br>
+ * @author wzx
+ * @date 2015年7月17日 下午3:47:24
+ * @version V1.0
+ * @since JDK 1.6
+ */
+@SuppressWarnings("rawtypes")
+public interface IGatherJobRepository extends IMDBaseRepository {
+	/**
+	 * 
+	 * <p>
+	 * 批量审批采集元数据 <br>
+	 * 
+	 * @param context
+	 *            上下文
+	 * @return
+	 * @throws RepositoryException
+	 * @author zps
+	 * @date 2015年8月7日 上午10:33:07
+	 * @version V1.0
+	 */
+	public IResponse approveAgree(IContext context) throws RepositoryException;
+
+	/***
+	 * 
+	 * <p>
+	 * 批量驳回采集元数据 <br>
+	 * 
+	 * @param context
+	 *            上下文
+	 * @return
+	 * @throws RepositoryException
+	 * @author zps
+	 * @date 2015年8月7日 上午10:33:13
+	 * @version V1.0
+	 */
+	public IResponse approveReject(IContext context) throws RepositoryException;
+
+	/**
+	 * 获取JobParam
+	 * <p>
+	 * <br>
+	 * 
+	 * @param jobid
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年8月12日 下午6:53:25
+	 * @version V1.0
+	 * @return
+	 */
+	public List<MdGatherJobParam> getJobParam(String jobid)
+			throws RepositoryException;
+
+	/**
+	 * 获取job
+	 * <p>
+	 * <br>
+	 * 
+	 * @param jobid
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年8月18日 下午3:07:13
+	 * @version V1.0
+	 */
+	public MdGatherJob getJob(String jobid) throws RepositoryException;
+
+	/**
+	 * 获取数据源
+	 * <p>
+	 * <br>
+	 * 
+	 * @param jobid
+	 * @return
+	 * @throws RepositoryException
+	 * @author wzx
+	 * @date 2015年8月18日 下午3:26:26
+	 * @version V1.0
+	 */
+	public MdGatherDatasource getDbs(String dbsid) throws RepositoryException;
+
+	List<MdGatherDatasourceParam> getDBSParam(String dbsid)
+			throws RepositoryException;
+
+	/***
+	 * 
+	 * <p>
+	 * 查询采集的一个元数据的详细信息，包括属性列表信息； <br>
+	 * 
+	 * @param paramIContext
+	 *            上下文，IDParameters，参数是采集的元数据id标识
+	 * @return 参照MetaDataBasicView
+	 * @throws RepositoryException
+	 * @author zps
+	 * @date 2015年8月26日 下午1:00:10
+	 * @version V1.0
+	 */
+	public abstract IResponse getGatherMetaDataById(IContext paramIContext)
+			throws RepositoryException;
+
+	public IResponse getJobGatherSubMetaData(IContext nextContext) throws RepositoryException;
+
+
+
+
+}

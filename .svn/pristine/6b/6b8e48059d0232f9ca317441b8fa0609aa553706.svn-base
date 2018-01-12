@@ -1,0 +1,17 @@
+package com.gilight.dep.metadata.enums;
+
+public class GatherDataBase {
+
+	public GatherDataBase() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public static final String parentCode="parentCode";
+	public static final String parentName="parentName";
+	public static final String modelcode="modelcode";
+	public static final String name="name";
+	public static final String remark="remark";
+	public static final String code="code";
+	public static final String[] databasesource={parentCode,parentName,modelcode,name,code};
+	//public static final String[] databasetarget={"parentCode","parentName","modelcode","name"};
+}

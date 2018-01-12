@@ -1,0 +1,89 @@
+package com.gilight.dep.metadata.entity;
+
+import java.util.Objects;
+
+public class MdDbsParam extends BaseMetaDataEntity {
+  private String id;
+  private String mdid;
+  private String host;
+  private String port;
+  private String sid;
+  private String url;
+
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getMdid() {
+    return mdid;
+  }
+
+  public void setMdid(String mdid) {
+    this.mdid = mdid;
+  }
+
+  public String getHost() {
+    return host;
+  }
+
+  public void setHost(String host) {
+    this.host = host;
+  }
+
+  public String getPort() {
+    return port;
+  }
+
+  public void setPort(String port) {
+    this.port = port;
+  }
+
+  public String getSid() {
+    return sid;
+  }
+
+  public void setSid(String sid) {
+    this.sid = sid;
+  }
+
+  @Override
+  public String toString() {
+    return "MdDbsParam{" +
+            "id='" + id + '\'' +
+            ", mdid='" + mdid + '\'' +
+            ", host='" + host + '\'' +
+            ", port='" + port + '\'' +
+            ", sid='" + sid + '\'' +
+            '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    MdDbsParam that = (MdDbsParam) o;
+    return Objects.equals(id, that.id) &&
+            Objects.equals(mdid, that.mdid) &&
+            Objects.equals(host, that.host) &&
+            Objects.equals(port, that.port) &&
+            Objects.equals(sid, that.sid);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, mdid, host, port, sid);
+  }
+}

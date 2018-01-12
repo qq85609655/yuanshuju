@@ -1,0 +1,41 @@
+package com.gilight.dep.metadata.message.consumer;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.ContextImpl;
+import com.gilight.dep.framework.core.context.base.DomainMessageContext;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.context.support.IResultHandler;
+import com.gilight.dep.framework.core.message.consumer.AbstractConsumer;
+import com.gilight.dep.framework.core.message.consumer.IMessageConsumer;
+import com.gilight.dep.metadata.repository.IGatherDataScourceRepository;
+import com.gilight.dep.metadata.repository.IMetaDataBaseRepository;
+import com.gilight.dep.metadata.repository.IMetaDataViewRepository;
+import com.jdon.annotation.Consumer;
+import com.jdon.async.disruptor.EventDisruptor;
+import com.jdon.domain.message.DomainEventHandler;
+@Consumer("dbsDel")
+public class MetaDataGatherDBSDelMessageConsumer extends AbstractConsumer implements
+IMessageConsumer{
+//
+	@Autowired
+	private IGatherDataScourceRepository repository;
+	
+
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+	
+
+	public void executeEvent(DomainMessageContext dmContext) throws Exception {
+		IContext context = ContextFactoryImpl.getInstance().createContext(ContextImpl.class, dmContext);
+		repository.delete(context);
+		
+	}
+
+}

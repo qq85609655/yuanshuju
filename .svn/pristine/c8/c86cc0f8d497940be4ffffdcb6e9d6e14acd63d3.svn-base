@@ -1,0 +1,31 @@
+/**   
+ * @Title: MetaModelStatus.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月22日 上午11:51:48
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.enmu;
+
+import com.gilight.dep.framework.util.enmu.IntEnum;
+
+public class MetaModelStatus extends IntEnum {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static int SAVE = 0;
+
+	public static int APPROVE = 10;
+
+	public static int REJECT = -10;
+
+	protected MetaModelStatus(String iName, int iValue) {
+		super(iName, iValue);
+		// TODO Auto-generated constructor stub
+	}
+
+}

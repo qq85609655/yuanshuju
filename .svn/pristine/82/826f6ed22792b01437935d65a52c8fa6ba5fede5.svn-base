@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gilight.dep.metadata.entity.MdAnalyseLog" table="MD_ANALYSE_LOG">
+        <id name="id" type="string">
+            <column name="ID" length="64" />
+            <generator class="assigned" />
+        </id>
+        <property name="startDate" type="string">
+            <column name="START_DATE" length="64" />
+        </property>
+        <property name="endDate" type="string">
+            <column name="END_DATE" length="64" />
+        </property>
+        <property name="runStatus" type="integer">
+            <column name="RUN_STATUS" precision="22" scale="0">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

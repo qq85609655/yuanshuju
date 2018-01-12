@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       ">
+	<bean id="gatherDataScourceRepository"
+		class="com.gilight.dep.metadata.repository.impl.GatherDataScourceRepositoryImpl"
+		parent="metaDataRepository">
+		<property name="gatherDataScourceDao">
+			<ref bean="gatherDataScourceDao" />
+		</property>
+		<property name="baseDao">
+			<ref bean="baseDao" />
+		</property>
+	</bean>
+
+	<bean id="gatherJobRepository"
+		class="com.gilight.dep.metadata.repository.impl.GatherJobRepositoryImpl">
+		<property name="gatherJobDao">
+			<ref bean="gatherJobDao" />
+		</property>
+		<property name="baseDao">
+			<ref bean="baseDao" />
+		</property>
+	</bean>
+	<bean id="gatherExcuteRepository"
+		class="com.gilight.dep.metadata.repository.impl.GatherExcuteRepositoryImpl">
+		<property name="gatherExcuteDao">
+			<ref bean="gatherExcuteDao" />
+		</property>
+		<property name="baseDao">
+			<ref bean="baseDao" />
+		</property>
+	</bean>
+	<bean id="gatherRepository"
+		class="com.gilight.dep.metadata.repository.impl.GatherRepositoryImpl">
+		<property name="gatherDao">
+			<ref bean="gatherDao" />
+		</property>
+		<property name="baseDao">
+			<ref bean="baseDao" />
+		</property>
+	</bean>
+	<bean id="gatherTempleRepository"
+		class="com.gilight.dep.metadata.repository.impl.GatherTempleRepositoryImpl">
+		<property name="gatherTempleDao">
+			<ref bean="gatherTempleDao" />
+		</property>
+		<property name="baseDao">
+			<ref bean="baseDao" />
+		</property>
+	</bean>
+	<bean id="gatherAdaptorRepository"
+		class="com.gilight.dep.metadata.repository.impl.GatherAdaptorRepositoryImpl">
+		<property name="gatherAdaptorDao">
+			<ref bean="gatherAdaptorDao" />
+		</property>
+		<property name="baseDao">
+			<ref bean="baseDao" />
+		</property>
+	</bean>
+</beans>

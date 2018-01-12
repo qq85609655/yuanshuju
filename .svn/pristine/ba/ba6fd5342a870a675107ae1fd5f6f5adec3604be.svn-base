@@ -1,0 +1,44 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+/**
+ * 
+* @ClassName: MetaDataTreeView 
+* <p>元数据树信息<br>
+* @author wzx
+* @date 2015年7月9日 下午4:07:57
+* @version V1.0
+* @since JDK 1.7
+ */
+public class MetaDataTreeView implements IView{
+	/**
+	 * 元数据树的list
+	 */
+	private List<MetaDataTreeView> metaDataTreeList;
+	/**
+	 * 元数据的list
+	 */
+	private List<MetaDataBasicView>  metaDataList;
+	
+	public List<MetaDataTreeView> getMetaDataTreeList() {
+		return metaDataTreeList;
+	}
+	public void setMetaDataTreeList(List<MetaDataTreeView> metaDataTreeList) {
+		this.metaDataTreeList = metaDataTreeList;
+	}
+	public List<MetaDataBasicView> getMetaDataList() {
+		return metaDataList;
+	}
+	public void setMetaDataList(List<MetaDataBasicView> metaDataList) {
+		this.metaDataList = metaDataList;
+	}
+	@Override
+	public String toString() {
+		return "MetaDataTreeView [metaDataTreeList=" + metaDataTreeList
+				+ ", metaDataList=" + metaDataList + "]";
+	}
+	 
+
+}

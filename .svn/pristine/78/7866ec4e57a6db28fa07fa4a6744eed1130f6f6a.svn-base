@@ -1,0 +1,59 @@
+package com.gilight.dep.metadata.repository;
+
+import java.util.List;
+
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdDependency;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+
+/**
+ * 数据地图查询
+* @ClassName: IDataMapQueryRepository 
+* <p>TODO<br>
+* @author wzx
+* @date 2015年7月17日 下午3:46:52
+* @version V1.0
+* @since JDK 1.6
+ */
+public interface IDataMapQueryRepository extends IMetaDataRepository {
+	/**
+	 * 根据code查询元模型
+	* <p><br>
+	* @param code
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月6日 下午6:41:13
+	* @version V1.0
+	 */
+	public MmMetamodel getModelByCode(String code) throws RepositoryException;
+	
+	/**
+	 * 根据tomdid获取组合关系
+	* <p><br>
+	* @param tomdid
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月4日 上午11:00:34
+	* @version V1.0
+	 */
+	public List<MdComposition> getMetaDataComp(String tomdid)
+			throws RepositoryException;
+
+	public List<MdComposition> getMetaDataComp(List<String> tomdids)
+			throws RepositoryException;
+	/**
+	 * 根据ids查依赖关系
+	* <p><br>
+	* @param ids
+	* @return
+	* @throws RepositoryException  
+	* @author wzx
+	* @date 2015年8月7日 下午2:41:01
+	* @version V1.0
+	 */
+	public List<MdDependency>  getMdDependencyByIdlist(List<String> ids) throws RepositoryException;
+}

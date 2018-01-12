@@ -1,0 +1,33 @@
+{
+	"fName" : "InheritLine",
+	"fType" : "InheritLine",
+	"description" : "继承关系连接",
+	"groupId" : "mmrelation",
+	"viewConfig" : {
+		"width" : "64",
+		"height" : "64",
+		"color" : "#B5D2F8",
+		"targetDecDemension" : [6, 6]
+	},
+	"shape" : "Dep.framework.editor.figure.NoBussConnection",
+	"persistentViewData" : false,
+	"isConnection" : "true",
+	"isNoBussConnection" : "true",
+	"persistentViewAttributes" : ["x", "y", "dimension"],
+	"connectionRelationKeys":{
+		"srcKey" : "parentId",
+		"destKey" : "mmId"
+	},
+	"api" : {
+
+		"getAll" : "metamodelquery/findInheList.do"
+
+	},
+	"contextMenus" : [{
+				"type" : "nomal",
+				"name" : "删除",
+				"icon" : "Dep\/resource\/img\/common\/delete.png",
+				"desc" : "删除",
+				"action" : "delModel"
+			}]
+}

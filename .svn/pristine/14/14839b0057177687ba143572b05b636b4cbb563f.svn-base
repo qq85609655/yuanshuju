@@ -1,0 +1,56 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+public class ColumnView implements IView{
+
+	public ColumnView() {
+		// TODO Auto-generated constructor stub
+	}
+	private String name;
+	private String typename;
+	private String size;
+	private String digits;
+	private String isnull;
+	private String remark;
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getTypename() {
+		return typename;
+	}
+	public void setTypename(String typename) {
+		this.typename = typename;
+	}
+	public String getSize() {
+		return size;
+	}
+	public void setSize(String size) {
+		this.size = size;
+	}
+	public String getDigits() {
+		return digits;
+	}
+	public void setDigits(String digits) {
+		this.digits = digits;
+	}
+	public String getIsnull() {
+		return isnull;
+	}
+	public void setIsnull(String isnull) {
+		this.isnull = isnull;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
+	
+	
+}

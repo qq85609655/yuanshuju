@@ -1,0 +1,63 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+/**
+ * 
+* @ClassName: MetaDataCompView 
+* <p>元数据组合关系<br>
+* @author wzx
+* @date 2015年7月9日 下午4:06:15
+* @version V1.0
+* @since JDK 1.7
+ */
+public class MetaDataImpView extends MetaDataCompBaseView  implements IView{
+	private String mdid; //组合端元素id
+	private String compid; //组合关系id
+	private String path;
+	private String filename;
+
+	@Override
+	public String toString() {
+		return "MetaDataImpView{" +
+				"mdid='" + mdid + '\'' +
+				", compid='" + compid + '\'' +
+				", path='" + path + '\'' +
+				", filename='" + filename + '\'' +
+				'}';
+	}
+
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	public String getMdid() {
+		return mdid;
+	}
+
+	public void setMdid(String mdid) {
+		this.mdid = mdid;
+	}
+
+	public String getCompid() {
+		return compid;
+	}
+
+	public void setCompid(String compid) {
+		this.compid = compid;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+
+}

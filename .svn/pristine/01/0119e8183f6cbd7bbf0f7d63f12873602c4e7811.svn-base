@@ -1,0 +1,101 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+/**
+ * 
+ * @ClassName: MetaDataAttView
+ *             <p>
+ *             元数据属性<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:05:09
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaDataAttView implements IView {
+
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 元数据属性数据模型view
+	 */
+	private MetaModelAttView attmodel;
+	/**
+	 * 元数据属性ID
+	 */
+	private String id;
+	/**
+	 * 元模型属性id
+	 */
+	private String mmAttId;
+	/**
+	 * 元模型属性名称
+	 */
+	private String mmAttName;
+	/**
+	 * 元数据id
+	 */
+	private String mdId;
+	/**
+	 * 属性值
+	 */
+	private String valUe;
+
+	public MetaModelAttView getAttmodel() {
+		return attmodel;
+	}
+
+	public void setAttmodel(MetaModelAttView attmodel) {
+		this.attmodel = attmodel;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMmAttId() {
+		return mmAttId;
+	}
+
+	public void setMmAttId(String mmAttId) {
+		this.mmAttId = mmAttId;
+	}
+
+	public String getMmAttName() {
+		return mmAttName;
+	}
+
+	public void setMmAttName(String mmAttName) {
+		this.mmAttName = mmAttName;
+	}
+
+	public String getMdId() {
+		return mdId;
+	}
+
+	public void setMdId(String mdId) {
+		this.mdId = mdId;
+	}
+
+	public String getValUe() {
+		return valUe;
+	}
+
+	public void setValUe(String valUe) {
+		this.valUe = valUe;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaDataAttView [attmodel=" + attmodel + ", id=" + id
+				+ ", mmAttId=" + mmAttId + ", mmAttName=" + mmAttName
+				+ ", mdId=" + mdId + ", valUe=" + valUe + "]";
+	}
+
+}

@@ -1,0 +1,109 @@
+.x-panel-ghost {
+    z-index: 1;
+}
+
+.x-border-layout-ct {
+    background: #DFE8F6;
+}
+
+.x-portal-body {
+    padding: 0 0 0 8px;
+}
+
+.x-portal .x-portal-column {
+    padding: 8px 8px 0 0;
+}
+
+.x-portal .x-panel-dd-spacer {
+    border: 2px dashed #99bbe8;
+    background: #f6f6f6;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.x-portlet {
+    margin-bottom: 10px;
+    padding: 1px;
+}
+
+.x-portlet .x-panel-body {
+    background: #fff;
+}
+
+.portlet-content {
+    padding: 10px;
+    font-size: 11px;
+}
+
+.infoDiv {
+    font-size: 24px;
+    color: #808000;
+}
+
+.ul-topmenu {
+    position:absolute;
+    top:0;
+    left:330px;
+    list-style:none;
+    margin:0;
+    padding:0;
+    overflow:hidden
+}
+.ul-topmenu li {
+    list-style:none;
+    margin:0;
+    padding:0;
+    float:left;
+}
+.ul-topmenu li:hover {
+    /*background:url(../img/menu/li-hover.png) center center no-repeat;*/
+    background:#36c7d3;
+}
+.ul-topmenu li a {
+    display:block;
+    width:101px;
+    height:83px;
+    background:url(../img/menu/1.png) center 13px no-repeat;
+    padding-top:50px;
+    text-align:center;
+    font-size:12px;
+    color:#6597e8;
+    text-decoration:none;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+}
+.ul-topmenu li a.toptwo {
+    background:url(../img/menu/2.png) center 13px no-repeat;
+}
+.ul-topmenu li a.topthree {
+    background:url(../img/menu/3.png) center 13px no-repeat;
+}
+.ul-topmenu li a.topfour {
+    background:url(../img/menu/4.png) center 13px no-repeat;
+}
+.ul-topmenu li a.topfive {
+    background:url(../img/menu/5.png) center 13px no-repeat;
+}
+.li-selected {
+    background:url(../img/menu/li-bg.png) center center no-repeat;
+}
+#panel-1010-innerCt{
+    background-color:#364050;
+}
+#cronStartTime-inputEl{
+    width: 160px;
+}
+#period-bodyEl{
+    padding:0;
+}
+.x-form-item-label{
+    margin-right:0 !important;
+    margin-left:8px;
+}
+/*.x-boundlist,.x-boundlist-list-ct,.x-list-plain,.x-mask {
+	width:263px !important
+}
+.x-toolbar{
+	width:263px
+}*/

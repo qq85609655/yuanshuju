@@ -1,0 +1,152 @@
+package com.gilight.dep.metadata.service.impl;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.framework.core.model.IModel;
+import com.gilight.dep.framework.core.service.impl.BasicServiceImpl;
+import com.gilight.dep.metadata.entity.MdComposition;
+import com.gilight.dep.metadata.entity.MdMetadata;
+import com.gilight.dep.metadata.entity.MdView;
+import com.gilight.dep.metadata.entity.MmComposition;
+import com.gilight.dep.metadata.entity.MmMetamodel;
+import com.gilight.dep.metadata.repository.IMetaDataMapRepository;
+import com.gilight.dep.metadata.service.IMetaDataMapTwoService;
+import com.gilight.dep.metadata.view.MetaDataMapMDView;
+import com.gilight.dep.metadata.view.MetaDataMapTopView;
+
+public class MetaDataMapTwoServiceImpl extends BasicServiceImpl implements IMetaDataMapTwoService {
+	private static final Logger logger = Logger
+			.getLogger(MetaDataMapTwoServiceImpl.class);
+	@Override
+	public IResponse getByScope(IContext arg0) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class getModelClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IModel initModel(IContext arg0) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private IMetaDataMapRepository metaDataMapRepository;
+	public IMetaDataMapRepository getMetaDataMapRepository() {
+		return metaDataMapRepository;
+	}
+
+	public void setMetaDataMapRepository(IMetaDataMapRepository metaDataMapRepository) {
+		this.metaDataMapRepository = metaDataMapRepository;
+	}
+
+	@Override
+	public MdMetadata findParentMD(String id){
+		//在组合表中通过元数据id查对应的组合关系
+		MdComposition mdComposition = metaDataMapRepository.findCompositionByToMdId(id);
+		if (mdComposition!=null){
+			String fromMdId = mdComposition.getFromMdId();//获得
+			MdMetadata parent = metaDataMapRepository.findMdMetadataById(fromMdId);
+			return parent;
+		}
+		return null;
+	}
+	@Override
+	public MmMetamodel findParentMM(String mmId) {
+		// 在组合表中通过元模型id查对应的组合关系
+		MmComposition mmComposition = metaDataMapRepository.findCompositionByToMmId(mmId);
+		if (mmComposition != null) {
+			String fromMmId = mmComposition.getFromMmId();// 获得
+			MmMetamodel parent = metaDataMapRepository.findMmMetamodelById(fromMmId);
+			return parent;
+		}
+		return null;
+	}
+	@Override
+	public MdView findMdView(String mdId) {
+		MdMetadata mdMetadata = metaDataMapRepository.findMdMetadataById(mdId);
+		return metaDataMapRepository.findMdViewById(mdMetadata.getMdPackageid());
+	}
+	
+	@Override
+	public List<MdMetadata> findMdListByMmId(String mmId){
+		return metaDataMapRepository.findMdListByMmId(mmId);
+	}
+	@Override
+	public Integer findMdCountsByMmId(String mmId) {
+		return metaDataMapRepository.findMdCountsByMmId(mmId);
+	}	
+	@Override
+	public List<MdMetadata> findMdListPagesByMmId(String mmId, Integer startCount, Integer pageSize) {
+		return metaDataMapRepository.findMdListPagesByMmId(mmId, startCount, pageSize);
+	}
+	
+	@Override
+	public MetaDataMapMDView packageMDView(MdMetadata old) {
+		MetaDataMapMDView mdView = new MetaDataMapMDView();
+		mdView.setId(old.getId());
+		mdView.setMdName(old.getMdName());
+		mdView.setMdPackageid(old.getMdPackageid());
+		mdView.setMmId(old.getMmId());
+		mdView.setMmName(old.getMmName());
+		mdView.setIssys(old.getIssys());
+		mdView.setMdCode(old.getMdCode());
+		mdView.setRemark(old.getRemark());
+		mdView.setStatus(old.getStatus());
+		mdView.setSysver(old.getSysver());
+		mdView.setUpdateDate(old.getUpdateDate());
+		mdView.setUserver(old.getUserver());
+		mdView.setVerRemark(old.getVerRemark());
+		return mdView;
+	}
+	//父类封装
+	@Override
+	public MetaDataMapMDView packageMDView(MetaDataMapMDView old) {
+		MetaDataMapMDView mdView = new MetaDataMapMDView();
+		mdView.setId(old.getId());
+		mdView.setMdName(old.getMdName());
+		mdView.setMdPackageid(old.getMdPackageid());
+		mdView.setMmId(old.getMmId());
+		mdView.setMmName(old.getMmName());
+		mdView.setFromMdId(old.getFromMdId());
+		mdView.setToMdId(old.getToMdId());
+		mdView.setIssys(old.getIssys());
+		mdView.setMdCode(old.getMdCode());
+		mdView.setRemark(old.getRemark());
+		mdView.setStatus(old.getStatus());
+		mdView.setSysver(old.getSysver());
+		mdView.setUpdateDate(old.getUpdateDate());
+		mdView.setUserver(old.getUserver());
+		mdView.setVerRemark(old.getVerRemark());
+		return mdView;
+	}
+	//顶层封装
+	@Override
+	public MetaDataMapTopView packageTopView(MdView old){
+		MetaDataMapTopView topView = new MetaDataMapTopView();
+		topView.setId(old.getId());
+		topView.setViewName(old.getViewName());
+		topView.setDefaultShow(old.getDefaultShow());
+		topView.setDisplayOrder(old.getDisplayOrder());
+		topView.setIshidden(old.getIshidden());
+		topView.setRemark(old.getRemark());
+		topView.setViewType(old.getViewType());
+		return topView;
+	}
+
+	
+
+	
+
+	
+
+}

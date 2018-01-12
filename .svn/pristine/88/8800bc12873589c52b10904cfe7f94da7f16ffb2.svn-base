@@ -1,0 +1,152 @@
+package com.gilight.dep.metadata.entity;
+
+// Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1
+
+import java.math.BigDecimal;
+
+import com.gilight.dep.metadata.util.MetaDateUtils;
+
+/***
+* 
+* @ClassName: MdAnalyseResult 
+* <p>TODO<br>
+* @author hww
+* @date 2015年7月7日 下午3:45:58
+* @version V1.0
+* @since JDK 1.7
+ */
+
+public class MdAnalyseResult extends BaseMetaDataEntity {
+
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 主键
+	 */
+	private String id;
+	/**
+	 * 元数据ID
+	 */
+	private String mdId;
+	/**
+	 * 元数据编码
+	 */
+	private String mdCode;
+	/**
+	 * 元数据名称
+	 */
+	private String mdName;
+	/**
+	 * 上游数据
+	 */
+	private String upstream;
+	/**
+	 * 下游数据
+	 */
+	private String downstream;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate=MetaDateUtils.getDefaultUpdateDate();
+	/**
+	 * 状态
+	 */
+	private Integer status;
+
+	public MdAnalyseResult() {
+	}
+
+	public MdAnalyseResult(String id) {
+		this.id = id;
+	}
+
+	public MdAnalyseResult(String id, String mdId, String mdCode,
+			String mdName, String upstream, String downstream,
+			String updateDate, Integer status) {
+		this.id = id;
+		this.mdId = mdId;
+		this.mdCode = mdCode;
+		this.mdName = mdName;
+		this.upstream = upstream;
+		this.downstream = downstream;
+		this.updateDate = updateDate;
+		this.status = status;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMdId() {
+		return this.mdId;
+	}
+
+	public void setMdId(String mdId) {
+		this.mdId = mdId;
+	}
+
+	public String getMdCode() {
+		return this.mdCode;
+	}
+
+	public void setMdCode(String mdCode) {
+		this.mdCode = mdCode;
+	}
+
+	public String getMdName() {
+		return this.mdName;
+	}
+
+	public void setMdName(String mdName) {
+		this.mdName = mdName;
+	}
+
+	public String getUpstream() {
+		return this.upstream;
+	}
+
+	public void setUpstream(String upstream) {
+		this.upstream = upstream;
+	}
+
+	public String getDownstream() {
+		return this.downstream;
+	}
+
+	public void setDownstream(String downstream) {
+		this.downstream = downstream;
+	}
+
+	public String getUpdateDate() {
+		return this.updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	@Override
+	public String toString() {
+		return "MdAnalyseResult [id=" + id + ", mdId=" + mdId + ", mdCode="
+				+ mdCode + ", mdName=" + mdName + ", upstream=" + upstream
+				+ ", downstream=" + downstream + ", updateDate=" + updateDate
+				+ ", status=" + status + "]";
+	}
+	
+}

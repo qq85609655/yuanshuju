@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-7-7 12:08:22 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gilight.dep.metadata.entity.MdMetadata" table="MD_METADATA" >
+    <cache usage="read-write" />
+        <id name="id" type="string">
+            <column name="ID" length="64" />
+            <generator class="assigned" />
+        </id>
+        <property name="mmName" type="string">
+            <column name="MM_NAME" length="256" />
+        </property>
+        <property name="mmId" type="string">
+            <column name="MM_ID" length="64">
+            </column>
+        </property>
+        <property name="mdCode" type="string">
+            <column name="MD_CODE" length="256">
+            </column>
+        </property>
+        <property name="mdName" type="string">
+            <column name="MD_NAME" length="256">
+            </column>
+        </property>
+        <property name="mdPackageid" type="string">
+            <column name="MD_PACKAGEID" length="64">
+            </column>
+        </property>
+        <property name="issys" type="integer">
+            <column name="ISSYS" precision="22" scale="0">
+            </column>
+        </property>
+        <property name="status" type="integer">
+            <column name="STATUS" precision="22" scale="0">
+            </column>
+        </property>
+        <property name="sysver" type="string">
+            <column name="SYSVER" length="256">
+            </column>
+        </property>
+        <property name="userver" type="string">
+            <column name="USERVER" length="256">
+            </column>
+        </property>
+        <property name="verRemark" type="string">
+            <column name="VER_REMARK" length="256">
+            </column>
+        </property>
+        <property name="updateDate" type="string">
+            <column name="UPDATE_DATE" length="64">
+            </column>
+        </property>
+        <property name="remark" type="string">
+            <column name="REMARK" length="512">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

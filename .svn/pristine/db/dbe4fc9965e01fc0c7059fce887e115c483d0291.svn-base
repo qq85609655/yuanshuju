@@ -1,0 +1,103 @@
+package com.gilight.dep.metadata.view;
+
+import com.gilight.dep.framework.core.context.response.view.IView;
+
+/**
+ * 
+ * @ClassName: GatherExcelTempleteView
+ *             <p>
+ *             采集模板<br>
+ * @author wzx
+ * @date 2015年7月9日 下午3:53:13
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class GatherExcelTempleteView implements IView {
+	/** 
+	* @Fields serialVersionUID : TODO
+	*/ 
+	private static final long serialVersionUID = 1L;
+	/**
+	 * ID
+	 */
+	private String id;
+	/**
+	 * 采集模板名称
+	 */
+	private String name;
+    /***
+     * 备注
+     */
+	private String remark;
+	/**
+	 * 创建时间
+	 */
+	private String updateDate;
+	/**
+	 * 文件路径
+	 */
+	private String filepath;
+
+	public GatherExcelTempleteView() {
+		super();
+	}
+
+	public GatherExcelTempleteView(String id, String name, String remark,
+			String updatedate, String filepath) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.remark = remark;
+		this.updateDate = updatedate;
+		this.filepath = filepath;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	 
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public String getFilepath() {
+		return filepath;
+	}
+
+	public void setFilepath(String filepath) {
+		this.filepath = filepath;
+	}
+
+	@Override
+	public String toString() {
+		return "GatherExcelTempleteView [id=" + id + ", name=" + name
+				+ ", remark=" + remark + ", updatedate=" + updateDate
+				+ ", filepath=" + filepath + "]";
+	}
+
+}

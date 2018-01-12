@@ -1,0 +1,50 @@
+/**   
+ * @Title: MetadataBaseController.java  
+ * @Description: 元数据控制层基类 
+ * @author YHY   
+ * @date 2015年7月22日 上午11:15:53
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd
+ * @version V1.0   
+ */
+package com.gilight.dep.metadata.web.controller;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.context.response.view.IView;
+import com.gilight.dep.framework.core.controller.BaseController;
+import com.gilight.dep.framework.core.exception.ControllerException;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.param.ControllerParamInvalidException;
+
+public class MetadataBaseController extends BaseController {
+	/**
+	 * 
+	 * <p>
+	 * 检查view 参数<br>
+	 * 
+	 * @throws ControllerException
+	 * @author YHY
+	 * @date 2015年7月22日 上午11:17:53
+	 * @version V1.0
+	 */
+	protected void checkViewParameter(IView view)
+			throws ControllerParamInvalidException {
+		if (view == null) {
+			throw new ControllerParamInvalidException("程序执行错误，传递参数不能为空。");
+		}
+	}
+
+	@ExceptionHandler(value = { GilightException.class, Exception.class })
+	@ResponseBody
+	public Object customExp(Exception exception, HttpServletRequest request)
+			throws Exception {
+		exception.printStackTrace();
+		// 返回失败结果
+		return ResultFactory.getInstance().createFailedModelAndView(exception);
+
+	}
+}

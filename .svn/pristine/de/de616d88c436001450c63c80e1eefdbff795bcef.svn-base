@@ -1,0 +1,596 @@
+package com.gilight.dep.metadata.repository.impl;
+
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.request.parameter.ParameterKeys;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.factory.ResultFactory;
+import com.gilight.dep.framework.core.dao.db.scope.BaseHbiernateScope;
+import com.gilight.dep.framework.core.exception.DaoException;
+import com.gilight.dep.framework.core.exception.RepositoryException;
+import com.gilight.dep.framework.core.model.entity.IEntity;
+import com.gilight.dep.metadata.dao.IMetaModelQueryDao;
+import com.gilight.dep.metadata.entity.*;
+import com.gilight.dep.metadata.repository.IMetaModelQueryRepository;
+import com.gilight.dep.metadata.scope.MetaModelAttributeScope;
+import com.gilight.dep.metadata.scope.MetaModelScope;
+import com.gilight.dep.metadata.util.AutoCopyList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public class MetaModelQueryRepositoryImpl implements IMetaModelQueryRepository {
+
+	private IMetaModelQueryDao metaModelQueryDao;
+
+	public IMetaModelQueryDao getMetaModelQueryDao() {
+		return metaModelQueryDao;
+	}
+
+	public void setMetaModelQueryDao(IMetaModelQueryDao metaModelQueryDao) {
+		this.metaModelQueryDao = metaModelQueryDao;
+	}
+
+	
+	@Override
+	public IResponse getByScope(IContext paramIContext)
+			throws RepositoryException {
+		try {
+			BaseHbiernateScope scope = (BaseHbiernateScope) paramIContext
+					.getParameters();
+			List<IEntity> mmelist = metaModelQueryDao.findByScope(scope);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmelist));
+		} catch (DaoException e) {
+			new RepositoryException("查询元模型失败!", e);
+		}
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getBaseByScope(IContext context)
+			throws RepositoryException {
+		try {
+			BaseHbiernateScope scope = (BaseHbiernateScope) context
+					.getParameters();
+			List<IEntity> mmelist = metaModelQueryDao.findByScope(scope);
+			if (mmelist != null) {
+				for (int i = 0, j = mmelist.size(); i < j; i++) {
+					MmMetamodel mm = (MmMetamodel) mmelist.get(i);
+					MetaModelAttributeScope scopeAtt = new MetaModelAttributeScope();
+					scopeAtt.setMmId(mm.getId());
+					List attList = this.metaModelQueryDao.findByScope(scopeAtt);
+					mm.setAttList(attList);
+				}
+			}
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmelist));
+
+		} catch (DaoException e) {
+			e.printStackTrace();
+			new RepositoryException("查询元模型失败!-dao");
+		}
+
+		return context.getResponse();
+	}
+
+	@Override
+	public IResponse getModelByName(IContext context) throws RepositoryException {
+		MetaModelScope mmscope = (MetaModelScope)context.getParameters();
+		try {
+			List<IEntity> list=metaModelQueryDao.findByScope(mmscope);
+			context.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(list));
+		} catch (DaoException e) {
+
+			e.printStackTrace();
+			throw new RepositoryException("查询元模型失败");
+		}
+		return context.getResponse();
+	}
+
+	@Override
+	public IResponse findRootModel(IContext paramIContext) throws RepositoryException {
+		try {
+			//查询根模型
+			String rootcode="CWMElement";
+			MmMetamodel model = new MmMetamodel();
+			model.setMmCode(rootcode);
+
+			List<IEntity> rootmodellist=metaModelQueryDao.findByEntity(model);
+			if(rootmodellist==null){
+				return null;
+			}
+			//List<String> modellist=metaModelQueryDao.findByEntity(model);
+			String rootid="";
+			for (IEntity iEntity:rootmodellist) {
+				MmMetamodel mmmodel=(MmMetamodel)iEntity;
+				rootid=mmmodel.getId();
+			}
+			//根据根模型id查询继承关系
+
+
+			List<MmMetamodel> mmdlist = null;
+			mmdlist = this.getSubModel(rootid,null);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmdlist));
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw  new RepositoryException("查询元模型继承节点失败");
+		}
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse findNodeModel(IContext paramIContext) throws RepositoryException {
+		try {
+			String id=(String)paramIContext.getParameter(ParameterKeys.ATT_ID);
+			List<MmMetamodel> mmdlist=getSubModel(id,null);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmdlist));
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw  new RepositoryException("查询元模型继承节点失败");
+		}
+
+		return paramIContext.getResponse();
+	}
+
+
+	/**
+	 * 获取继承关系的子模型
+	 * @return
+	 */
+	private List<MmMetamodel> getSubModel(String id,String isparent) throws DaoException {
+		MmInherit mmih = new MmInherit();
+		if(isparent==null){
+			mmih.setParentId(id);
+		}else{
+			mmih.setMmId(id);
+		}
+
+
+		mmih.setUpdateDate(null);
+		List<IEntity> mmInheritlist = metaModelQueryDao.findByEntity(mmih);
+		List<MmInherit>  mmInherits=AutoCopyList.getObjList(mmInheritlist,MmInherit.class);
+		return this.getSubModel(mmInherits,null);
+	}
+	/**
+	 * 获取继承关系的子模型
+	 * @return
+     */
+	private List<MmMetamodel> getSubModel(List<MmInherit> mmInheritlist,String isparent) throws DaoException {
+		List<String> mmids = new ArrayList<String>();
+		for (MmInherit entity:mmInheritlist) {
+			//String id=((MmInherit)entity).getId();
+			if(isparent==null){
+				mmids.add(entity.getMmId());
+			}else {
+				mmids.add(entity.getParentId());
+			}
+
+		}
+		List<IEntity> mmlist = metaModelQueryDao.findByIdList(mmids,MmMetamodel.class);
+		List<MmMetamodel> mmdlist =AutoCopyList.getObjList(mmlist,MmMetamodel.class);
+		return mmdlist;
+	}
+
+
+	@Override
+	public IResponse findCompRootModel(IContext paramIContext) throws RepositoryException {
+		List<IEntity> mmlist = null;
+		try {
+			mmlist = metaModelQueryDao.findCompRootModel();
+			List<MmMetamodel> mmdlist =AutoCopyList.getObjList(mmlist,MmMetamodel.class);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmdlist));
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw  new RepositoryException("查询元模型组合root节点失败");
+		}
+		return paramIContext.getResponse();
+		//return null;
+	}
+	/**
+	 *获取依赖关系的模型
+	 * @param id
+	 * @return
+	 */
+	private List<MmMetamodel>  getDepeSubModel(String id,String isparent) throws RepositoryException {
+
+		try {
+			MmDependency mmdepe = new MmDependency();
+			//mmdepe.setUpdateDate(null);
+			if(isparent==null){
+				mmdepe.setFromMmId(id);
+			}else {
+				mmdepe.setToMmId(id);
+			}
+
+			List<IEntity> depeList = metaModelQueryDao.findByEntity(mmdepe);
+			List<MmDependency>  depes=AutoCopyList.getObjList(depeList,MmDependency.class);
+			List<String> mids=new ArrayList<String>();
+			for (MmDependency depe:depes) {
+				if (isparent==null){
+					mids.add(depe.getToMmId());
+				}else{
+					mids.add(depe.getFromMmId());
+				}
+
+			}
+			List<IEntity> mmlist = metaModelQueryDao.findByIdList(mids,MmDependency.class);
+			List<MmMetamodel> mmdlist =AutoCopyList.getObjList(mmlist,MmMetamodel.class);
+			return mmdlist;
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw  new RepositoryException("查询元模型组合节点失败");
+		}
+		//return null;
+	}
+	/**
+	 *获取组合关系的子模型
+	 * @param id
+	 * @return
+     */
+	private List<MmMetamodel>  getCompSubModel(String id,String isparent) throws RepositoryException {
+
+		try {
+			MmComposition mmcomp = new MmComposition();
+			mmcomp.setUpdateDate(null);
+			if (isparent==null){
+				mmcomp.setFromMmId(id);
+			}else{
+				mmcomp.setToMmId(id);
+			}
+
+			List<IEntity> compList = metaModelQueryDao.findByEntity(mmcomp);
+			List<MmComposition>  comps=AutoCopyList.getObjList(compList,MmComposition.class);
+			List<String> mids=new ArrayList<String>();
+			for (MmComposition comp:comps) {
+				if(isparent==null){
+					//mmcomp.setToMmId(id);
+					mids.add(comp.getToMmId());
+				}else {
+					mids.add(comp.getFromMmId());
+				}
+
+			}
+			List<IEntity> mmlist = metaModelQueryDao.findByIdList(mids,MmMetamodel.class);
+			List<MmMetamodel> mmdlist =AutoCopyList.getObjList(mmlist,MmMetamodel.class);
+			return mmdlist;
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw  new RepositoryException("查询元模型组合节点失败");
+		}
+		//return null;
+	}
+	@Override
+	public IResponse findCompNodeModel(IContext paramIContext) throws RepositoryException {
+		try {
+			String id=(String)paramIContext.getParameter(ParameterKeys.ATT_ID);
+			List<MmMetamodel> mmdlist=getCompSubModel(id,null);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmdlist));
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw  new RepositoryException("查询元模型继承节点失败");
+		}
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse findEnumList(IContext paramIContext) throws RepositoryException {
+		MmEnum mmEnum = new MmEnum();
+		mmEnum.setUpdateDate(null);
+		List<IEntity> list=metaModelQueryDao.findByEntity(mmEnum);
+		List<MmEnum> enumlist=AutoCopyList.getObjList(list,MmEnum.class);
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessResult(enumlist));
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse findEnumValueList(IContext paramIContext) throws RepositoryException {
+		String enumid=(String)paramIContext.getParameter(ParameterKeys.ATT_ID);
+		MmEnumValue mev = new MmEnumValue();
+		mev.setEnumId(enumid);
+		List<IEntity> list=metaModelQueryDao.findByEntity(mev);
+		List<MmEnumValue> mevlist=AutoCopyList.getObjList(list,MmEnumValue.class);
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessResult(mevlist));
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse findEnumById(IContext paramIContext) throws RepositoryException {
+
+		try {
+			String enumid=(String)paramIContext.getParameter(ParameterKeys.ATT_ID);
+			MmEnum mmEnum = new MmEnum();
+			mmEnum.setUpdateDate(null);
+			mmEnum.setId(enumid);
+			mmEnum=(MmEnum)metaModelQueryDao.findById(enumid,MmEnum.class);
+
+			MmEnumValue mev = new MmEnumValue();
+			mev.setEnumId(enumid);
+			List<IEntity> list=metaModelQueryDao.findByEntity(mev);
+			List<MmEnumValue> mevlist=AutoCopyList.getObjList(list,MmEnumValue.class);
+
+			mmEnum.setValueList(mevlist);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmEnum));
+			return paramIContext.getResponse();
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("查询枚举失败");
+		}
+
+
+	}
+
+
+	@Override
+	public IResponse findInheList(IContext paramIContext) throws RepositoryException {
+		//String enumid=(String)paramIContext.getParameter(ParameterKeys.ATT_ID);
+		MmInherit mmInherit = new MmInherit();
+		mmInherit.setUpdateDate(null);
+		List<IEntity> list=metaModelQueryDao.findByEntity(mmInherit);
+		List<MmInherit> mlist=AutoCopyList.getObjList(list,MmInherit.class);
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessResult(mlist));
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse findCompList(IContext paramIContext) throws RepositoryException {
+		MmComposition mmComposition = new MmComposition();
+		mmComposition.setUpdateDate(null);
+		List<IEntity> list=metaModelQueryDao.findByEntity(mmComposition);
+		List<MmComposition> mlist=AutoCopyList.getObjList(list,MmComposition.class);
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessResult(mlist));
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse findDepeList(IContext paramIContext) throws RepositoryException {
+		MmDependency mmDependency = new MmDependency();
+
+		List<IEntity> list=metaModelQueryDao.findByEntity(mmDependency);
+		List<MmDependency> mlist=AutoCopyList.getObjList(list,MmDependency.class);
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessResult(mlist));
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse findAllModel(IContext paramIContext) throws RepositoryException {
+		MmMetamodel mm = new MmMetamodel();
+
+		List<IEntity> list=metaModelQueryDao.findByEntity(mm);
+		List<MmMetamodel> mlist=AutoCopyList.getObjList(list,MmMetamodel.class);
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessResult(mlist));
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse findModelById(IContext paramIContext) throws RepositoryException {
+		String id =(String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+		try {
+			MmMetamodel mmMetamodel= (MmMetamodel) metaModelQueryDao.findById(id,MmMetamodel.class);
+			List<MmAttribute> attrlist =findAttrByModelId(id);
+			mmMetamodel.setAttList(attrlist);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmMetamodel));
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("获取元模型失败");
+		}
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public MmMetamodel findModelById(String id) throws RepositoryException {
+
+		try {
+			MmMetamodel mmMetamodel= (MmMetamodel) metaModelQueryDao.findById(id,MmMetamodel.class);
+			//List<MmAttribute> attrlist =findAttrByModelId(id);
+			//mmMetamodel.setAttList(attrlist);
+			return mmMetamodel;
+		} catch (DaoException e) {
+			e.printStackTrace();
+			throw new RepositoryException("获取元模型失败");
+		}
+		//return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse findAttrByModelId(IContext paramIContext) throws RepositoryException {
+		String id =(String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+		try {
+
+			List<MmAttribute> attrlist =findAttrByModelId(id);
+			//MmAttribute mmAttribute= (MmAttribute) metaModelQueryDao.findById(id,MmAttribute.class);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(attrlist));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RepositoryException("获取元模型属性失败");
+		}
+		return paramIContext.getResponse();
+	}
+
+	private List<MmAttribute> findAttrByModelId(String id) throws RepositoryException {
+		try {
+			MmAttribute mmAttribute = new MmAttribute();
+			mmAttribute.setMmId(id);
+			List<IEntity> list =  metaModelQueryDao.findByEntity(mmAttribute);
+			List<MmAttribute> attrlist =AutoCopyList.getObjList(list,MmAttribute.class);
+			//MmAttribute mmAttribute= (MmAttribute) metaModelQueryDao.findById(id,MmAttribute.class);
+			return attrlist;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RepositoryException("获取元模型属性失败");
+		}
+	}
+	@Override
+	public IResponse findAllMmInheritById(IContext paramIContext) throws RepositoryException{
+		String id =(String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+		List<MmInherit> mmInherits = findAllMmInheritById(id);
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessResult(mmInherits));
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse findAllMmCompositionById(IContext paramIContext) throws RepositoryException{
+		String id =(String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+		List<MmComposition> mmInherits = findAllMmCompositionById(id);
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessResult(mmInherits));
+
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse findAllMmDependencyById(IContext paramIContext) throws RepositoryException{
+		String id =(String) paramIContext.getParameter(ParameterKeys.ATT_ID);
+		List<MmDependency> mmInherits = findAllMmDependencyById(id);
+		paramIContext.getResponse().setResult(
+				ResultFactory.getInstance().createSuccessResult(mmInherits));
+
+		return paramIContext.getResponse();
+	}
+
+
+	/**
+	 * 查询继承与被继承关系
+	 * @param id
+	 * @return
+	 * @throws RepositoryException
+     */
+	private List<MmInherit> findAllMmInheritById(String id) throws RepositoryException {
+		try {
+			MmInherit mmInherit1= new MmInherit();
+			mmInherit1.setUpdateDate(null);
+			mmInherit1.setMmId(id);
+			MmInherit mmInherit2= new MmInherit();
+			mmInherit2.setUpdateDate(null);
+			mmInherit2.setParentId(id);
+			List<IEntity> mminList=new ArrayList<IEntity>();
+			mminList.add(mmInherit1);
+			mminList.add(mmInherit2);
+
+			List<IEntity> inlist=metaModelQueryDao.findByOrEntity(mminList);
+			List<MmInherit> mmInherits=  AutoCopyList.getObjList(inlist,MmInherit.class);
+
+
+			return mmInherits;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RepositoryException("获取元模型继承关系失败");
+		}
+	}
+
+	/**
+	 * 查询组合与被组合关系
+	 * @param id
+	 * @return
+	 * @throws RepositoryException
+     */
+	private List<MmComposition> findAllMmCompositionById(String id) throws RepositoryException {
+		try {
+			MmComposition mmComposition1= new MmComposition();
+			mmComposition1.setUpdateDate(null);
+			mmComposition1.setFromMmId(id);
+			MmComposition mmComposition2= new MmComposition();
+			mmComposition2.setUpdateDate(null);
+			mmComposition2.setToMmId(id);
+			List<IEntity> mmList=new ArrayList<IEntity>();
+			mmList.add(mmComposition1);
+			mmList.add(mmComposition2);
+
+			List<IEntity> inlist=metaModelQueryDao.findByOrEntity(mmList);
+			List<MmComposition> mmcomps=  AutoCopyList.getObjList(inlist,MmComposition.class);
+
+
+			return mmcomps;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RepositoryException("获取元模型组合关系失败");
+		}
+	}
+
+
+	/**
+	 * 查询依赖与被依赖关系
+	 * @param id
+	 * @return
+	 * @throws RepositoryException
+	 */
+	private List<MmDependency> findAllMmDependencyById(String id) throws RepositoryException {
+		try {
+			MmDependency mmDependency1= new MmDependency();
+			//mmDependency1.setUpdateDate(null);
+			mmDependency1.setFromMmId(id);
+			MmDependency mmDependency2= new MmDependency();
+			//mmDependency2.setUpdateDate(null);
+			mmDependency2.setToMmId(id);
+			List<IEntity> mmList=new ArrayList<IEntity>();
+			mmList.add(mmDependency1);
+			mmList.add(mmDependency2);
+
+			List<IEntity> inlist=metaModelQueryDao.findByOrEntity(mmList);
+			List<MmDependency> mmdepes=  AutoCopyList.getObjList(inlist,MmDependency.class);
+			return mmdepes;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RepositoryException("获取元模型依赖关系失败");
+		}
+	}
+
+
+	@Override
+	public IResponse getByLeftDepeScope(IContext paramIContext)
+			throws RepositoryException {
+		try {
+			BaseHbiernateScope scope = (BaseHbiernateScope) paramIContext
+					.getParameters();
+			List<IEntity> mmelist = metaModelQueryDao.findByScope(scope);
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmelist));
+		} catch (DaoException e) {
+			new RepositoryException("查询元模型失败!", e);
+		}
+		return paramIContext.getResponse();
+	}
+
+	@Override
+	public IResponse getByLeftCompScope(IContext paramIContext)
+			throws RepositoryException {
+		try {
+			BaseHbiernateScope scope = (BaseHbiernateScope) paramIContext
+					.getParameters();
+			List<IEntity> mmelist = metaModelQueryDao.findByScope(scope);
+			List<MmMetamodel> modellist= AutoCopyList.getObjList(mmelist,MmMetamodel.class);
+
+
+
+			paramIContext.getResponse().setResult(
+					ResultFactory.getInstance().createSuccessResult(mmelist));
+		} catch (DaoException e) {
+			new RepositoryException("查询元模型失败!", e);
+		}
+		return paramIContext.getResponse();
+	}
+
+
+
+
+
+
+}

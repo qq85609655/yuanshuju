@@ -1,0 +1,34 @@
+package com.gilight.dep.metadata.service.impl;
+
+
+import java.io.Serializable;
+
+import org.springframework.scheduling.quartz.CronTriggerBean;
+
+import com.gilight.dep.framework.core.exception.ServiceException;
+import com.gilight.dep.metadata.service.IInitBackupTimeService;
+
+/**
+ * 自定义触发器
+ * 初始化系统的备份时间
+ */
+public class CustomCronTrigger extends CronTriggerBean implements Serializable{
+	//注入初始化时间业务
+	private IInitBackupTimeService initBackupTimeService;
+	public IInitBackupTimeService getInitBackupTimeService() {
+		return initBackupTimeService;
+	}
+	public void setInitBackupTimeService(IInitBackupTimeService initBackupTimeService) throws ServiceException{
+		this.initBackupTimeService = initBackupTimeService;
+		//获取表达式
+		String cronExpression = initBackupTimeService.getCronExpressionFromDB();
+		if(cronExpression!=null && !cronExpression.equals("")){
+			try{//设置表达式
+				setCronExpression(cronExpression);  
+			}catch(Exception e){
+				e.printStackTrace();
+				throw new ServiceException("自定义触发器的初始化系统的备份时间异常");
+			}
+		}
+	}
+}

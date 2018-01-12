@@ -1,0 +1,129 @@
+/**   
+ * @Title: MetaModelEnumFactory.java 
+ * <p>TODO 
+ * @author zps  
+ * @date 2015年7月24日 下午4:53:34
+ * @Copyright Henan Province Jinghua Sci & Tech Co.. Ltd. 
+ * @version V1.0   
+ */
+package com.gilight.dep.metamodel.init.data.enmu;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import com.gilight.dep.framework.core.context.base.ContextFactoryImpl;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.context.response.IResponse;
+import com.gilight.dep.framework.core.context.response.result.IResult;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.metadata.spring.TestSpringFactory;
+import com.gilight.dep.metadata.view.MetaModeDataTypeView;
+import com.gilight.dep.metadata.view.MetaModeSelectedView;
+import com.gilight.dep.metamodel.service.impl.MetaModelDataTypeServiceImpl;
+
+public class MetaModelEnumFactory {
+	// MmEnum
+	// MmEnumValue
+	private static Map<String, MetaModeDataTypeView> dataType = new HashMap<String, MetaModeDataTypeView>();
+	private static MetaModelDataTypeServiceImpl metaModelDataTypeService = null;
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		claer();
+		init();
+//		save();
+		 testGet();
+	}
+
+	private static void testGet() {
+		// TODO Auto-generated method stubgetDataTypeSelectByDId
+		try {
+			IContext context = ContextFactoryImpl.getInstance()
+					.createContextWithID(
+							"21b94ec0-0469-4efc-87a7-00b8a2a963ca");
+			IResponse response = metaModelDataTypeService
+					.getDataTypeSelectByDId(context);
+			System.out.println(response.getResult().getClass());
+			IResult res=(IResult) response.getBlockedResult();
+			List a = (List) res.getResult();
+			System.out.println(a.size());
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public static Map<String, MetaModeDataTypeView> getMetaModel() {
+		dataType.clear();
+		init();
+		return dataType;
+	}
+
+	private static void putCache(MetaModeDataTypeView m) {
+		// TODO Auto-generated method stub
+		if (!dataType.containsKey(m.getId())) {
+			dataType.put(m.getId(), m);
+		} else {
+			System.out.println("---------" + (m.getId()));
+		}
+	}
+
+	private static MetaModeDataTypeView getCache(String code) {
+		// TODO Auto-generated method stub
+		if (dataType.containsKey(code)) {
+			return dataType.get(code);
+		}
+		return null;
+	}
+
+	private static void save() {
+		try {
+			System.out.println("---------------");
+			System.out.println("---------------" + dataType.size());
+			Iterator<String> it = dataType.keySet().iterator();
+			while (it.hasNext()) {
+				String id = it.next();
+				MetaModeDataTypeView view = dataType.get(id);
+				IContext context = ContextFactoryImpl.getInstance()
+						.createContextWithView(view);
+				metaModelDataTypeService.create(context);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void init() {
+		// TODO Auto-generated method stub
+		metaModelDataTypeService = (MetaModelDataTypeServiceImpl) TestSpringFactory
+				.getBean("metaModelDataTypeService");
+		System.out.println("---init----" + metaModelDataTypeService == null);
+		getBussEleDataType();
+	}
+
+	private static void claer() {
+		dataType.clear();
+	}
+
+	public static MetaModeDataTypeView getBussEleDataType() {
+		String id = "21b94ec0-0469-4efc-87a7-00b8a2a963ca";
+		MetaModeDataTypeView m = getCache(id);
+		if (m == null) {
+			m = new MetaModeDataTypeView();
+			m.setId(id);
+		}
+		List<MetaModeSelectedView> sl = new ArrayList<MetaModeSelectedView>();
+		MetaModeSelectedView se = new MetaModeSelectedView("C", "字符类型");
+		sl.add(se);
+		MetaModeSelectedView se2 = new MetaModeSelectedView("N", "数字类型");
+		sl.add(se2);
+		m.setSelectedList(sl);
+		putCache(m);
+		return m;
+	}
+
+}

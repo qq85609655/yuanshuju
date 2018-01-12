@@ -1,0 +1,126 @@
+package com.gilight.dep.metadata.message.procuder;
+
+import com.gilight.dep.framework.core.context.base.DomainMessageContext;
+import com.gilight.dep.framework.core.context.base.IContext;
+import com.gilight.dep.framework.core.exception.GilightException;
+import com.gilight.dep.framework.core.exception.MessageProducerException;
+import com.gilight.dep.framework.core.message.consumer.AbstractConsumer;
+import com.gilight.dep.framework.core.message.consumer.IMessageConsumer;
+import com.gilight.dep.framework.core.message.producer.IBasicMessageProducer;
+import com.gilight.dep.framework.core.message.producer.impl.BaseMessageProducer;
+import com.jdon.annotation.Introduce;
+import com.jdon.annotation.model.Send;
+import com.jdon.async.disruptor.EventDisruptor;
+@Introduce("message")
+public class MetaDataVersionMessageProducer extends BaseMessageProducer  implements
+IBasicMessageProducer{
+
+	public MetaDataVersionMessageProducer() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+	
+	
+
+
+
+
+	
+	@Send("MetaDataVersionGet")
+	public DomainMessageContext get(IContext paramIContext)
+			throws MessageProducerException {
+		// TODO Auto-generated method stub
+		try {
+			//System.out.println("7777777777777777777777777777777");
+			return new DomainMessageContext(paramIContext);
+			
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new MessageProducerException("更新视图失败");
+		}
+	}
+
+	@Override
+	@Send("MetaDataVersionCreate")
+	public DomainMessageContext create(IContext paramIContext)
+			throws MessageProducerException {
+		// TODO Auto-generated method stub
+		try {
+			//System.out.println("7777777777777777777777777777777");
+			return new DomainMessageContext(paramIContext);
+			
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new MessageProducerException("更新视图失败");
+		}
+	}
+
+	@Override
+	@Send("MetaDataVersionDelete")
+	public DomainMessageContext delete(IContext paramIContext)
+			throws MessageProducerException {
+		// TODO Auto-generated method stub
+		try {
+			//System.out.println("7777777777777777777777777777777");
+			return new DomainMessageContext(paramIContext);
+			
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new MessageProducerException("更新视图失败");
+		}
+	}
+
+	@Override
+	@Send("MetaDataVersionUpdate")
+	public DomainMessageContext update(IContext paramIContext)
+			throws MessageProducerException {
+		// TODO Auto-generated method stub
+		try {
+			//System.out.println("7777777777777777777777777777777");
+			return new DomainMessageContext(paramIContext);
+			
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new MessageProducerException("更新视图失败");
+		}
+	}
+
+	
+	@Send("approveReject")
+	public DomainMessageContext approveReject(IContext paramIContext)
+			throws MessageProducerException {
+		// TODO Auto-generated method stub
+		try {
+			
+			return new DomainMessageContext(paramIContext);
+			
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new MessageProducerException("审批操作失败");
+		}
+	}
+	
+	@Send("approveAgree")
+	public DomainMessageContext approveAgree(IContext paramIContext)
+			throws MessageProducerException {
+		// TODO Auto-generated method stub
+		try {
+			//System.out.println("7777777777777777777777777777777");
+			return new DomainMessageContext(paramIContext);
+			
+		} catch (GilightException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new MessageProducerException("审批操作失败");
+		}
+	}
+}

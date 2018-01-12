@@ -1,0 +1,51 @@
+package com.gilight.dep.metadata.view;
+
+import java.util.List;
+
+/**
+ * 
+ * @ClassName: MetaModelDepeView
+ *             <p>
+ *             依赖关系详情，包括依赖端的元模型，被依赖端的元模型基本信息。<br>
+ * @author wzx
+ * @date 2015年7月9日 下午4:12:58
+ * @version V1.0
+ * @since JDK 1.7
+ */
+public class MetaModelDepeView extends MetaModelDepeBasicView {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = 1L;
+	/***
+	 * 依赖端元模型
+	 */
+	private MetaModelBasicView fromModel;
+	/***
+	 * 被依赖元模型列表
+	 */
+	private List<MetaModelBasicView> toModelList;
+
+	public MetaModelBasicView getFromModel() {
+		return fromModel;
+	}
+
+	public void setFromModel(MetaModelBasicView fromModel) {
+		this.fromModel = fromModel;
+	}
+
+	public List<MetaModelBasicView> getToModelList() {
+		return toModelList;
+	}
+
+	public void setToModelList(List<MetaModelBasicView> toModelList) {
+		this.toModelList = toModelList;
+	}
+
+	@Override
+	public String toString() {
+		return "MetaModelDepeView [fromModel=" + fromModel + ", toModelList="
+				+ toModelList + "]";
+	}
+
+}
